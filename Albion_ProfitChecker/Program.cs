@@ -68,7 +68,8 @@ internal static class Program
         int HistoryRetries,
         int HistoryRetryDelayMs,
         int HistorySpanDelayMs,
-        int MaxHistoryConcurrency
+        int MaxHistoryConcurrency,
+        string ApiHost
     );
 
     public static async Task Main(string[] args)
@@ -153,7 +154,8 @@ internal static class Program
             HistoryRetries: DEFAULT_HISTORY_RETRIES,
             HistoryRetryDelayMs: DEFAULT_HISTORY_RETRY_DELAY_MS,
             HistorySpanDelayMs: DEFAULT_HISTORY_SPAN_DELAY_MS,
-            MaxHistoryConcurrency: DEFAULT_MAX_HISTORY_CONCURRENCY
+            MaxHistoryConcurrency: DEFAULT_MAX_HISTORY_CONCURRENCY,
+            ApiHost: "https://west.albion-online-data.com/api/v2/stats"
         );
 
         for (int i = 0; i < args.Length; i++)
@@ -194,6 +196,11 @@ internal static class Program
                 var list = args[i + 1].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                 if (list.Length > 0)
                     opt = opt with { Cities = list.ToArray() };
+                i++;
+            }
+            else if (string.Equals(arg, "--api-host", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
+            {
+                opt = opt with { ApiHost = args[i + 1].Trim().TrimEnd('/') };
                 i++;
             }
             else if (string.Equals(arg, "--bm-min-points", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length && int.TryParse(args[i + 1], out var mp))
@@ -243,7 +250,7 @@ internal static class Program
 
     private static async Task RunPipelineAsync(Options options)
     {
-        var api = new AlbionApiService();
+        var api = new AlbionApiService(apiBase: options.ApiHost);
 
         // 0) ItemList laden
         var itemListPath = ToAbsolute(options.ItemListPath);

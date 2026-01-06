@@ -13,7 +13,7 @@ namespace AlbionProfitChecker.Services
     public class AlbionApiService
     {
         private readonly HttpClient _http;
-        private const string API_BASE = "https://west.albion-online-data.com/api/v2/stats";
+        private readonly string _apiBase;
         private const int MAX_PRICE_AGE_DAYS = 90; 
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {
@@ -21,7 +21,7 @@ namespace AlbionProfitChecker.Services
             NumberHandling = JsonNumberHandling.AllowReadingFromString
         };
 
-        public AlbionApiService(HttpClient? http = null)
+        public AlbionApiService(HttpClient? http = null, string? apiBase = null)
         {
             if (http != null)
             {
@@ -35,6 +35,8 @@ namespace AlbionProfitChecker.Services
                 };
                 _http = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(20) };
             }
+
+            _apiBase = (apiBase ?? "https://west.albion-online-data.com/api/v2/stats").TrimEnd('/');
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace AlbionProfitChecker.Services
         /// </summary>
         public async Task<(int price, DateTime? dateUtc)> GetSellPriceMinAsync(string itemId, string location)
         {
-            var url = $"{API_BASE}/prices/{Uri.EscapeDataString(itemId)}.json?locations={Uri.EscapeDataString(location)}";
+            var url = $"{_apiBase}/prices/{Uri.EscapeDataString(itemId)}.json?locations={Uri.EscapeDataString(location)}";
             using var resp = await _http.GetAsync(url);
             if (!resp.IsSuccessStatusCode)
             {
@@ -99,7 +101,7 @@ namespace AlbionProfitChecker.Services
         /// </summary>
         public async Task<List<HistoryPoint>> GetHistoryAsync(string itemId, string location, int days = 14)
         {
-            var url = $"{API_BASE}/history/{Uri.EscapeDataString(itemId)}.json?locations={Uri.EscapeDataString(location)}&time-scale=24";
+            var url = $"{_apiBase}/history/{Uri.EscapeDataString(itemId)}.json?locations={Uri.EscapeDataString(location)}&time-scale=24";
             for (int attempt = 1; attempt <= 3; attempt++)
             {
                 using var resp = await _http.GetAsync(url);
@@ -183,7 +185,7 @@ namespace AlbionProfitChecker.Services
             var ids = itemIds.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             if (ids.Count == 0) return result;
 
-            var url = $"{API_BASE}/prices/{string.Join(",", ids)}.json?locations={Uri.EscapeDataString(location)}";
+            var url = $"{_apiBase}/prices/{string.Join(",", ids)}.json?locations={Uri.EscapeDataString(location)}";
             using var resp = await _http.GetAsync(url);
             if (!resp.IsSuccessStatusCode)
             {

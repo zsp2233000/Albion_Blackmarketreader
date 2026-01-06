@@ -1,0 +1,1 @@
+﻿window.results = [{"city":"Lymhurst","id":"T4_HEAD_PLATE_UNDEAD","lym":1228,"bm":6666,"sold":173,"profit":442.8,"span":"14d"}];

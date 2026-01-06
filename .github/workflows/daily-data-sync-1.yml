@@ -23,7 +23,7 @@ jobs:
       - name: Restore
         run: dotnet restore Albion_ProfitChecker/Albion_ProfitChecker.csproj
 
-      - name: Run backend (Topf 1)
+      - name: Run backend (Topf 1 - US)
         working-directory: Albion_ProfitChecker
         run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --cities "Lymhurst,Martlock,Fort Sterling"
 

@@ -31,6 +31,27 @@
     </div>
   </div>
 
+  <div id="regionModal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <h3>Select your data region</h3>
+      <p>Please choose which server data you want to load.</p>
+      <select id="regionChoice" class="city-select" style="width:100%;margin:10px 0;">
+        <option value="us">America</option>
+        <option value="eu">Europe</option>
+      </select>
+      <button id="confirmRegion" class="cta">Continue</button>
+    </div>
+  </div>
+
+  <!-- TODO: remove maintenance notice when rebuild is done -->
+  <div id="maintenanceModal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <h3>Maintenance</h3>
+      <p>We are currently reworking the data pipelines. Values may be incomplete or incorrect.</p>
+      <button id="maintenanceClose" class="cta">OK</button>
+    </div>
+  </div>
+
   <div id="accountPanel" class="account-panel">
     <div class="account-header">
       <img id="profileAvatar" class="avatar-big" src="picture/avatars/default.png" alt="Avatar" />
@@ -52,6 +73,13 @@
       </div>
     </div>
 
+    <div class="avatar-select">
+      <h4>Data region</h4>
+      <select id="regionSelectAccount" class="city-select">
+        <option value="us">America</option>
+        <option value="eu">Europe</option>
+      </select>
+    </div>
     <button id="resetPw" class="btn primary">🔒 Change password</button>
     <button id="logout" class="btn danger">Logout</button>
 
@@ -121,6 +149,7 @@
         <div class="badge" id="lastUpdated">Last update: --:-- --.--.----</div>
         <div class="pill-row">
           <span class="pill" id="dealsCount">Deals: 0</span>
+          <span class="pill">Region: <span id="regionLabel">America</span></span>
         </div>
       </div>
     </div>
@@ -128,13 +157,13 @@
     <div class="layout">
       <div class="main-col">
         <div class="filters">
-          Profit ≥ <input id="minProfit" type="number" value="0" /> %
+          Profit = <input id="minProfit" type="number" value="0" /> %
           <button id="applyFilter">Apply filter</button>
           <button id="filterSilver">Sort by silver</button>
           <button id="clearSilver" style="display:none;">Reset</button>
         </div>
 
-        <div id="cards" class="grid"></div>
+<div id="cards" class="grid"></div>
       </div>
 
       <aside class="aside">
@@ -185,6 +214,13 @@
     const cityNameEl = document.getElementById('cityName');
     const cityCrestEl = document.getElementById('cityCrest');
     const staticBg = document.getElementById('staticBg');
+    const regionSelectAccount = document.getElementById('regionSelectAccount');
+    const regionLabel = document.getElementById('regionLabel');
+    const regionModal = document.getElementById('regionModal');
+    const regionChoice = document.getElementById('regionChoice');
+    const confirmRegion = document.getElementById('confirmRegion');
+    const maintenanceModal = document.getElementById('maintenanceModal');
+    const maintenanceClose = document.getElementById('maintenanceClose');
 
     const authModal = document.getElementById('authModal');
     const authEmail = document.getElementById('authEmail');
@@ -501,6 +537,7 @@
     let allData = [];
     let minProfitFilter = 0;
     let sortBySilver = false;
+    let regionCurrent = localStorage.getItem("region") || null;
     let cityFilter = "ALL";
 
     function setBg(city) {
@@ -557,17 +594,32 @@
       }
     }
 
-    function loadResults() {
-      return new Promise((resolve, reject) => {
-        const s = document.createElement("script");
-        s.src = "results.js?v=" + Date.now();
-        s.onload = () => {
+    async function loadResults(region = regionCurrent) {
+      // Load only the files for the selected region. If none load, leave data empty.
+      const files = region === "eu"
+        ? ["/results-eu.js", "/results-eu-1.js", "/results-eu-2.js"]
+        : ["/results.js", "/results-1.js", "/results-2.js"];
+
+      window.results = [];
+      allData = [];
+
+      for (const file of files) {
+        try {
+          window.results = []; // reset before trying each file
+          await new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = `${file}?v=${Date.now()}`;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.body.appendChild(s);
+          });
           allData = window.results || [];
-          resolve();
-        };
-        s.onerror = reject;
-        document.body.appendChild(s);
-      });
+          if (allData.length) return;
+        } catch (_) {
+          // try next file
+        }
+      }
+      // nothing loaded -> keep empty
     }
 
     function renderLastUpdated(text) {
@@ -596,6 +648,43 @@
       if (val) renderLastUpdated(val);
     }
 
+    function setRegion(region) {
+      regionCurrent = region === "eu" ? "eu" : "us";
+      localStorage.setItem("region", regionCurrent);
+      if (regionLabel) regionLabel.textContent = regionCurrent === "eu" ? "Europe" : "America";
+      if (regionSelectAccount) regionSelectAccount.value = regionCurrent;
+    }
+
+    async function saveRegionToProfile() {
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (!data?.user) return;
+        await supabase.auth.updateUser({ data: { region: regionCurrent } });
+      } catch (_) {
+        // ignore profile save errors
+      }
+    }
+
+    async function changeRegion(region) {
+      loadingOverlay.style.display = "flex";
+      setRegion(region);
+      allData = [];
+      render();
+      try {
+        await loadResults(regionCurrent);
+        await saveRegionToProfile();
+        const stamp = formatDate(new Date());
+        setLastUpdated(stamp);
+        render();
+      } catch (err) {
+        console.error(err);
+          showToast("Could not load data for the selected region.");
+          setLastUpdated("--:-- --.--.----");
+        } finally {
+          loadingOverlay.style.display = "none";
+        }
+      }
+
     function setCity(city) {
       cityFilter = city;
       cityNameEl.textContent = city === "ALL" ? "All Cities" : city;
@@ -607,8 +696,8 @@
     async function ensureAuth() {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
-        const userResp = await supabase.auth.getUser();
-        const user = userResp.data.user;
+      const userResp = await supabase.auth.getUser();
+      const user = userResp.data.user;
         if (!user?.email_confirmed_at) {
           await supabase.auth.signOut();
           showToast("Bitte bestÃ¤tige zuerst deine E-Mail.");
@@ -619,7 +708,15 @@
         authModal.style.display = "none";
         app.style.display = "block";
         accountEmail.textContent = user?.email || "-";
-        return true;
+          const savedRegion = user?.user_metadata?.region || localStorage.getItem("region");
+          if (!savedRegion) {
+            regionModal.style.display = "flex";
+            regionChoice.value = "us";
+            app.style.display = "none";
+            return false;
+          }
+          setRegion(savedRegion);
+          return true;
       }
       authModal.style.display = "flex";
       return false;
@@ -711,11 +808,17 @@
 
     async function initApp() {
       loadingOverlay.style.display = "flex";
-      await loadResults();
-      const stamp = formatDate(new Date());
-      setLastUpdated(stamp);
-      render();
-      loadingOverlay.style.display = "none";
+      try {
+        await loadResults(regionCurrent);
+        const stamp = formatDate(new Date());
+        setLastUpdated(stamp);
+        render();
+      } catch (err) {
+        console.error(err);
+        showToast("Data could not be loaded. Check results.js / results-eu.js.");
+      } finally {
+        loadingOverlay.style.display = "none";
+      }
     }
 
     applyFilterEl.onclick = () => {
@@ -725,6 +828,7 @@
     filterSilverEl.onclick = () => { sortBySilver = true; clearSilverEl.style.display = "inline-block"; render(); };
     clearSilverEl.onclick = () => { sortBySilver = false; clearSilverEl.style.display = "none"; render(); };
     citySelectEl.onchange = (e) => setCity(e.target.value);
+      if (regionSelectAccount) regionSelectAccount.onchange = (e) => changeRegion(e.target.value);
 
     btnLogin.onclick = handleLogin;
     btnRegister.onclick = handleRegister;
@@ -791,6 +895,8 @@
     });
     confirmClose.onclick = () => { confirmModal.style.display = "none"; };
 
+    if (regionCurrent) setRegion(regionCurrent);
+
     (async () => {
       const ok = await ensureAuth();
       if (ok) {
@@ -798,7 +904,41 @@
         await initApp();
         setCity("ALL");
       }
+      confirmRegion.onclick = async () => {
+        setRegion(regionChoice.value);
+        await saveRegionToProfile();
+        regionModal.style.display = "none";
+        app.style.display = "block";
+        await loadAvatar();
+        await initApp();
+        setCity("ALL");
+      };
+
+      // show maintenance info (remove when done)
+      maintenanceModal.style.display = "flex";
+      maintenanceClose.onclick = () => { maintenanceModal.style.display = "none"; };
     })();
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,15 +1,15 @@
-name: Data Sync - Topf 2 (Bridgewatch/Thetford/Caerleon)
+name: Data Sync EU - Topf 1 (Lymhurst/Martlock/Fort Sterling)
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 2 * * *" # 02:00 UTC
+    - cron: "0 11 * * *" # 11:00 UTC (EU)
 
 permissions:
   contents: write
 
 jobs:
-  sync-topf2:
+  sync-topf1-eu:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,22 +23,22 @@ jobs:
       - name: Restore
         run: dotnet restore Albion_ProfitChecker/Albion_ProfitChecker.csproj
 
-      - name: Run backend (Topf 2 - US)
+      - name: Run backend (Topf 1 - EU)
         working-directory: Albion_ProfitChecker
-        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --cities "Bridgewatch,Thetford,Caerleon"
+        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --cities "Lymhurst,Martlock,Fort Sterling" --api-host "https://europe.albion-online-data.com/api/v2/stats"
 
-      - name: Move results to results-2.js
-        run: mv Albion_ProfitChecker/ui/results.js Albion_ProfitChecker/ui/results-2.js
+      - name: Move results to results-eu-1.js
+        run: mv Albion_ProfitChecker/ui/results.js Albion_ProfitChecker/ui/results-eu-1.js
 
-      - name: Commit updated results-2 (falls vorhanden)
+      - name: Commit updated results-eu-1 (falls vorhanden)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/results-2.js)" ]; then
-            git add Albion_ProfitChecker/ui/results-2.js
-            git commit -m "chore: data refresh topf2"
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/results-eu-1.js)" ]; then
+            git add Albion_ProfitChecker/ui/results-eu-1.js
+            git commit -m "chore: data refresh topf1 EU"
           else
-            echo "Keine Änderungen in results-2.js"
+            echo "Keine Änderungen in results-eu-1.js"
           fi
 
       - name: Push changes
