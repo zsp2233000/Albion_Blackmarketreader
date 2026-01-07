@@ -163,7 +163,8 @@
           <button id="clearSilver" style="display:none;">Reset</button>
         </div>
 
-<div id="cards" class="grid"></div>
+  <div id="cards" class="grid"></div>
+  <div id="loadMoreTrigger"></div>
       </div>
 
       <aside class="aside">
@@ -202,10 +203,11 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const loadingOverlay = document.getElementById('loadingOverlay');
-    const app = document.getElementById('app');
-    const cardsEl = document.getElementById('cards');
-    const minProfitEl = document.getElementById('minProfit');
-    const applyFilterEl = document.getElementById('applyFilter');
+      const app = document.getElementById('app');
+      const cardsEl = document.getElementById('cards');
+      const loadMoreTrigger = document.getElementById('loadMoreTrigger');
+      const minProfitEl = document.getElementById('minProfit');
+      const applyFilterEl = document.getElementById('applyFilter');
     const filterSilverEl = document.getElementById('filterSilver');
     const clearSilverEl = document.getElementById('clearSilver');
     const lastUpdatedEl = document.getElementById('lastUpdated');
@@ -534,11 +536,15 @@
       profileAvatar.src = avatar;
     }
 
-    let allData = [];
-    let minProfitFilter = 0;
-    let sortBySilver = false;
-    let regionCurrent = localStorage.getItem("region") || null;
-    let cityFilter = "ALL";
+      let allData = [];
+      let minProfitFilter = 0;
+      let sortBySilver = false;
+      let regionCurrent = localStorage.getItem("region") || null;
+      let cityFilter = "ALL";
+      let currentList = [];
+      let visibleCount = 0;
+      const batchSize = 60;
+      let listObserver = null;
 
     function setBg(city) {
       staticBg.style.background = bgMap[city] || bgMap.ALL;
@@ -556,6 +562,51 @@
       return `${tier}${ench}\u00A0\u00A0${translated}`;
     }
 
+    function buildCard(item) {
+      const profitText = sortBySilver
+        ? `Profit: ${(item.bm - item.lym).toLocaleString('de-DE')} Silber`
+        : `Profit: ${item.profit.toFixed(1)}%`;
+
+      const enchantClass = item.id.includes("@1") ? "border-enchant-1"
+        : item.id.includes("@2") ? "border-enchant-2"
+        : item.id.includes("@3") ? "border-enchant-3"
+        : item.id.includes("@4") ? "border-enchant-4"
+        : "";
+
+      const card = document.createElement("div");
+      card.className = `card ${enchantClass}`.trim();
+      card.innerHTML = `
+        <div class="title">${displayName(item.id)}</div>
+        <div class="row"><span>ID</span><span class="val">${item.id}</span></div>
+        <div class="row"><span>${item.city}</span><span class="val">${item.lym.toLocaleString('de-DE')}</span></div>
+        <div class="row"><span>Black Market</span><span class="val">${item.bm.toLocaleString('de-DE')}</span></div>
+        <div class="row"><span>Sold/Tag</span><span class="val">${item.sold ?? 0}</span></div>
+        <div class="profit">${profitText} <span class="pill">${item.span}</span></div>
+      `;
+      return card;
+    }
+
+    function renderBatch() {
+      const next = currentList.slice(visibleCount, visibleCount + batchSize);
+      for (const item of next) {
+        cardsEl.appendChild(buildCard(item));
+      }
+      visibleCount += next.length;
+      if (visibleCount >= currentList.length && listObserver) {
+        listObserver.disconnect();
+      }
+    }
+
+    function setupObserver() {
+      if (listObserver) listObserver.disconnect();
+      listObserver = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          renderBatch();
+        }
+      }, { rootMargin: "600px 0px" });
+      listObserver.observe(loadMoreTrigger);
+    }
+
     function render() {
       cardsEl.innerHTML = "";
       const filtered = allData.filter(item =>
@@ -563,35 +614,14 @@
         (cityFilter === "ALL" || item.city === cityFilter)
       );
 
-      const list = sortBySilver
+      currentList = sortBySilver
         ? [...filtered].sort((a, b) => (b.bm - b.lym) - (a.bm - a.lym))
         : filtered;
 
-      dealsCountEl.textContent = `Deals: ${list.length}`;
-
-      for (const item of list) {
-        const profitText = sortBySilver
-          ? `Profit: ${(item.bm - item.lym).toLocaleString('de-DE')} Silber`
-          : `Profit: ${item.profit.toFixed(1)}%`;
-
-        const enchantClass = item.id.includes("@1") ? "border-enchant-1"
-          : item.id.includes("@2") ? "border-enchant-2"
-          : item.id.includes("@3") ? "border-enchant-3"
-          : item.id.includes("@4") ? "border-enchant-4"
-          : "";
-
-        const card = document.createElement("div");
-        card.className = `card ${enchantClass}`.trim();
-        card.innerHTML = `
-          <div class="title">${displayName(item.id)}</div>
-          <div class="row"><span>ID</span><span class="val">${item.id}</span></div>
-          <div class="row"><span>${item.city}</span><span class="val">${item.lym.toLocaleString('de-DE')}</span></div>
-          <div class="row"><span>Black Market</span><span class="val">${item.bm.toLocaleString('de-DE')}</span></div>
-          <div class="row"><span>Sold/Tag</span><span class="val">${item.sold ?? 0}</span></div>
-          <div class="profit">${profitText} <span class="pill">${item.span}</span></div>
-        `;
-        cardsEl.appendChild(card);
-      }
+      dealsCountEl.textContent = `Deals: ${currentList.length}`;
+      visibleCount = 0;
+      setupObserver();
+      renderBatch();
     }
 
     async function loadResults(region = regionCurrent) {
