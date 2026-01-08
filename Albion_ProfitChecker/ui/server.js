@@ -59,9 +59,17 @@ const server = http.createServer((req, res) => {
     filePath = path.join(uiDir, 'dashboard.html');
   } else if (url.pathname === '/index.html' || url.pathname === '/') {
     filePath = path.join(uiDir, 'index.html');
-  } else if (url.pathname === '/styles.css') {
-    filePath = path.join(uiDir, 'styles.css');
+  } else if (url.pathname === '/index.css') {
+    filePath = path.join(uiDir, 'index.css');
+  } else if (url.pathname === '/dashboard.css') {
+    filePath = path.join(uiDir, 'dashboard.css');
     contentType = 'text/css';
+  } else if (url.pathname === '/env.js') {
+    filePath = path.join(uiDir, 'env.js');
+    contentType = 'application/javascript';
+  } else if (url.pathname === '/env.example.js') {
+    filePath = path.join(uiDir, 'env.example.js');
+    contentType = 'application/javascript';
   } else if (url.pathname.startsWith('/results.js')) {
     filePath = path.join(uiDir, 'results.js');
     contentType = 'application/javascript';

@@ -1,0 +1,10 @@
+{
+  "name": "albion-profitchecker-ui",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "stripe": "^14.23.0"
+  }
+}

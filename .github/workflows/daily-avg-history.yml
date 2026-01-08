@@ -1,0 +1,103 @@
+name: Daily Avg History (US+EU)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 8 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  build-history:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build avg-profit-history.json from results files
+        working-directory: Albion_ProfitChecker/ui
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const today = new Date().toISOString().slice(0, 10);
+          const cities = ["ALL","Lymhurst","Martlock","Fort Sterling","Thetford","Bridgewatch","Caerleon"];
+          const regions = {
+            us: ["results.js","results-1.js","results-2.js"],
+            eu: ["results-eu.js","results-eu-1.js","results-eu-2.js"]
+          };
+
+          const readResults = (file) => {
+            const raw = fs.readFileSync(file, 'utf8');
+            const json = raw.replace(/^window\.results\s*=\s*/,'').replace(/;?\s*$/,'');
+            const data = JSON.parse(json);
+            return Array.isArray(data) ? data : [];
+          };
+
+          const ensureEntry = (arr, date, avg) => {
+            const idx = arr.findIndex((e) => e.date === date);
+            if (idx >= 0) arr[idx].avg = avg;
+            else arr.push({ date, avg });
+            arr.sort((a, b) => a.date.localeCompare(b.date));
+            if (arr.length > 365) arr.splice(0, arr.length - 365);
+          };
+
+          const basePath = process.cwd();
+          const historyPath = path.join(basePath, 'avg-profit-history.json');
+          let history = { us: { ALL: [] }, eu: { ALL: [] } };
+          if (fs.existsSync(historyPath)) {
+            try {
+              history = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+            } catch (_) {}
+          }
+
+          for (const [region, files] of Object.entries(regions)) {
+            const merged = [];
+            for (const file of files) {
+              if (!fs.existsSync(path.join(basePath, file))) continue;
+              try { merged.push(...readResults(path.join(basePath, file))); } catch (_) {}
+            }
+            if (!history[region]) history[region] = { ALL: [] };
+
+            for (const city of cities) {
+              const list = city === "ALL" ? merged : merged.filter((item) => item.city === city);
+              const profits = list.map((item) => Number(item.profit)).filter((v) => Number.isFinite(v));
+              const avg = profits.length ? profits.reduce((s, v) => s + v, 0) / profits.length : 0;
+              if (!history[region][city]) history[region][city] = [];
+              ensureEntry(history[region][city], today, Number(avg.toFixed(2)));
+            }
+          }
+
+          fs.writeFileSync(historyPath, JSON.stringify(history, null, 2));
+          console.log('Saved', historyPath);
+          NODE
+
+      - name: Commit avg-profit-history.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/avg-profit-history.json)" ]; then
+            git add Albion_ProfitChecker/ui/avg-profit-history.json
+            git commit -m "chore: daily avg profit history"
+          else
+            echo "No changes in avg-profit-history.json"
+          fi
+
+      - name: Push changes
+        if: success()
+        run: |
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          git pull --rebase origin "$branch" || true
+          if [ -n "$(git log origin/$(git rev-parse --abbrev-ref HEAD)..HEAD)" ]; then
+            git push
+          else
+            echo "Nothing to push"
+          fi
+
+      - name: Trigger Vercel Deploy Hook
+        if: env.VERCEL_DEPLOY_HOOK_URL != ''
+        env:
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: curl -X POST "$VERCEL_DEPLOY_HOOK_URL"

@@ -1,27 +1,25 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Albion Blackmarket Reader – Dashboard</title>
-  <meta name="description" content="Albion Blackmarket Reader Dashboard – Profitable items, city comparison, silver filters and Black Market insights." />
-  <link rel="icon" type="image/x-icon" href="picture/logoicon.ico" />
-  <link rel="stylesheet" href="styles.css" />
+  <title>Albion Blackmarket Reader � Dashboard</title>
+  <meta name="description" content="Albion Blackmarket Reader Dashboard � Profitable items, city comparison, silver filters and Black Market insights." />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="account-section/account.css" />
 </head>
-<body>
+<body class="dashboard">
 
   <div class="static-bg" id="staticBg"></div>
 
   <img src="picture/testo ohne background.png" alt="Logo" class="logo-fixed" onclick="window.location.href='index.html'" />
-  <button class="mobile-back" onclick="window.location.href='index.html'">← Back</button>
+  <button class="mobile-back" onclick="window.location.href='index.html'">? Back</button>
 
-  <div class="account-wrap">
-    <button id="accountBtn" class="account-btn" aria-label="Account">
-      <img id="avatarIcon" src="picture/avatars/default.png" alt="Avatar" />
-    </button>
-  </div>
+  
 
-  <div id="toast" class="toast" style="display:none;"></div>
+    <div id="toast" class="toast" style="display:none;"></div>
 
   <div id="confirmModal" class="modal-overlay" style="display:none;">
     <div class="modal-card">
@@ -43,51 +41,16 @@
     </div>
   </div>
 
-  <!-- TODO: remove maintenance notice when rebuild is done -->
+  <!-- TODO: remove demo notice when production data is live -->
   <div id="maintenanceModal" class="modal-overlay" style="display:none;">
     <div class="modal-card">
-      <h3>Maintenance</h3>
-      <p>We are currently reworking the data pipelines. Values may be incomplete or incorrect.</p>
+      <h3>Demo Mode</h3>
+      <p>This version is running in demo mode. Live data is still being verified, so results may differ from the final release.</p>
       <button id="maintenanceClose" class="cta">OK</button>
     </div>
   </div>
 
-  <div id="accountPanel" class="account-panel">
-    <div class="account-header">
-      <img id="profileAvatar" class="avatar-big" src="picture/avatars/default.png" alt="Avatar" />
-      <div class="user-info">
-        <span class="email" id="accountEmail">-</span>
-        <span class="status">Logged in</span>
-      </div>
-      <button id="accountClose" class="close-btn">✕</button>
-    </div>
-
-    <div class="avatar-select">
-      <h4>Select profile avatar</h4>
-      <div class="avatar-grid">
-        <img src="picture/Bridgewatch.png" data-avatar="picture/Bridgewatch.png" alt="Bridgewatch">
-        <img src="picture/Carleon.png" data-avatar="picture/Carleon.png" alt="Caerleon">
-        <img src="picture/Martlockwappen.png" data-avatar="picture/Martlockwappen.png" alt="Martlock">
-        <img src="picture/Lymhurstwappen.png" data-avatar="picture/Lymhurstwappen.png" alt="Lymhurst">
-        <img src="picture/Thefortwappen.png" data-avatar="picture/Thefortwappen.png" alt="Thetford">
-      </div>
-    </div>
-
-    <div class="avatar-select">
-      <h4>Data region</h4>
-      <select id="regionSelectAccount" class="city-select">
-        <option value="us">America</option>
-        <option value="eu">Europe</option>
-      </select>
-    </div>
-    <button id="resetPw" class="btn primary">🔒 Change password</button>
-    <button id="logout" class="btn danger">Logout</button>
-
-    <div class="account-help">
-      <span>Need help?</span>
-      <a href="mailto:blackmarketreader@gmail.com">blackmarketreader@gmail.com</a>
-    </div>
-  </div>
+  <div id="accountMount"></div>
 
   <div id="loadingOverlay" class="loading-overlay">
     <div class="loading-spinner"></div>
@@ -116,7 +79,7 @@
             <img src="picture/Googleicon.png" alt="Google Login">
           </button>
         </div>
-        <p class="auth-hint">📩 Please confirm your email before logging in.</p>
+        <p class="auth-hint">Please confirm your email before logging in.</p>
       </div>
 
       <div id="registerForm" style="display:none;">
@@ -126,7 +89,7 @@
         <div class="auth-actions">
           <button id="btnRegister" class="cta">Register</button>
         </div>
-        <p class="auth-hint">📩 You will receive a confirmation email after registration.</p>
+        <p class="auth-hint">You will receive a confirmation email after registration.</p>
       </div>
 
       <div id="authError" class="auth-error"></div>
@@ -135,61 +98,129 @@
         <a href="mailto:blackmarketreader@gmail.com">Support: blackmarketreader@gmail.com</a>
       </div>
 
-      <div class="auth-trust">🔒 Powered by Supabase · Secure Authentication</div>
+      <div class="auth-trust">Powered by Supabase � Secure Authentication</div>
     </div>
   </div>
 
   <div id="app" class="page" style="display:none;">
-    <div class="hero">
-      <div>
-        <h1>RomulusKings Market Reader</h1>
-        <p>>= 30% Profit · 14-Day Range · Live Black Market Data</p>
+    <header class="topbar">
+      <a class="topbar-brand" href="index.html">        <img src="picture/testo ohne background.png" alt="Logo" class="topbar-logo" />        <span class="topbar-title">RomulusKings Market Reader</span>      </a>
+      <div class="topbar-search">
+        <input id="searchInput" type="search" placeholder="Search markets" aria-label="Search markets" list="searchSuggestions" />
+        <datalist id="searchSuggestions"></datalist>
       </div>
-      <div class="hero-cta">
-        <div class="badge" id="lastUpdated">Last update: --:-- --.--.----</div>
-        <div class="pill-row">
-          <span class="pill" id="dealsCount">Deals: 0</span>
-          <span class="pill">Region: <span id="regionLabel">America</span></span>
+      <nav class="topbar-nav" aria-label="Primary">
+        <button class="nav-link active" type="button">Markets</button>
+        <button class="nav-link" type="button">Community</button>
+        </nav>
+      <div class="topbar-right">
+        <div class="topbar-meta">
+          <div class="badge" id="lastUpdated">Last update: --:-- --.--.----</div>
+          <div class="pill-row">
+            <span class="pill" id="dealsCount">Deals: 0</span>
+            <span class="pill">Region: <span id="regionLabel">America</span></span>
+          </div>
         </div>
+        <div class="account-wrap">
+          <button id="accountBtn" class="account-btn" aria-label="Account">
+            <img id="avatarIcon" src="picture/accountsymbol.png" alt="Avatar" />
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <section class="dash-hero">
+      <span class="dash-label">Markets</span>
+      <h1>Black Market Profits. Made Clear.</h1>
+      <p>>= 30% Profit - 14-Day Range - Live Black Market Data</p>
+    </section>
+
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card">
+        <span class="kpi-label">Deals</span>
+        <span class="kpi-value" id="kpiDeals">0</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Best Profit</span>
+        <span class="kpi-value" id="kpiBest">--</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Avg Profit</span>
+        <span class="kpi-value" id="kpiAvg">--</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Best Silver</span>
+        <span class="kpi-value" id="kpiSilver">--</span>
       </div>
     </div>
 
-    <div class="layout">
-      <div class="main-col">
+    <div class="chart-layout">
+      <section class="chart-panel">
+        <div class="chart-header">
+          <div>
+            <h2>Monthly Avg Profit</h2>
+            <p>Last 30 days - calculated from live deals</p>
+          </div>
+          <div class="chart-meta">
+            <span class="chart-pill">Avg: <strong id="avgProfitMonth">--</strong></span>
+            <span class="chart-pill">Best: <strong id="bestProfitMonth">--</strong></span>
+          </div>
+        </div>
+        <svg id="profitChart" class="profit-chart" viewBox="0 0 600 220" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(92,240,200,0.35)" />
+              <stop offset="100%" stop-color="rgba(92,240,200,0.02)" />
+            </linearGradient>
+          </defs>
+          <path id="chartArea" class="chart-area" d="" />
+          <path id="chartLine" class="chart-line" d="" />
+          <circle id="chartDot" class="chart-dot" cx="0" cy="0" r="5" />
+              </svg>
+        <div id="chartTooltip" class="chart-tooltip" aria-hidden="true"></div>
+      <div class="chart-controls">
+        <div class="range-group" role="group" aria-label="Range">
+          <button class="range-btn active" type="button" data-range="1W">1W</button>
+          <button class="range-btn" type="button" data-range="1M">1M</button>
+          <button class="range-btn" type="button" data-range="6M">6M</button>
+          <button class="range-btn" type="button" data-range="1Y">1Y</button>
+        </div>
+        <div class="chart-actions" aria-hidden="true"></div>
+      </div>
+    </section>
+
+      <aside class="city-panel">
+        <img id="cityCrest" class="city-crest-img" src="picture/Carleon.png" alt="City crest" />
+        <div class="city-panel-body">
+          <span class="city-panel-title">City</span>
+          <span class="city-panel-name" id="cityName">All Cities</span>
+          <select id="citySelect" class="city-select">
+            <option value="ALL">All Cities</option>
+            <option value="Lymhurst">Lymhurst</option>
+            <option value="Martlock">Martlock</option>
+            <option value="Fort Sterling">Fort Sterling</option>
+            <option value="Thetford">Thetford</option>
+            <option value="Bridgewatch">Bridgewatch</option>
+            <option value="Caerleon">Caerleon</option>
+          </select>
+        </div>
+      </aside>
+    </div>
+
+    <section class="cards-section">
+      <div class="filters-wrap">
         <div class="filters">
           Profit = <input id="minProfit" type="number" value="0" /> %
           <button id="applyFilter">Apply filter</button>
           <button id="filterSilver">Sort by silver</button>
           <button id="clearSilver" style="display:none;">Reset</button>
         </div>
-
-  <div id="cards" class="grid"></div>
-  <div id="loadMoreTrigger"></div>
       </div>
 
-      <aside class="aside">
-        <div class="city-panel">
-          <img id="cityCrest" class="city-crest-img" src="picture/Carleon.png" />
-          <div class="city-panel-body">
-            <span class="city-panel-title">City</span>
-            <span class="city-panel-name" id="cityName">All Cities</span>
-            <select id="citySelect" class="city-select">
-              <option value="ALL">All Cities</option>
-              <option value="Lymhurst">Lymhurst</option>
-              <option value="Martlock">Martlock</option>
-              <option value="Fort Sterling">Fort Sterling</option>
-              <option value="Thetford">Thetford</option>
-              <option value="Bridgewatch">Bridgewatch</option>
-              <option value="Caerleon">Caerleon</option>
-            </select>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </div>
-
-
-  <script src="env.js"></script>
+      <div id="cards" class="grid"></div>
+      <div id="loadMoreTrigger"></div>
+    </section>
+  </div><script src="env.js"></script>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -212,11 +243,25 @@
     const clearSilverEl = document.getElementById('clearSilver');
     const lastUpdatedEl = document.getElementById('lastUpdated');
     const dealsCountEl = document.getElementById('dealsCount');
+    const kpiDealsEl = document.getElementById('kpiDeals');
+    const kpiBestEl = document.getElementById('kpiBest');
+    const kpiAvgEl = document.getElementById('kpiAvg');
+    const kpiSilverEl = document.getElementById('kpiSilver');
+    const avgProfitMonthEl = document.getElementById('avgProfitMonth');
+    const bestProfitMonthEl = document.getElementById('bestProfitMonth');
+    const chartLineEl = document.getElementById('chartLine');
+    const chartAreaEl = document.getElementById('chartArea');
+    const chartSvg = document.getElementById('profitChart');
+    const chartDot = document.getElementById('chartDot');
+    const chartTooltip = document.getElementById('chartTooltip');
+    const rangeButtons = Array.from(document.querySelectorAll('.range-btn'));
+    const searchInput = document.getElementById('searchInput');
+    const searchSuggestions = document.getElementById('searchSuggestions');
     const citySelectEl = document.getElementById('citySelect');
     const cityNameEl = document.getElementById('cityName');
     const cityCrestEl = document.getElementById('cityCrest');
     const staticBg = document.getElementById('staticBg');
-    const regionSelectAccount = document.getElementById('regionSelectAccount');
+    let regionSelectAccount = null;
     const regionLabel = document.getElementById('regionLabel');
     const regionModal = document.getElementById('regionModal');
     const regionChoice = document.getElementById('regionChoice');
@@ -239,13 +284,14 @@
     const btnRegister = document.getElementById('btnRegister');
     const btnGoogle = document.getElementById('btnGoogle');
     const accountBtn = document.getElementById('accountBtn');
-    const accountPanel = document.getElementById('accountPanel');
-    const accountClose = document.getElementById('accountClose');
-    const accountEmail = document.getElementById('accountEmail');
     const avatarIcon = document.getElementById('avatarIcon');
-    const profileAvatar = document.getElementById('profileAvatar');
-    const resetPw = document.getElementById('resetPw');
-    const logout = document.getElementById('logout');
+    const accountMount = document.getElementById('accountMount');
+    let accountPanel = null;
+    let accountClose = null;
+    let accountEmail = null;
+    let profileAvatar = null;
+    let resetPw = null;
+    let logout = null;
     const confirmModal = document.getElementById('confirmModal');
     const confirmClose = document.getElementById('confirmClose');
 
@@ -530,15 +576,103 @@
       const { data } = await supabase.auth.getUser();
       if (!data?.user) return;
       const metaAvatar = data.user.user_metadata?.avatar || data.user.user_metadata?.avatar_url || data.user.user_metadata?.picture;
-      const avatar = metaAvatar || "picture/Carleon.png";
-      accountEmail.textContent = data.user.email || "-";
-      avatarIcon.src = avatar;
-      profileAvatar.src = avatar;
+      const avatar = metaAvatar || "picture/accountsymbol.png";
+      if (accountEmail) accountEmail.textContent = data.user.email || "-";
+      if (avatarIcon) avatarIcon.src = avatar;
+      if (profileAvatar) profileAvatar.src = avatar;
+    }
+
+    let accountHandlersBound = false;
+
+    async function loadAccountPanel() {
+      if (!accountMount) return;
+      try {
+        const res = await fetch(`account-section/account.html?v=${Date.now()}`);
+        if (!res.ok) return;
+        accountMount.innerHTML = await res.text();
+        accountPanel = document.getElementById('accountPanel');
+        accountClose = document.getElementById('accountClose');
+        accountEmail = document.getElementById('accountEmail');
+        profileAvatar = document.getElementById('profileAvatar');
+        regionSelectAccount = document.getElementById('regionSelectAccount');
+        resetPw = document.getElementById('resetPw');
+        logout = document.getElementById('logout');
+        bindAccountHandlers();
+      } catch (err) {
+        console.error("Account panel failed to load.", err);
+      }
+    }
+
+    function bindAccountHandlers() {
+      if (accountHandlersBound || !accountPanel) return;
+      accountHandlersBound = true;
+
+      accountBtn.onclick = () => {
+        document.body.classList.add("panel-open");
+        accountPanel.classList.add("open");
+      };
+      if (accountClose) {
+        accountClose.onclick = () => {
+          document.body.classList.remove("panel-open");
+          accountPanel.classList.remove("open");
+        };
+      }
+      if (resetPw) {
+        resetPw.onclick = async () => {
+          const user = (await supabase.auth.getUser()).data.user;
+          if (!user?.email) return;
+          await supabase.auth.resetPasswordForEmail(user.email);
+          showToast(`Reset-Link wurde an ${user.email} gesendet.`);
+          document.body.classList.remove("panel-open");
+          accountPanel.classList.remove("open");
+          await supabase.auth.signOut();
+          app.style.display = "none";
+          authModal.style.display = "flex";
+        };
+      }
+      if (logout) {
+        logout.onclick = async () => {
+          const user = (await supabase.auth.getUser()).data.user;
+          if (user?.email) showToast(`Logout: ${user.email}`);
+          await supabase.auth.signOut();
+          document.body.classList.remove("panel-open");
+          accountPanel.classList.remove("open");
+          app.style.display = "none";
+          authModal.style.display = "flex";
+        };
+      }
+      if (regionSelectAccount) {
+        regionSelectAccount.onchange = (e) => changeRegion(e.target.value);
+      }
+      accountPanel.querySelectorAll(".avatar-grid img").forEach((img) => {
+        img.addEventListener("click", async () => {
+          const avatar = img.getAttribute("data-avatar") || img.src;
+          const { data } = await supabase.auth.getUser();
+          if (!data?.user) return;
+          await supabase.auth.updateUser({ data: { avatar } });
+          if (avatarIcon) avatarIcon.src = avatar;
+          if (profileAvatar) profileAvatar.src = avatar;
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!accountPanel.contains(e.target) && !accountBtn.contains(e.target)) {
+          document.body.classList.remove("panel-open");
+          accountPanel.classList.remove("open");
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          document.body.classList.remove("panel-open");
+          accountPanel.classList.remove("open");
+        }
+      });
     }
 
       let allData = [];
       let minProfitFilter = 0;
       let sortBySilver = false;
+      let searchTerm = "";
       let regionCurrent = localStorage.getItem("region") || null;
       let cityFilter = "ALL";
       let currentList = [];
@@ -548,6 +682,18 @@
 
     function setBg(city) {
       staticBg.style.background = bgMap[city] || bgMap.ALL;
+    }
+
+    function normalizeName(value) {
+      return (value || "").toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function baseName(id) {
+      const baseNoEnchant = id.split("@")[0];
+      const parts = baseNoEnchant.split("_");
+      if (parts.length < 2) return id;
+      const key = parts.slice(1).join("_");
+      return nameMap[key] || key.replace(/_/g, " ");
     }
 
     function displayName(id) {
@@ -560,6 +706,19 @@
       const key = parts.slice(1).join("_"); // ohne Tier
       const translated = nameMap[key] || key.replace(/_/g, " ");
       return `${tier}${ench}\u00A0\u00A0${translated}`;
+    }
+
+    function updateSuggestions(list) {
+      if (!searchSuggestions) return { list: [], map: new Map() };
+      const map = new Map();
+      for (const item of list) {
+        const name = baseName(item.id);
+        const key = normalizeName(name);
+        if (!map.has(key)) map.set(key, name);
+      }
+      const values = Array.from(map.values()).sort((a, b) => a.localeCompare(b));
+      searchSuggestions.innerHTML = values.map((name) => `<option value="${name}"></option>`).join("");
+      return { list: values, map };
     }
 
     function buildCard(item) {
@@ -609,20 +768,235 @@
 
     function render() {
       cardsEl.innerHTML = "";
-      const filtered = allData.filter(item =>
+      let filtered = allData.filter(item =>
         item.profit >= minProfitFilter &&
         (cityFilter === "ALL" || item.city === cityFilter)
       );
+
+      const suggestions = updateSuggestions(filtered);
+      const term = normalizeName(searchTerm);
+      if (term) {
+        const isExactBase = suggestions.map.has(term);
+        filtered = filtered.filter((item) => {
+          const base = normalizeName(baseName(item.id));
+          const display = normalizeName(displayName(item.id));
+          const id = normalizeName(item.id);
+          if (isExactBase) return base === term;
+          return base.includes(term) || display.includes(term) || id.includes(term);
+        });
+      }
 
       currentList = sortBySilver
         ? [...filtered].sort((a, b) => (b.bm - b.lym) - (a.bm - a.lym))
         : filtered;
 
       dealsCountEl.textContent = `Deals: ${currentList.length}`;
+      if (kpiDealsEl) kpiDealsEl.textContent = currentList.length.toLocaleString("de-DE");
+
+      if (!currentList.length) {
+        if (kpiBestEl) kpiBestEl.textContent = "--";
+        if (kpiAvgEl) kpiAvgEl.textContent = "--";
+        if (kpiSilverEl) kpiSilverEl.textContent = "--";
+      } else {
+        let bestProfit = -Infinity;
+        let totalProfit = 0;
+        let bestSilver = -Infinity;
+        for (const item of currentList) {
+          if (item.profit > bestProfit) bestProfit = item.profit;
+          totalProfit += item.profit;
+          const silver = item.bm - item.lym;
+          if (silver > bestSilver) bestSilver = silver;
+        }
+        const avgProfit = totalProfit / currentList.length;
+        if (kpiBestEl) kpiBestEl.textContent = `${bestProfit.toFixed(1)}%`;
+        if (kpiAvgEl) kpiAvgEl.textContent = `${avgProfit.toFixed(1)}%`;
+        if (kpiSilverEl) kpiSilverEl.textContent = bestSilver.toLocaleString("de-DE");
+      }
+      updateChartFromHistory();
       visibleCount = 0;
       setupObserver();
       renderBatch();
     }
+
+    const chartState = {
+      buckets: [],
+      coords: [],
+      dates: []
+    };
+
+    let chartRange = "1W";
+
+    function getRangeDays(range) {
+      switch (range) {
+        case "1M": return 30;
+        case "6M": return 180;
+        case "1Y": return 365;
+        case "1W":
+        default:
+          return 7;
+      }
+    }
+
+    function formatDayKey(date) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    let historyCache = null;
+
+    async function loadHistoryFile() {
+      if (historyCache) return historyCache;
+      try {
+        const res = await fetch(`/avg-profit-history.json?v=${Date.now()}`);
+        if (!res.ok) return null;
+        historyCache = await res.json();
+        return historyCache;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function getHistoryList() {
+      if (!historyCache) return [];
+      const regionBlock = historyCache[regionCurrent] || {};
+      return regionBlock[cityFilter] || regionBlock.ALL || [];
+    }
+
+    function buildSeries(days) {
+      const today = new Date();
+      const history = getHistoryList();
+      const map = new Map(history.map((entry) => [entry.date, entry.avg]));
+      const values = [];
+      const dates = [];
+      for (let i = days - 1; i >= 0; i -= 1) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = formatDayKey(d);
+        dates.push(key);
+        values.push(Number.isFinite(map.get(key)) ? map.get(key) : 0);
+      }
+      return { values, dates };
+    }
+
+    function calcStats(values) {
+      const usable = values.filter((v) => Number.isFinite(v) && v !== 0);
+      const base = usable.length ? usable : values.filter((v) => Number.isFinite(v));
+      if (!base.length) return { avg: 0, best: 0 };
+      const avg = base.reduce((sum, v) => sum + v, 0) / base.length;
+      const best = Math.max(...base);
+      return { avg, best };
+    }
+
+    function updateChartFromHistory() {
+      const series = buildSeries(getRangeDays(chartRange));
+      chartState.dates = series.dates;
+      updateChart(series.values);
+      const stats = calcStats(series.values);
+      if (avgProfitMonthEl) avgProfitMonthEl.textContent = `${stats.avg.toFixed(1)}%`;
+      if (bestProfitMonthEl) bestProfitMonthEl.textContent = `${stats.best.toFixed(1)}%`;
+    }
+
+    function updateChart(list) {
+      if (!chartLineEl || !chartAreaEl) return;
+      const width = 600;
+      const height = 220;
+      const pad = 18;
+      const values = Array.isArray(list) ? list.filter((v) => Number.isFinite(v)) : [];
+      if (!values.length) {
+        const y = height / 2;
+        const line = `M0,${y} L${width},${y}`;
+        const area = `M0,${y} L${width},${y} L${width},${height} L0,${height} Z`;
+        chartLineEl.setAttribute("d", line);
+        chartAreaEl.setAttribute("d", area);
+        chartState.buckets = [];
+        chartState.coords = [];
+        chartState.dates = [];
+        if (chartDot) chartDot.style.opacity = "0";
+        if (chartTooltip) chartTooltip.style.display = "none";
+        return;
+      }
+
+      let min = Math.min(...values);
+      let max = Math.max(...values);
+      if (min === max) {
+        min -= 1;
+        max += 1;
+      }
+
+      const count = values.length;
+      const step = count > 1 ? width / (count - 1) : 0;
+      const coords = values.map((val, i) => {
+        const x = i * step;
+        const t = (val - min) / (max - min);
+        const y = pad + (1 - t) * (height - pad * 2);
+        return [x, y];
+      });
+
+      const line = `M${coords.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(" L")}`;
+      const area = `${line} L${width},${height} L0,${height} Z`;
+      chartLineEl.setAttribute("d", line);
+      chartAreaEl.setAttribute("d", area);
+      chartState.buckets = values;
+      chartState.coords = coords;
+      if (chartDot) chartDot.style.opacity = "0";
+      if (chartTooltip) chartTooltip.style.display = "none";
+    }
+
+    function showChartTooltip(index, rect) {
+      if (!chartDot || !chartTooltip) return;
+      const coords = chartState.coords;
+      const buckets = chartState.buckets;
+      if (!coords.length || !buckets.length) return;
+
+      const clamped = Math.max(0, Math.min(index, coords.length - 1));
+      const value = buckets[clamped];
+      const [cx, cy] = coords[clamped];
+
+      chartDot.setAttribute("cx", cx.toFixed(2));
+      chartDot.setAttribute("cy", cy.toFixed(2));
+      chartDot.style.opacity = "1";
+
+      const dateLabel = chartState.dates[clamped] || `Day ${clamped + 1}`;
+      chartTooltip.textContent = `${dateLabel}: ${value.toFixed(1)}%`;
+
+      const panel = chartSvg.closest(".chart-panel");
+      if (!panel) return;
+      const panelRect = panel.getBoundingClientRect();
+      const xPx = rect.left + (cx / 600) * rect.width;
+      const yPx = rect.top + (cy / 220) * rect.height;
+
+      chartTooltip.style.left = `${xPx - panelRect.left}px`;
+      chartTooltip.style.top = `${yPx - panelRect.top - 12}px`;
+      chartTooltip.style.display = "block";
+    }
+
+    if (chartSvg) {
+      chartSvg.addEventListener("mousemove", (event) => {
+        if (!chartState.coords.length) return;
+        const rect = chartSvg.getBoundingClientRect();
+        const x = Math.max(0, Math.min(event.clientX - rect.left, rect.width));
+        const ratio = rect.width ? x / rect.width : 0;
+        const index = Math.round(ratio * (chartState.coords.length - 1));
+        showChartTooltip(index, rect);
+      });
+      chartSvg.addEventListener("mouseleave", () => {
+        if (chartDot) chartDot.style.opacity = "0";
+        if (chartTooltip) chartTooltip.style.display = "none";
+      });
+    }
+
+    rangeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        rangeButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        chartRange = btn.dataset.range || "1W";
+        const series = buildSeries(getRangeDays(chartRange));
+        chartState.dates = series.dates;
+        updateChart(series.values);
+        const stats = calcStats(series.values);
+        if (avgProfitMonthEl) avgProfitMonthEl.textContent = `${stats.avg.toFixed(1)}%`;
+        if (bestProfitMonthEl) bestProfitMonthEl.textContent = `${stats.best.toFixed(1)}%`;
+      });
+    });
 
     async function loadResults(region = regionCurrent) {
       // Load only the files for the selected region. If none load, leave data empty.
@@ -702,6 +1076,7 @@
       render();
       try {
         await loadResults(regionCurrent);
+        await loadHistoryFile();
         await saveRegionToProfile();
         const stamp = formatDate(new Date());
         setLastUpdated(stamp);
@@ -730,14 +1105,14 @@
       const user = userResp.data.user;
         if (!user?.email_confirmed_at) {
           await supabase.auth.signOut();
-          showToast("Bitte bestÃ¤tige zuerst deine E-Mail.");
+          showToast("Bitte bestätige zuerst deine E-Mail.");
           authModal.style.display = "flex";
           app.style.display = "none";
           return false;
         }
         authModal.style.display = "none";
         app.style.display = "block";
-        accountEmail.textContent = user?.email || "-";
+        if (accountEmail) accountEmail.textContent = user?.email || "-";
           const savedRegion = user?.user_metadata?.region || localStorage.getItem("region");
           if (!savedRegion) {
             regionModal.style.display = "flex";
@@ -772,10 +1147,10 @@
       const password = regPassword.value.trim();
       const displayName = regName.value.trim();
       if (!displayName || !email || !password) {
-        authError.textContent = "Bitte Display Name, E-Mail und Passwort ausfÃ¼llen.";
+        authError.textContent = "Bitte Display Name, E-Mail und Passwort ausfüllen.";
         return;
       }
-      // PrÃ¼fe Display-Name auf Duplikat (wenn Tabelle existiert)
+      // Prüfe Display-Name auf Duplikat (wenn Tabelle existiert)
       try {
         const { data: existingName } = await supabase
           .from('profiles')
@@ -840,6 +1215,7 @@
       loadingOverlay.style.display = "flex";
       try {
         await loadResults(regionCurrent);
+        await loadHistoryFile();
         const stamp = formatDate(new Date());
         setLastUpdated(stamp);
         render();
@@ -857,8 +1233,13 @@
     };
     filterSilverEl.onclick = () => { sortBySilver = true; clearSilverEl.style.display = "inline-block"; render(); };
     clearSilverEl.onclick = () => { sortBySilver = false; clearSilverEl.style.display = "none"; render(); };
+    if (searchInput) {
+      searchInput.addEventListener("input", (event) => {
+        searchTerm = event.target.value || "";
+        render();
+      });
+    }
     citySelectEl.onchange = (e) => setCity(e.target.value);
-      if (regionSelectAccount) regionSelectAccount.onchange = (e) => changeRegion(e.target.value);
 
     btnLogin.onclick = handleLogin;
     btnRegister.onclick = handleRegister;
@@ -873,61 +1254,37 @@
       loginForm.style.display = "none"; registerForm.style.display = "block";
       authError.textContent = "";
     };
-    accountBtn.onclick = () => {
-      document.body.classList.add("panel-open");
-      accountPanel.classList.add("open");
-    };
-    accountClose.onclick = () => {
-      document.body.classList.remove("panel-open");
-      accountPanel.classList.remove("open");
-    };
-    resetPw.onclick = async () => {
-      const user = (await supabase.auth.getUser()).data.user;
-      if (!user?.email) return;
-      await supabase.auth.resetPasswordForEmail(user.email);
-      showToast(`Reset-Link wurde an ${user.email} gesendet.`);
-      document.body.classList.remove("panel-open");
-      accountPanel.classList.remove("open");
-      await supabase.auth.signOut();
-      app.style.display = "none";
-      authModal.style.display = "flex";
-    };
-    logout.onclick = async () => {
-      const user = (await supabase.auth.getUser()).data.user;
-      if (user?.email) showToast(`Logout: ${user.email}`);
-      await supabase.auth.signOut();
-      document.body.classList.remove("panel-open");
-      accountPanel.classList.remove("open");
-      app.style.display = "none";
-      authModal.style.display = "flex";
-    };
-    document.querySelectorAll(".avatar-grid img").forEach(img => {
-      img.addEventListener("click", async () => {
-        const avatar = img.getAttribute("data-avatar") || img.src;
-        const { data } = await supabase.auth.getUser();
-        if (!data?.user) return;
-        await supabase.auth.updateUser({ data: { avatar } });
-        avatarIcon.src = avatar;
-        profileAvatar.src = avatar;
-      });
-    });
-    document.addEventListener("click", (e) => {
-      if (!accountPanel.contains(e.target) && !accountBtn.contains(e.target)) {
-        document.body.classList.remove("panel-open");
-        accountPanel.classList.remove("open");
-      }
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        document.body.classList.remove("panel-open");
-        accountPanel.classList.remove("open");
-      }
-    });
     confirmClose.onclick = () => { confirmModal.style.display = "none"; };
+
+    const topbarEl = document.querySelector(".topbar");
+    const heroEl = document.querySelector(".dash-hero");
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+    const updateTopbar = () => {
+      const currentY = window.scrollY;
+      const heroLimit = heroEl
+        ? (heroEl.offsetTop + heroEl.offsetHeight - 20)
+        : 120;
+      if (!topbarEl) return;
+      if (currentY < heroLimit) {
+        topbarEl.classList.remove("topbar-hidden");
+      } else {
+        topbarEl.classList.add("topbar-hidden");
+      }
+      lastScrollY = currentY;
+      ticking = false;
+    };
+    window.addEventListener("scroll", () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateTopbar);
+        ticking = true;
+      }
+    });
 
     if (regionCurrent) setRegion(regionCurrent);
 
     (async () => {
+      await loadAccountPanel();
       const ok = await ensureAuth();
       if (ok) {
         await loadAvatar();
@@ -940,6 +1297,7 @@
         regionModal.style.display = "none";
         app.style.display = "block";
         await loadAvatar();
+        await loadHistoryFile();
         await initApp();
         setCity("ALL");
       };
@@ -949,8 +1307,19 @@
       maintenanceClose.onclick = () => { maintenanceModal.style.display = "none"; };
     })();
   </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 
