@@ -44,8 +44,8 @@
   <!-- TODO: remove demo notice when production data is live -->
   <div id="maintenanceModal" class="modal-overlay" style="display:none;">
     <div class="modal-card">
-      <h3>Demo Mode</h3>
-      <p>This version is running in demo mode. Live data is still being verified, so results may differ from the final release.</p>
+      <h3>Free Trial</h3>
+      <p>This version is running in Free Trial mode. Live data is still being verified, so results may differ from the final release.</p>
       <button id="maintenanceClose" class="cta">OK</button>
     </div>
   </div>
@@ -110,9 +110,9 @@
         <datalist id="searchSuggestions"></datalist>
       </div>
       <nav class="topbar-nav" aria-label="Primary">
-        <button class="nav-link active" type="button">Markets</button>
-        <button class="nav-link" type="button">Community</button>
-        </nav>
+        <a class="nav-link active" href="#cards">Markets</a>
+        <a class="nav-link" href="community/index.html">Community</a>
+      </nav>
       <div class="topbar-right">
         <div class="topbar-meta">
           <div class="badge" id="lastUpdated">Last update: --:-- --.--.----</div>
@@ -589,7 +589,9 @@
       try {
         const res = await fetch(`account-section/account.html?v=${Date.now()}`);
         if (!res.ok) return;
-        accountMount.innerHTML = await res.text();
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        accountMount.replaceChildren(...doc.body.childNodes);
         accountPanel = document.getElementById('accountPanel');
         accountClose = document.getElementById('accountClose');
         accountEmail = document.getElementById('accountEmail');
@@ -717,7 +719,12 @@
         if (!map.has(key)) map.set(key, name);
       }
       const values = Array.from(map.values()).sort((a, b) => a.localeCompare(b));
-      searchSuggestions.innerHTML = values.map((name) => `<option value="${name}"></option>`).join("");
+      searchSuggestions.replaceChildren();
+      for (const name of values) {
+        const option = document.createElement("option");
+        option.value = name;
+        searchSuggestions.appendChild(option);
+      }
       return { list: values, map };
     }
 
@@ -734,14 +741,39 @@
 
       const card = document.createElement("div");
       card.className = `card ${enchantClass}`.trim();
-      card.innerHTML = `
-        <div class="title">${displayName(item.id)}</div>
-        <div class="row"><span>ID</span><span class="val">${item.id}</span></div>
-        <div class="row"><span>${item.city}</span><span class="val">${item.lym.toLocaleString('de-DE')}</span></div>
-        <div class="row"><span>Black Market</span><span class="val">${item.bm.toLocaleString('de-DE')}</span></div>
-        <div class="row"><span>Sold/Tag</span><span class="val">${item.sold ?? 0}</span></div>
-        <div class="profit">${profitText} <span class="pill">${item.span}</span></div>
-      `;
+
+      const title = document.createElement("div");
+      title.className = "title";
+      title.textContent = displayName(item.id);
+      card.appendChild(title);
+
+      const addRow = (label, value) => {
+        const row = document.createElement("div");
+        row.className = "row";
+        const labelEl = document.createElement("span");
+        labelEl.textContent = label;
+        const valueEl = document.createElement("span");
+        valueEl.className = "val";
+        valueEl.textContent = value;
+        row.appendChild(labelEl);
+        row.appendChild(valueEl);
+        card.appendChild(row);
+      };
+
+      addRow("ID", item.id);
+      addRow(item.city, item.lym.toLocaleString("de-DE"));
+      addRow("Black Market", item.bm.toLocaleString("de-DE"));
+      addRow("Sold/Tag", String(item.sold ?? 0));
+
+      const profit = document.createElement("div");
+      profit.className = "profit";
+      profit.textContent = `${profitText} `;
+      const pill = document.createElement("span");
+      pill.className = "pill";
+      pill.textContent = item.span;
+      profit.appendChild(pill);
+      card.appendChild(profit);
+
       return card;
     }
 
@@ -767,7 +799,7 @@
     }
 
     function render() {
-      cardsEl.innerHTML = "";
+      cardsEl.replaceChildren();
       let filtered = allData.filter(item =>
         item.profit >= minProfitFilter &&
         (cityFilter === "ALL" || item.city === cityFilter)
@@ -1030,7 +1062,16 @@
       const parts = text.trim().split(/\s+/);
       const time = parts[0] || "";
       const date = parts[1] || "";
-      lastUpdatedEl.innerHTML = `Last updated: <span class="lu-time">${time}</span> <span class="lu-date">${date}</span>`;
+      lastUpdatedEl.replaceChildren();
+      const label = document.createTextNode("Last updated: ");
+      const timeSpan = document.createElement("span");
+      timeSpan.className = "lu-time";
+      timeSpan.textContent = time;
+      const space = document.createTextNode(" ");
+      const dateSpan = document.createElement("span");
+      dateSpan.className = "lu-date";
+      dateSpan.textContent = date;
+      lastUpdatedEl.append(label, timeSpan, space, dateSpan);
     }
 
     function setLastUpdated(text) {

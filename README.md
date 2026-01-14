@@ -1,40 +1,116 @@
-# Albion Blackmarket Reader
 
-Modernes Albion-Market-Tool: Primär als gehostetes Web-UI (Landing + Dashboard). Daten kommen per automatischem Sync (GitHub Actions/Vercel) aus der Albion Online Data API.
+# 📊 Albion Blackmarket Reader
 
-## Nutzung
-- Online (https://blackmarketreader.com): Deine Vercel-URL aufrufen. Kein lokaler Start nötig.
-- Auth: Supabase (E-Mail/Passwort + Google). Avatar/Display-Name im Account-Panel anpassbar.
-- Daten & letzte Aktualisierung siehst du direkt im Dashboard.
+A modern **market analytics tool** for *Albion Online* that automatically calculates and displays profitable deals (≥ 30 %) from market data and provides a clean, web-based UI with real-time charts and filters.
 
-## Deployment (Vercel)
-- Root: `ui`
-- Env Vars: `SUPABASE_URL`, `SUPABASE_ANON_KEY`
-- Build Command: erzeugt `env.js` aus Env Vars (siehe Vercel-Einstellungen; keine Keys im Repo).
-- Output Directory: `.`
-- `env.js` ist in `.gitignore`; nur `env.example.js` liegt im Repo.
+Live preview: [https://blackmarketreader.com](https://blackmarketreader.com) ([GitHub][1])
 
-## Lokale Entwicklung
-```powershell
-git clone https://github.com/LeonWWImmo/Albion_Blackmarketreader
-cd Albion_Blackmarketreader/Albion_ProfitChecker/ui
-# env.js lokal anlegen (nicht committen):
-# window.env = { SUPABASE_URL: "...", SUPABASE_ANON_KEY: "..." };
+---
+
+## 🚀 Features
+
+✅ **Profit Detection**
+Automatically calculates trader profits from Albion Online market data based on buy/sell prices and shows only profitable trades (≥ 30 %) ([GitHub][1])
+
+✅ **Region Support**
+US and EU region data splits (results.js / results-eu.js) ([GitHub][1])
+
+✅ **Dashboard UI**
+A clean browser interface with:
+
+* charts,
+* filters (min profit, search),
+* city selection,
+* region switching ([GitHub][1])
+
+---
+
+## 📁 Project Structure
+
 ```
-Lokale EXE ist optional und nicht mehr der Hauptweg.
+Albion_Blackmarketreader/
+├── .github/workflows/         # CI for data sync & merges
+├── Albion_ProfitChecker/      # .NET backend + web UI bundle
+│   ├── Program.cs             # data fetcher + local server
+│   ├── *.cs                   # API + profit logic
+│   ├── ui/                    # static site
+│   │   ├── index.html         # Landing page
+│   │   ├── dashboard.html     # Gated dashboard
+│   │   ├── *.css              # Styles
+│   │   ├── results*.js        # Market data splits
+│   │   ├── avg-profit-history.json
+│   │   ├── env.js             # runtime env injection
+│   │   └── picture/           # images
+├── items_weapons_armor.txt    # Item IDs for reference
+└── README.md                  # This file
+```
 
-## Sync / Daten
-- Datenquelle: west.albion-online-data.com (Rate Limits → Batches + Retries).
-- Ergebnisse landen in `ui/results.js`, Fortschritt in `ui/progress.json`.
-- Item-Basis: `Data/ItemList.json` (Codes), Übersetzungen separat.
+---
 
-## Struktur
-- `Albion_ProfitChecker/ui/` – statisches Frontend (index.html, dashboard.html, styles.css, results.js, pictures).
-- `Albion_ProfitChecker/Program.cs` – Kestrel-Host, Endpunkte `/refresh`, `/progress`, statische Auslieferung.
-- `Data/` – Item-Listen.
-- `.github/workflows/` – Sync-Actions (Topf 1/2/Merge etc. je nach Setup).
+## 🧰 Tech Stack
+
+* **Frontend:** HTML / CSS / JS (vanilla) ([GitHub][1])
+* **Backend:** .NET (.cs) for data sync, hosted via GitHub Actions + Vercel ([GitHub][1])
+* **Auth & DB:** Supabase (Profiles + user metadata) ([GitHub][1])
+* **Deployment:** Vercel (static UI + webhooks via CI) ([GitHub][1])
+
+---
+
+## 📦 Environment Setup
+
+### 🔑 Required Env Vars (Vercel)
+
+Set these in your Vercel project settings:
+
+```
+SUPABASE_URL
+SUPABASE_ANON_KEY
+```
+
+These are used to generate `env.js` at build time. ([GitHub][1])
+
+---
 
 
-## Support
-- Issues/PRs willkommen.
-- Auth/Support-Mail im UI: `blackmarketreader@gmail.com`.
+## 📈 Data Sync & Workflows
+
+* GitHub Actions automatically syncs **market data** and merges results into the repo.
+* Splits data into multi-region JS files: `results.js`, `results-eu.js`, etc.
+* History for charts stored in `avg-profit-history.json` ([GitHub][1])
+
+---
+
+## 🧠 Features / Thoughts
+
+✅ Automated daily sync
+✅ Profit filtering logic
+✅ Region + city data
+✅ Supabase auth gating
+✅ Dashboard with charts + filters
+
+---
+
+## 📬 Support
+
+Use the GitHub Issues if you have questions or feature requests.
+For auth / general support, the app UI references: `blackmarketreader@gmail.com` ([GitHub][1])
+
+Discord for Support: https://discord.gg/HF2Ctg73m5 
+
+---
+
+## 📜 License
+
+Disclaimer
+
+This software is provided “as is”, without warranty of any kind.
+No guarantees are given, either express or implied, including but not limited to merchantability or fitness for a particular purpose.
+
+In no event shall the author be liable for any damages, data loss, or other issues arising directly or indirectly from the use of this software, regardless of whether such liability arises from contract, negligence, or any other legal theory.
+
+---
+
+## ⭐ Attribution
+
+Albion Blackmarketreader pulls data from public Albion Online Market APIs and visualizes it for easy profit inspection.
+Not affiliated with Albion Online / Sandbox Interactive.
