@@ -576,7 +576,7 @@
       const { data } = await supabase.auth.getUser();
       if (!data?.user) return;
       const metaAvatar = data.user.user_metadata?.avatar || data.user.user_metadata?.avatar_url || data.user.user_metadata?.picture;
-      const avatar = metaAvatar || "picture/accountsymbol.png";
+      const avatar = sanitizeAvatarUrl(metaAvatar || "picture/accountsymbol.png");
       if (accountEmail) accountEmail.textContent = data.user.email || "-";
       if (avatarIcon) avatarIcon.src = avatar;
       if (profileAvatar) profileAvatar.src = avatar;
@@ -648,7 +648,7 @@
       }
       accountPanel.querySelectorAll(".avatar-grid img").forEach((img) => {
         img.addEventListener("click", async () => {
-          const avatar = img.getAttribute("data-avatar") || img.src;
+          const avatar = sanitizeAvatarUrl(img.getAttribute("data-avatar") || img.src);
           const { data } = await supabase.auth.getUser();
           if (!data?.user) return;
           await supabase.auth.updateUser({ data: { avatar } });
@@ -688,6 +688,26 @@
 
     function normalizeName(value) {
       return (value || "").toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function sanitizeAvatarUrl(value) {
+      const fallback = "picture/accountsymbol.png";
+      if (!value || typeof value !== "string") return fallback;
+      const trimmed = value.trim();
+      if (!trimmed) return fallback;
+      const lower = trimmed.toLowerCase();
+      if (lower.startsWith("javascript:") || lower.startsWith("data:")) return fallback;
+      try {
+        const url = new URL(trimmed, window.location.origin);
+        if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "blob:") {
+          return url.href;
+        }
+        if (url.protocol === "file:") return fallback;
+      } catch (_) {
+        if (trimmed.startsWith("//")) return fallback;
+        return trimmed;
+      }
+      return fallback;
     }
 
     function baseName(id) {
