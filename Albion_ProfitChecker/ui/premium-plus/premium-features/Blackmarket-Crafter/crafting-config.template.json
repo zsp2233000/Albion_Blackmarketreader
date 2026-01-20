@@ -1,0 +1,51 @@
+{
+  "generatedAt": "",
+  "notes": "Template for crafting inputs. Helmets/Shoes use 8 materials, Chest armors use 16.",
+  "recipes": [
+    {
+      "itemId": "T4_ITEM_EXAMPLE",
+      "displayName": "Example Item",
+      "outputs": 1,
+      "materials": [
+        { "itemId": "T4_METALBAR", "qty": 16 },
+        { "itemId": "T4_PLANKS", "qty": 8 }
+      ],
+      "subRecipes": [
+        {
+          "itemId": "T4_SUB_COMPONENT",
+          "qty": 1
+        }
+      ]
+    }
+  ],
+  "craftingRules": {
+    "usageFee": {
+      "mode": "flat",
+      "value": 0
+    },
+    "returnRate": {
+      "base": 0.15,
+      "cityBonus": {
+        "Caerleon": 0.0,
+        "Bridgewatch": 0.0,
+        "Lymhurst": 0.0,
+        "Martlock": 0.0,
+        "Fort Sterling": 0.0,
+        "Thetford": 0.0
+      },
+      "stationBonus": 0.0,
+      "premiumBonus": 0.0,
+      "focusBonus": 0.0
+    },
+    "armorMaterialQty": {
+      "helmet": 8,
+      "shoes": 8,
+      "chest": 16
+    }
+  },
+  "userInputs": {
+    "city": "Caerleon",
+    "hasPremium": true,
+    "useFocus": false
+  }
+}
