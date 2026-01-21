@@ -586,6 +586,15 @@
       "Caerleon": "radial-gradient(circle at 20% 30%, rgba(30,30,30,0.22), transparent 42%), radial-gradient(circle at 75% 20%, rgba(0,0,0,0.14), transparent 35%), linear-gradient(180deg, #0b0f15, #080b12)"
     };
 
+    const allowedAvatars = new Set([
+      "picture/accountsymbol.png",
+      "picture/Bridgewatch.png",
+      "picture/Carleon.png",
+      "picture/Martlockwappen.png",
+      "picture/Lymhurstwappen.png",
+      "picture/Thefortwappen.png"
+    ]);
+
     async function loadAvatar() {
       const { data } = await supabase.auth.getUser();
       if (!data?.user) return;
@@ -662,7 +671,7 @@
       }
       accountPanel.querySelectorAll(".avatar-grid img").forEach((img) => {
         img.addEventListener("click", async () => {
-          const avatar = sanitizeAvatarUrl(img.getAttribute("data-avatar") || img.src);
+          const avatar = sanitizeAvatarSelection(img.getAttribute("data-avatar") || img.src);
           const { data } = await supabase.auth.getUser();
           if (!data?.user) return;
           await supabase.auth.updateUser({ data: { avatar } });
@@ -709,8 +718,7 @@
       if (!value || typeof value !== "string") return fallback;
       const trimmed = value.trim();
       if (!trimmed) return fallback;
-      const lower = trimmed.toLowerCase();
-      if (lower.startsWith("javascript:") || lower.startsWith("data:")) return fallback;
+      if (/^(javascript|data|vbscript|file):/i.test(trimmed)) return fallback;
       try {
         const url = new URL(trimmed, window.location.origin);
         if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "blob:") {
@@ -720,6 +728,22 @@
       } catch (_) {
         if (trimmed.startsWith("//")) return fallback;
         return trimmed;
+      }
+      return fallback;
+    }
+
+    function sanitizeAvatarSelection(value) {
+      const fallback = "picture/accountsymbol.png";
+      if (!value || typeof value !== "string") return fallback;
+      const trimmed = value.trim();
+      if (!trimmed) return fallback;
+      if (allowedAvatars.has(trimmed)) return trimmed;
+      try {
+        const url = new URL(trimmed, window.location.origin);
+        const normalized = url.pathname.replace(/^\/+/, "");
+        if (allowedAvatars.has(normalized)) return normalized;
+      } catch (_) {
+        // ignore invalid URL
       }
       return fallback;
     }
