@@ -62,7 +62,7 @@ jobs:
               .replace(/^\uFEFF/, '')
               .replace(/^window\\.results\\s*=\\s*/, '')
               .replace(/;?\\s*$/, '');
-            const match = raw.match(/(\\[[\\s\\S]*\\]|\\{[\\s\\S]*\\})/);
+            const match = raw.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
             if (!match) {
               console.error('Invalid JSON format in:', p);
               return [];
