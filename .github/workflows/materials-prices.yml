@@ -1,0 +1,133 @@
+name: Build Material Prices (EU + US)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 9 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  build-material-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch refining material prices (tiers 4-8, enchants 0-3)
+        working-directory: Albion_ProfitChecker/ui
+        run: |
+          node - <<'NODE'
+          const fs = require("fs");
+          const path = require("path");
+
+          const bases = ["METALBAR", "PLANKS", "CLOTH", "LEATHER"];
+          const tiers = [4, 5, 6, 7, 8];
+          const enchants = [0, 1, 2, 3];
+          const cities = ["Caerleon", "Bridgewatch", "Lymhurst", "Martlock", "Fort Sterling", "Thetford"];
+          const chunkSize = 50;
+          const outputDir = path.join("premium-plus", "premium-features", "Blackmarket-Crafter", "data");
+
+          const regions = [
+            { key: "eu", host: "https://europe.albion-online-data.com/api/v2/stats" },
+            { key: "us", host: "https://west.albion-online-data.com/api/v2/stats" }
+          ];
+
+          const buildItemIds = () => {
+            const ids = [];
+            for (const base of bases) {
+              for (const tier of tiers) {
+                for (const enchant of enchants) {
+                  const suffix = enchant > 0 ? `@${enchant}` : "";
+                  ids.push(`T${tier}_${base}${suffix}`);
+                }
+              }
+            }
+            return ids;
+          };
+
+          const parseMeta = (itemId) => {
+            const tierMatch = itemId.match(/^T(\d+)_/);
+            const enchantMatch = itemId.match(/@(\d+)/);
+            const tier = tierMatch ? Number(tierMatch[1]) : null;
+            const enchant = enchantMatch ? Number(enchantMatch[1]) : 0;
+            return { tier, enchant };
+          };
+
+          const fetchPrices = async (host, itemIds) => {
+            const out = [];
+            const locations = encodeURIComponent(cities.join(","));
+            for (let i = 0; i < itemIds.length; i += chunkSize) {
+              const slice = itemIds.slice(i, i + chunkSize);
+              const url = `${host}/prices/${slice.join(",")}.json?locations=${locations}`;
+              const res = await fetch(url);
+              if (!res.ok) {
+                console.error("Fetch failed", res.status, url);
+                continue;
+              }
+              const data = await res.json();
+              for (const row of data) {
+                const price = Number(row.sell_price_min || 0);
+                if (!price) continue;
+                const { tier, enchant } = parseMeta(row.item_id || "");
+                out.push({
+                  itemId: row.item_id,
+                  tier,
+                  enchant,
+                  city: row.city,
+                  price
+                });
+              }
+              const hasMore = i + chunkSize < itemIds.length;
+              if (hasMore) {
+                await new Promise((resolve) => setTimeout(resolve, 1500));
+              }
+            }
+            return out;
+          };
+
+          (async () => {
+            fs.mkdirSync(outputDir, { recursive: true });
+            const ids = buildItemIds();
+            const now = new Date().toISOString();
+
+            for (const region of regions) {
+              const items = await fetchPrices(region.host, ids);
+              const payload = {
+                generatedAt: now,
+                region: region.key,
+                count: items.length,
+                items
+              };
+              const outPath = path.join(outputDir, `materials-${region.key}.json`);
+              fs.writeFileSync(outPath, JSON.stringify(payload));
+              console.log(`Wrote ${outPath}: ${items.length} rows`);
+            }
+          })().catch((err) => {
+            console.error(err);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Commit material price outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/materials-eu.json Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/materials-us.json)" ]; then
+            git add Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/materials-eu.json Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/materials-us.json
+            git commit -m "chore: update material prices (eu/us)"
+          else
+            echo "No material price changes"
+          fi
+
+      - name: Push changes
+        if: success()
+        run: |
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          git pull --rebase origin "$branch" || true
+          if [ -n "$(git log origin/$(git rev-parse --abbrev-ref HEAD)..HEAD)" ]; then
+            git push
+          else
+            echo "Nichts zu pushen"
+          fi

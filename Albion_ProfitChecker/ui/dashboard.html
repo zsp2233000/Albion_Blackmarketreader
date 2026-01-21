@@ -50,6 +50,19 @@
     </div>
   </div>
 
+  <div id="premiumGate" class="modal-overlay" style="display:none;">
+    <div class="modal-card premium-gate-card">
+      <h3>Premium+ in progress</h3>
+      <p>Under construction. Admin access only.</p>
+      <input id="premiumPassword" class="premium-input" type="password" placeholder="Enter admin password" />
+      <div id="premiumError" class="premium-error"></div>
+      <div class="premium-actions">
+        <button id="premiumCancel" class="ghost">Cancel</button>
+        <button id="premiumEnter" class="cta">Continue</button>
+      </div>
+    </div>
+  </div>
+
   <div id="accountMount"></div>
 
   <div id="loadingOverlay" class="loading-overlay">
@@ -111,6 +124,7 @@
       </div>
       <nav class="topbar-nav" aria-label="Primary">
         <a class="nav-link active" href="#cards">Markets</a>
+        <a class="nav-link" href="premium-plus/index.html" id="premiumLink">Premium+</a>
         <a class="nav-link" href="community/index.html">Community</a>
       </nav>
       <div class="topbar-right">
@@ -576,7 +590,7 @@
       const { data } = await supabase.auth.getUser();
       if (!data?.user) return;
       const metaAvatar = data.user.user_metadata?.avatar || data.user.user_metadata?.avatar_url || data.user.user_metadata?.picture;
-      const avatar = metaAvatar || "picture/accountsymbol.png";
+      const avatar = sanitizeAvatarUrl(metaAvatar || "picture/accountsymbol.png");
       if (accountEmail) accountEmail.textContent = data.user.email || "-";
       if (avatarIcon) avatarIcon.src = avatar;
       if (profileAvatar) profileAvatar.src = avatar;
@@ -648,7 +662,7 @@
       }
       accountPanel.querySelectorAll(".avatar-grid img").forEach((img) => {
         img.addEventListener("click", async () => {
-          const avatar = img.getAttribute("data-avatar") || img.src;
+          const avatar = sanitizeAvatarUrl(img.getAttribute("data-avatar") || img.src);
           const { data } = await supabase.auth.getUser();
           if (!data?.user) return;
           await supabase.auth.updateUser({ data: { avatar } });
@@ -688,6 +702,26 @@
 
     function normalizeName(value) {
       return (value || "").toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function sanitizeAvatarUrl(value) {
+      const fallback = "picture/accountsymbol.png";
+      if (!value || typeof value !== "string") return fallback;
+      const trimmed = value.trim();
+      if (!trimmed) return fallback;
+      const lower = trimmed.toLowerCase();
+      if (lower.startsWith("javascript:") || lower.startsWith("data:")) return fallback;
+      try {
+        const url = new URL(trimmed, window.location.origin);
+        if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "blob:") {
+          return url.href;
+        }
+        if (url.protocol === "file:") return fallback;
+      } catch (_) {
+        if (trimmed.startsWith("//")) return fallback;
+        return trimmed;
+      }
+      return fallback;
     }
 
     function baseName(id) {
@@ -1321,6 +1355,61 @@
         ticking = true;
       }
     });
+
+    const premiumGate = document.getElementById("premiumGate");
+    const premiumPassword = document.getElementById("premiumPassword");
+    const premiumEnter = document.getElementById("premiumEnter");
+    const premiumCancel = document.getElementById("premiumCancel");
+    const premiumError = document.getElementById("premiumError");
+    const premiumLinks = document.querySelectorAll('a[href="premium-plus/index.html"]');
+    let premiumHref = "premium-plus/index.html";
+
+    const openPremiumGate = (href) => {
+      if (!premiumGate) return;
+      premiumHref = href || premiumHref;
+      premiumGate.style.display = "flex";
+      if (premiumPassword) {
+        premiumPassword.value = "";
+        premiumPassword.focus();
+      }
+      if (premiumError) premiumError.textContent = "";
+    };
+
+    const closePremiumGate = () => {
+      if (!premiumGate) return;
+      premiumGate.style.display = "none";
+      if (premiumError) premiumError.textContent = "";
+    };
+
+    premiumLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        openPremiumGate(link.getAttribute("href"));
+      });
+    });
+
+    if (premiumCancel) {
+      premiumCancel.addEventListener("click", closePremiumGate);
+    }
+
+    if (premiumEnter) {
+      premiumEnter.addEventListener("click", () => {
+        const value = premiumPassword ? premiumPassword.value : "";
+        if (value === "Test25%") {
+          window.location.href = premiumHref;
+          return;
+        }
+        if (premiumError) premiumError.textContent = "Incorrect password.";
+      });
+    }
+
+    if (premiumPassword) {
+      premiumPassword.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && premiumEnter) {
+          premiumEnter.click();
+        }
+      });
+    }
 
     if (regionCurrent) setRegion(regionCurrent);
 
