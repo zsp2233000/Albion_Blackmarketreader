@@ -29,7 +29,17 @@ jobs:
               .replace(/^\uFEFF/, '')
               .replace(/^window\.results\s*=\s*/, '')
               .replace(/;?\s*$/, '');
-            return JSON.parse(raw);
+            const match = raw.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
+            if (!match) {
+              console.error('Invalid JSON format in:', p);
+              return [];
+            }
+            try {
+              return JSON.parse(match[0]);
+            } catch (err) {
+              console.error('JSON parse failed in:', p, err.message);
+              return [];
+            }
           };
           const a = read('results-eu-1.js');
           const b = read('results-eu-2.js');
@@ -48,9 +58,21 @@ jobs:
 
           const read = (p) => {
             if (!fs.existsSync(p)) return [];
-            const raw = fs.readFileSync(p, 'utf8');
-            const json = raw.replace(/^window\\.results\\s*=\\s*/, '').replace(/;?\\s*$/, '');
-            return JSON.parse(json);
+            const raw = fs.readFileSync(p, 'utf8')
+              .replace(/^\uFEFF/, '')
+              .replace(/^window\\.results\\s*=\\s*/, '')
+              .replace(/;?\\s*$/, '');
+            const match = raw.match(/(\\[[\\s\\S]*\\]|\\{[\\s\\S]*\\})/);
+            if (!match) {
+              console.error('Invalid JSON format in:', p);
+              return [];
+            }
+            try {
+              return JSON.parse(match[0]);
+            } catch (err) {
+              console.error('JSON parse failed in:', p, err.message);
+              return [];
+            }
           };
 
           const pick = (rows, region) => rows.map((r) => ({
