@@ -667,6 +667,40 @@ body.panel-open::before {
 }
 .modal-card h3 { margin: 0 0 10px; }
 .modal-card p { margin: 0 0 14px; color: var(--muted); }
+
+.premium-gate-card {
+  width: min(420px, 90vw);
+  display: grid;
+  gap: 10px;
+}
+
+.premium-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(92,240,200,0.25);
+  background: rgba(6, 10, 16, 0.9);
+  color: #fff;
+  font-size: 14px;
+}
+
+.premium-input:focus {
+  outline: none;
+  border-color: rgba(92,240,200,0.6);
+  box-shadow: 0 0 0 2px rgba(92,240,200,0.15);
+}
+
+.premium-error {
+  min-height: 16px;
+  color: #f87171;
+  font-size: 12px;
+}
+
+.premium-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(300px, 1fr));

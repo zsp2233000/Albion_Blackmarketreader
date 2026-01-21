@@ -1,4 +1,4 @@
-(function setupCrafterTable() {
+﻿(function setupCrafterTable() {
   const regionToggle = document.getElementById("regionToggle");
   const regionLabel = document.getElementById("regionLabel");
   const lastUpdated = document.getElementById("lastUpdated");
@@ -10,6 +10,7 @@
   const soldValue = document.getElementById("soldValue");
   const returnRateInput = document.getElementById("returnRateInput");
   const returnRateValue = document.getElementById("returnRateValue");
+  const bonusCityToggle = document.getElementById("bonusCityToggle");
   const itemSearch = document.getElementById("itemSearch");
   const sliderFill = document.querySelector(".slider-fill");
   const sliderThumb = document.querySelector(".slider-thumb");
@@ -776,6 +777,18 @@
     applyFilters();
   });
 
+  if (bonusCityToggle) {
+    bonusCityToggle.addEventListener("change", () => {
+      if (bonusCityToggle.checked) {
+        returnRateInput.value = 24.81;
+      } else {
+        returnRateInput.value = 15.25;
+      }
+      updateReturnRate();
+      applyFilters();
+    });
+  }
+
   itemSearch.addEventListener("input", () => {
     searchTerm = itemSearch.value.trim().toLowerCase();
     applyFilters();
@@ -788,3 +801,4 @@
   renderEmpty();
   loadRegion(currentRegion);
 })();
+

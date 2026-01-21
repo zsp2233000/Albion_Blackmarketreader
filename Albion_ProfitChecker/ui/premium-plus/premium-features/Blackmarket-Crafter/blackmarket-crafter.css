@@ -392,6 +392,24 @@ body {
   font-size: 10px;
 }
 
+.bonus-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+}
+
+.bonus-toggle input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--primary);
+}
+
 .bm-main {
   display: flex;
   gap: 24px;
