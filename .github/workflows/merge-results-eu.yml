@@ -23,7 +23,50 @@ jobs:
       - name: Build Blackmarket-Crafter data/bm-crafter-us.json + data/bm-crafter-eu.json
         working-directory: Albion_ProfitChecker/ui
         run: |
-          node -e "const fs=require('fs'); const dir='premium-plus/premium-features/Blackmarket-Crafter/data'; fs.mkdirSync(dir,{recursive:true}); const read=(p)=>{if(!fs.existsSync(p))return []; const raw=fs.readFileSync(p,'utf8'); const json=raw.replace(/^window\\.results\\s*=\\s*/,'').replace(/;?\\s*$/,''); return JSON.parse(json);}; const pick=(rows,region)=>rows.map(r=>({region,id:r.id,bm:r.bm,sold:r.sold})); let us=read('results.js'); if(!us.length){us=[...read('results-1.js'),...read('results-2.js')];} let eu=read('results-eu.js'); if(!eu.length){eu=[...read('results-eu-1.js'),...read('results-eu-2.js')];} const outUs=pick(us,'us'); const outEu=pick(eu,'eu'); fs.writeFileSync(`${dir}/bm-crafter-us.json`, JSON.stringify({generatedAt: new Date().toISOString(), region:'us', count: outUs.length, items: outUs})); fs.writeFileSync(`${dir}/bm-crafter-eu.json`, JSON.stringify({generatedAt: new Date().toISOString(), region:'eu', count: outEu.length, items: outEu})); console.log('BM Crafter US:', outUs.length, 'EU:', outEu.length);"
+          node - <<'NODE'
+          const fs = require('fs');
+          const dir = 'premium-plus/premium-features/Blackmarket-Crafter/data';
+          fs.mkdirSync(dir, { recursive: true });
+
+          const read = (p) => {
+            if (!fs.existsSync(p)) return [];
+            const raw = fs.readFileSync(p, 'utf8');
+            const json = raw.replace(/^window\\.results\\s*=\\s*/, '').replace(/;?\\s*$/, '');
+            return JSON.parse(json);
+          };
+
+          const pick = (rows, region) => rows.map((r) => ({
+            region,
+            id: r.id,
+            bm: r.bm,
+            sold: r.sold
+          }));
+
+          let us = read('results.js');
+          if (!us.length) {
+            us = [...read('results-1.js'), ...read('results-2.js')];
+          }
+          let eu = read('results-eu.js');
+          if (!eu.length) {
+            eu = [...read('results-eu-1.js'), ...read('results-eu-2.js')];
+          }
+
+          const outUs = pick(us, 'us');
+          const outEu = pick(eu, 'eu');
+          fs.writeFileSync(dir + '/bm-crafter-us.json', JSON.stringify({
+            generatedAt: new Date().toISOString(),
+            region: 'us',
+            count: outUs.length,
+            items: outUs
+          }));
+          fs.writeFileSync(dir + '/bm-crafter-eu.json', JSON.stringify({
+            generatedAt: new Date().toISOString(),
+            region: 'eu',
+            count: outEu.length,
+            items: outEu
+          }));
+          console.log('BM Crafter US:', outUs.length, 'EU:', outEu.length);
+          NODE
 
       - name: Commit merged results EU
         run: |
