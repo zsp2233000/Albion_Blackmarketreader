@@ -22,6 +22,7 @@ jobs:
           const path = require("path");
 
           const idsPath = path.join(process.cwd(), "artefact-ids-only.json");
+          const idsFallback = path.join(process.cwd(), "Albion_ProfitChecker", "artefact-ids-only.json");
           const outputDir = path.join("Albion_ProfitChecker", "ui", "premium-plus", "premium-features", "Blackmarket-Crafter", "data");
           const city = "Lymhurst";
           const chunkSize = 50;
@@ -32,7 +33,7 @@ jobs:
             { key: "us", host: "https://west.albion-online-data.com/api/v2/stats" }
           ];
 
-          const ids = JSON.parse(fs.readFileSync(idsPath, "utf8"));
+          const ids = JSON.parse(fs.readFileSync(fs.existsSync(idsPath) ? idsPath : idsFallback, "utf8"));
 
           async function fetchPrices(host) {
             const out = [];
