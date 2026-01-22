@@ -805,63 +805,83 @@ tbody td {
   color: var(--primary);
 }
 
-.locked {
-  position: relative;
+.material-box {
   margin: 14px 0;
   border-radius: 16px;
-  overflow: hidden;
-  border: 1px dashed var(--border);
+  border: 1px solid rgba(26, 44, 50, 0.65);
+  background: rgba(7, 12, 15, 0.75);
+  padding: 12px;
 }
 
-.locked-cover {
-  padding: 14px;
-  text-align: center;
-  background: rgba(5, 8, 10, 0.85);
-}
-
-.locked-cover h4 {
-  margin: 6px 0 4px;
-  font-size: 11px;
-}
-
-.locked-cover p {
-  margin: 0;
-  font-size: 9px;
-  color: var(--text-secondary);
-}
-
-.locked-cover button {
-  margin-top: 8px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--primary);
-  background: rgba(45, 212, 191, 0.1);
-  color: var(--primary);
-  font-size: 8px;
+.material-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.material-total {
+  color: var(--primary);
   font-weight: 700;
 }
 
-.locked-ghost {
+.material-list {
   display: grid;
-  gap: 6px;
-  padding: 10px;
-  opacity: 0.12;
+  gap: 8px;
 }
 
-.locked-ghost div:last-child {
+.material-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(5, 8, 10, 0.6);
+  border: 1px solid rgba(26, 44, 50, 0.35);
+  font-size: 11px;
+  color: #e2e8f0;
+}
+
+.material-row.artefact-row {
+  margin-top: 10px;
+  border-style: dashed;
+}
+
+.material-row[aria-hidden="true"] {
   display: none;
 }
 
-.locked-ghost div {
-  height: 10px;
-  background: rgba(148, 163, 184, 0.35);
-  border-radius: 6px;
+.material-name {
+  font-weight: 600;
 }
 
-.locked-compact {
-  margin-top: 10px;
+.material-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.material-price {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.material-unit-row {
+  background: rgba(5, 8, 10, 0.35);
+  border-style: dashed;
+  font-size: 10px;
+}
+
+.material-unit-row .material-name {
+  color: var(--text-secondary);
 }
 
 

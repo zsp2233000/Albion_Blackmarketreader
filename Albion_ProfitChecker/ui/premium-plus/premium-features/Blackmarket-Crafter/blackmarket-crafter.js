@@ -4,6 +4,7 @@
   const lastUpdated = document.getElementById("lastUpdated");
   const tableBody = document.getElementById("bmTableBody");
   const tableSummary = document.getElementById("tableSummary");
+  const tableWrap = document.querySelector(".table-wrap");
   const tierFilter = document.getElementById("tierFilter");
   const enchantFilter = document.getElementById("enchantFilter");
   const soldRange = document.getElementById("soldRange");
@@ -17,18 +18,28 @@
   const regionConfirm = document.getElementById("regionConfirm");
   const regionConfirmYes = document.getElementById("regionConfirmYes");
   const regionCancel = document.getElementById("regionCancel");
+  const materialList = document.getElementById("materialList");
+  const materialTotal = document.getElementById("materialTotal");
+  const artefactRow = document.getElementById("artefactRow");
+  const artefactName = document.getElementById("artefactName");
+  const artefactQty = document.getElementById("artefactQty");
+  const artefactPrice = document.getElementById("artefactPrice");
   if (!regionToggle || !regionLabel || !lastUpdated || !tableBody || !tableSummary || !tierFilter || !enchantFilter || !soldRange || !soldValue || !returnRateInput || !returnRateValue || !itemSearch) return;
 
   let currentRegion = "eu";
   let pendingRegion = null;
   let allItems = [];
   let materialMap = new Map();
+  let artefactMap = new Map();
   let recipeMap = new Map();
   let selectedTier = null;
   let selectedEnchant = null;
   let minSold = 0;
   let returnRate = 0.1525;
   let searchTerm = "";
+  let filteredItems = [];
+  let visibleCount = 0;
+  const batchSize = 60;
 
   const nameMap = {
     "OFF_SHIELD": "Beginner's Shield",
@@ -313,8 +324,10 @@
 
   function buildMaterialId(base, tier, enchant) {
     if (!base || !tier) return null;
-    const safeEnchant = Number.isFinite(enchant) && enchant > 0 ? `@${enchant}` : "";
-    return `T${tier}_${base}${safeEnchant}`;
+    if (Number.isFinite(enchant) && enchant > 0) {
+      return `T${tier}_${base}_LEVEL${enchant}@${enchant}`;
+    }
+    return `T${tier}_${base}`;
   }
 
   function getMaterialPrice(name, tier, enchant) {
@@ -323,6 +336,118 @@
     if (fullKey && materialMap.has(fullKey)) return materialMap.get(fullKey);
     if (materialMap.has(name)) return materialMap.get(name);
     return null;
+  }
+
+  function buildArtefactId(artefactId, tier) {
+    if (!artefactId || !tier) return null;
+    return `T${tier}_${artefactId}`;
+  }
+
+  function getArtefactPrice(artefactId, tier) {
+    const key = buildArtefactId(artefactId, tier);
+    if (key && artefactMap.has(key)) return artefactMap.get(key);
+    return null;
+  }
+
+  const materialNameMap = {
+    "METALBAR": "Metal Bars",
+    "PLANKS": "Planks",
+    "CLOTH": "Cloth",
+    "LEATHER": "Leather"
+  };
+
+  function formatMaterialLabel(key, tier, enchant) {
+    const base = materialNameMap[key] || key || "Material";
+    const tierLabel = tier ? `T${tier}` : "";
+    const enchantLabel = Number.isFinite(enchant) ? `.${enchant}` : "";
+    return `${tierLabel} ${base} ${enchantLabel}`.trim();
+  }
+
+  function renderMaterialBreakdown(item) {
+    if (!materialList || !materialTotal) return;
+    materialList.replaceChildren();
+    materialTotal.textContent = "Total: --";
+    if (artefactRow) {
+      artefactRow.setAttribute("aria-hidden", "true");
+    }
+
+    const recipe = getRecipe(item.id);
+    if (!recipe || !Array.isArray(recipe.materials)) return;
+    const tier = parseTier(item.id);
+    const enchant = parseEnchant(item.id);
+    let sum = 0;
+    let hasPrice = false;
+
+    recipe.materials.forEach((mat) => {
+      const materialKey = mat.itemId || mat.name;
+      const unit = getMaterialPrice(materialKey, tier, enchant);
+      const qty = Number(mat.qty || 0);
+      const row = document.createElement("div");
+      row.className = "material-row";
+      const name = document.createElement("div");
+      name.className = "material-name";
+      name.textContent = formatMaterialLabel(materialKey, tier, enchant);
+      const meta = document.createElement("div");
+      meta.className = "material-meta";
+      const qtyEl = document.createElement("span");
+      qtyEl.className = "material-qty";
+      qtyEl.textContent = `x${qty}`;
+      const priceEl = document.createElement("span");
+      priceEl.className = "material-price";
+      if (typeof unit === "number") {
+        const total = unit * qty;
+        priceEl.textContent = formatNumber(Math.round(total));
+        sum += total;
+        hasPrice = true;
+      } else {
+        priceEl.textContent = "--";
+      }
+      meta.appendChild(qtyEl);
+      meta.appendChild(priceEl);
+      row.appendChild(name);
+      row.appendChild(meta);
+      materialList.appendChild(row);
+
+      const unitRow = document.createElement("div");
+      unitRow.className = "material-row material-unit-row";
+      const unitName = document.createElement("div");
+      unitName.className = "material-name";
+      unitName.textContent = `${formatMaterialLabel(materialKey, tier, enchant)} · Unit`;
+      const unitMeta = document.createElement("div");
+      unitMeta.className = "material-meta";
+      const unitQty = document.createElement("span");
+      unitQty.className = "material-qty";
+      unitQty.textContent = "x1";
+      const unitPrice = document.createElement("span");
+      unitPrice.className = "material-price";
+      unitPrice.textContent = typeof unit === "number" ? formatNumber(Math.round(unit)) : "--";
+      unitMeta.appendChild(unitQty);
+      unitMeta.appendChild(unitPrice);
+      unitRow.appendChild(unitName);
+      unitRow.appendChild(unitMeta);
+      materialList.appendChild(unitRow);
+    });
+
+    if (hasPrice) {
+      let craftCost = sum;
+      if (recipe.artifactId) {
+        const artefactPrice = getArtefactPrice(recipe.artifactId, tier);
+        if (Number.isFinite(artefactPrice)) {
+          craftCost += artefactPrice;
+        }
+      }
+      craftCost = craftCost * (1 - returnRate);
+      materialTotal.textContent = `Total: ${formatNumber(Math.round(craftCost))}`;
+    }
+
+    if (recipe.artifactId && artefactRow && artefactName && artefactQty && artefactPrice) {
+      const artefactLabel = recipe.artifact || recipe.artifactId;
+      artefactName.textContent = artefactLabel;
+      artefactQty.textContent = "x1";
+      const price = getArtefactPrice(recipe.artifactId, tier);
+      artefactPrice.textContent = Number.isFinite(price) ? formatNumber(Math.round(price)) : "--";
+      artefactRow.setAttribute("aria-hidden", "false");
+    }
   }
 
   function renderEmpty() {
@@ -337,17 +462,20 @@
     tableSummary.textContent = "Showing 0 items";
   }
 
-  function renderRows(items) {
-    tableBody.replaceChildren();
+  function renderRows(items, reset = false) {
+    if (reset) {
+      tableBody.replaceChildren();
+      visibleCount = 0;
+    }
     if (!items.length) {
       renderEmpty();
       return;
     }
-    const maxRows = 50;
-    const list = items.slice(0, maxRows);
+    if (visibleCount >= items.length) return;
+    const list = items.slice(visibleCount, visibleCount + batchSize);
     list.forEach((item, idx) => {
       const row = document.createElement("tr");
-      row.className = `high-density-row${idx % 2 ? " alt" : ""}`;
+      row.className = `high-density-row${(visibleCount + idx) % 2 ? " alt" : ""}`;
       row.addEventListener("click", () => updateInsight(item));
 
       const baseId = normalizeItemId(item.id);
@@ -405,8 +533,8 @@
       const craftCell = document.createElement("td");
       craftCell.className = "num muted";
       const recipe = getRecipe(item.id);
-      let craftCost = null;
-      if (recipe && Array.isArray(recipe.materials)) {
+      let craftCost = Number.isFinite(item._craftCost) ? item._craftCost : null;
+      if (!Number.isFinite(craftCost) && recipe && Array.isArray(recipe.materials)) {
         let sum = 0;
         let hasPrice = false;
         const itemTier = parseTier(item.id);
@@ -419,14 +547,26 @@
             hasPrice = true;
           }
         }
-        craftCost = hasPrice ? sum * (1 - returnRate) : null;
+        if (hasPrice) {
+          if (recipe.artifactId) {
+            const artefactPrice = getArtefactPrice(recipe.artifactId, itemTier);
+            if (!Number.isFinite(artefactPrice)) {
+              craftCost = null;
+            } else {
+              craftCost = (sum + artefactPrice) * (1 - returnRate);
+            }
+          } else {
+            craftCost = sum * (1 - returnRate);
+          }
+        }
       }
       craftCell.textContent = Number.isFinite(craftCost) ? formatNumber(Math.round(craftCost)) : "--";
 
       const profitCell = document.createElement("td");
       profitCell.className = "num";
+      const profitValue = Number.isFinite(item._profit) ? item._profit : null;
       if (Number.isFinite(craftCost) && Number.isFinite(item.bm)) {
-        const profit = item.bm - craftCost;
+        const profit = Number.isFinite(profitValue) ? profitValue : (item.bm - craftCost);
         profitCell.textContent = formatNumber(Math.round(profit));
         profitCell.classList.toggle("profit", profit > 0);
         profitCell.classList.toggle("loss", profit < 0);
@@ -444,7 +584,7 @@
       const dailyCell = document.createElement("td");
       dailyCell.className = "num";
       if (Number.isFinite(craftCost) && Number.isFinite(item.bm) && Number.isFinite(item.sold)) {
-        const profit = item.bm - craftCost;
+        const profit = Number.isFinite(profitValue) ? profitValue : (item.bm - craftCost);
         const daily = profit * item.sold;
         dailyCell.textContent = formatNumber(Math.round(daily));
         dailyCell.classList.toggle("profit", daily > 0);
@@ -456,8 +596,8 @@
       const percentCell = document.createElement("td");
       percentCell.className = "num";
       if (Number.isFinite(craftCost) && craftCost > 0 && Number.isFinite(item.bm)) {
-        const profit = item.bm - craftCost;
-        const pct = (profit / craftCost) * 100;
+        const profit = Number.isFinite(profitValue) ? profitValue : (item.bm - craftCost);
+        const pct = Number.isFinite(item._profitPct) ? item._profitPct : ((profit / craftCost) * 100);
         percentCell.textContent = `${pct.toFixed(1)}%`;
         percentCell.classList.toggle("profit", pct > 0);
         percentCell.classList.toggle("loss", pct < 0);
@@ -474,7 +614,8 @@
       row.appendChild(percentCell);
       tableBody.appendChild(row);
     });
-    tableSummary.textContent = `Showing ${list.length} of ${items.length} items`;
+    visibleCount += list.length;
+    tableSummary.textContent = `Showing ${visibleCount} of ${items.length} items`;
   }
 
   const insightName = document.getElementById("insightName");
@@ -542,7 +683,17 @@
         }
       }
       if (hasPrice) {
-        const craftCost = sum * (1 - returnRate);
+        let craftCost = sum;
+        if (recipe.artifactId) {
+          const artefactPrice = getArtefactPrice(recipe.artifactId, itemTier);
+          if (Number.isFinite(artefactPrice)) {
+            craftCost += artefactPrice;
+          } else {
+            craftCost = null;
+          }
+        }
+        if (!Number.isFinite(craftCost)) return;
+        craftCost = craftCost * (1 - returnRate);
         const profit = item.bm - craftCost;
         const daily = Number.isFinite(item.sold) ? profit * item.sold : null;
         if (insightCraft) insightCraft.textContent = formatNumber(Math.round(craftCost));
@@ -564,10 +715,14 @@
         }
       }
     }
+    renderMaterialBreakdown(item);
   }
 
   function applyFilters() {
     const filtered = allItems.filter((item) => {
+      const idValue = item.id || "";
+      if (/_ROYAL(\b|_)/i.test(idValue)) return false;
+      if (/SHAPESHIFTER/i.test(idValue)) return false;
       const tier = parseTier(item.id);
       const enchant = parseEnchant(item.id);
       if (selectedTier !== null && tier !== selectedTier) return false;
@@ -580,12 +735,43 @@
         const displayName = nameMap[baseId] || (recipe && recipe.name) || baseId || "";
         if (!String(displayName).toLowerCase().includes(searchTerm)) return false;
       }
+      const recipe = getRecipe(item.id);
+      if (!recipe || !Array.isArray(recipe.materials) || !Number.isFinite(item.bm)) return false;
+      let sum = 0;
+      let hasPrice = false;
+      for (const mat of recipe.materials) {
+        const materialKey = mat.itemId || mat.name;
+        const unit = getMaterialPrice(materialKey, tier, enchant);
+        if (typeof unit === "number") {
+          sum += unit * Number(mat.qty || 0);
+          hasPrice = true;
+        }
+      }
+      if (!hasPrice) return false;
+      let craftCost = sum;
+      if (recipe.artifactId) {
+        const artefactPrice = getArtefactPrice(recipe.artifactId, tier);
+        if (!Number.isFinite(artefactPrice)) return false;
+        craftCost += artefactPrice;
+      }
+      craftCost = craftCost * (1 - returnRate);
+      const profit = item.bm - craftCost;
+      if (!Number.isFinite(profit) || profit < 0) return false;
+      const profitPct = craftCost > 0 ? (profit / craftCost) * 100 : null;
+      item._craftCost = craftCost;
+      item._profit = profit;
+      item._profitPct = Number.isFinite(profitPct) ? profitPct : null;
       return true;
     });
-    const sorted = [...filtered].sort((a, b) => (b.sold || 0) - (a.sold || 0));
-    renderRows(sorted);
-    if (sorted.length) {
-      updateInsight(sorted[0]);
+    filteredItems = [...filtered].sort((a, b) => {
+      const aPct = Number.isFinite(a._profitPct) ? a._profitPct : -Infinity;
+      const bPct = Number.isFinite(b._profitPct) ? b._profitPct : -Infinity;
+      return bPct - aPct;
+    });
+    if (tableWrap) tableWrap.scrollTop = 0;
+    renderRows(filteredItems, true);
+    if (filteredItems.length) {
+      updateInsight(filteredItems[0]);
     } else {
       updateInsight({ id: "--", bm: null, sold: null });
     }
@@ -667,6 +853,38 @@
     }
   }
 
+  async function loadArtefacts(region) {
+    const dataPath = region === "us"
+      ? "/premium-plus/premium-features/Blackmarket-Crafter/data/artefacts-us.json"
+      : "/premium-plus/premium-features/Blackmarket-Crafter/data/artefacts-eu.json";
+    const relativePath = region === "us"
+      ? "./data/artefacts-us.json"
+      : "./data/artefacts-eu.json";
+    const localPath = region === "us"
+      ? buildLocalUrl("data/artefacts-us.json")
+      : buildLocalUrl("data/artefacts-eu.json");
+    try {
+      const payload = await fetchJsonWithFallback([dataPath, localPath, relativePath]);
+      if (!payload) throw new Error("artefacts load failed");
+      const items = Array.isArray(payload.items) ? payload.items : [];
+      const grouped = new Map();
+      items.forEach((row) => {
+        const price = Number(row.price);
+        if (!row.itemId || !Number.isFinite(price)) return;
+        const list = grouped.get(row.itemId) || [];
+        list.push(price);
+        grouped.set(row.itemId, list);
+      });
+      artefactMap = new Map();
+      grouped.forEach((prices, key) => {
+        const avg = prices.reduce((sum, v) => sum + v, 0) / prices.length;
+        artefactMap.set(key, avg);
+      });
+    } catch (_) {
+      artefactMap = new Map();
+    }
+  }
+
   async function loadRecipes() {
     const file = "/premium-plus/premium-features/Blackmarket-Crafter/items-categorized-crafting.json";
     const relativeFile = "./items-categorized-crafting.json";
@@ -707,11 +925,26 @@
       const payload = await fetchJsonWithFallback([dataPath, localPath, relativePath, legacyPath]);
       if (!payload) throw new Error("load failed");
       const items = Array.isArray(payload.items) ? payload.items : [];
-      allItems = items;
+      const uniqueMap = new Map();
+      items.forEach((item) => {
+        if (!item || !item.id) return;
+        if (!uniqueMap.has(item.id)) {
+          uniqueMap.set(item.id, item);
+          return;
+        }
+        const existing = uniqueMap.get(item.id);
+        const existingSold = Number(existing.sold || 0);
+        const nextSold = Number(item.sold || 0);
+        if (nextSold > existingSold) {
+          uniqueMap.set(item.id, item);
+        }
+      });
+      allItems = Array.from(uniqueMap.values());
       const stamp = payload.generatedAt ? new Date(payload.generatedAt) : null;
       lastUpdated.textContent = stamp ? stamp.toISOString().slice(11, 16) : "--:--";
       await loadRecipes();
       await loadMaterials(currentRegion);
+      await loadArtefacts(currentRegion);
       applyFilters();
     } catch (_) {
       renderEmpty();
@@ -793,6 +1026,13 @@
     searchTerm = itemSearch.value.trim().toLowerCase();
     applyFilters();
   });
+
+  if (tableWrap) {
+    tableWrap.addEventListener("scroll", () => {
+      const nearBottom = tableWrap.scrollTop + tableWrap.clientHeight >= tableWrap.scrollHeight - 120;
+      if (nearBottom) renderRows(filteredItems, false);
+    });
+  }
 
   setActive(tierFilter, "data-tier", selectedTier);
   setActive(enchantFilter, "data-enchant", selectedEnchant);
