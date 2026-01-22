@@ -181,16 +181,18 @@
               <strong id="insightId">--</strong>
             </div>
           </div>
-          <div class="locked locked-compact">
-            <div class="locked-cover">
-              <span class="material-symbols-outlined">lock</span>
-              <h4>Material Calculator</h4>
-              <p>Detailed material breakdown coming soon.</p>
-              <button type="button">Notify Me</button>
+          <div class="material-box">
+            <div class="material-head">
+              <span>Material Prices Used</span>
+              <span class="material-total" id="materialTotal">Total: --</span>
             </div>
-            <div class="locked-ghost">
-              <div></div>
-              <div></div>
+            <div class="material-list" id="materialList"></div>
+            <div class="material-row artefact-row" id="artefactRow" aria-hidden="true">
+              <div class="material-name" id="artefactName">Artefact</div>
+              <div class="material-meta">
+                <span class="material-qty" id="artefactQty">x1</span>
+                <span class="material-price" id="artefactPrice">--</span>
+              </div>
             </div>
           </div>
           <div class="side-chart">

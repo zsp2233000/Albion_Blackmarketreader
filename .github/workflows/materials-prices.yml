@@ -25,8 +25,10 @@ jobs:
           const bases = ["METALBAR", "PLANKS", "CLOTH", "LEATHER"];
           const tiers = [4, 5, 6, 7, 8];
           const enchants = [0, 1, 2, 3];
-          const cities = ["Caerleon", "Bridgewatch", "Lymhurst", "Martlock", "Fort Sterling", "Thetford"];
+          const cities = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford"];
           const chunkSize = 50;
+          const historyChunkSize = 20;
+          const delayMs = 1500;
           const outputDir = path.join("premium-plus", "premium-features", "Blackmarket-Crafter", "data");
 
           const regions = [
@@ -39,8 +41,11 @@ jobs:
             for (const base of bases) {
               for (const tier of tiers) {
                 for (const enchant of enchants) {
-                  const suffix = enchant > 0 ? `@${enchant}` : "";
-                  ids.push(`T${tier}_${base}${suffix}`);
+                  if (enchant > 0) {
+                    ids.push(`T${tier}_${base}_LEVEL${enchant}@${enchant}`);
+                  } else {
+                    ids.push(`T${tier}_${base}`);
+                  }
                 }
               }
             }
@@ -55,8 +60,12 @@ jobs:
             return { tier, enchant };
           };
 
-          const fetchPrices = async (host, itemIds) => {
-            const out = [];
+          function formatDate(date) {
+            return date.toISOString().slice(0, 10);
+          }
+
+          const fetchCurrentPrices = async (host, itemIds) => {
+            const currentMap = new Map();
             const locations = encodeURIComponent(cities.join(","));
             for (let i = 0; i < itemIds.length; i += chunkSize) {
               const slice = itemIds.slice(i, i + chunkSize);
@@ -70,21 +79,54 @@ jobs:
               for (const row of data) {
                 const price = Number(row.sell_price_min || 0);
                 if (!price) continue;
-                const { tier, enchant } = parseMeta(row.item_id || "");
-                out.push({
-                  itemId: row.item_id,
-                  tier,
-                  enchant,
-                  city: row.city,
-                  price
-                });
+                const existing = currentMap.get(row.item_id);
+                if (!existing || price < existing.price) {
+                  currentMap.set(row.item_id, { price, city: row.city });
+                }
               }
               const hasMore = i + chunkSize < itemIds.length;
               if (hasMore) {
-                await new Promise((resolve) => setTimeout(resolve, 1500));
+                await new Promise((resolve) => setTimeout(resolve, delayMs));
               }
             }
-            return out;
+            return currentMap;
+          };
+
+          const fetchHistoryAverages = async (host, itemIds) => {
+            const historyMap = new Map();
+            if (!itemIds.length) return historyMap;
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 14);
+            const dateParam = `date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&time-scale=24`;
+
+            for (let i = 0; i < itemIds.length; i += historyChunkSize) {
+              const slice = itemIds.slice(i, i + historyChunkSize);
+              const url = `${host}/history/${slice.join(",")}.json?locations=${encodeURIComponent(cities.join(","))}&${dateParam}`;
+              const res = await fetch(url);
+              if (!res.ok) {
+                console.error("History fetch failed", res.status, url);
+                continue;
+              }
+              const data = await res.json();
+              for (const row of data) {
+                const series = Array.isArray(row.data) ? row.data : [];
+                const values = series
+                  .map((entry) => Number(entry.avg_price || 0))
+                  .filter((val) => Number.isFinite(val) && val > 0);
+                if (!values.length) continue;
+                const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+                const existing = historyMap.get(row.item_id);
+                if (!existing || avg < existing.price) {
+                  historyMap.set(row.item_id, { price: Math.round(avg), city: row.city });
+                }
+              }
+              const hasMore = i + historyChunkSize < itemIds.length;
+              if (hasMore) {
+                await new Promise((resolve) => setTimeout(resolve, delayMs));
+              }
+            }
+            return historyMap;
           };
 
           (async () => {
@@ -93,10 +135,26 @@ jobs:
             const now = new Date().toISOString();
 
             for (const region of regions) {
-              const items = await fetchPrices(region.host, ids);
+              const currentMap = await fetchCurrentPrices(region.host, ids);
+              const missingIds = ids.filter((id) => !currentMap.has(id));
+              const historyMap = await fetchHistoryAverages(region.host, missingIds);
+              const items = [];
+              for (const id of ids) {
+                const pick = currentMap.get(id) || historyMap.get(id);
+                if (!pick || !pick.price) continue;
+                const { tier, enchant } = parseMeta(id);
+                items.push({
+                  itemId: id,
+                  tier,
+                  enchant,
+                  city: pick.city,
+                  price: pick.price
+                });
+              }
               const payload = {
                 generatedAt: now,
                 region: region.key,
+                city: "ANY",
                 count: items.length,
                 items
               };
