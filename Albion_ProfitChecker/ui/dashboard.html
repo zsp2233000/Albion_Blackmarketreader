@@ -50,19 +50,6 @@
     </div>
   </div>
 
-  <div id="premiumGate" class="modal-overlay" style="display:none;">
-    <div class="modal-card premium-gate-card">
-      <h3>Premium+ in progress</h3>
-      <p>Under construction. Admin access only.</p>
-      <input id="premiumPassword" class="premium-input" type="password" placeholder="Enter admin password" />
-      <div id="premiumError" class="premium-error"></div>
-      <div class="premium-actions">
-        <button id="premiumCancel" class="ghost">Cancel</button>
-        <button id="premiumEnter" class="cta">Continue</button>
-      </div>
-    </div>
-  </div>
-
   <div id="accountMount"></div>
 
   <div id="loadingOverlay" class="loading-overlay">
@@ -117,7 +104,10 @@
 
   <div id="app" class="page" style="display:none;">
     <header class="topbar">
-      <a class="topbar-brand" href="index.html">        <img src="picture/testo ohne background.png" alt="Logo" class="topbar-logo" />        <span class="topbar-title">RomulusKings Market Reader</span>      </a>
+      <a class="topbar-brand" href="index.html">
+        <img src="picture/testo ohne background.png" alt="Logo" class="topbar-logo" />
+        <span class="topbar-title">RomulusKings Market Reader</span>
+      </a>
       <div class="topbar-search">
         <input id="searchInput" type="search" placeholder="Search markets" aria-label="Search markets" list="searchSuggestions" />
         <datalist id="searchSuggestions"></datalist>
@@ -144,26 +134,33 @@
     </header>
 
     <section class="dash-hero">
-      <span class="dash-label">Markets</span>
-      <h1>Black Market Profits. Made Clear.</h1>
-      <p>>= 30% Profit - 14-Day Range - Live Black Market Data</p>
+      <div class="hero-badge">
+        <span class="hero-dot"></span>
+        Real-time Arbitrage Engine
+      </div>
+      <h1>Black Market Profits.<br /><span class="hero-muted">Made Clear.</span></h1>
+      <div class="hero-subline">
+        <span class="hero-line"></span>
+        <p>>= 30% Profit - 14-Day Range - Live Black Market Data</p>
+        <span class="hero-line"></span>
+      </div>
     </section>
 
     <div class="kpi-row" id="kpiRow">
       <div class="kpi-card">
-        <span class="kpi-label">Deals</span>
+        <span class="kpi-label">Live Signals</span>
         <span class="kpi-value" id="kpiDeals">0</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-label">Best Profit</span>
+        <span class="kpi-label">Top Spread</span>
         <span class="kpi-value" id="kpiBest">--</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-label">Avg Profit</span>
+        <span class="kpi-label">Median ROI</span>
         <span class="kpi-value" id="kpiAvg">--</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-label">Best Silver</span>
+        <span class="kpi-label">Max Liquidity</span>
         <span class="kpi-value" id="kpiSilver">--</span>
       </div>
     </div>
@@ -172,12 +169,12 @@
       <section class="chart-panel">
         <div class="chart-header">
           <div>
-            <h2>Monthly Avg Profit</h2>
-            <p>Last 30 days - calculated from live deals</p>
+            <h2>Institutional Performance Index</h2>
+            <p>Aggregate profit yield across all verified market clusters</p>
           </div>
           <div class="chart-meta">
-            <span class="chart-pill">Avg: <strong id="avgProfitMonth">--</strong></span>
-            <span class="chart-pill">Best: <strong id="bestProfitMonth">--</strong></span>
+            <span class="chart-pill">Avg Yield <strong id="avgProfitMonth">--</strong></span>
+            <span class="chart-pill">Peak <strong id="bestProfitMonth">--</strong></span>
           </div>
         </div>
         <svg id="profitChart" class="profit-chart" viewBox="0 0 600 220" preserveAspectRatio="none" aria-hidden="true">
@@ -203,11 +200,28 @@
       </div>
     </section>
 
-      <aside class="city-panel">
-        <img id="cityCrest" class="city-crest-img" src="picture/Carleon.png" alt="City crest" />
-        <div class="city-panel-body">
-          <span class="city-panel-title">City</span>
-          <span class="city-panel-name" id="cityName">All Cities</span>
+            <aside class="side-stack">
+        <div class="side-card premium-panel">
+          <div class="side-card-header">
+            <span class="side-card-icon">�Y�</span>
+            <div class="side-card-copy">
+              <span class="side-card-label">Premium Feature</span>
+              <span class="side-card-title">Pro Suite</span>
+            </div>
+          </div>
+          <button class="premium-preview" type="button" id="premiumPreviewBtn" aria-label="Preview BM Crafter">
+            <img src="picture/bm-crafter-table.png" alt="BM Crafter preview" />
+          </button>
+          <a class="premium-button" href="premium-plus/index.html">Upgrade Now</a>
+        </div>
+        <div class="side-card city-panel">
+          <div class="side-card-header">
+            <img id="cityCrest" class="city-crest-img" src="picture/Carleon.png" alt="City crest" />
+            <div class="city-panel-copy">
+              <span class="city-panel-title">City</span>
+              <span class="city-panel-name" id="cityName">All Cities</span>
+            </div>
+          </div>
           <select id="citySelect" class="city-select">
             <option value="ALL">All Cities</option>
             <option value="Lymhurst">Lymhurst</option>
@@ -221,14 +235,34 @@
       </aside>
     </div>
 
+    <div class="chart-divider" aria-hidden="true"></div>
+
     <section class="cards-section">
       <div class="filters-wrap">
-        <div class="filters">
-          Profit = <input id="minProfit" type="number" value="0" /> %
-          Max Cost per Item <= <input id="maxCost" type="number" placeholder="100000" />
-          <button id="applyFilter">Apply filter</button>
-          <button id="filterSilver">Sort by silver</button>
-          <button id="clearSilver" style="display:none;">Reset</button>
+        <div class="filters-bar">
+          <div class="tier-filters" role="group" aria-label="Tier filters">
+            <button class="tier-btn active" type="button" data-tier="ALL">All tiers</button>
+            <button class="tier-btn" type="button" data-tier="T4">Tier 4</button>
+            <button class="tier-btn" type="button" data-tier="T5">Tier 5</button>
+            <button class="tier-btn" type="button" data-tier="T6">Tier 6</button>
+            <button class="tier-btn" type="button" data-tier="T7">Tier 7</button>
+            <button class="tier-btn" type="button" data-tier="T8">Tier 8</button>
+          </div>
+          <div class="filters-right">
+            <label class="filter-field" for="minProfit">
+              <span>Min Profit %</span>
+              <input id="minProfit" type="number" value="0" />
+            </label>
+            <label class="filter-field" for="maxCost">
+              <span>Max Cost per Item</span>
+              <input id="maxCost" type="number" placeholder="100000" />
+            </label>
+            <div class="filter-actions">
+              <button id="applyFilter">Apply filter</button>
+              <button id="filterSilver">Sort by silver</button>
+              <button id="clearSilver" style="display:none;">Reset</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -237,14 +271,22 @@
     </section>
 
     <a class="community-tile compact" href="community/index.html" aria-label="Join Discord">
-      <span class="tile-title">
+      <span class="tile-icon-wrap">
         <svg class="tile-icon" viewBox="0 0 256 199" aria-hidden="true" focusable="false">
           <path d="M216.9 16.5A208.5 208.5 0 0 0 164.6 0c-2.3 4-4.9 9.2-6.7 13.4-19.2-2.9-38.1-2.9-57.1 0-1.8-4.2-4.5-9.4-6.8-13.4a209.3 209.3 0 0 0-52.4 16.5C6.6 68.4-3.1 119.4 1.8 169.8a210.1 210.1 0 0 0 63.9 32.7c5.2-7.1 9.8-14.6 13.5-22.7-7.4-2.8-14.5-6.2-21.2-10.2 1.8-1.3 3.5-2.6 5.1-4 40.9 19.1 85.1 19.1 125.5 0 1.7 1.4 3.4 2.7 5.1 4-6.7 4-13.8 7.4-21.2 10.2 3.7 8.1 8.3 15.6 13.5 22.7a210.2 210.2 0 0 0 63.9-32.7c5.8-57.9-9.7-108.4-44.8-153.3ZM85 135.3c-12.5 0-22.7-11.4-22.7-25.4S72.5 84.5 85 84.5s22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Zm86 0c-12.5 0-22.7-11.4-22.7-25.4s10.1-25.4 22.7-25.4 22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Z"/>
         </svg>
-        Join Discord
+      </span>
+      <span class="tile-copy">
+<span class="tile-title">Discord</span>
       </span>
     </a>
   </div><script src="env.js"></script>
+  <div id="premiumPreviewModal" class="preview-modal" style="display:none;">
+    <div class="preview-card">
+      <button id="premiumPreviewClose" class="preview-close" aria-label="Close preview">×</button>
+      <img src="picture/bm-crafter-table.png" alt="BM Crafter preview large" />
+    </div>
+  </div>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -263,6 +305,7 @@
       const loadMoreTrigger = document.getElementById('loadMoreTrigger');
     const minProfitEl = document.getElementById('minProfit');
     const maxCostEl = document.getElementById('maxCost');
+    const tierButtons = Array.from(document.querySelectorAll('.tier-btn'));
       const applyFilterEl = document.getElementById('applyFilter');
     const filterSilverEl = document.getElementById('filterSilver');
     const clearSilverEl = document.getElementById('clearSilver');
@@ -709,6 +752,7 @@
     let minProfitFilter = 0;
     let maxCostFilter = null;
       let sortBySilver = false;
+      let tierFilter = "ALL";
       let searchTerm = "";
       let regionCurrent = localStorage.getItem("region") || null;
       let cityFilter = "ALL";
@@ -874,6 +918,10 @@
         item.profit >= minProfitFilter &&
         (cityFilter === "ALL" || item.city === cityFilter)
       );
+      if (tierFilter !== "ALL") {
+        const prefix = `${tierFilter}_`;
+        filtered = filtered.filter((item) => (item.id || "").startsWith(prefix));
+      }
       if (maxCostFilter !== null) {
         filtered = filtered.filter((item) => {
           const cost = Number(item.lym || 0);
@@ -1351,12 +1399,38 @@
       }
     }
 
+    function setTierFilter(value) {
+      tierFilter = value || "ALL";
+      tierButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.tier === tierFilter);
+      });
+      minProfitFilter = Number(minProfitEl.value) || 0;
+      const rawCost = Number(maxCostEl.value);
+      maxCostFilter = Number.isFinite(rawCost) && rawCost > 0 ? rawCost : null;
+      render();
+    }
+
     applyFilterEl.onclick = () => {
       minProfitFilter = Number(minProfitEl.value) || 0;
       const rawCost = Number(maxCostEl.value);
       maxCostFilter = Number.isFinite(rawCost) && rawCost > 0 ? rawCost : null;
       render();
     };
+    tierButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        setTierFilter(btn.dataset.tier || "ALL");
+      });
+    });
+    if (minProfitEl) {
+      minProfitEl.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") applyFilterEl.click();
+      });
+    }
+    if (maxCostEl) {
+      maxCostEl.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") applyFilterEl.click();
+      });
+    }
     filterSilverEl.onclick = () => { sortBySilver = true; clearSilverEl.style.display = "inline-block"; render(); };
     clearSilverEl.onclick = () => { sortBySilver = false; clearSilverEl.style.display = "none"; render(); };
     if (searchInput) {
@@ -1407,57 +1481,24 @@
       }
     });
 
-    const premiumGate = document.getElementById("premiumGate");
-    const premiumPassword = document.getElementById("premiumPassword");
-    const premiumEnter = document.getElementById("premiumEnter");
-    const premiumCancel = document.getElementById("premiumCancel");
-    const premiumError = document.getElementById("premiumError");
-    const premiumLinks = document.querySelectorAll('a[href="premium-plus/index.html"]');
-    let premiumHref = "premium-plus/index.html";
+    const premiumPreviewBtn = document.getElementById("premiumPreviewBtn");
+    const premiumPreviewModal = document.getElementById("premiumPreviewModal");
+    const premiumPreviewClose = document.getElementById("premiumPreviewClose");
 
-    const openPremiumGate = (href) => {
-      if (!premiumGate) return;
-      premiumHref = href || premiumHref;
-      premiumGate.style.display = "flex";
-      if (premiumPassword) {
-        premiumPassword.value = "";
-        premiumPassword.focus();
-      }
-      if (premiumError) premiumError.textContent = "";
-    };
-
-    const closePremiumGate = () => {
-      if (!premiumGate) return;
-      premiumGate.style.display = "none";
-      if (premiumError) premiumError.textContent = "";
-    };
-
-    premiumLinks.forEach((link) => {
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
-        openPremiumGate(link.getAttribute("href"));
-      });
-    });
-
-    if (premiumCancel) {
-      premiumCancel.addEventListener("click", closePremiumGate);
-    }
-
-    if (premiumEnter) {
-      premiumEnter.addEventListener("click", () => {
-        const value = premiumPassword ? premiumPassword.value : "";
-        if (value === "Test25%") {
-          window.location.href = premiumHref;
-          return;
-        }
-        if (premiumError) premiumError.textContent = "Incorrect password.";
+    if (premiumPreviewBtn && premiumPreviewModal) {
+      premiumPreviewBtn.addEventListener("click", () => {
+        premiumPreviewModal.style.display = "flex";
       });
     }
-
-    if (premiumPassword) {
-      premiumPassword.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && premiumEnter) {
-          premiumEnter.click();
+    if (premiumPreviewClose && premiumPreviewModal) {
+      premiumPreviewClose.addEventListener("click", () => {
+        premiumPreviewModal.style.display = "none";
+      });
+    }
+    if (premiumPreviewModal) {
+      premiumPreviewModal.addEventListener("click", (event) => {
+        if (event.target === premiumPreviewModal) {
+          premiumPreviewModal.style.display = "none";
         }
       });
     }
@@ -1492,6 +1533,8 @@
   <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
+
+
 
 
 
