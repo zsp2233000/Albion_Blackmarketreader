@@ -983,6 +983,18 @@ tbody td {
     width: 100%;
     justify-content: space-between;
   }
+  .bm-main {
+    height: auto;
+    overflow: visible;
+  }
+  .table-wrap {
+    max-height: 60vh;
+  }
+  .side-card {
+    position: relative;
+    top: auto;
+    max-height: none;
+  }
 }
 
 @media (max-width: 720px) {
@@ -995,6 +1007,47 @@ tbody td {
   .bm-main {
     padding: 16px;
   }
+  .bm-header-row {
+    gap: 12px;
+  }
+  .bm-brand h1 {
+    font-size: 16px;
+  }
+  .bm-pill,
+  .bm-status {
+    font-size: 9px;
+    padding: 5px 10px;
+  }
+  .table-wrap {
+    max-height: 58vh;
+  }
+  table {
+    min-width: 720px;
+  }
+  th, td {
+    padding: 8px 10px;
+    font-size: 9px;
+  }
+  tbody td {
+    font-size: 11px;
+  }
+  .item-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .item-name {
+    font-size: 11px;
+  }
+  .side-card {
+    padding: 16px;
+  }
+  .side-hero h2 {
+    font-size: 16px;
+  }
+  .side-icon {
+    width: 64px;
+    height: 64px;
+  }
 }
 
 @media (max-width: 420px) {
@@ -1004,5 +1057,42 @@ tbody td {
   .bm-meta {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .bm-main {
+    padding: 12px;
+  }
+  .bm-filters {
+    gap: 12px;
+    padding: 10px 14px;
+    top: 56px;
+  }
+  .chip {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+  table {
+    min-width: 600px;
+  }
+  th:nth-child(6),
+  td:nth-child(6),
+  th:nth-child(7),
+  td:nth-child(7) {
+    display: none;
+  }
+  .side-card {
+    padding: 14px;
+  }
+  .material-box {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  th:nth-child(5),
+  td:nth-child(5) {
+    display: none;
+  }
+  table {
+    min-width: 520px;
   }
 }

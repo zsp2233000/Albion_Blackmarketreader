@@ -1,401 +1,432 @@
-<!DOCTYPE html>
-    <html lang="en">
+<!doctype html>
+<html class="dark" lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Albion Blackmarket Reader</title>
-    <meta
-      name="description"
-      content="Albion Blackmarket Reader - Live Black Market prices, profit analysis, city comparison and silver filters."
-    />
-    <meta
-      name="keywords"
-      content="Albion Online, Black Market, Prices, Profit, Silver Filter, City Comparison, Market Analysis"
-    />
+    <title>Elite Crafter | Full Tool Preview V1</title>
+    <link rel="stylesheet" href="/index.css" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta property="og:title" content="Albion Blackmarket Reader" />
-    <meta
-      property="og:description"
-      content="Live Black Market prices, profit analysis, city comparison and silver filters."
-    />
-    <meta property="og:image" content="https://blackmarketreader.com/picture/Anzeige-preis.png" />
-    <meta property="og:url" content="https://blackmarketreader.com/" />
-    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="index.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
-    <div class="bg-layer" aria-hidden="true"></div>
-
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="brand" href="#top" aria-label="Back to top">
-          <img src="picture/testo%20ohne%20background.png" alt="Logo" class="brand-logo" />
-          <span class="brand-title">RomulusKings Market Reader</span>
-        </a>
-        <nav class="main-nav" aria-label="Landing Navigation">
-          <a href="#screen-silver">Features</a>
-          <a href="#screen-profit">How it works</a>
-          <a href="#screens">Screens</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-        <button class="menu-toggle" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-        <a class="btn btn-primary" href="dashboard.html">Open Dashboard</a>
-      </div>
-    </header>
-    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-      <div class="mobile-menu-backdrop" data-menu-close></div>
-      <div class="mobile-menu-panel" role="dialog" aria-label="Mobile menu">
-        <nav class="mobile-menu-links">
-          <a href="#screen-silver">Features</a>
-          <a href="#screen-profit">How it works</a>
-          <a href="#screens">Screens</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-        <a class="btn btn-primary mobile-menu-cta" href="dashboard.html">Open Dashboard</a>
+  <body class="selection-accent">
+    <div class="alert-bar">
+      <div class="alert-track">
+        <span>BM Crafter</span>
+        <span>FREE TRIAL UNTIL APRIL 2026</span>
+        <span>Test version</span>
       </div>
     </div>
 
-    <main>
-      <section class="hero-full" id="top">
-        <div class="hero-content">
-          <h1>Markets. Clearer.</h1>
-          <p>
-            Live Albion black market scans, city comparison, and profit filters -
-            see what is truly worth it in seconds.
-          </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="dashboard.html">Open Dashboard</a>
-            <a class="btn btn-ghost" href="#screen-profit">How it works</a>
-          </div>
-         
-        </div>
-        <a class="community-tile" href="community/index.html" aria-label="Join the community">
-          <span class="tile-title">
-            <svg class="tile-icon" viewBox="0 0 256 199" aria-hidden="true" focusable="false">
-              <path d="M216.9 16.5A208.5 208.5 0 0 0 164.6 0c-2.3 4-4.9 9.2-6.7 13.4-19.2-2.9-38.1-2.9-57.1 0-1.8-4.2-4.5-9.4-6.8-13.4a209.3 209.3 0 0 0-52.4 16.5C6.6 68.4-3.1 119.4 1.8 169.8a210.1 210.1 0 0 0 63.9 32.7c5.2-7.1 9.8-14.6 13.5-22.7-7.4-2.8-14.5-6.2-21.2-10.2 1.8-1.3 3.5-2.6 5.1-4 40.9 19.1 85.1 19.1 125.5 0 1.7 1.4 3.4 2.7 5.1 4-6.7 4-13.8 7.4-21.2 10.2 3.7 8.1 8.3 15.6 13.5 22.7a210.2 210.2 0 0 0 63.9-32.7c5.8-57.9-9.7-108.4-44.8-153.3ZM85 135.3c-12.5 0-22.7-11.4-22.7-25.4S72.5 84.5 85 84.5s22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Zm86 0c-12.5 0-22.7-11.4-22.7-25.4s10.1-25.4 22.7-25.4 22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Z"/>
-            </svg>
-            Join the Community
-          </span>
-          <span class="tile-subtitle">Discord, deals, live flips</span>
-          <span class="tile-cta">Open Community</span>
-        </a>
-        <a class="hero-arrow" href="#screen-silver" aria-label="Scroll to features">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M12 16.5l-6-6 1.4-1.4L12 13.7l4.6-4.6 1.4 1.4-6 6z"/>
-          </svg>
-        </a>
-      </section>
-
-      <div class="page">
-        <section class="proof" id="proof">
-        <div class="proof-row">
-          <div class="kpi-card">
-            <span>Live BM Prices</span>
-            <strong>Realtime</strong>
-          </div>
-          <div class="kpi-card">
-            <span>City Comparison</span>
-            <strong>6 Cities</strong>
-          </div>
-          <div class="kpi-card">
-            <span>Analysis</span>
-            <strong>14/30/60</strong>
-          </div>
-          <div class="kpi-card">
-            <span>Smart Filters</span>
-            <strong>Percent/Silver</strong>
-          </div>
-        </div>
-      </section>
-
-      <section class="screens" id="screens">
-        <div class="section-head">
-          <h2>Dashboard views</h2>
-          <p>Two views for percent and silver profit.</p>
-        </div>
-        <div class="screens-grid">
-          <figure class="screen-card" id="screen-silver">
-            <img src="picture/Silver-dashboard.png" class="zoomable" alt="Silver Profit Dashboard" />
-            <figcaption>Dashboard Silver Profit</figcaption>
-          </figure>
-          <figure class="screen-card offset" id="screen-profit">
-            <img src="picture/Profit-Dashboard.png" class="zoomable" alt="Profit Dashboard" />
-            <figcaption>Dashboard % Profit</figcaption>
-          </figure>
-        </div>
-      </section>
-
-      <section class="how" id="how">
-        <div class="section-head">
-          <h2>How it works</h2>
-          <p>Three steps, no detours.</p>
-        </div>
-        <div class="how-steps">
-          <div class="step">
-            <span class="step-num">1</span>
-            <h3>Pick a city</h3>
-            <p>Select region and city - the background adapts.</p>
-          </div>
-          <div class="step">
-            <span class="step-num">2</span>
-            <h3>Set filters</h3>
-            <p>Percent or silver - you decide what to see.</p>
-          </div>
-          <div class="step">
-            <span class="step-num">3</span>
-            <h3>Take the deal</h3>
-            <p>See top items, trade, and take profit.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="guide" id="guide">
-        <div class="section-head">
-          <h2>Guide & features</h2>
-          <p>All details - compact and easy to scan.</p>
-        </div>
-        <div class="guide-layout">
-          <nav class="guide-nav" aria-label="Guide Navigation">
-            <a href="#guide-cards">Price cards</a>
-            <a href="#guide-search">Search bar</a>
-            <a href="#guide-profit">Profit filter</a>
-            <a href="#guide-city">Switch city</a>
-            <a href="#guide-silver">Silver filter</a>
-            <a href="#guide-chart">Chart</a>
-            <a href="#guide-update">Last update</a>
-            <a href="#guide-account">Account & avatar</a>
-            <a href="#guide-deals">Deals counter</a>
-          </nav>
-          <div class="guide-cards">
-            <article class="guide-card" id="guide-cards">
-              <div class="guide-text">
-                <h3>Reading price cards</h3>
-                <ul>
-                  <li>ID shows tier and enchant.</li>
-                  <li>Sold/day shows demand.</li>
-                  <li>Profit color gives a clear rating.</li>
-                </ul>
-              </div>
-              <img src="picture/Anzeige-preis.png" alt="Price card" />
-            </article>
-            <article class="guide-card" id="guide-search">
-              <div class="guide-text">
-                <h3>Search bar</h3>
-                <ul>
-                  <li>Start typing an item name to see suggestions.</li>
-                  <li>Pick a result to jump directly to that item.</li>
-                  <li>Search updates instantly with the active filters.</li>
-                </ul>
-              </div>
-              <img src="picture/Searchbar.png" alt="Search bar suggestions" />
-            </article>
-            <article class="guide-card" id="guide-profit">
-              <div class="guide-text">
-                <h3>Profit filter</h3>
-                <ul>
-                  <li>Set a minimum percent.</li>
-                  <li>Only relevant items remain visible.</li>
-                </ul>
-              </div>
-              <img src="picture/Filter-anwenden.png" alt="Profit filter" />
-            </article>
-            <article class="guide-card" id="guide-city">
-              <div class="guide-text">
-                <h3>Switch city</h3>
-                <ul>
-                  <li>City data updates instantly.</li>
-                  <li>Background and crest adapt.</li>
-                </ul>
-              </div>
-              <img src="picture/City-anpasssen.png" alt="City selection" />
-            </article>
-            <article class="guide-card" id="guide-silver">
-              <div class="guide-text">
-                <h3>Silver filter</h3>
-                <ul>
-                  <li>Switch from percent to silver.</li>
-                  <li>Sorted by highest gain.</li>
-                </ul>
-              </div>
-              <img src="picture/Silber-Filter.png" alt="Silver filter" />
-            </article>
-            <article class="guide-card" id="guide-chart">
-              <div class="guide-text">
-                <h3>Profit chart</h3>
-                <ul>
-                  <li>Shows the average profit over time.</li>
-                  <li>Change city or region and the chart updates.</li>
-                  <li>Use the range buttons to switch time windows.</li>
-                </ul>
-              </div>
-              <img src="picture/Statistic.png" alt="Profit chart" />
-            </article>
-            <article class="guide-card" id="guide-update">
-              <div class="guide-text">
-                <h3>Last update</h3>
-                <ul>
-                  <li>Daily refresh between 08:00-09:00 UTC.</li>
-                  <li>Time and date are visible.</li>
-                </ul>
-              </div>
-              <img src="picture/Aktualisierung.png" alt="Last update" />
-            </article>
-            <article class="guide-card" id="guide-account">
-              <div class="guide-text">
-                <h3>Account & avatar</h3>
-                <ul>
-                  <li>Account panel via avatar.</li>
-                  <li>Change image, logout, password reset.</li>
-                </ul>
-              </div>
-              <img src="picture/Carleon.png" alt="Account panel" />
-            </article>
-            <article class="guide-card" id="guide-deals">
-              <div class="guide-text">
-                <h3>Deals counter</h3>
-                <ul>
-                  <li>Shows the current number of deals.</li>
-                  <li>Adapts to filters and city.</li>
-                </ul>
-              </div>
-              <img src="picture/Deals.bild.png" alt="Deals counter" />
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="why" id="why">
-        <div class="section-head">
-          <h2>Why this tool?</h2>
-          <p>Less chaos, clearer decisions.</p>
-        </div>
-        <div class="why-grid">
-          <div class="card">
-            <h3>Less manual work</h3>
-            <p>No constant price checks in every city.</p>
-          </div>
-          <div class="card">
-            <h3>Fewer bad buys</h3>
-            <p>Profits visible before you buy.</p>
-          </div>
-          <div class="card">
-            <h3>More clarity</h3>
-            <p>Everything you need in one dashboard.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="faq" id="faq">
-        <div class="section-head">
-          <h2>FAQ</h2>
-          <p>The most important questions, answered briefly.</p>
-        </div>
-        <div class="faq-list">
-          <details>
-            <summary>How often is data updated?</summary>
-            <p>Data is refreshed daily between 08:00-09:00 UTC.</p>
-          </details>
-          <details>
-            <summary>Which regions are available?</summary>
-            <p>America and Europe. You choose the region after login.</p>
-          </details>
-          <details>
-            <summary>Is this official from Sandbox Interactive?</summary>
-            <p>No. This is community-built and uses the Albion Online Data API.</p>
-          </details>
-          <details>
-            <summary>Why do prices differ?</summary>
-            <p>The API provides city prices and black market data that changes constantly.</p>
-          </details>
-          <details>
-            <summary>Do I need an account?</summary>
-            <p>Yes, login is required to keep region and account features saved.</p>
-          </details>
-        </div>
-      </section>
+    <nav class="premium-nav">
+      <div class="nav-brand">
+        <span class="material-symbols-outlined">terminal</span>
+        <span class="brand-title">RomulusKings <span>Market Reader</span></span>
       </div>
+      <div class="nav-links">
+        <a href="#platform-overview">Features</a>
+        <a href="/Blackmarket-Crafter/index.html">How it works</a>
+        <a href="#dashboard-views">Screens</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a class="nav-access" href="/dashboard.html">Open Dashboard</a>
+    </nav>
+
+    <section class="hero nebula-bg">
+      <div class="eclipse-glow"></div>
+      <div class="hero-content">
+        <div class="hero-kicker">Blackmarket Protocol v4.0</div>
+        <h1>
+          ANALYZE FIRST.<br />
+          <span>PROFIT ALWAYS.</span>
+        </h1>
+        <div class="hero-actions">
+          <a class="hero-cta" href="/dashboard.html">Open Dashboard</a>
+          <p>
+            Zero latency market telemetry for high-volume stakeholders.
+          </p>
+        </div>
+      </div>
+      <div class="hero-footer">
+        <div class="hero-line"></div>
+        <span>Institutional Grade Hardware Required</span>
+      </div>
+    </section>
+
+    <main class="deep-black">
+      <section class="section" id="platform-overview">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-eyebrow">Core Infrastructure</span>
+            <h2>Platform Overview</h2>
+          </div>
+          <div class="perspective-mockup mockup-tilt" id="bmCrafterPreview">
+            <button class="mockup-zoom" type="button" aria-label="Zoom BM Crafter preview">
+              <img class="mockup-preview" src="/picture/bm-crafter-table.png" alt="BM Crafter preview" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section screens" id="dashboard-views">
+        <div class="container">
+          <div class="section-head">
+            <h2>Dashboard views</h2>
+            <p>Two views for percent and silver profit.</p>
+          </div>
+          <div class="screens-grid">
+            <figure class="screen-card">
+              <img class="zoomable" src="/picture/Silver-dashboard.png" alt="Dashboard silver profit" />
+              <figcaption>Dashboard Silver Profit</figcaption>
+            </figure>
+            <figure class="screen-card offset">
+              <img class="zoomable" src="/picture/Profit-Dashboard.png" alt="Dashboard percent profit" />
+              <figcaption>Dashboard % Profit</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section premium-plus-section" id="bm-crafter-access">
+        <div class="container">
+          <div class="premium-carousel-head">
+            <span class="section-eyebrow">Premium+ Institutional</span>
+            <h2>BM Crafter Access</h2>
+          </div>
+          <div class="premium-carousel carousel-perspective" data-carousel>
+            <button class="carousel-nav prev" type="button" aria-label="Previous">
+              <span class="material-symbols-outlined">arrow_back_ios_new</span>
+            </button>
+            <button class="carousel-nav next" type="button" aria-label="Next">
+              <span class="material-symbols-outlined">arrow_forward_ios</span>
+            </button>
+            <div class="carousel-stage">
+              <article class="tool-card active" data-index="0">
+                <div class="tool-header">
+                  <span class="tool-kicker">Black Market Crafter</span>
+                </div>
+                <div class="tool-media">
+                  <img class="zoomable" src="/picture/bm-crafter-table.png" alt="BM Crafter preview" />
+                </div>
+                <a class="tool-cta" href="/Blackmarket-Crafter/index.html">
+                  Open BM Crafter
+                </a>
+              </article>
+              <article class="tool-card side-right" data-index="1">
+                <div class="tool-header">
+                  <span class="tool-kicker">Crafting Calculator</span>
+                  <span class="tool-badge muted">Coming Soon</span>
+                </div>
+                <div class="tool-placeholder">
+                  <span>Coming Soon</span>
+                </div>
+              </article>
+              <article class="tool-card side-left" data-index="2">
+                <div class="tool-header">
+                  <span class="tool-kicker">Refining Calculator</span>
+                  <span class="tool-badge muted">Coming Soon</span>
+                </div>
+                <div class="tool-placeholder">
+                  <span>Coming Soon</span>
+                </div>
+              </article>
+            </div>
+            <div class="carousel-progress" aria-hidden="true">
+              <span class="progress-fill"></span>
+            </div>
+            <div class="carousel-dots" aria-hidden="true">
+              <span class="active"></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="carousel-cta-row">
+              <a class="premium-plus-cta" href="/Blackmarket-Crafter/index.html">
+                Open BM Crafter
+              </a>
+              <span class="carousel-note">RomulusKings BM-Crafter</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section feature-section">
+        <div class="container">
+          <div class="section-head">
+           
+          </div>
+          <div class="feature-cards">
+            <article class="feature-card">
+              <div class="feature-head">
+                <span>01</span>
+                <h3>Dashboard Views</h3>
+              </div>
+              <p>
+                Two live views for percent and silver profit. Scan faster, compare cities, and spot flips in seconds with clear, clean cards.
+              </p>
+              <ul>
+                <li>Percent + silver modes</li>
+                <li>City + region filters</li>
+                <li>Instant sorting by profit</li>
+              </ul>
+            </article>
+            <article class="feature-card">
+              <div class="feature-head">
+                <span>02</span>
+                <h3>BM Crafter</h3>
+              </div>
+              <p>
+                Live Black Market pricing, Sold/Day velocity, and full craft cost with materials + artifacts. Only profitable items surface.
+              </p>
+              <ul>
+                <li>Tier + enchant filters</li>
+                <li>Profit % + daily potential</li>
+                <li>Materials + artifact prices</li>
+              </ul>
+            </article>
+            <article class="feature-card">
+              <div class="feature-head">
+                <span>03</span>
+                <h3>Coming Soon</h3>
+              </div>
+              <p>
+                Next tools are already in the pipeline. Crafting Calculator, Refining Calculator, and more premium workflows are on the way.
+              </p>
+              <ul>
+                <li>Crafting Calculator</li>
+                <li>Refining Calculator</li>
+                <li>Mystery tool drop</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section join-section">
+        <div class="container">
+          <div class="join">
+            <h2>Join the <br /><span>Discord</span></h2>
+            <div class="join-body">
+              <a class="join-cta" href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener">
+                <div>
+                  <span>Initialize Connection</span>
+                  <span>Discord Verified Access</span>
+                </div>
+              </a>
+              <div class="join-divider"></div>
+              <div class="join-copy">
+                <div>See updates</div>
+                <strong>Support</strong>
+                <span>Ticketing System</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section faq-section" id="faq">
+        <div class="container">
+          <div class="section-head faq-head">
+            <h2>FAQ</h2>
+            <p>The most important questions, answered briefly.</p>
+          </div>
+          <div class="faq-list">
+            <details>
+              <summary>How often is data updated?</summary>
+              <p>Data is refreshed daily between 08:00-09:00 UTC.</p>
+            </details>
+            <details>
+              <summary>Which regions are available?</summary>
+              <p>America and Europe. You choose the region after login.</p>
+            </details>
+            <details>
+              <summary>Is this official from Sandbox Interactive?</summary>
+              <p>No. This is community-built and uses the Albion Online Data API.</p>
+            </details>
+            <details>
+              <summary>Why do prices differ?</summary>
+              <p>The API provides city prices and black market data that changes constantly.</p>
+            </details>
+            <details>
+              <summary>Do I need an account?</summary>
+              <p>Yes, login is required to keep region and account features saved.</p>
+            </details>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <footer class="footer">
-      <span>Albion Profit Radar - Built for traders</span>
-      <span>2025 - API compliant - Client-side only</span>
-      <span>Disclaimer: This project is a fan-made tool and is not affiliated with, endorsed by, or sponsored by Sandbox Interactive GmbH or Albion Online.</span>
-      <span>This site uses Database for authentication and may process user data such as email addresses for login purposes. No personal data is sold or shared with third parties.</span>
+    <footer class="premium-footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="footer-brand">
+            <span class="material-symbols-outlined">terminal</span>
+            <span>Elite <span>Crafter</span></span>
+          </div>
+          <p>
+            Institutional Trading Suite <br />
+            All Rights Reserved // 2024
+          </p>
+        </div>
+        <div class="footer-columns">
+          <div>
+            <div class="footer-title">Network</div>
+          </div>
+          <div>
+            <div class="footer-title">Legal</div>
+            <a href="/legal/index.html#terms">Terms</a>
+            <a href="/legal/index.html#privacy">Privacy</a>
+          </div>
+          <div>
+            <div class="footer-title">Social</div>
+            <a href="#">Discord</a>
+          </div>
+        </div>
+        <div class="footer-disclaimer">
+          <span>Disclaimer: This project is a fan-made tool and is not affiliated with, endorsed by, or sponsored by Sandbox Interactive GmbH or Albion Online.</span>
+          <span>This site uses Database for authentication and may process user data such as email addresses for login purposes. No personal data is sold or shared with third parties.</span>
+        </div>
+      </div>
     </footer>
-
-    <div class="lightbox" id="lightbox" aria-hidden="true">
-      <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
-      <img id="lightboxImg" alt="Preview" />
+    <a class="community-tile" href="/community/index.html" aria-label="Join the community">
+      <span class="tile-title">
+        <svg class="tile-icon" viewBox="0 0 256 199" aria-hidden="true" focusable="false">
+          <path d="M216.9 16.5A208.5 208.5 0 0 0 164.6 0c-2.3 4-4.9 9.2-6.7 13.4-19.2-2.9-38.1-2.9-57.1 0-1.8-4.2-4.5-9.4-6.8-13.4a209.3 209.3 0 0 0-52.4 16.5C6.6 68.4-3.1 119.4 1.8 169.8a210.1 210.1 0 0 0 63.9 32.7c5.2-7.1 9.8-14.6 13.5-22.7-7.4-2.8-14.5-6.2-21.2-10.2 1.8-1.3 3.5-2.6 5.1-4 40.9 19.1 85.1 19.1 125.5 0 1.7 1.4 3.4 2.7 5.1 4-6.7 4-13.8 7.4-21.2 10.2 3.7 8.1 8.3 15.6 13.5 22.7a210.2 210.2 0 0 0 63.9-32.7c5.8-57.9-9.7-108.4-44.8-153.3ZM85 135.3c-12.5 0-22.7-11.4-22.7-25.4S72.5 84.5 85 84.5s22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Zm86 0c-12.5 0-22.7-11.4-22.7-25.4s10.1-25.4 22.7-25.4 22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Z"/>
+        </svg>
+        Join the Community
+      </span>
+      <span class="tile-subtitle">Discord, deals, live flips</span>
+      <span class="tile-cta">Open Community</span>
+    </a>
+    <div class="zoom-modal" id="bmCrafterZoom" aria-hidden="true" style="display:none;">
+      <div class="zoom-card">
+        <button class="zoom-close" type="button" aria-label="Close">X</button>
+        <img src="/picture/bm-crafter-table.png" alt="BM Crafter preview large" />
+      </div>
     </div>
-
     <script>
-      (function setupLightbox() {
-        const lb = document.getElementById("lightbox");
-        const lbImg = document.getElementById("lightboxImg");
-        const lbBg = document.getElementById("lightboxBackdrop");
-        if (!lb || !lbImg || !lbBg) return;
-
-        const open = (src, alt) => {
-          lbImg.src = src;
-          lbImg.alt = alt || "Preview";
-          lb.setAttribute("aria-hidden", "false");
-          lb.style.display = "flex";
+      const tiltCard = document.getElementById("bmCrafterPreview");
+      if (tiltCard) {
+        const resetTilt = () => {
+          tiltCard.style.transform = "perspective(1200px) rotateX(15deg) rotateY(-10deg) scale(1)";
         };
-        const close = () => {
-          lb.setAttribute("aria-hidden", "true");
-          lb.style.display = "none";
-          lbImg.src = "";
+        resetTilt();
+        tiltCard.addEventListener("mousemove", (event) => {
+          const rect = tiltCard.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width - 0.5;
+          const y = (event.clientY - rect.top) / rect.height - 0.5;
+          const rotateX = 12 - y * 8;
+          const rotateY = -10 + x * 8;
+          tiltCard.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        });
+        tiltCard.addEventListener("mouseleave", resetTilt);
+      }
+      const zoomTrigger = document.querySelector(".mockup-zoom");
+      const zoomModal = document.getElementById("bmCrafterZoom");
+      const zoomClose = zoomModal ? zoomModal.querySelector(".zoom-close") : null;
+      const zoomImage = zoomModal ? zoomModal.querySelector("img") : null;
+      if (zoomTrigger && zoomModal) {
+        const openZoom = () => {
+          zoomModal.style.display = "flex";
+          zoomModal.setAttribute("aria-hidden", "false");
         };
-
+        const closeZoom = () => {
+          zoomModal.style.display = "none";
+          zoomModal.setAttribute("aria-hidden", "true");
+        };
+        zoomTrigger.addEventListener("click", () => {
+          const preview = zoomTrigger.querySelector("img");
+          if (preview && zoomImage) zoomImage.src = preview.src;
+          openZoom();
+        });
+        if (zoomClose) zoomClose.addEventListener("click", closeZoom);
+        zoomModal.addEventListener("click", (event) => {
+          if (event.target === zoomModal) closeZoom();
+        });
         document.querySelectorAll(".zoomable").forEach((img) => {
-          img.style.cursor = "zoom-in";
-          img.addEventListener("click", () => open(img.src, img.alt));
+          img.addEventListener("click", () => {
+            if (zoomImage) zoomImage.src = img.src;
+            openZoom();
+          });
         });
-        lbBg.addEventListener("click", close);
-        lb.addEventListener("click", (e) => { if (e.target === lb) close(); });
-        document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
-      })();
-    </script>
-    <script>
-      (function setupMobileMenu() {
-        const body = document.body;
-        const toggle = document.querySelector(".menu-toggle");
-        const menu = document.getElementById("mobileMenu");
-        if (!toggle || !menu) return;
+      }
 
-        const close = () => {
-          body.classList.remove("menu-open");
-          toggle.setAttribute("aria-expanded", "false");
-          menu.setAttribute("aria-hidden", "true");
+      const carousel = document.querySelector("[data-carousel]");
+      if (carousel) {
+        const cards = Array.from(carousel.querySelectorAll(".tool-card"));
+        const dots = Array.from(carousel.querySelectorAll(".carousel-dots span"));
+        const progress = carousel.querySelector(".progress-fill");
+        const prevBtn = carousel.querySelector(".carousel-nav.prev");
+        const nextBtn = carousel.querySelector(".carousel-nav.next");
+        let activeIndex = 0;
+        let timer = null;
+        const durationMs = 6000;
+
+        const applyState = () => {
+          cards.forEach((card) => card.classList.remove("active", "side-left", "side-right"));
+          const leftIndex = (activeIndex - 1 + cards.length) % cards.length;
+          const rightIndex = (activeIndex + 1) % cards.length;
+          cards[activeIndex].classList.add("active");
+          cards[leftIndex].classList.add("side-left");
+          cards[rightIndex].classList.add("side-right");
+          dots.forEach((dot, index) => dot.classList.toggle("active", index === activeIndex));
+          if (progress) {
+            progress.style.animation = "none";
+            void progress.offsetHeight;
+            progress.style.animation = `progress-fill ${durationMs}ms linear`;
+          }
         };
 
-        toggle.addEventListener("click", () => {
-          const isOpen = body.classList.toggle("menu-open");
-          toggle.setAttribute("aria-expanded", String(isOpen));
-          menu.setAttribute("aria-hidden", String(!isOpen));
-        });
+        const next = () => {
+          activeIndex = (activeIndex + 1) % cards.length;
+          applyState();
+        };
 
-        menu.addEventListener("click", (e) => {
-          if (e.target.matches("[data-menu-close]")) close();
-          if (e.target.closest("a")) close();
-        });
+        const prev = () => {
+          activeIndex = (activeIndex - 1 + cards.length) % cards.length;
+          applyState();
+        };
 
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") close();
+        const schedule = () => {
+          if (timer) return;
+          timer = setTimeout(() => {
+            next();
+            timer = null;
+            schedule();
+          }, durationMs);
+          if (progress) progress.style.animationPlayState = "running";
+        };
+
+        const stop = () => {
+          if (!timer) return;
+          clearTimeout(timer);
+          timer = null;
+          if (progress) progress.style.animationPlayState = "paused";
+        };
+
+        if (prevBtn) prevBtn.addEventListener("click", () => {
+          prev();
+          stop();
+          schedule();
         });
-      })();
+        if (nextBtn) nextBtn.addEventListener("click", () => {
+          next();
+          stop();
+          schedule();
+        });
+        carousel.addEventListener("mouseenter", stop);
+        carousel.addEventListener("mouseleave", schedule);
+        applyState();
+        schedule();
+      }
     </script>
-
-    <script defer src="/_vercel/insights/script.js"></script>
-    <script defer src="/_vercel/speed-insights/script.js"></script>
   </body>
 </html>

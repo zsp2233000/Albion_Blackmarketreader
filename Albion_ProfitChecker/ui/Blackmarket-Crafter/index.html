@@ -4,7 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blackmarket Crafter Dashboard</title>
-    <link rel="stylesheet" href="/premium-plus/premium-features/Blackmarket-Crafter/blackmarket-crafter.css" />
+    <link rel="stylesheet" href="/Blackmarket-Crafter/blackmarket-crafter.css" />
+    <link rel="stylesheet" href="/account-section/account.css" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link
@@ -41,7 +42,7 @@
           <a class="pill" href="#">Leaderboards</a>
         </div>
         <div class="bm-meta">
-          <a class="bm-link" href="/premium-plus/index.html">Premium+</a>
+          <a class="bm-link" href="/index.html">Home</a>
           <button class="bm-pill" id="regionToggle" type="button">
             <span class="material-symbols-outlined">language</span>
             Region: <span id="regionLabel">EU</span>
@@ -49,6 +50,11 @@
           <div class="bm-status">
             <span class="pulse"></span>
             Last updated: <span id="lastUpdated">--:--</span>
+          </div>
+          <div class="account-wrap">
+            <button id="accountBtn" class="account-btn" aria-label="Account">
+              <img id="avatarIcon" src="/picture/accountsymbol.png" alt="Avatar" />
+            </button>
           </div>
         </div>
       </div>
@@ -218,6 +224,19 @@
       <p>Blackmarket Crafter (c) 2024 - Professional High-Density Analytics</p>
     </footer>
 
-    <script defer src="/premium-plus/premium-features/Blackmarket-Crafter/blackmarket-crafter.js"></script>
+    <div id="accountMount"></div>
+
+    <script src="/env.js"></script>
+    <script type="module" defer>
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      const SUPABASE_URL = window.env?.SUPABASE_URL;
+      const SUPABASE_ANON_KEY = window.env?.SUPABASE_ANON_KEY;
+
+      if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    </script>
+    <script defer src="/Blackmarket-Crafter/blackmarket-crafter.js"></script>
   </body>
 </html>

@@ -53,7 +53,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs = require('fs');
-          const dir = 'premium-plus/premium-features/Blackmarket-Crafter/data';
+          const dir = 'Blackmarket-Crafter/data';
           fs.mkdirSync(dir, { recursive: true });
 
           const read = (p) => {
@@ -112,8 +112,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/results-eu.js Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/bm-crafter-us.json Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/bm-crafter-eu.json)" ]; then
-            git add Albion_ProfitChecker/ui/results-eu.js Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/bm-crafter-us.json Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/bm-crafter-eu.json
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/results-eu.js Albion_ProfitChecker/ui/Blackmarket-Crafter/data/bm-crafter-us.json Albion_ProfitChecker/ui/Blackmarket-Crafter/data/bm-crafter-eu.json)" ]; then
+            git add Albion_ProfitChecker/ui/results-eu.js Albion_ProfitChecker/ui/Blackmarket-Crafter/data/bm-crafter-us.json Albion_ProfitChecker/ui/Blackmarket-Crafter/data/bm-crafter-eu.json
             git commit -m "chore: merge results EU + bm crafter data"
           else
             echo "Keine Aenderungen in results-eu.js"

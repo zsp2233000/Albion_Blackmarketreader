@@ -467,13 +467,41 @@ body {
     color: rgba(255,255,255,0.35);
     font-weight: 800;
   }
-  .side-card-title {
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-weight: 800;
-    color: #ffffff;
-  }
+.side-card-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  color: #ffffff;
+}
+.premium-badge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(125, 211, 255, 0.4);
+  background: rgba(125, 211, 255, 0.12);
+  color: #cfeaff;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+.premium-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5cf0c8;
+  box-shadow: 0 0 10px rgba(92, 240, 200, 0.8);
+  animation: premiumPulse 1.6s ease-in-out infinite;
+}
+@keyframes premiumPulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.5); opacity: 0.6; }
+}
 .premium-panel {
   gap: 16px;
 }
@@ -1391,6 +1419,80 @@ body.panel-open::before {
 @media (max-width: 420px) {
   .topbar-title { display: none; }
   .filters button { width: 100%; }
+}
+
+/* ===== Extra Mobile Polish ===== */
+@media (max-width: 720px) {
+  .topbar {
+    gap: 8px;
+    padding: 12px;
+  }
+  .topbar-search input {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .topbar-right {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .topbar-meta {
+    font-size: 11px;
+  }
+  .chart-panel {
+    padding: 14px;
+  }
+  .profit-chart {
+    height: 160px;
+  }
+  .kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .filters-wrap {
+    padding: 10px;
+  }
+  .filters {
+    gap: 8px;
+  }
+  .filters input,
+  .filters select {
+    width: 96px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .community-tile {
+    position: static;
+    margin: 20px auto 0;
+    width: calc(100% - 28px);
+    max-width: 320px;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar-nav {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .kpi-row {
+    grid-template-columns: 1fr;
+  }
+  .kpi-card {
+    padding: 18px 20px;
+  }
+  .filters-bar {
+    gap: 8px;
+  }
+  .filters button {
+    width: 100%;
+  }
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }
 
 /* Dashboard overrides: wider cards + compact city panel */

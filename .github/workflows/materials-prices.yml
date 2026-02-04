@@ -29,7 +29,7 @@ jobs:
           const chunkSize = 50;
           const historyChunkSize = 20;
           const delayMs = 1500;
-          const outputDir = path.join("premium-plus", "premium-features", "Blackmarket-Crafter", "data");
+          const outputDir = path.join("Blackmarket-Crafter", "data");
 
           const regions = [
             { key: "eu", host: "https://europe.albion-online-data.com/api/v2/stats" },
@@ -172,8 +172,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/materials-eu.json Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/materials-us.json)" ]; then
-            git add Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/materials-eu.json Albion_ProfitChecker/ui/premium-plus/premium-features/Blackmarket-Crafter/data/materials-us.json
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/Blackmarket-Crafter/data/materials-eu.json Albion_ProfitChecker/ui/Blackmarket-Crafter/data/materials-us.json)" ]; then
+            git add Albion_ProfitChecker/ui/Blackmarket-Crafter/data/materials-eu.json Albion_ProfitChecker/ui/Blackmarket-Crafter/data/materials-us.json
             git commit -m "chore: update material prices (eu/us)"
           else
             echo "No material price changes"

@@ -24,6 +24,9 @@
   const artefactName = document.getElementById("artefactName");
   const artefactQty = document.getElementById("artefactQty");
   const artefactPrice = document.getElementById("artefactPrice");
+  const accountBtn = document.getElementById("accountBtn");
+  const accountMount = document.getElementById("accountMount");
+  const avatarIcon = document.getElementById("avatarIcon");
   if (!regionToggle || !regionLabel || !lastUpdated || !tableBody || !tableSummary || !tierFilter || !enchantFilter || !soldRange || !soldValue || !returnRateInput || !returnRateValue || !itemSearch) return;
 
   let currentRegion = "eu";
@@ -40,6 +43,15 @@
   let filteredItems = [];
   let visibleCount = 0;
   const batchSize = 60;
+  const avatarFallback = "/picture/accountsymbol.png";
+  let accountPanel = null;
+  let accountClose = null;
+  let accountEmail = null;
+  let profileAvatar = null;
+  let regionSelectAccount = null;
+  let resetPwBtn = null;
+  let logoutBtn = null;
+  let accountHandlersBound = false;
 
   const nameMap = {
     "OFF_SHIELD": "Beginner's Shield",
@@ -820,8 +832,8 @@
 
   async function loadMaterials(region) {
     const dataPath = region === "us"
-      ? "/premium-plus/premium-features/Blackmarket-Crafter/data/materials-us.json"
-      : "/premium-plus/premium-features/Blackmarket-Crafter/data/materials-eu.json";
+      ? "/Blackmarket-Crafter/data/materials-us.json"
+      : "/Blackmarket-Crafter/data/materials-eu.json";
     const relativePath = region === "us"
       ? "./data/materials-us.json"
       : "./data/materials-eu.json";
@@ -829,8 +841,8 @@
       ? buildLocalUrl("data/materials-us.json")
       : buildLocalUrl("data/materials-eu.json");
     const legacyPath = region === "us"
-      ? "/premium-plus/premium-features/Blackmarket-Crafter/materials-us.json"
-      : "/premium-plus/premium-features/Blackmarket-Crafter/materials-eu.json";
+      ? "/Blackmarket-Crafter/materials-us.json"
+      : "/Blackmarket-Crafter/materials-eu.json";
     try {
       const payload = await fetchJsonWithFallback([dataPath, localPath, relativePath, legacyPath]);
       if (!payload) throw new Error("materials load failed");
@@ -855,8 +867,8 @@
 
   async function loadArtefacts(region) {
     const dataPath = region === "us"
-      ? "/premium-plus/premium-features/Blackmarket-Crafter/data/artefacts-us.json"
-      : "/premium-plus/premium-features/Blackmarket-Crafter/data/artefacts-eu.json";
+      ? "/Blackmarket-Crafter/data/artefacts-us.json"
+      : "/Blackmarket-Crafter/data/artefacts-eu.json";
     const relativePath = region === "us"
       ? "./data/artefacts-us.json"
       : "./data/artefacts-eu.json";
@@ -886,7 +898,7 @@
   }
 
   async function loadRecipes() {
-    const file = "/premium-plus/premium-features/Blackmarket-Crafter/items-categorized-crafting.json";
+    const file = "/Blackmarket-Crafter/items-categorized-crafting.json";
     const relativeFile = "./items-categorized-crafting.json";
     const localFile = buildLocalUrl("items-categorized-crafting.json");
     try {
@@ -906,12 +918,184 @@
     }
   }
 
+  function getStoredRegion() {
+    const stored = (localStorage.getItem("region") || "").toLowerCase();
+    return stored === "us" || stored === "eu" ? stored : null;
+  }
+
+  function sanitizeAvatarUrl(value, fallback = avatarFallback) {
+    if (!value) return fallback;
+    const trimmed = String(value).trim();
+    if (!trimmed) return fallback;
+    const lower = trimmed.toLowerCase();
+    if (lower.startsWith("javascript:") || lower.startsWith("data:") || lower.startsWith("file:")) {
+      return fallback;
+    }
+    try {
+      const url = new URL(trimmed, window.location.origin);
+      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "blob:") {
+        return url.href;
+      }
+    } catch (_) {
+      return fallback;
+    }
+    return fallback;
+  }
+
+  async function loadAccountPanel() {
+    if (!accountMount) return;
+    if (!accountPanel) {
+      const res = await fetch(`/account-section/account.html?v=${Date.now()}`);
+      if (!res.ok) return;
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      accountMount.replaceChildren(...doc.body.childNodes);
+      accountPanel = document.getElementById("accountPanel");
+      accountClose = document.getElementById("accountClose");
+      accountEmail = document.getElementById("accountEmail");
+      profileAvatar = document.getElementById("profileAvatar");
+      regionSelectAccount = document.getElementById("regionSelectAccount");
+      resetPwBtn = document.getElementById("resetPw");
+      logoutBtn = document.getElementById("logout");
+    }
+    if (regionSelectAccount) {
+      regionSelectAccount.value = currentRegion;
+    }
+  }
+
+  function bindAccountHandlers() {
+    if (accountHandlersBound || !accountPanel) return;
+    accountHandlersBound = true;
+    if (accountBtn) {
+      accountBtn.onclick = () => {
+        accountPanel.classList.add("open");
+        document.body.classList.add("panel-open");
+      };
+    }
+    if (accountClose) {
+      accountClose.onclick = () => {
+        accountPanel.classList.remove("open");
+        document.body.classList.remove("panel-open");
+      };
+    }
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        accountPanel.classList.remove("open");
+        document.body.classList.remove("panel-open");
+      }
+    });
+    document.addEventListener("click", (event) => {
+      if (!accountPanel.contains(event.target) && !accountBtn?.contains(event.target)) {
+        accountPanel.classList.remove("open");
+        document.body.classList.remove("panel-open");
+      }
+    });
+    if (regionSelectAccount) {
+      regionSelectAccount.onchange = (event) => {
+        loadRegion(event.target.value);
+      };
+    }
+    if (resetPwBtn && window.supabase?.auth?.resetPasswordForEmail) {
+      resetPwBtn.onclick = async () => {
+        if (!accountEmail) return;
+        const email = accountEmail.textContent?.trim();
+        if (!email || email === "-") return;
+        try {
+          await window.supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/dashboard.html`
+          });
+          resetPwBtn.textContent = "Email sent";
+          setTimeout(() => { resetPwBtn.textContent = "Change password"; }, 3000);
+        } catch (_) {
+          // ignore
+        }
+      };
+    }
+    if (logoutBtn && window.supabase?.auth?.signOut) {
+      logoutBtn.onclick = async () => {
+        try {
+          await window.supabase.auth.signOut();
+          window.location.href = "/dashboard.html";
+        } catch (_) {
+          window.location.href = "/dashboard.html";
+        }
+      };
+    }
+    accountPanel.querySelectorAll(".avatar-grid img").forEach((img) => {
+      img.addEventListener("click", async () => {
+        const next = sanitizeAvatarUrl(img.getAttribute("data-avatar"));
+        if (avatarIcon) avatarIcon.src = next;
+        if (profileAvatar) profileAvatar.src = next;
+        localStorage.setItem("avatar", next);
+        broadcastAvatar(next);
+        if (window.supabase?.auth?.updateUser) {
+          try {
+            await window.supabase.auth.updateUser({ data: { avatar: next } });
+          } catch (_) {
+            // ignore profile save errors
+          }
+        }
+      });
+    });
+  }
+
+  async function loadAccountProfile() {
+    const cachedAvatar = localStorage.getItem("avatar");
+    if (cachedAvatar) {
+      const safeCached = sanitizeAvatarUrl(cachedAvatar || avatarFallback);
+      if (avatarIcon) avatarIcon.src = safeCached;
+      if (profileAvatar) profileAvatar.src = safeCached;
+    }
+    if (!window.supabase?.auth?.getUser) return;
+    try {
+      const { data } = await window.supabase.auth.getUser();
+      const avatar = sanitizeAvatarUrl(data?.user?.user_metadata?.avatar || avatarFallback);
+      localStorage.setItem("avatar", avatar);
+      if (avatarIcon) avatarIcon.src = avatar;
+      if (profileAvatar) profileAvatar.src = avatar;
+      if (accountEmail) accountEmail.textContent = data?.user?.email || "-";
+    } catch (_) {
+      // ignore profile load errors
+    }
+  }
+
+  const regionChannel = ("BroadcastChannel" in window)
+    ? new BroadcastChannel("rk-region-sync")
+    : null;
+  const profileChannel = ("BroadcastChannel" in window)
+    ? new BroadcastChannel("rk-profile-sync")
+    : null;
+  let suppressBroadcast = false;
+  let suppressAvatarBroadcast = false;
+
+  function broadcastRegion(region) {
+    if (!regionChannel || suppressBroadcast) return;
+    regionChannel.postMessage({ type: "region", value: region });
+  }
+  function broadcastAvatar(avatar) {
+    if (!profileChannel || suppressAvatarBroadcast) return;
+    profileChannel.postMessage({ type: "avatar", value: avatar });
+  }
+
+  async function saveRegionToProfile() {
+    if (!window.supabase?.auth?.getUser) return;
+    try {
+      const { data } = await window.supabase.auth.getUser();
+      if (!data?.user) return;
+      await window.supabase.auth.updateUser({ data: { region: currentRegion } });
+    } catch (_) {
+      // ignore profile save errors
+    }
+  }
+
   async function loadRegion(region) {
     currentRegion = region === "us" ? "us" : "eu";
+    localStorage.setItem("region", currentRegion);
     regionLabel.textContent = currentRegion.toUpperCase();
+    if (regionSelectAccount) regionSelectAccount.value = currentRegion;
     const dataPath = currentRegion === "us"
-      ? "/premium-plus/premium-features/Blackmarket-Crafter/data/bm-crafter-us.json"
-      : "/premium-plus/premium-features/Blackmarket-Crafter/data/bm-crafter-eu.json";
+      ? "/Blackmarket-Crafter/data/bm-crafter-us.json"
+      : "/Blackmarket-Crafter/data/bm-crafter-eu.json";
     const relativePath = currentRegion === "us"
       ? "./data/bm-crafter-us.json"
       : "./data/bm-crafter-eu.json";
@@ -919,8 +1103,8 @@
       ? buildLocalUrl("data/bm-crafter-us.json")
       : buildLocalUrl("data/bm-crafter-eu.json");
     const legacyPath = currentRegion === "us"
-      ? "/premium-plus/premium-features/Blackmarket-Crafter/bm-crafter-us.json"
-      : "/premium-plus/premium-features/Blackmarket-Crafter/bm-crafter-eu.json";
+      ? "/Blackmarket-Crafter/bm-crafter-us.json"
+      : "/Blackmarket-Crafter/bm-crafter-eu.json";
     try {
       const payload = await fetchJsonWithFallback([dataPath, localPath, relativePath, legacyPath]);
       if (!payload) throw new Error("load failed");
@@ -946,6 +1130,10 @@
       await loadMaterials(currentRegion);
       await loadArtefacts(currentRegion);
       applyFilters();
+      if (!suppressBroadcast) {
+        await saveRegionToProfile();
+      }
+      broadcastRegion(currentRegion);
     } catch (_) {
       renderEmpty();
     }
@@ -1039,6 +1227,75 @@
   updateSlider();
   updateReturnRate();
   renderEmpty();
-  loadRegion(currentRegion);
+  loadAccountPanel()
+    .then(() => {
+      bindAccountHandlers();
+      return loadAccountProfile();
+    })
+    .catch(() => {});
+  (async () => {
+    let storedRegion = getStoredRegion();
+    if (!storedRegion && window.supabase?.auth?.getUser) {
+      try {
+        const { data } = await window.supabase.auth.getUser();
+        const metaRegion = (data?.user?.user_metadata?.region || "").toLowerCase();
+        if (metaRegion === "us" || metaRegion === "eu") {
+          localStorage.setItem("region", metaRegion);
+          storedRegion = metaRegion;
+        }
+      } catch (_) {
+        // ignore metadata load errors
+      }
+    }
+    if (storedRegion) currentRegion = storedRegion;
+    await loadRegion(currentRegion);
+  })();
+
+  window.addEventListener("storage", (event) => {
+    if (event.key !== "region") return;
+    const next = (event.newValue || "").toLowerCase();
+    if (next !== "us" && next !== "eu") return;
+    if (next === currentRegion) return;
+    suppressBroadcast = true;
+    loadRegion(next).finally(() => {
+      suppressBroadcast = false;
+    });
+  });
+
+  if (regionChannel) {
+    regionChannel.onmessage = (event) => {
+      const next = (event.data && event.data.value) || "";
+      if (next !== "us" && next !== "eu") return;
+      if (next === currentRegion) return;
+      suppressBroadcast = true;
+      loadRegion(next).finally(() => {
+        suppressBroadcast = false;
+      });
+    };
+  }
+
+  if (profileChannel) {
+    profileChannel.onmessage = (event) => {
+      const next = (event.data && event.data.value) || "";
+      if (!next) return;
+      const safe = sanitizeAvatarUrl(next || avatarFallback);
+      suppressAvatarBroadcast = true;
+      localStorage.setItem("avatar", safe);
+      if (avatarIcon) avatarIcon.src = safe;
+      if (profileAvatar) profileAvatar.src = safe;
+      suppressAvatarBroadcast = false;
+    };
+  }
+
+  window.addEventListener("storage", (event) => {
+    if (event.key !== "avatar") return;
+    const next = event.newValue || "";
+    if (!next) return;
+    const safe = sanitizeAvatarUrl(next || avatarFallback);
+    suppressAvatarBroadcast = true;
+    if (avatarIcon) avatarIcon.src = safe;
+    if (profileAvatar) profileAvatar.src = safe;
+    suppressAvatarBroadcast = false;
+  });
 })();
 

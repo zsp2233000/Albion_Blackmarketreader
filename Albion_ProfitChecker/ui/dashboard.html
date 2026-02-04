@@ -114,7 +114,7 @@
       </div>
       <nav class="topbar-nav" aria-label="Primary">
         <a class="nav-link active" href="#cards">Markets</a>
-        <a class="nav-link" href="premium-plus/index.html" id="premiumLink">Premium+</a>
+        <a class="nav-link" href="index.html#bm-crafter-access" id="premiumLink">Premium+</a>
         <a class="nav-link" href="community/index.html">Community</a>
       </nav>
       <div class="topbar-right">
@@ -203,16 +203,19 @@
             <aside class="side-stack">
         <div class="side-card premium-panel">
           <div class="side-card-header">
-            <span class="side-card-icon">�Y�</span>
             <div class="side-card-copy">
               <span class="side-card-label">Premium Feature</span>
-              <span class="side-card-title">Pro Suite</span>
+              <span class="side-card-title">BM Crafter</span>
             </div>
+            <span class="premium-badge">
+              <span class="premium-dot" aria-hidden="true"></span>
+              New
+            </span>
           </div>
           <button class="premium-preview" type="button" id="premiumPreviewBtn" aria-label="Preview BM Crafter">
             <img src="picture/bm-crafter-table.png" alt="BM Crafter preview" />
           </button>
-          <a class="premium-button" href="premium-plus/index.html">Upgrade Now</a>
+          <a class="premium-button" href="index.html#bm-crafter-access">Upgrade Now</a>
         </div>
         <div class="side-card city-panel">
           <div class="side-card-header">
@@ -650,10 +653,17 @@
     ]);
 
     async function loadAvatar() {
+      const cachedAvatar = localStorage.getItem("avatar");
+      if (cachedAvatar) {
+        const safeCached = sanitizeAvatarUrl(cachedAvatar || "picture/accountsymbol.png");
+        if (avatarIcon) avatarIcon.src = safeCached;
+        if (profileAvatar) profileAvatar.src = safeCached;
+      }
       const { data } = await supabase.auth.getUser();
       if (!data?.user) return;
       const metaAvatar = data.user.user_metadata?.avatar || data.user.user_metadata?.avatar_url || data.user.user_metadata?.picture;
       const avatar = sanitizeAvatarUrl(metaAvatar || "picture/accountsymbol.png");
+      localStorage.setItem("avatar", avatar);
       if (accountEmail) accountEmail.textContent = data.user.email || "-";
       if (avatarIcon) avatarIcon.src = avatar;
       if (profileAvatar) profileAvatar.src = avatar;
@@ -729,6 +739,8 @@
           const { data } = await supabase.auth.getUser();
           if (!data?.user) return;
           await supabase.auth.updateUser({ data: { avatar } });
+          localStorage.setItem("avatar", avatar);
+          broadcastAvatar(avatar);
           if (avatarIcon) avatarIcon.src = avatar;
           if (profileAvatar) profileAvatar.src = avatar;
         });
@@ -1217,6 +1229,24 @@
       if (val) renderLastUpdated(val);
     }
 
+    const regionChannel = ("BroadcastChannel" in window)
+      ? new BroadcastChannel("rk-region-sync")
+      : null;
+    const profileChannel = ("BroadcastChannel" in window)
+      ? new BroadcastChannel("rk-profile-sync")
+      : null;
+    let isSyncingRegion = false;
+    let isSyncingAvatar = false;
+
+    function broadcastRegion(region) {
+      if (!regionChannel) return;
+      regionChannel.postMessage({ type: "region", value: region });
+    }
+    function broadcastAvatar(avatar) {
+      if (!profileChannel) return;
+      profileChannel.postMessage({ type: "avatar", value: avatar });
+    }
+
     function setRegion(region) {
       regionCurrent = region === "eu" ? "eu" : "us";
       localStorage.setItem("region", regionCurrent);
@@ -1234,7 +1264,7 @@
       }
     }
 
-    async function changeRegion(region) {
+    async function changeRegion(region, { broadcast = true } = {}) {
       loadingOverlay.style.display = "flex";
       setRegion(region);
       allData = [];
@@ -1246,6 +1276,7 @@
         const stamp = formatDate(new Date());
         setLastUpdated(stamp);
         render();
+        if (broadcast) broadcastRegion(regionCurrent);
       } catch (err) {
         console.error(err);
           showToast("Could not load data for the selected region.");
@@ -1278,7 +1309,8 @@
         authModal.style.display = "none";
         app.style.display = "block";
         if (accountEmail) accountEmail.textContent = user?.email || "-";
-          const savedRegion = user?.user_metadata?.region || localStorage.getItem("region");
+          const cachedRegion = localStorage.getItem("region");
+          const savedRegion = cachedRegion || user?.user_metadata?.region;
           if (!savedRegion) {
             regionModal.style.display = "flex";
             regionChoice.value = "us";
@@ -1504,6 +1536,55 @@
     }
 
     if (regionCurrent) setRegion(regionCurrent);
+
+    if (regionChannel) {
+      regionChannel.onmessage = (event) => {
+        const next = (event.data && event.data.value) || "";
+        if (next !== "us" && next !== "eu") return;
+        if (next === regionCurrent) return;
+        if (isSyncingRegion) return;
+        isSyncingRegion = true;
+        changeRegion(next, { broadcast: false }).finally(() => {
+          isSyncingRegion = false;
+        });
+      };
+    }
+    if (profileChannel) {
+      profileChannel.onmessage = (event) => {
+        const next = (event.data && event.data.value) || "";
+        if (!next) return;
+        if (isSyncingAvatar) return;
+        isSyncingAvatar = true;
+        const safe = sanitizeAvatarUrl(next || "picture/accountsymbol.png");
+        localStorage.setItem("avatar", safe);
+        if (avatarIcon) avatarIcon.src = safe;
+        if (profileAvatar) profileAvatar.src = safe;
+        isSyncingAvatar = false;
+      };
+    }
+
+    window.addEventListener("storage", (event) => {
+      if (event.key !== "region") return;
+      const next = (event.newValue || "").toLowerCase();
+      if (next !== "us" && next !== "eu") return;
+      if (next === regionCurrent) return;
+      if (isSyncingRegion) return;
+      isSyncingRegion = true;
+      changeRegion(next, { broadcast: false }).finally(() => {
+        isSyncingRegion = false;
+      });
+    });
+    window.addEventListener("storage", (event) => {
+      if (event.key !== "avatar") return;
+      const next = event.newValue || "";
+      if (!next) return;
+      if (isSyncingAvatar) return;
+      isSyncingAvatar = true;
+      const safe = sanitizeAvatarUrl(next || "picture/accountsymbol.png");
+      if (avatarIcon) avatarIcon.src = safe;
+      if (profileAvatar) profileAvatar.src = safe;
+      isSyncingAvatar = false;
+    });
 
     (async () => {
       await loadAccountPanel();
