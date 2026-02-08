@@ -1,0 +1,242 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blackmarket Crafter Dashboard</title>
+    <link rel="stylesheet" href="/Blackmarket-Crafter/blackmarket-crafter.css" />
+    <link rel="stylesheet" href="/account-section/account.css" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bm-crafter">
+    <div class="modal-overlay" id="regionConfirm" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="regionConfirmTitle">
+        <h3 id="regionConfirmTitle">Switch region?</h3>
+        <p>Do you really want to switch the region?</p>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn ghost" id="regionCancel">Cancel</button>
+          <button type="button" class="modal-btn primary" id="regionConfirmYes">Switch</button>
+        </div>
+      </div>
+    </div>
+    <header class="bm-header">
+      <div class="bm-header-row">
+        <a class="bm-brand" href="/dashboard">
+          <div class="bm-logo" aria-hidden="true">
+            <img src="/picture/testo%20ohne%20background.png" alt="" />
+          </div>
+          <h1>Blackmarket Crafter</h1>
+        </a>
+        <div class="bm-nav">
+          <a class="pill active" href="#">Dashboard</a>
+          <a class="pill" href="#">Market Trends</a>
+          <a class="pill" href="#">Leaderboards</a>
+        </div>
+        <div class="bm-meta">
+          <a class="bm-link" href="/">Home</a>
+          <button class="bm-pill" id="regionToggle" type="button">
+            <span class="material-symbols-outlined">language</span>
+            Region: <span id="regionLabel">EU</span>
+          </button>
+          <div class="bm-status">
+            <span class="pulse"></span>
+            Last updated: <span id="lastUpdated">--:--</span>
+          </div>
+          <div class="account-wrap">
+            <button id="accountBtn" class="account-btn" aria-label="Account">
+              <img id="avatarIcon" src="/picture/accountsymbol.png" alt="Avatar" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="bm-filters">
+      <div class="filter-block" id="tierFilter">
+        <p>Item Tiers</p>
+        <div class="chip-row">
+          <button class="chip" data-tier="4">T4</button>
+          <button class="chip" data-tier="5">T5</button>
+          <button class="chip" data-tier="6">T6</button>
+          <button class="chip" data-tier="7">T7</button>
+          <button class="chip" data-tier="8">T8</button>
+        </div>
+      </div>
+      <div class="filter-block" id="enchantFilter">
+        <p>Enchantment</p>
+        <div class="chip-toggle">
+          <button class="chip" data-enchant="0">.0</button>
+          <button class="chip" data-enchant="1">.1</button>
+          <button class="chip" data-enchant="2">.2</button>
+          <button class="chip" data-enchant="3">.3</button>
+        </div>
+      </div>
+      <div class="filter-block">
+        <div class="filter-head">
+          <p>Min Sold / Day</p>
+          <span class="filter-value" id="soldValue">0+</span>
+        </div>
+        <div class="slider">
+          <div class="slider-track">
+            <div class="slider-fill"></div>
+            <div class="slider-thumb"></div>
+          </div>
+          <input id="soldRange" type="range" min="0" max="200" value="0" step="1" />
+        </div>
+      </div>
+      <div class="filter-block">
+        <div class="filter-head">
+          <p>Return Rate</p>
+          <span class="filter-value" id="returnRateValue">15.25%</span>
+        </div>
+        <div class="return-rate">
+          <input id="returnRateInput" type="number" min="15.25" max="60" step="0.25" value="15.25" />
+          <span class="suffix">%</span>
+          <label class="bonus-toggle">
+            <input id="bonusCityToggle" type="checkbox" />
+            <span>Bonus city</span>
+          </label>
+        </div>
+      </div>
+      <div class="filter-block">
+        <p>Search Item</p>
+        <div class="search-field">
+          <input id="itemSearch" type="search" placeholder="Type item name" />
+          <span class="material-symbols-outlined">search</span>
+        </div>
+      </div>
+    </section>
+
+    <main class="bm-main">
+      <section class="bm-table">
+        <div class="table-wrap custom-scrollbar">
+          <table>
+            <thead>
+              <tr>
+                <th>Item Specification</th>
+                <th class="num">BM Price</th>
+                <th class="num">Craft Cost</th>
+                <th class="num">Net Profit / U</th>
+                <th class="center">Sold/Day</th>
+                <th class="num">Daily Potential</th>
+                <th class="num">Profit %</th>
+              </tr>
+            </thead>
+            <tbody id="bmTableBody"></tbody>
+          </table>
+        </div>
+        <div class="table-footer">
+          <p id="tableSummary">Showing 0 items</p>
+        </div>
+      </section>
+
+      <aside class="bm-side">
+        <div class="side-card teal-glow custom-scrollbar">
+          <div class="side-header">
+            <h3>Crafter Insight</h3>
+            <span class="material-symbols-outlined">info</span>
+          </div>
+          <div class="side-hero teal-gradient-bg" id="insightHero">
+            <div class="side-icon" id="insightIconWrap">
+              <div class="side-icon-inner">
+                <img id="insightIcon" alt="" loading="lazy" decoding="async" />
+              </div>
+            </div>
+            <h2 id="insightName">Select an item</h2>
+            <div class="side-tags">
+              <span class="tag" id="insightTier">Tier --</span>
+              <span class="tag muted" id="insightRegion">--</span>
+            </div>
+          </div>
+          <div class="side-metrics">
+            <div>
+              <span>BM Price</span>
+              <strong class="profit" id="insightBm">--</strong>
+            </div>
+            <div>
+              <span>Sold / Day</span>
+              <strong class="primary" id="insightSold">--</strong>
+            </div>
+            <div>
+              <span>Craft Cost</span>
+              <strong id="insightCraft">--</strong>
+            </div>
+            <div>
+              <span>Net Profit / U</span>
+              <strong id="insightProfit">--</strong>
+            </div>
+            <div>
+              <span>Profit %</span>
+              <strong id="insightProfitPct">--</strong>
+            </div>
+            <div>
+              <span>Daily Potential</span>
+              <strong id="insightDaily">--</strong>
+            </div>
+            <div>
+              <span>Item ID</span>
+              <strong id="insightId">--</strong>
+            </div>
+          </div>
+          <div class="material-box">
+            <div class="material-head">
+              <span>Material Prices Used</span>
+              <span class="material-total" id="materialTotal">Total: --</span>
+            </div>
+            <div class="material-list" id="materialList"></div>
+            <div class="material-row artefact-row" id="artefactRow" aria-hidden="true">
+              <div class="material-name" id="artefactName">Artefact</div>
+              <div class="material-meta">
+                <span class="material-qty" id="artefactQty">x1</span>
+                <span class="material-price" id="artefactPrice">--</span>
+              </div>
+            </div>
+          </div>
+          <div class="side-chart">
+            <div class="side-chart-head">
+              <span class="material-symbols-outlined">trending_up</span>
+              <span>Monthly Avg Profit</span>
+            </div>
+            <div class="chart-bars">
+              <span style="height:40%"></span>
+              <span style="height:60%"></span>
+              <span style="height:55%"></span>
+              <span style="height:75%"></span>
+              <span style="height:90%"></span>
+              <span style="height:85%"></span>
+              <span class="strong" style="height:100%"></span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="bm-footer">
+      <p>Blackmarket Crafter (c) 2024 - Professional High-Density Analytics</p>
+    </footer>
+
+    <div id="accountMount"></div>
+
+    <script src="/env.js"></script>
+    <script type="module" defer>
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      const SUPABASE_URL = window.env?.SUPABASE_URL;
+      const SUPABASE_ANON_KEY = window.env?.SUPABASE_ANON_KEY;
+
+      if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    </script>
+    <script defer src="/Blackmarket-Crafter/blackmarket-crafter.js"></script>
+  </body>
+</html>

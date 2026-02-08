@@ -56,7 +56,7 @@ module.exports = async function handler(req, res) {
   try {
     const session = await stripe.billingPortal.sessions.create({
       customer: sub.stripe_customer_id,
-      return_url: `${siteUrl}/dashboard.html`,
+      return_url: `${siteUrl}/dashboard`,
     });
     res.status(200).json({ url: session.url });
   } catch (err) {
