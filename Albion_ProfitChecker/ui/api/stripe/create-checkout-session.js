@@ -48,8 +48,8 @@ module.exports = async function handler(req, res) {
       payment_method_types: ["card"],
       customer_email: user.email,
       line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
-      success_url: `${siteUrl}/dashboard.html?checkout=success`,
-      cancel_url: `${siteUrl}/dashboard.html?checkout=cancel`,
+      success_url: `${siteUrl}/dashboard?checkout=success`,
+      cancel_url: `${siteUrl}/dashboard?checkout=cancel`,
       metadata: { user_id: user.id },
     });
 

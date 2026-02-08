@@ -1002,7 +1002,7 @@
         if (!email || email === "-") return;
         try {
           await window.supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/dashboard.html`
+            redirectTo: `${window.location.origin}/dashboard`
           });
           resetPwBtn.textContent = "Email sent";
           setTimeout(() => { resetPwBtn.textContent = "Change password"; }, 3000);
@@ -1015,9 +1015,9 @@
       logoutBtn.onclick = async () => {
         try {
           await window.supabase.auth.signOut();
-          window.location.href = "/dashboard.html";
+          window.location.href = "/dashboard";
         } catch (_) {
-          window.location.href = "/dashboard.html";
+          window.location.href = "/dashboard";
         }
       };
     }

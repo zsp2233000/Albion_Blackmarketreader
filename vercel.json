@@ -11,6 +11,24 @@
       "permanent": true
     }
   ],
+  "rewrites": [
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/community",
+      "destination": "/community/index.html"
+    },
+    {
+      "source": "/legal",
+      "destination": "/legal/index.html"
+    },
+    {
+      "source": "/Blackmarket-Crafter",
+      "destination": "/Blackmarket-Crafter/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
