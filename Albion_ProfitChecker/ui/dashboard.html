@@ -1339,6 +1339,15 @@
           window.location.reload();
           return;
         }
+        const hasRegionCache = !!localStorage.getItem("region");
+        const hasDashboardCache = !!localStorage.getItem("lastUpdatedText");
+        const needsFreshBootReload = !hasRegionCache || !hasDashboardCache;
+        const reloadDone = sessionStorage.getItem("freshLoginReloadDone") === "1";
+        if (needsFreshBootReload && !reloadDone) {
+          sessionStorage.setItem("freshLoginReloadDone", "1");
+          window.location.reload();
+          return;
+        }
         await loadProfile();
         initApp();
       }
@@ -1592,6 +1601,7 @@
       if (ok) {
         await loadAvatar();
         await initApp();
+        sessionStorage.removeItem("freshLoginReloadDone");
         setCity("ALL");
       }
       confirmRegion.onclick = async () => {
@@ -1602,6 +1612,7 @@
         await loadAvatar();
         await loadHistoryFile();
         await initApp();
+        sessionStorage.removeItem("freshLoginReloadDone");
         setCity("ALL");
       };
 
