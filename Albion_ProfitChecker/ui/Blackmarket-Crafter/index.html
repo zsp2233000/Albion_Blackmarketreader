@@ -3,7 +3,32 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blackmarket Crafter Dashboard</title>
+    <title>Blackmarket Crafter | Albion Blackmarket Craft Profit Tool</title>
+    <meta
+      name="description"
+      content="Blackmarket Crafter for Albion Online: compare BM price, craft cost, sold/day, and profit by tier, enchant, and region."
+    />
+    <meta
+      name="keywords"
+      content="Blackmarket Crafter, Albion Blackmarket Crafter, Albion Black Market crafting, Albion craft profit calculator"
+    />
+    <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+    <link rel="canonical" href="https://blackmarketreader.com/Blackmarket-Crafter" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Blackmarket Crafter | Albion Blackmarket Craft Profit Tool" />
+    <meta
+      property="og:description"
+      content="Live BM crafting insights: craft cost, net profit, sold/day, and daily potential."
+    />
+    <meta property="og:url" content="https://blackmarketreader.com/Blackmarket-Crafter" />
+    <meta property="og:image" content="https://blackmarketreader.com/picture/bm-crafter-table.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Blackmarket Crafter | Albion Blackmarket Craft Profit Tool" />
+    <meta
+      name="twitter:description"
+      content="Live BM crafting insights: craft cost, net profit, sold/day, and daily potential."
+    />
+    <meta name="twitter:image" content="https://blackmarketreader.com/picture/bm-crafter-table.png" />
     <link rel="stylesheet" href="/Blackmarket-Crafter/blackmarket-crafter.css" />
     <link rel="stylesheet" href="/account-section/account.css" />
     <link rel="icon" href="/favicon.ico" />
@@ -16,6 +41,22 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
       rel="stylesheet"
     />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Blackmarket Crafter",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "url": "https://blackmarketreader.com/Blackmarket-Crafter",
+        "description": "Albion Blackmarket crafting tool for tier/enchant filtering and craft profit analysis.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
   </head>
   <body class="bm-crafter">
     <div class="modal-overlay" id="regionConfirm" aria-hidden="true">
@@ -30,19 +71,21 @@
     </div>
     <header class="bm-header">
       <div class="bm-header-row">
-        <a class="bm-brand" href="/dashboard">
-          <div class="bm-logo" aria-hidden="true">
-            <img src="/picture/testo%20ohne%20background.png" alt="" />
+        <div class="bm-brand">
+          <div class="bm-brand-home">
+            <div class="bm-logo" aria-hidden="true">
+              <img src="/picture/testo%20ohne%20background.png" alt="" />
+            </div>
+            <h1>RomulusKings Crafting Tools</h1>
           </div>
-          <h1>Blackmarket Crafter</h1>
-        </a>
-        <div class="bm-nav">
-          <a class="pill active" href="#">Dashboard</a>
-          <a class="pill" href="#">Market Trends</a>
-          <a class="pill" href="#">Leaderboards</a>
+          <div class="bm-nav bm-nav-switch">
+            <a class="nav-tab" href="/">Home</a>
+            <a class="nav-tab" href="/dashboard">Dashboard</a>
+            <a class="nav-tab active" href="/Blackmarket-Crafter">Blackmarket Crafter</a>
+            <a class="nav-tab" href="/crafting-calculator">Crafting Calculator</a>
+          </div>
         </div>
         <div class="bm-meta">
-          <a class="bm-link" href="/">Home</a>
           <button class="bm-pill" id="regionToggle" type="button">
             <span class="material-symbols-outlined">language</span>
             Region: <span id="regionLabel">EU</span>
@@ -92,6 +135,16 @@
           </div>
           <input id="soldRange" type="range" min="0" max="200" value="0" step="1" />
         </div>
+      </div>
+      <div class="filter-block">
+        <div class="filter-head">
+          <p>Top Daily Profit</p>
+          <span class="filter-value" id="dailyTopValue">Off</span>
+        </div>
+        <label class="daily-top-toggle">
+          <input id="dailyTopToggle" type="checkbox" />
+          <span>Sort by highest daily potential</span>
+        </label>
       </div>
       <div class="filter-block">
         <div class="filter-head">

@@ -9,6 +9,8 @@
   const enchantFilter = document.getElementById("enchantFilter");
   const soldRange = document.getElementById("soldRange");
   const soldValue = document.getElementById("soldValue");
+  const dailyTopToggle = document.getElementById("dailyTopToggle");
+  const dailyTopValue = document.getElementById("dailyTopValue");
   const returnRateInput = document.getElementById("returnRateInput");
   const returnRateValue = document.getElementById("returnRateValue");
   const bonusCityToggle = document.getElementById("bonusCityToggle");
@@ -27,7 +29,7 @@
   const accountBtn = document.getElementById("accountBtn");
   const accountMount = document.getElementById("accountMount");
   const avatarIcon = document.getElementById("avatarIcon");
-  if (!regionToggle || !regionLabel || !lastUpdated || !tableBody || !tableSummary || !tierFilter || !enchantFilter || !soldRange || !soldValue || !returnRateInput || !returnRateValue || !itemSearch) return;
+  if (!regionToggle || !regionLabel || !lastUpdated || !tableBody || !tableSummary || !tierFilter || !enchantFilter || !soldRange || !soldValue || !dailyTopToggle || !dailyTopValue || !returnRateInput || !returnRateValue || !itemSearch) return;
 
   let currentRegion = "eu";
   let pendingRegion = null;
@@ -38,6 +40,7 @@
   let selectedTier = null;
   let selectedEnchant = null;
   let minSold = 0;
+  let sortByDailyTop = false;
   let returnRate = 0.1525;
   let searchTerm = "";
   let filteredItems = [];
@@ -769,13 +772,20 @@
       craftCost = craftCost * (1 - returnRate);
       const profit = item.bm - craftCost;
       if (!Number.isFinite(profit) || profit < 0) return false;
+      const dailyPotential = Number.isFinite(sold) ? profit * sold : null;
       const profitPct = craftCost > 0 ? (profit / craftCost) * 100 : null;
       item._craftCost = craftCost;
       item._profit = profit;
+      item._dailyPotential = dailyPotential;
       item._profitPct = Number.isFinite(profitPct) ? profitPct : null;
       return true;
     });
     filteredItems = [...filtered].sort((a, b) => {
+      if (sortByDailyTop) {
+        const aDaily = Number.isFinite(a._dailyPotential) ? a._dailyPotential : -Infinity;
+        const bDaily = Number.isFinite(b._dailyPotential) ? b._dailyPotential : -Infinity;
+        return bDaily - aDaily;
+      }
       const aPct = Number.isFinite(a._profitPct) ? a._profitPct : -Infinity;
       const bPct = Number.isFinite(b._profitPct) ? b._profitPct : -Infinity;
       return bPct - aPct;
@@ -810,6 +820,11 @@
     returnRate = clamped / 100;
     returnRateInput.value = clamped;
     returnRateValue.textContent = `${clamped}%`;
+  }
+
+  function updateDailyTopToggle() {
+    sortByDailyTop = Boolean(dailyTopToggle.checked);
+    dailyTopValue.textContent = sortByDailyTop ? "On" : "Off";
   }
 
   async function fetchJsonWithFallback(paths) {
@@ -923,17 +938,58 @@
     return stored === "us" || stored === "eu" ? stored : null;
   }
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function waitForSupabase(timeoutMs = 5000) {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      if (window.supabase?.auth?.getSession && window.supabase?.auth?.getUser) return true;
+      await sleep(100);
+    }
+    return false;
+  }
+
+  function redirectToDashboardLogin() {
+    const next = encodeURIComponent(window.location.pathname || "/Blackmarket-Crafter");
+    window.location.href = `/dashboard?next=${next}`;
+  }
+
+  async function ensureAuthGate() {
+    const supabaseReady = await waitForSupabase();
+    if (!supabaseReady) {
+      redirectToDashboardLogin();
+      return false;
+    }
+    try {
+      const { data } = await window.supabase.auth.getSession();
+      if (!data?.session) {
+        redirectToDashboardLogin();
+        return false;
+      }
+      const userResp = await window.supabase.auth.getUser();
+      const user = userResp?.data?.user;
+      if (!user?.email_confirmed_at) {
+        try { await window.supabase.auth.signOut(); } catch (_) {}
+        redirectToDashboardLogin();
+        return false;
+      }
+      return true;
+    } catch (_) {
+      redirectToDashboardLogin();
+      return false;
+    }
+  }
+
   function sanitizeAvatarUrl(value, fallback = avatarFallback) {
     if (!value) return fallback;
     const trimmed = String(value).trim();
     if (!trimmed) return fallback;
-    const lower = trimmed.toLowerCase();
-    if (lower.startsWith("javascript:") || lower.startsWith("data:") || lower.startsWith("file:")) {
-      return fallback;
-    }
     try {
       const url = new URL(trimmed, window.location.origin);
-      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "blob:") {
+      const allowedProtocols = new Set(["http:", "https:", "blob:"]);
+      if (allowedProtocols.has(url.protocol)) {
         return url.href;
       }
     } catch (_) {
@@ -1193,6 +1249,11 @@
     applyFilters();
   });
 
+  dailyTopToggle.addEventListener("change", () => {
+    updateDailyTopToggle();
+    applyFilters();
+  });
+
   returnRateInput.addEventListener("input", () => {
     updateReturnRate();
     applyFilters();
@@ -1225,15 +1286,18 @@
   setActive(tierFilter, "data-tier", selectedTier);
   setActive(enchantFilter, "data-enchant", selectedEnchant);
   updateSlider();
+  updateDailyTopToggle();
   updateReturnRate();
   renderEmpty();
-  loadAccountPanel()
-    .then(() => {
-      bindAccountHandlers();
-      return loadAccountProfile();
-    })
-    .catch(() => {});
+
   (async () => {
+    const allowed = await ensureAuthGate();
+    if (!allowed) return;
+
+    await loadAccountPanel().catch(() => {});
+    bindAccountHandlers();
+    await loadAccountProfile().catch(() => {});
+
     let storedRegion = getStoredRegion();
     if (!storedRegion && window.supabase?.auth?.getUser) {
       try {

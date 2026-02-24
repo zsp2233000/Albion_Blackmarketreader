@@ -9,6 +9,11 @@
       "source": "/premium-plus/index.html",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/Crafting%20Calculator",
+      "destination": "/crafting-calculator",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -27,6 +32,10 @@
     {
       "source": "/Blackmarket-Crafter",
       "destination": "/Blackmarket-Crafter/index.html"
+    },
+    {
+      "source": "/crafting-calculator",
+      "destination": "/crafting-calculator/index.html"
     }
   ],
   "headers": [

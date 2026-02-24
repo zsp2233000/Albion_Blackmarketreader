@@ -54,7 +54,7 @@ body.selection-accent {
 
 .premium-nav {
   position: fixed;
-  top: 40px;
+  top: 0;
   left: 0;
   right: 0;
   z-index: 50;
@@ -180,6 +180,14 @@ body.selection-accent {
   align-items: center;
 }
 
+.hero-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
 .hero-cta {
   display: inline-flex;
   align-items: center;
@@ -187,14 +195,15 @@ body.selection-accent {
   background: #ffffff;
   color: #000000;
   border: 1px solid #ffffff;
-  padding: 22px 64px;
+  padding: 20px 34px;
   text-transform: uppercase;
   font-weight: 900;
-  letter-spacing: 0.4em;
+  letter-spacing: 0.28em;
   font-size: 11px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
+  min-width: 240px;
 }
 
 .hero-cta:hover {
@@ -1178,6 +1187,8 @@ body.selection-accent {
 @media (max-width: 720px) {
   .alert-track { flex-direction: column; gap: 8px; }
   .hero h1 { font-size: 56px; }
+  .hero-cta-row { width: 100%; flex-direction: column; }
+  .hero-cta { min-width: 0; }
   .hero-cta { width: 100%; }
   .join-body { flex-direction: column; }
   .join-divider { display: none; }
