@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
@@ -244,6 +244,11 @@ function useRegion(): [MarketRegion, (next: MarketRegion) => void] {
 }
 
 export function CraftingCalculatorPage() {
+  const configuredGatePassword = "testo";
+  const [isPasswordUnlocked, setIsPasswordUnlocked] = useState(() => sessionStorage.getItem("ccPasswordUnlocked") === "1");
+  const [gatePasswordInput, setGatePasswordInput] = useState("");
+  const [gateError, setGateError] = useState("");
+
   const [region, setRegion] = useRegion();
   const [authService, setAuthService] = useState<AuthService | null>(null);
   const [user, setUser] = useState<UserState | null>(null);
@@ -608,6 +613,44 @@ export function CraftingCalculatorPage() {
     }));
   }
 
+  function onUnlockSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (gatePasswordInput === configuredGatePassword) {
+      sessionStorage.setItem("ccPasswordUnlocked", "1");
+      setIsPasswordUnlocked(true);
+      setGateError("");
+      setGatePasswordInput("");
+      return;
+    }
+    setGateError("Incorrect password.");
+  }
+
+  if (!isPasswordUnlocked) {
+    return (
+      <div className="cc-page cc-gate-page">
+        <div className="cc-gate-backdrop" />
+        <div className="cc-gate-modal" role="dialog" aria-modal="true" aria-labelledby="ccGateTitle">
+          <h2 id="ccGateTitle">Crafting Calculator</h2>
+          <p>This feature is still in development and currently password-protected.</p>
+          <form onSubmit={onUnlockSubmit} className="cc-gate-form">
+            <input
+              type="password"
+              value={gatePasswordInput}
+              onChange={(event) => {
+                setGatePasswordInput(event.target.value);
+                if (gateError) setGateError("");
+              }}
+              placeholder="Enter access password"
+              autoComplete="off"
+            />
+            <button type="submit">Unlock</button>
+          </form>
+          {gateError ? <div className="cc-gate-error">{gateError}</div> : null}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="cc-page">
       <div className={`modal-overlay ${showRegionConfirm ? "open" : ""}`} aria-hidden={showRegionConfirm ? "false" : "true"}>
@@ -654,7 +697,6 @@ export function CraftingCalculatorPage() {
           </div>
         </div>
       </header>
-
       {user ? (
       <div ref={accountPanelRef} className={`account-panel ${showAccount ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
         <div className="account-header">

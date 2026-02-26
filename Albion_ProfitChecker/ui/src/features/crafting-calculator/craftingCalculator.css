@@ -22,6 +22,79 @@ body.crafting-calculator-body {
   background: var(--cc-bg-main);
 }
 
+.cc-gate-page {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cc-gate-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(92, 240, 200, 0.14), transparent 50%),
+    radial-gradient(circle at 80% 35%, rgba(125, 211, 255, 0.14), transparent 55%),
+    rgba(2, 7, 12, 0.88);
+}
+
+.cc-gate-modal {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 430px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 20px;
+  background: rgba(10, 20, 32, 0.96);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
+}
+
+.cc-gate-modal h2 {
+  margin: 0 0 8px;
+  color: #f8fafc;
+}
+
+.cc-gate-modal p {
+  margin: 0 0 14px;
+  color: #a9bdd2;
+  font-size: 13px;
+}
+
+.cc-gate-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.cc-gate-form input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.cc-gate-form input:focus {
+  outline: none;
+  border-color: rgba(92, 240, 200, 0.6);
+}
+
+.cc-gate-form button {
+  border: 1px solid rgba(92, 240, 200, 0.5);
+  background: linear-gradient(135deg, #5cf0c8, #7dd3ff);
+  color: #081018;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cc-gate-error {
+  margin-top: 10px;
+  color: #fda4af;
+  font-size: 12px;
+}
+
 .cc-header {
   display: flex;
   justify-content: space-between;
