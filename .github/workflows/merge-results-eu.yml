@@ -41,10 +41,10 @@ jobs:
               return [];
             }
           };
-          const a = read('results-eu-1.js');
-          const b = read('results-eu-2.js');
+          const a = read('public/results-eu-1.js');
+          const b = read('public/results-eu-2.js');
           const merged = [...a, ...b];
-          fs.writeFileSync('results-eu.js', 'window.results = ' + JSON.stringify(merged) + ';');
+          fs.writeFileSync('public/results-eu.js', 'window.results = ' + JSON.stringify(merged) + ';');
           console.log('Merged EU', a.length, '+', b.length, '=', merged.length);
           NODE
 
@@ -53,7 +53,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs = require('fs');
-          const dir = 'Blackmarket-Crafter/data';
+          const dir = 'public/data';
           fs.mkdirSync(dir, { recursive: true });
 
           const read = (p) => {
@@ -82,13 +82,13 @@ jobs:
             sold: r.sold
           }));
 
-          let us = read('results.js');
+          let us = read('public/results.js');
           if (!us.length) {
-            us = [...read('results-1.js'), ...read('results-2.js')];
+            us = [...read('public/results-1.js'), ...read('public/results-2.js')];
           }
-          let eu = read('results-eu.js');
+          let eu = read('public/results-eu.js');
           if (!eu.length) {
-            eu = [...read('results-eu-1.js'), ...read('results-eu-2.js')];
+            eu = [...read('public/results-eu-1.js'), ...read('public/results-eu-2.js')];
           }
 
           const outUs = pick(us, 'us');
@@ -112,8 +112,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/results-eu.js Albion_ProfitChecker/ui/Blackmarket-Crafter/data/bm-crafter-us.json Albion_ProfitChecker/ui/Blackmarket-Crafter/data/bm-crafter-eu.json)" ]; then
-            git add Albion_ProfitChecker/ui/results-eu.js Albion_ProfitChecker/ui/Blackmarket-Crafter/data/bm-crafter-us.json Albion_ProfitChecker/ui/Blackmarket-Crafter/data/bm-crafter-eu.json
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/results-eu.js Albion_ProfitChecker/ui/public/data/bm-crafter-us.json Albion_ProfitChecker/ui/public/data/bm-crafter-eu.json)" ]; then
+            git add Albion_ProfitChecker/ui/public/results-eu.js Albion_ProfitChecker/ui/public/data/bm-crafter-us.json Albion_ProfitChecker/ui/public/data/bm-crafter-eu.json
             git commit -m "chore: merge results EU + bm crafter data"
           else
             echo "Keine Aenderungen in results-eu.js"

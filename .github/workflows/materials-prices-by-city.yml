@@ -34,7 +34,7 @@ jobs:
           const chunkSize = 50;
           const delayMs = 1400;
 
-          const outputDir = path.join("crafting-calculator", "data");
+          const outputDir = path.join("public", "data");
           const regions = [
             { key: "eu", host: "https://europe.albion-online-data.com/api/v2/stats" },
             { key: "us", host: "https://west.albion-online-data.com/api/v2/stats" }
@@ -146,8 +146,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/crafting-calculator/data/materials-cities-eu.json Albion_ProfitChecker/ui/crafting-calculator/data/materials-cities-us.json)" ]; then
-            git add Albion_ProfitChecker/ui/crafting-calculator/data/materials-cities-eu.json Albion_ProfitChecker/ui/crafting-calculator/data/materials-cities-us.json
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/data/materials-cities-eu.json Albion_ProfitChecker/ui/public/data/materials-cities-us.json)" ]; then
+            git add Albion_ProfitChecker/ui/public/data/materials-cities-eu.json Albion_ProfitChecker/ui/public/data/materials-cities-us.json
             git commit -m "chore: update city material prices (eu/us)"
           else
             echo "No city material price changes"
