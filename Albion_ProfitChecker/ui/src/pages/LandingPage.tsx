@@ -8,6 +8,7 @@ type ToolSlide = {
   badge?: string;
   image?: string;
   href?: string;
+  ctaLabel?: string;
 };
 
 const CAROUSEL_DURATION_MS = 6000;
@@ -23,15 +24,18 @@ export function LandingPage() {
       {
         title: "Black Market Crafter",
         image: assets.bmCrafterPreview,
-        href: "/bm-crafter"
+        href: "/bm-crafter",
+        ctaLabel: "Open BM Crafter"
       },
       {
         title: "Crafting Calculator",
-        badge: "Coming Soon"
+        href: "/crafting-calculator",
+        ctaLabel: "Open Crafting Calculator"
       },
       {
         title: "Refining Calculator",
-        badge: "Coming Soon"
+        href: "/refining-calculator",
+        ctaLabel: "Open Refining Calculator"
       }
     ],
     []
@@ -168,6 +172,9 @@ export function LandingPage() {
               <a className="hero-cta" href="/crafting-calculator">
                 Crafting Calculator
               </a>
+              <a className="hero-cta" href="/refining-calculator">
+                Refining Calculator
+              </a>
             </div>
             <p>Zero latency market telemetry for high-volume stakeholders.</p>
           </div>
@@ -284,7 +291,7 @@ export function LandingPage() {
 
                       {slide.href ? (
                         <a className="tool-cta" href={slide.href}>
-                          Open BM Crafter
+                          {slide.ctaLabel || "Open Tool"}
                         </a>
                       ) : null}
                     </article>
