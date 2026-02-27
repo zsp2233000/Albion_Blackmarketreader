@@ -9,27 +9,128 @@
       "source": "/premium-plus/index.html",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/Crafting%20Calculator",
+      "destination": "/crafting-calculator",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard.html",
+      "destination": "/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/community/index.html",
+      "destination": "/community",
+      "permanent": true
+    },
+    {
+      "source": "/legal/index.html",
+      "destination": "/legal",
+      "permanent": true
+    },
+    {
+      "source": "/Blackmarket-Crafter",
+      "destination": "/bm-crafter",
+      "permanent": true
+    },
+    {
+      "source": "/Blackmarket-Crafter/index.html",
+      "destination": "/bm-crafter",
+      "permanent": true
+    },
+    {
+      "source": "/crafting-calculator/index.html",
+      "destination": "/crafting-calculator",
+      "permanent": true
     }
   ],
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
       "source": "/dashboard",
-      "destination": "/dashboard.html"
+      "destination": "/index.html"
     },
     {
       "source": "/community",
-      "destination": "/community/index.html"
+      "destination": "/index.html"
     },
     {
       "source": "/legal",
-      "destination": "/legal/index.html"
+      "destination": "/index.html"
     },
     {
-      "source": "/Blackmarket-Crafter",
-      "destination": "/Blackmarket-Crafter/index.html"
+      "source": "/bm-crafter",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/crafting-calculator",
+      "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/results(.*).js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/avg-profit-history.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/items-categorized-crafting.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/picture/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/itemicons/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [

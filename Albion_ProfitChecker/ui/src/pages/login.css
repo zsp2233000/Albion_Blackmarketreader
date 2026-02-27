@@ -1,0 +1,212 @@
+body.login-body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Manrope", system-ui, -apple-system, sans-serif;
+  color: #e9edf5;
+  overflow: hidden;
+}
+
+.login-page {
+  position: relative;
+  min-height: 100vh;
+}
+
+.login-bg {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+    linear-gradient(to bottom, transparent, #020205),
+    url("/picture/planeten.png");
+  background-size: cover;
+  background-position: center;
+  z-index: -2;
+}
+
+.login-page .auth-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.login-page .auth-card {
+  background: rgba(16, 20, 32, 0.9);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 280px;
+  width: min(420px, 100%);
+}
+
+.login-page .auth-header {
+  text-align: center;
+  display: grid;
+  gap: 6px;
+}
+
+.login-page .auth-logo {
+  height: 54px;
+  margin: 0 auto;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
+}
+
+.login-page .auth-card h2 {
+  margin: 0;
+}
+
+.login-page .auth-header p {
+  margin: 0;
+  color: #9aa3b5;
+  font-size: 13px;
+}
+
+.login-page .auth-card input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e9edf5;
+  margin-bottom: 8px;
+}
+
+.login-page .auth-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.login-page .auth-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.login-page .auth-tabs .tab {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.login-page .auth-tabs .tab.active {
+  background: linear-gradient(135deg, #5cf0c8, #7dd3ff);
+  color: #0b1018;
+  font-weight: 700;
+}
+
+.login-page .cta {
+  background: linear-gradient(135deg, #5cf0c8, #7dd3ff);
+  color: #071018;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.login-page .ghost {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e9edf5;
+}
+
+.login-page .btn-google {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: grid;
+  place-items: center;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.login-page .btn-google:hover {
+  transform: translateY(-1px);
+  border-color: rgba(124, 255, 208, 0.35);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.login-page .btn-google img {
+  height: 20px;
+  width: 20px;
+  display: block;
+}
+
+.login-page .auth-error {
+  color: #f56f89;
+  min-height: 18px;
+  font-size: 13px;
+}
+
+.login-page .auth-hint {
+  font-size: 12px;
+  color: #9aa3b5;
+  margin: 6px 0 0;
+}
+
+.login-page .auth-footer {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.login-page .auth-footer a {
+  color: #7dd3ff;
+  text-decoration: none;
+}
+
+.login-page .auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.login-page .auth-trust {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.login-page .modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+  z-index: 1300;
+  padding: 16px;
+}
+
+.login-page .modal-card {
+  width: min(420px, 100%);
+  background: rgba(12, 16, 24, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+@media (max-width: 768px) {
+  .login-bg {
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+      linear-gradient(to bottom, transparent, #020205),
+      url("/picture/planeten-768.jpg");
+  }
+}
