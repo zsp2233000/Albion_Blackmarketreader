@@ -23,7 +23,7 @@ jobs:
 
           const idsPath = path.join(process.cwd(), "artefact-ids-only.json");
           const idsFallback = path.join(process.cwd(), "Albion_ProfitChecker", "artefact-ids-only.json");
-          const outputDir = path.join("Albion_ProfitChecker", "ui", "Blackmarket-Crafter", "data");
+          const outputDir = path.join("Albion_ProfitChecker", "ui", "public", "data");
           const cities = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford"];
           const chunkSize = 50;
           const historyChunkSize = 20;
@@ -144,8 +144,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/Blackmarket-Crafter/data/artefacts-eu.json Albion_ProfitChecker/ui/Blackmarket-Crafter/data/artefacts-us.json)" ]; then
-            git add Albion_ProfitChecker/ui/Blackmarket-Crafter/data/artefacts-eu.json Albion_ProfitChecker/ui/Blackmarket-Crafter/data/artefacts-us.json
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/data/artefacts-eu.json Albion_ProfitChecker/ui/public/data/artefacts-us.json)" ]; then
+            git add Albion_ProfitChecker/ui/public/data/artefacts-eu.json Albion_ProfitChecker/ui/public/data/artefacts-us.json
             git commit -m "chore: update artefact prices (eu/us)"
           else
             echo "No artefact price changes"

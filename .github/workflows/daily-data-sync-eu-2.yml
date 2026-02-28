@@ -28,14 +28,14 @@ jobs:
         run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --cities "Bridgewatch,Thetford,Caerleon" --api-host "https://europe.albion-online-data.com/api/v2/stats"
 
       - name: Move results to results-eu-2.js
-        run: mv Albion_ProfitChecker/ui/results.js Albion_ProfitChecker/ui/results-eu-2.js
+        run: mv Albion_ProfitChecker/ui/public/results.js Albion_ProfitChecker/ui/public/results-eu-2.js
 
       - name: Commit updated results-eu-2 (falls vorhanden)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/results-eu-2.js)" ]; then
-            git add Albion_ProfitChecker/ui/results-eu-2.js
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/results-eu-2.js)" ]; then
+            git add Albion_ProfitChecker/ui/public/results-eu-2.js
             git commit -m "chore: data refresh topf2 EU"
           else
             echo "Keine Änderungen in results-eu-2.js"

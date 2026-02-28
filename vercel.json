@@ -1,4 +1,8 @@
 {
+  "framework": "vite",
+  "installCommand": "cd Albion_ProfitChecker/ui && npm install",
+  "buildCommand": "cd Albion_ProfitChecker/ui && npm run build",
+  "outputDirectory": "Albion_ProfitChecker/ui/dist",
   "redirects": [
     {
       "source": "/premium-plus",
@@ -9,53 +13,146 @@
       "source": "/premium-plus/index.html",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/Crafting%20Calculator",
+      "destination": "/crafting-calculator",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard.html",
+      "destination": "/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/community/index.html",
+      "destination": "/community",
+      "permanent": true
+    },
+    {
+      "source": "/legal/index.html",
+      "destination": "/legal",
+      "permanent": true
+    },
+    {
+      "source": "/Blackmarket-Crafter",
+      "destination": "/bm-crafter",
+      "permanent": true
+    },
+    {
+      "source": "/Blackmarket-Crafter/index.html",
+      "destination": "/bm-crafter",
+      "permanent": true
+    },
+    {
+      "source": "/crafting-calculator/index.html",
+      "destination": "/crafting-calculator",
+      "permanent": true
     }
   ],
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
       "source": "/dashboard",
-      "destination": "/dashboard.html"
+      "destination": "/index.html"
     },
     {
       "source": "/community",
-      "destination": "/community/index.html"
+      "destination": "/index.html"
     },
     {
       "source": "/legal",
-      "destination": "/legal/index.html"
+      "destination": "/index.html"
     },
     {
-      "source": "/Blackmarket-Crafter",
-      "destination": "/Blackmarket-Crafter/index.html"
+      "source": "/bm-crafter",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/crafting-calculator",
+      "destination": "/index.html"
     }
   ],
   "headers": [
     {
+      "source": "/results(.*).js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/avg-profit-history.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/items-categorized-crafting.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/picture/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/itemicons/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self' https: data: blob:; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https: wss:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'self'"
+          "key": "X-Frame-Options",
+          "value": "DENY"
         },
         {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'none';"
         },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
         },
         {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
-        },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=63072000; includeSubDomains; preload"
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         }
       ]
     }

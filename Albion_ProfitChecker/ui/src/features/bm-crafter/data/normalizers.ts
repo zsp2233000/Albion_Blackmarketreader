@@ -1,0 +1,128 @@
+import type { BmMarketItem, BmRecipe, MarketRegion } from "../domain";
+import type { BmCrafterMarketData, BmCrafterPriceData, BmCrafterRecipesData, PriceEntry } from "./types";
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function toFiniteNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return null;
+}
+
+function normalizeRegion(raw: unknown, fallback: MarketRegion): MarketRegion {
+  const text = String(raw || "").toLowerCase();
+  return text === "us" ? "us" : text === "eu" ? "eu" : fallback;
+}
+
+export function normalizeMarketPayload(payload: unknown, fallbackRegion: MarketRegion): BmCrafterMarketData {
+  const root = isRecord(payload) ? payload : {};
+  const list = Array.isArray(root.items) ? root.items : [];
+
+  const items: BmMarketItem[] = [];
+  for (const entry of list) {
+    if (!isRecord(entry)) continue;
+    const id = String(entry.id || "").trim();
+    if (!id) continue;
+    items.push({
+      id,
+      bm: toFiniteNumber(entry.bm),
+      sold: toFiniteNumber(entry.sold)
+    });
+  }
+
+  return {
+    region: normalizeRegion(root.region, fallbackRegion),
+    generatedAt: typeof root.generatedAt === "string" ? root.generatedAt : null,
+    items
+  };
+}
+
+export function normalizePricePayload(payload: unknown, fallbackRegion: MarketRegion): BmCrafterPriceData {
+  const root = isRecord(payload) ? payload : {};
+  const list = Array.isArray(root.items) ? root.items : [];
+  const items: PriceEntry[] = [];
+  const byItemId = new Map<string, number>();
+
+  for (const entry of list) {
+    if (!isRecord(entry)) continue;
+    const itemId = String(entry.itemId || "").trim();
+    const price = toFiniteNumber(entry.price);
+    if (!itemId || !Number.isFinite(price)) continue;
+    const city = typeof entry.city === "string" ? entry.city : undefined;
+    items.push({ itemId, price: price as number, city });
+    byItemId.set(itemId, price as number);
+  }
+
+  return {
+    region: normalizeRegion(root.region, fallbackRegion),
+    generatedAt: typeof root.generatedAt === "string" ? root.generatedAt : null,
+    items,
+    byItemId
+  };
+}
+
+function normalizeRecipeItem(entry: unknown): BmRecipe | null {
+  if (!isRecord(entry)) return null;
+  const itemId = String(entry.id || "").trim();
+  if (!itemId) return null;
+
+  const rawMaterials = Array.isArray(entry.materials) ? entry.materials : [];
+  const materials = rawMaterials
+    .map((mat): BmRecipe["materials"][number] | null => {
+      if (!isRecord(mat)) return null;
+      const materialId = String(mat.itemId || mat.name || "").trim();
+      const qty = toFiniteNumber(mat.qty);
+      if (!materialId || !Number.isFinite(qty)) return null;
+      return { itemId: materialId, qty: qty as number };
+    })
+    .filter((v): v is BmRecipe["materials"][number] => Boolean(v));
+
+  if (!materials.length) return null;
+
+  const artifactId =
+    typeof entry.artifactId === "string" && entry.artifactId.trim()
+      ? entry.artifactId.trim()
+      : null;
+
+  const recipe: BmRecipe = {
+    itemId,
+    name: typeof entry.name === "string" ? entry.name : undefined,
+    materials,
+    artifactId,
+    artifact: typeof entry.artifact === "string" ? entry.artifact : undefined
+  };
+
+  return recipe;
+}
+
+export function normalizeRecipesPayload(payload: unknown): BmCrafterRecipesData {
+  const root = isRecord(payload) ? payload : {};
+  const categories = Array.isArray(root.categories) ? root.categories : [];
+
+  const items: BmRecipe[] = [];
+  const byItemId = new Map<string, BmRecipe>();
+
+  for (const category of categories) {
+    if (!isRecord(category)) continue;
+    const list = Array.isArray(category.items) ? category.items : [];
+    for (const entry of list) {
+      const recipe = normalizeRecipeItem(entry);
+      if (!recipe) continue;
+      items.push(recipe);
+      if (!byItemId.has(recipe.itemId)) {
+        byItemId.set(recipe.itemId, recipe);
+      }
+    }
+  }
+
+  return {
+    generatedAt: null,
+    items,
+    byItemId
+  };
+}
