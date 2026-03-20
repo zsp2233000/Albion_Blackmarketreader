@@ -9,6 +9,10 @@
 
 .rc-filters {
   top: 72px;
+  display: grid;
+  grid-template-columns: minmax(0, 2.15fr) minmax(240px, 0.85fr);
+  gap: 12px;
+  align-items: start;
 }
 
 .rc-filters .filter-block {
@@ -17,14 +21,184 @@
   gap: 8px;
 }
 
+.rc-price-editor,
+.rc-fixed-filters {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(10px);
+  padding: 12px;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.22);
+}
+
+.rc-block-title {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+.rc-price-editor-head {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.rc-price-editor-head span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.rc-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rc-tab {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(30, 41, 59, 0.75);
+  color: #cbd5e1;
+  padding: 6px 10px;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rc-tab.active {
+  border-color: var(--primary);
+  background: rgba(45, 212, 191, 0.18);
+  color: #f8fafc;
+}
+
+.rc-section-label {
+  margin: 0 0 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.rc-price-tables {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(520px, 1.3fr);
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.rc-price-table-wrap {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.rc-price-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.rc-price-table th,
+.rc-price-table td {
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  padding: 4px 5px;
+}
+
+.rc-price-table th {
+  background: rgba(30, 41, 59, 0.88);
+  color: #e2e8f0;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.tier-cell {
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  width: 46px;
+}
+
+.tier-4 .tier-cell {
+  color: #60a5fa;
+}
+
+.tier-5 .tier-cell {
+  color: #f87171;
+}
+
+.tier-6 .tier-cell {
+  color: #fb923c;
+}
+
+.tier-7 .tier-cell {
+  color: #facc15;
+}
+
+.tier-8 .tier-cell {
+  color: #f8fafc;
+}
+
+.tier-4 td {
+  background: rgba(96, 165, 250, 0.06);
+}
+
+.tier-5 td {
+  background: rgba(248, 113, 113, 0.06);
+}
+
+.tier-6 td {
+  background: rgba(251, 146, 60, 0.06);
+}
+
+.tier-7 td {
+  background: rgba(250, 204, 21, 0.06);
+}
+
+.tier-8 td {
+  background: rgba(248, 250, 252, 0.06);
+}
+
+.rc-table-input {
+  min-width: 0;
+  border-radius: 8px;
+  padding: 5px 6px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.rc-fixed-filters {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rc-filter-action {
+  justify-content: flex-end;
+  grid-column: 1 / -1;
+}
+
+.rc-filter-action .execute-btn {
+  height: 34px;
+}
+
 .rc-input {
   width: 100%;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 10px;
   background: var(--bg);
   color: #e2e8f0;
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 6px 8px;
+  font-size: 11px;
   outline: none;
 }
 
@@ -85,11 +259,11 @@
   border-radius: 999px;
   background: rgba(45, 212, 191, 0.14);
   color: var(--primary);
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 700;
-  height: 40px;
+  height: 36px;
   cursor: pointer;
 }
 
@@ -97,8 +271,31 @@
   background: rgba(45, 212, 191, 0.2);
 }
 
+.ghost-btn {
+  margin-bottom: 10px;
+  border-color: var(--border);
+  color: #e2e8f0;
+  background: rgba(148, 163, 184, 0.1);
+}
+
+.ghost-btn:hover {
+  background: rgba(148, 163, 184, 0.16);
+}
+
 @media (max-width: 900px) {
+  .rc-filters {
+    grid-template-columns: 1fr;
+  }
+
   .rc-main {
     height: auto;
+  }
+
+  .rc-price-tables {
+    grid-template-columns: 1fr;
+  }
+
+  .rc-fixed-filters {
+    grid-template-columns: 1fr;
   }
 }

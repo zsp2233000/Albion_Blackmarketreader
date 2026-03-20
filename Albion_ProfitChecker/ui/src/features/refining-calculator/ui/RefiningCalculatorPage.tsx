@@ -3,14 +3,28 @@ import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
-import { getReturnRatePresetConfig, makeRefiner, type MarketRegion, type MaterialKey, type RefineTierInput, type ReturnRatePreset, type Tier } from "../core";
-import { buildRefiningLiveSnapshot, DEFAULT_RAW_BY_MATERIAL_TIER, MATERIAL_DEFINITIONS, REFINE_VARIANTS } from "../data";
+import {
+  getReturnRatePresetConfig,
+  makeRefiner,
+  type MarketRegion,
+  type MaterialKey,
+  type RefineTierInput,
+  type ReturnRatePreset,
+  type Tier
+} from "../core";
+import { buildRefiningLiveSnapshot, MATERIAL_DEFINITIONS, REFINE_VARIANTS } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
 import "./refiningCalculator.css";
 
 type UserState = { id: string; email: string | null; avatar: string; region: MarketRegion | null };
+type ManualOverrides = {
+  variantMarkets: Record<string, string>;
+  rawByMaterialTier: Record<MaterialKey, Record<Tier, string>>;
+};
+
 const KNOWN_CITIES = ["ALL", "Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford"] as const;
 type SelectedCity = (typeof KNOWN_CITIES)[number];
+const MANUAL_OVERRIDE_STORAGE_KEY = "refining-manual-overrides-v1";
 
 declare global {
   interface Window {
@@ -26,6 +40,69 @@ const allowedAvatars = [
   "/picture/Lymhurstwappen.png",
   "/picture/Thefortwappen.png"
 ];
+
+function createEmptyRawByMaterialTier(): Record<MaterialKey, Record<Tier, string>> {
+  return MATERIAL_DEFINITIONS.reduce(
+    (acc, material) => {
+      acc[material.key] = { 4: "", 5: "", 6: "", 7: "", 8: "" };
+      return acc;
+    },
+    {} as Record<MaterialKey, Record<Tier, string>>
+  );
+}
+
+function createEmptyManualOverrides(): ManualOverrides {
+  return {
+    variantMarkets: {},
+    rawByMaterialTier: createEmptyRawByMaterialTier()
+  };
+}
+
+function createEmptyLiveRawByMaterialTier(): Record<MaterialKey, Record<Tier, number>> {
+  return MATERIAL_DEFINITIONS.reduce(
+    (acc, material) => {
+      acc[material.key] = { 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+      return acc;
+    },
+    {} as Record<MaterialKey, Record<Tier, number>>
+  );
+}
+
+function getManualOverrideStorageKey(region: MarketRegion, city: SelectedCity): string {
+  void region;
+  void city;
+  return MANUAL_OVERRIDE_STORAGE_KEY;
+}
+
+function normalizeManualOverrides(raw: unknown): ManualOverrides {
+  const fallback = createEmptyManualOverrides();
+  if (!raw || typeof raw !== "object") return fallback;
+
+  const source = raw as Partial<ManualOverrides>;
+  const variantMarkets =
+    source.variantMarkets && typeof source.variantMarkets === "object"
+      ? Object.fromEntries(Object.entries(source.variantMarkets).map(([key, value]) => [key, String(value ?? "")]))
+      : {};
+
+  const rawByMaterialTier = createEmptyRawByMaterialTier();
+  MATERIAL_DEFINITIONS.forEach((material) => {
+    const byTier = source.rawByMaterialTier?.[material.key];
+    ([4, 5, 6, 7, 8] as const).forEach((tier) => {
+      rawByMaterialTier[material.key][tier] = typeof byTier?.[tier] === "string" ? byTier[tier] : "";
+    });
+  });
+
+  return { variantMarkets, rawByMaterialTier };
+}
+
+function readManualOverrides(region: MarketRegion, city: SelectedCity): ManualOverrides {
+  try {
+    const stored = localStorage.getItem(getManualOverrideStorageKey(region, city));
+    return normalizeManualOverrides(stored ? JSON.parse(stored) : null);
+  } catch {
+    return createEmptyManualOverrides();
+  }
+}
 
 function parseAmount(raw: string, fallback = 0): number {
   const cleaned = String(raw || "").replace(/[^\d.-]/g, "");
@@ -77,6 +154,14 @@ function getCurrentCity(): SelectedCity {
   return "ALL";
 }
 
+function hasManualOverrideValues(overrides: ManualOverrides): boolean {
+  const hasVariantOverride = Object.values(overrides.variantMarkets).some((value) => String(value || "").trim() !== "");
+  const hasRawOverride = Object.values(overrides.rawByMaterialTier).some((byTier) =>
+    Object.values(byTier).some((value) => String(value || "").trim() !== "")
+  );
+  return hasVariantOverride || hasRawOverride;
+}
+
 function useRegion(): [MarketRegion, (next: MarketRegion) => void] {
   const [service] = useState(() => new RegionService("eu"));
   const [region, setRegion] = useState<MarketRegion>(service.getRegion());
@@ -102,23 +187,14 @@ export function RefiningCalculatorPage() {
   const [returnRatePreset, setReturnRatePreset] = useState<ReturnRatePreset>("bonus_city_focus");
   const [usageFeePer100, setUsageFeePer100] = useState("400");
   const [selectedCity, setSelectedCity] = useState<SelectedCity>(() => getCurrentCity());
-  const [marketByVariantId, setMarketByVariantId] = useState<Record<string, number>>({});
-  const [lastUpdated, setLastUpdated] = useState<string>("--:--");
-  const [rawByMaterialTier, setRawByMaterialTier] = useState<Record<MaterialKey, Record<Tier, string>>>(() =>
-    MATERIAL_DEFINITIONS.reduce(
-      (acc, material) => {
-        acc[material.key] = {
-          4: String(DEFAULT_RAW_BY_MATERIAL_TIER[material.key][4]),
-          5: String(DEFAULT_RAW_BY_MATERIAL_TIER[material.key][5]),
-          6: String(DEFAULT_RAW_BY_MATERIAL_TIER[material.key][6]),
-          7: String(DEFAULT_RAW_BY_MATERIAL_TIER[material.key][7]),
-          8: String(DEFAULT_RAW_BY_MATERIAL_TIER[material.key][8])
-        };
-        return acc;
-      },
-      {} as Record<MaterialKey, Record<Tier, string>>
-    )
+  const [editorMaterial, setEditorMaterial] = useState<MaterialKey>("metal");
+  const [liveMarketByVariantId, setLiveMarketByVariantId] = useState<Record<string, number>>({});
+  const [liveRawByMaterialTier, setLiveRawByMaterialTier] = useState<Record<MaterialKey, Record<Tier, number>>>(() =>
+    createEmptyLiveRawByMaterialTier()
   );
+  const [manualOverrides, setManualOverrides] = useState<ManualOverrides>(() => createEmptyManualOverrides());
+  const [hasLiveData, setHasLiveData] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string>("--:--");
 
   const accountPanelRef = useRef<HTMLDivElement | null>(null);
   const accountBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -146,7 +222,12 @@ export function RefiningCalculatorPage() {
       const profile = await authService.getUserProfile().catch(() => null);
       if (cancelled || !profile?.emailConfirmed) return;
       const safeRegion = readStoredRegion() || profile.region || "eu";
-      setUser({ id: profile.id, email: profile.email, avatar: sanitizeAvatarUrl(profile.avatar || localStorage.getItem("avatar")), region: safeRegion });
+      setUser({
+        id: profile.id,
+        email: profile.email,
+        avatar: sanitizeAvatarUrl(profile.avatar || localStorage.getItem("avatar")),
+        region: safeRegion
+      });
       setRegion(safeRegion);
     })();
     return () => {
@@ -173,6 +254,14 @@ export function RefiningCalculatorPage() {
   }, [showAccount]);
 
   useEffect(() => {
+    setManualOverrides(readManualOverrides(region, selectedCity));
+  }, [region, selectedCity]);
+
+  useEffect(() => {
+    localStorage.setItem(getManualOverrideStorageKey(region, selectedCity), JSON.stringify(manualOverrides));
+  }, [manualOverrides, region, selectedCity]);
+
+  useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
@@ -181,28 +270,25 @@ export function RefiningCalculatorPage() {
         const payload = await response.json();
         if (cancelled) return;
         const snapshot = buildRefiningLiveSnapshot(payload, REFINE_VARIANTS, selectedCity);
-        setMarketByVariantId(snapshot.marketByVariantId);
-        setRawByMaterialTier((prev) => {
-          const next = { ...prev };
-          MATERIAL_DEFINITIONS.forEach((material) => {
-            const current = next[material.key] || { 4: "", 5: "", 6: "", 7: "", 8: "" };
-            const liveByTier = snapshot.tierBaseRawByMaterial[material.key];
-            next[material.key] = {
-              4: liveByTier[4] > 0 ? String(liveByTier[4]) : current[4],
-              5: liveByTier[5] > 0 ? String(liveByTier[5]) : current[5],
-              6: liveByTier[6] > 0 ? String(liveByTier[6]) : current[6],
-              7: liveByTier[7] > 0 ? String(liveByTier[7]) : current[7],
-              8: liveByTier[8] > 0 ? String(liveByTier[8]) : current[8]
-            };
-          });
-          return next;
-        });
+        const hasAnyLiveVariant = Object.values(snapshot.marketByVariantId).some((value) => value > 0);
+        const hasAnyLiveRaw = Object.values(snapshot.tierBaseRawByMaterial).some((byTier) =>
+          Object.values(byTier).some((value) => value > 0)
+        );
+
+        setLiveMarketByVariantId(snapshot.marketByVariantId);
+        setLiveRawByMaterialTier(snapshot.tierBaseRawByMaterial);
+        setHasLiveData(hasAnyLiveVariant || hasAnyLiveRaw);
         if (snapshot.generatedAt) {
           const dt = new Date(snapshot.generatedAt);
           if (!Number.isNaN(dt.getTime())) setLastUpdated(dt.toISOString().slice(11, 16));
+        } else {
+          setLastUpdated("--:--");
         }
       } catch {
-        // keep defaults if live data fails
+        setHasLiveData(false);
+        setLiveMarketByVariantId({});
+        setLiveRawByMaterialTier(createEmptyLiveRawByMaterialTier());
+        setLastUpdated("--:--");
       }
     })();
     return () => {
@@ -210,22 +296,39 @@ export function RefiningCalculatorPage() {
     };
   }, [region, selectedCity]);
 
+  const displayedRawByMaterialTier = useMemo<Record<MaterialKey, Record<Tier, string>>>(
+    () =>
+      MATERIAL_DEFINITIONS.reduce(
+        (acc, material) => {
+          acc[material.key] = ([4, 5, 6, 7, 8] as const).reduce<Record<Tier, string>>((tierAcc, tier) => {
+            const manualValue = manualOverrides.rawByMaterialTier[material.key][tier];
+            const liveValue = liveRawByMaterialTier[material.key][tier];
+            tierAcc[tier] = manualValue.trim() !== "" ? manualValue : liveValue > 0 ? String(liveValue) : "";
+            return tierAcc;
+          }, { 4: "", 5: "", 6: "", 7: "", 8: "" });
+          return acc;
+        },
+        {} as Record<MaterialKey, Record<Tier, string>>
+      ),
+    [manualOverrides, liveRawByMaterialTier]
+  );
+
   const tierInputs = useMemo<ReadonlyArray<RefineTierInput>>(
     () =>
       MATERIAL_DEFINITIONS.flatMap((material) =>
         ([4, 5, 6, 7, 8] as const).map((tier) => ({
           materialKey: material.key,
           tier,
-          unitRawPrice: parseAmount(rawByMaterialTier[material.key]?.[tier], DEFAULT_RAW_BY_MATERIAL_TIER[material.key][tier])
+          unitRawPrice: parseAmount(displayedRawByMaterialTier[material.key][tier], 0)
         }))
       ),
-    [rawByMaterialTier]
+    [displayedRawByMaterialTier]
   );
 
   const rows = useMemo(() => {
     const profile = getReturnRatePresetConfig(returnRatePreset);
     const refiner = makeRefiner({
-      city: "Bridgewatch",
+      city: selectedCity === "ALL" ? "Bridgewatch" : selectedCity,
       baseReturnRate: profile.baseReturnRate,
       cityBonusRate: profile.cityBonusRate,
       refiningBonusRate: profile.refiningBonusRate,
@@ -233,17 +336,71 @@ export function RefiningCalculatorPage() {
       focusReturnRate: profile.focusReturnRate
     });
     const feeValue = parseAmount(usageFeePer100, 400);
+
     return REFINE_VARIANTS.map((variant) => {
-      const withMarket = { ...variant, market: marketByVariantId[variant.id] || variant.market };
+      const manualMarket = manualOverrides.variantMarkets[variant.id] || "";
+      const market = manualMarket.trim() !== "" ? parseAmount(manualMarket, 0) : liveMarketByVariantId[variant.id] || 0;
+      const withMarket = { ...variant, market };
       const result = refiner(withMarket, tierInputs, feeValue);
       return { variant: withMarket, ...result, positive: result.profit >= 0 };
-    });
-  }, [returnRatePreset, usageFeePer100, tierInputs, marketByVariantId]);
+    }).sort((left, right) => right.profit - left.profit);
+  }, [liveMarketByVariantId, manualOverrides, returnRatePreset, selectedCity, tierInputs, usageFeePer100]);
 
   const selectedRow = rows.find((row) => row.variant.id === selectedRowKey) || rows[0];
   const selectedMaterial = selectedRow?.variant.materialKey || "metal";
   const selectedMaterialLabel = MATERIAL_DEFINITIONS.find((entry) => entry.key === selectedMaterial)?.label || "Material";
   const maxDailyProfit = rows.reduce((sum, row) => sum + Math.max(0, row.profit), 0) * 5;
+  const hasDisplayData = hasLiveData || hasManualOverrideValues(manualOverrides);
+  const selectedVariantMarketInput = selectedRow
+    ? manualOverrides.variantMarkets[selectedRow.variant.id] || (selectedRow.revenue > 0 ? String(selectedRow.revenue) : "")
+    : "";
+  const editorMaterialLabel = MATERIAL_DEFINITIONS.find((entry) => entry.key === editorMaterial)?.label || "Material";
+  const variantByTierEnchant = useMemo(
+    () =>
+      REFINE_VARIANTS.filter((variant) => variant.materialKey === editorMaterial).reduce<Record<string, (typeof REFINE_VARIANTS)[number]>>(
+        (acc, variant) => {
+          acc[`${variant.tier}.${variant.enchant}`] = variant;
+          return acc;
+        },
+        {}
+      ),
+    [editorMaterial]
+  );
+
+  useEffect(() => {
+    if (!rows.length) return;
+    if (!rows.some((row) => row.variant.id === selectedRowKey)) {
+      setSelectedRowKey(rows[0].variant.id);
+    }
+  }, [rows, selectedRowKey]);
+
+  function updateManualVariantMarket(variantId: string, value: string) {
+    setManualOverrides((prev) => ({
+      ...prev,
+      variantMarkets: {
+        ...prev.variantMarkets,
+        [variantId]: value
+      }
+    }));
+  }
+
+  function updateManualRawPrice(materialKey: MaterialKey, tier: Tier, value: string) {
+    setManualOverrides((prev) => ({
+      ...prev,
+      rawByMaterialTier: {
+        ...prev.rawByMaterialTier,
+        [materialKey]: {
+          ...prev.rawByMaterialTier[materialKey],
+          [tier]: value
+        }
+      }
+    }));
+  }
+
+  function clearManualOverrides() {
+    localStorage.removeItem(MANUAL_OVERRIDE_STORAGE_KEY);
+    setManualOverrides(createEmptyManualOverrides());
+  }
 
   async function onRegionSave(next: MarketRegion) {
     setRegion(next);
@@ -254,7 +411,9 @@ export function RefiningCalculatorPage() {
   async function onResetPassword() {
     if (!authService || !user?.email) return;
     setAccountActionMsg("");
-    const { error } = await authService.client.auth.resetPasswordForEmail(user.email, { redirectTo: `${window.location.origin}/login?next=%2Frefining-calculator` });
+    const { error } = await authService.client.auth.resetPasswordForEmail(user.email, {
+      redirectTo: `${window.location.origin}/login?next=%2Frefining-calculator`
+    });
     setAccountActionMsg(error ? error.message || "Password reset failed." : "Email sent");
     if (!error) window.setTimeout(() => setAccountActionMsg(""), 3000);
   }
@@ -274,8 +433,21 @@ export function RefiningCalculatorPage() {
           <h3 id="regionConfirmTitle">Switch region?</h3>
           <p>Do you really want to switch the region?</p>
           <div className="modal-actions">
-            <button type="button" className="modal-btn ghost" onClick={() => { setShowRegionConfirm(false); setPendingRegion(null); }}>Cancel</button>
-            <button type="button" className="modal-btn primary" onClick={() => { const next = pendingRegion ?? (region === "eu" ? "us" : "eu"); setPendingRegion(null); setShowRegionConfirm(false); void onRegionSave(next); }}>Switch</button>
+            <button type="button" className="modal-btn ghost" onClick={() => { setShowRegionConfirm(false); setPendingRegion(null); }}>
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="modal-btn primary"
+              onClick={() => {
+                const next = pendingRegion ?? (region === "eu" ? "us" : "eu");
+                setPendingRegion(null);
+                setShowRegionConfirm(false);
+                void onRegionSave(next);
+              }}
+            >
+              Switch
+            </button>
           </div>
         </div>
       </div>
@@ -317,16 +489,25 @@ export function RefiningCalculatorPage() {
         </div>
         <div className="panel-section">
           <h4>Select profile avatar</h4>
-          <div className="avatar-grid">{allowedAvatars.filter((src) => !src.includes("accountsymbol")).map((src) => (<img key={src} src={assetUrl(src.replace(/^\//, ""))} alt="" onClick={() => setUser((prev) => (prev ? { ...prev, avatar: src } : prev))} />))}</div>
+          <div className="avatar-grid">
+            {allowedAvatars.filter((src) => !src.includes("accountsymbol")).map((src) => (
+              <img key={src} src={assetUrl(src.replace(/^\//, ""))} alt="" onClick={() => setUser((prev) => (prev ? { ...prev, avatar: src } : prev))} />
+            ))}
+          </div>
         </div>
         <div className="panel-section">
           <h4>Data region</h4>
-          <select className="city-select" value={region} onChange={(event) => void onRegionSave(event.target.value === "us" ? "us" : "eu")}><option value="us">America</option><option value="eu">Europe</option></select>
+          <select className="city-select" value={region} onChange={(event) => void onRegionSave(event.target.value === "us" ? "us" : "eu")}>
+            <option value="us">America</option>
+            <option value="eu">Europe</option>
+          </select>
         </div>
         <div className="account-actions">
           {user ? (
             <>
-              <button className="btn primary" onClick={() => void onResetPassword()}>{accountActionMsg === "Email sent" ? "Email sent" : "Change password"}</button>
+              <button className="btn primary" onClick={() => void onResetPassword()}>
+                {accountActionMsg === "Email sent" ? "Email sent" : "Change password"}
+              </button>
               <button className="btn danger" onClick={() => void onLogout()}>Logout</button>
             </>
           ) : (
@@ -336,51 +517,139 @@ export function RefiningCalculatorPage() {
       </div>
 
       <section className="bm-filters rc-filters">
-        {([4, 5, 6, 7, 8] as const).map((tier) => (
-          <div className="filter-block" key={tier}>
-            <p>{selectedMaterialLabel} T{tier}</p>
+        <div className="rc-price-editor">
+          <div className="rc-price-editor-head">
+            <div>
+              <p className="rc-block-title">Material Prices</p>
+              <span>{editorMaterialLabel} manual overrides for refining</span>
+            </div>
+            <div className="rc-tab-nav">
+              {MATERIAL_DEFINITIONS.map((material) => (
+                <button
+                  key={material.key}
+                  type="button"
+                  className={`rc-tab ${editorMaterial === material.key ? "active" : ""}`}
+                  onClick={() => setEditorMaterial(material.key)}
+                >
+                  {material.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="rc-price-tables">
+            <div className="rc-price-table-wrap">
+              <p className="rc-section-label">Raw Material Prices</p>
+              <table className="rc-price-table">
+                <thead>
+                  <tr>
+                    <th>Tier</th>
+                    <th>Raw Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {([4, 5, 6, 7, 8] as const).map((tier) => (
+                    <tr key={`raw-${editorMaterial}-${tier}`} className={`tier-row tier-${tier}`}>
+                      <td className="tier-cell">T{tier}.0</td>
+                      <td>
+                        <input
+                          className="rc-input rc-table-input"
+                          value={displayedRawByMaterialTier[editorMaterial][tier]}
+                          onChange={(event) => updateManualRawPrice(editorMaterial, tier, event.target.value)}
+                          placeholder={`${editorMaterialLabel} T${tier}`}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="rc-price-table-wrap">
+              <p className="rc-section-label">Refining Material Sell Price</p>
+              <table className="rc-price-table">
+                <thead>
+                  <tr>
+                    <th>Tier</th>
+                    <th>.0</th>
+                    <th>.1</th>
+                    <th>.2</th>
+                    <th>.3</th>
+                    <th>.4</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {([4, 5, 6, 7, 8] as const).map((tier) => (
+                    <tr key={`sell-row-${editorMaterial}-${tier}`} className={`tier-row tier-${tier}`}>
+                      <td className="tier-cell">T{tier}</td>
+                      {([0, 1, 2, 3, 4] as const).map((enchant) => {
+                        const variant = variantByTierEnchant[`${tier}.${enchant}`];
+                        const liveValue = variant ? liveMarketByVariantId[variant.id] || 0 : 0;
+                        const manualValue = variant ? manualOverrides.variantMarkets[variant.id] || "" : "";
+                        return (
+                          <td key={`sell-${editorMaterial}-${tier}-${enchant}`}>
+                            <input
+                              className="rc-input rc-table-input"
+                              value={manualValue || (liveValue > 0 ? String(liveValue) : "")}
+                              onChange={(event) => {
+                                if (!variant) return;
+                                updateManualVariantMarket(variant.id, event.target.value);
+                              }}
+                              placeholder={`T${tier}.${enchant}`}
+                            />
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div className="rc-fixed-filters">
+          <div className="filter-block">
+            <p>Usage Fee / 100</p>
+            <input className="rc-input" value={usageFeePer100} onChange={(event) => setUsageFeePer100(event.target.value)} />
+          </div>
+          <div className="filter-block">
+            <p>City</p>
+            <select
+              className="rc-input"
+              value={selectedCity}
+              onChange={(event) => {
+                const nextCity = normalizeCityName(event.target.value);
+                setSelectedCity(nextCity);
+                localStorage.setItem("city", nextCity === "ALL" ? "all" : nextCity);
+              }}
+            >
+              {KNOWN_CITIES.map((city) => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-block">
+            <p>Return Profile</p>
+            <select className="rc-input" value={returnRatePreset} onChange={(event) => setReturnRatePreset(event.target.value as ReturnRatePreset)}>
+              <option value="base">Base 15.2%</option>
+              <option value="bonus_city">Bonus City 36.7%</option>
+              <option value="bonus_city_focus">Bonus City + Focus 53.9%</option>
+            </select>
+          </div>
+          <div className="filter-block">
+            <p>Selected Item Sell Price</p>
             <input
               className="rc-input"
-              value={rawByMaterialTier[selectedMaterial][tier]}
-              onChange={(event) =>
-                setRawByMaterialTier((prev) => ({
-                  ...prev,
-                  [selectedMaterial]: {
-                    ...prev[selectedMaterial],
-                    [tier]: event.target.value
-                  }
-                }))
-              }
+              value={selectedVariantMarketInput}
+              onChange={(event) => {
+                if (!selectedRow) return;
+                updateManualVariantMarket(selectedRow.variant.id, event.target.value);
+              }}
+              placeholder="Sell price"
             />
           </div>
-        ))}
-        <div className="filter-block">
-          <p>Usage Fee / 100</p>
-          <input className="rc-input" value={usageFeePer100} onChange={(event) => setUsageFeePer100(event.target.value)} />
-        </div>
-        <div className="filter-block">
-          <p>City</p>
-          <select
-            className="rc-input"
-            value={selectedCity}
-            onChange={(event) => {
-              const nextCity = normalizeCityName(event.target.value);
-              setSelectedCity(nextCity);
-              localStorage.setItem("city", nextCity === "ALL" ? "all" : nextCity);
-            }}
-          >
-            {KNOWN_CITIES.map((city) => (
-              <option key={city} value={city}>{city}</option>
-            ))}
-          </select>
-        </div>
-        <div className="filter-block">
-          <p>Return Profile</p>
-          <select className="rc-input" value={returnRatePreset} onChange={(event) => setReturnRatePreset(event.target.value as ReturnRatePreset)}>
-            <option value="base">Base 15.2%</option>
-            <option value="bonus_city">Bonus City 36.7%</option>
-            <option value="bonus_city_focus">Bonus City + Focus 53.9%</option>
-          </select>
+          <div className="filter-block rc-filter-action">
+            <p>Manual Overrides</p>
+            <button type="button" className="execute-btn ghost-btn" onClick={clearManualOverrides}>Reset To Live Data</button>
+          </div>
         </div>
       </section>
 
@@ -388,11 +657,41 @@ export function RefiningCalculatorPage() {
         <section className="bm-table">
           <div className="table-wrap custom-scrollbar">
             <table>
-              <thead><tr><th>Variant ID</th><th className="num">Gross Cost</th><th className="num">Return Save</th><th className="num">Fee</th><th className="num">Net Cost</th><th className="num">Revenue</th><th className="num">Profit</th><th className="num">Profit %</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Variant ID</th>
+                  <th className="num">Gross Cost</th>
+                  <th className="num">Return Save</th>
+                  <th className="num">Fee</th>
+                  <th className="num">Net Cost</th>
+                  <th className="num">Revenue</th>
+                  <th className="num">Profit</th>
+                  <th className="num">Profit %</th>
+                </tr>
+              </thead>
               <tbody>
+                {!hasDisplayData || !rows.length ? (
+                  <tr>
+                    <td colSpan={8}>No refining data available for the selected region/city.</td>
+                  </tr>
+                ) : null}
                 {rows.map((row, index) => (
-                  <tr key={row.variant.id} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.variant.id ? "selected-row" : ""}`} onClick={() => setSelectedRowKey(row.variant.id)}>
-                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={row.variant.id} /></div><div><div className="item-name">{row.variant.id}</div><div className="item-meta">{row.variant.label}</div></div></div></div></td>
+                  <tr
+                    key={row.variant.id}
+                    className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.variant.id ? "selected-row" : ""}`}
+                    onClick={() => setSelectedRowKey(row.variant.id)}
+                  >
+                    <td>
+                      <div className="item">
+                        <div className="item-info">
+                          <div className="item-icon"><img src={row.variant.icon} alt={row.variant.id} /></div>
+                          <div>
+                            <div className="item-name">{row.variant.id}</div>
+                            <div className="item-meta">{row.variant.label}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
                     <td className="num">{formatNumber(row.grossMaterialCost)}</td>
                     <td className="num profit">-{formatNumber(row.returnedMaterialCost)}</td>
                     <td className="num muted">{formatNumber(row.refiningFee)}</td>
