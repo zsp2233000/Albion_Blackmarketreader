@@ -1,4 +1,4 @@
-import type { BonusConfig, MaterialKey, RefineTierInput, RefineVariant, RefiningInput, RefiningResult, RefiningState, Tier } from "./types";
+import type { BonusConfig, Enchant, MaterialKey, RefineTierInput, RefineVariant, RefiningInput, RefiningResult, RefiningState, Tier } from "./types";
 
 type RefiningStep = (state: RefiningState) => RefiningState;
 type BonusStep = (state: RefiningState, bonuses: BonusConfig) => RefiningState;
@@ -56,8 +56,8 @@ export function applyBonuses(state: RefiningState, bonuses: BonusConfig): Refini
   return { ...state, returnRate: nextReturnRate };
 }
 
-function getTierPrice(tierInputs: ReadonlyArray<RefineTierInput>, materialKey: MaterialKey, tier: Tier): number {
-  const match = tierInputs.find((entry) => entry.materialKey === materialKey && entry.tier === tier);
+function getTierPrice(tierInputs: ReadonlyArray<RefineTierInput>, materialKey: MaterialKey, tier: Tier, enchant: Enchant): number {
+  const match = tierInputs.find((entry) => entry.materialKey === materialKey && entry.tier === tier && entry.enchant === enchant);
   return match ? match.unitRawPrice : 0;
 }
 
@@ -79,7 +79,12 @@ function createInitialState(input: RefiningInput): RefiningState {
 }
 
 function computeBase(state: RefiningState): RefiningState {
-  const basePrice = getTierPrice(state.input.tierInputs, state.input.variant.materialKey, state.input.variant.tier);
+  const basePrice = getTierPrice(
+    state.input.tierInputs,
+    state.input.variant.materialKey,
+    state.input.variant.tier,
+    state.input.variant.enchant
+  );
   const grossMaterialCost = basePrice * state.input.variant.multiplier;
   const nutritionCost = state.input.variant.itemValue * state.input.nutritionFactor;
   const refiningFee = computeStationFee(state.input.variant.itemValue, state.input.usageFeePer100, state.input.nutritionFactor);

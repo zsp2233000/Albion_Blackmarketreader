@@ -7,6 +7,7 @@ export type MaterialKey = "metal" | "wood" | "fiber" | "hide";
 export interface RefineTierInput {
   readonly materialKey: MaterialKey;
   readonly tier: Tier;
+  readonly enchant: Enchant;
   readonly unitRawPrice: number;
 }
 

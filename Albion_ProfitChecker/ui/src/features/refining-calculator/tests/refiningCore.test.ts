@@ -16,7 +16,7 @@ describe("refining core", () => {
     const profile = getReturnRatePresetConfig("bonus_city_focus");
     const input = createRefiningInput({
       variant: REFINE_VARIANTS[0],
-      tierInputs: [{ materialKey: REFINE_VARIANTS[0].materialKey, tier: 8, unitRawPrice: DEFAULT_RAW_BY_TIER[8] }],
+      tierInputs: [{ materialKey: REFINE_VARIANTS[0].materialKey, tier: 8, enchant: 0, unitRawPrice: DEFAULT_RAW_BY_TIER[8] }],
       usageFeePer100: 400,
       city: "Bridgewatch",
       baseReturnRate: profile.baseReturnRate,
@@ -41,7 +41,7 @@ describe("refining core", () => {
     const profile = getReturnRatePresetConfig("bonus_city");
     const base = createRefiningInput({
       variant: REFINE_VARIANTS[1],
-      tierInputs: [{ materialKey: REFINE_VARIANTS[1].materialKey, tier: 8, unitRawPrice: 12000 }],
+      tierInputs: [{ materialKey: REFINE_VARIANTS[1].materialKey, tier: 8, enchant: REFINE_VARIANTS[1].enchant, unitRawPrice: 12000 }],
       usageFeePer100: 400,
       city: "Bridgewatch",
       baseReturnRate: profile.baseReturnRate,
@@ -58,7 +58,7 @@ describe("refining core", () => {
     const profile = getReturnRatePresetConfig("bonus_city_focus");
     const input = createRefiningInput({
       variant: REFINE_VARIANTS[2],
-      tierInputs: [{ materialKey: REFINE_VARIANTS[2].materialKey, tier: 7, unitRawPrice: 4800 }],
+      tierInputs: [{ materialKey: REFINE_VARIANTS[2].materialKey, tier: 7, enchant: REFINE_VARIANTS[2].enchant, unitRawPrice: 4800 }],
       usageFeePer100: 400,
       city: "Bridgewatch",
       baseReturnRate: profile.baseReturnRate,
@@ -86,11 +86,11 @@ describe("refining core", () => {
     const result = mk(
       REFINE_VARIANTS[0],
       [
-        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 4, unitRawPrice: DEFAULT_RAW_BY_TIER[4] },
-        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 5, unitRawPrice: DEFAULT_RAW_BY_TIER[5] },
-        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 6, unitRawPrice: DEFAULT_RAW_BY_TIER[6] },
-        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 7, unitRawPrice: DEFAULT_RAW_BY_TIER[7] },
-        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 8, unitRawPrice: DEFAULT_RAW_BY_TIER[8] }
+        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 4, enchant: 0, unitRawPrice: DEFAULT_RAW_BY_TIER[4] },
+        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 5, enchant: 0, unitRawPrice: DEFAULT_RAW_BY_TIER[5] },
+        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 6, enchant: 0, unitRawPrice: DEFAULT_RAW_BY_TIER[6] },
+        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 7, enchant: 0, unitRawPrice: DEFAULT_RAW_BY_TIER[7] },
+        { materialKey: REFINE_VARIANTS[0].materialKey, tier: 8, enchant: 0, unitRawPrice: DEFAULT_RAW_BY_TIER[8] }
       ],
       400
     );
