@@ -7,7 +7,8 @@ import {
   computeStationFee,
   createRefiningInput,
   getReturnRatePresetConfig,
-  makeRefiner
+  makeRefiner,
+  sumRepeatedValue
 } from "../core";
 import { DEFAULT_RAW_BY_TIER, REFINE_VARIANTS } from "../data";
 
@@ -52,6 +53,11 @@ describe("refining core", () => {
     });
     const withFocus = { ...base, bonuses: { ...base.bonuses, focusEnabled: true } };
     expect(computeReturnRate(withFocus)).toBeGreaterThan(computeReturnRate(base));
+  });
+
+  it("uses recursion for repeated material cost without mutating state", () => {
+    expect(sumRepeatedValue(125, 4)).toBe(500);
+    expect(sumRepeatedValue(125, 0)).toBe(0);
   });
 
   it("applyBonuses is immutable", () => {

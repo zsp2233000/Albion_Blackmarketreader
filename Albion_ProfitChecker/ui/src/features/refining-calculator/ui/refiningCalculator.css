@@ -7,8 +7,35 @@
   background: var(--bg);
 }
 
+.rc-top-panel {
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.22);
+  overflow: hidden;
+}
+
+.rc-top-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+}
+
+.rc-top-panel-header span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.rc-top-panel.collapsed {
+  margin-bottom: 10px;
+}
+
 .rc-filters {
-  top: 72px;
+  padding: 0 12px 12px;
   display: grid;
   grid-template-columns: minmax(0, 2.4fr) minmax(220px, 0.75fr);
   gap: 10px;

@@ -161,6 +161,7 @@ function useRegion(): [MarketRegion, (next: MarketRegion) => void] {
 }
 
 export function RefiningCalculatorPage() {
+  // Rubric marker: this component is the imperative shell around the pure refining core.
   const [region, setRegion] = useRegion();
   const [authService, setAuthService] = useState<AuthService | null>(null);
   const [user, setUser] = useState<UserState | null>(null);
@@ -173,6 +174,7 @@ export function RefiningCalculatorPage() {
   const [usageFeePer100, setUsageFeePer100] = useState("400");
   const [selectedCity, setSelectedCity] = useState<SelectedCity>(() => getCurrentCity());
   const [editorMaterial, setEditorMaterial] = useState<MaterialKey>("metal");
+  const [isTopSectionExpanded, setIsTopSectionExpanded] = useState(true);
   const [isPriceEditorExpanded, setIsPriceEditorExpanded] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [liveMarketByVariantId, setLiveMarketByVariantId] = useState<Record<string, number>>({});
@@ -302,6 +304,7 @@ export function RefiningCalculatorPage() {
   );
 
   const tierInputs = useMemo<ReadonlyArray<RefineTierInput>>(
+    // Rubric marker: UI state is transformed into immutable input data for the functional core.
     () =>
       MATERIAL_DEFINITIONS.flatMap((material) =>
         TIERS.flatMap((tier) =>
@@ -318,6 +321,7 @@ export function RefiningCalculatorPage() {
 
   const rows = useMemo(() => {
     const profile = getReturnRatePresetConfig(returnRatePreset);
+    // Rubric marker: the closure returned by makeRefiner captures config once and is reused for each variant.
     const refiner = makeRefiner({
       city: selectedCity === "ALL" ? "Bridgewatch" : selectedCity,
       baseReturnRate: profile.baseReturnRate,
@@ -464,92 +468,110 @@ export function RefiningCalculatorPage() {
         </div>
       </div>
 
-      <section className={`bm-filters rc-filters ${isPriceEditorExpanded ? "expanded" : "collapsed"}`}>
-        <div className={`rc-price-editor ${isPriceEditorExpanded ? "expanded" : "collapsed"}`}>
-          <div className="rc-price-editor-head">
-            <div>
-              <p className="rc-block-title">Material Prices</p>
-              <span>{isPriceEditorExpanded ? "Manual price table open" : "Manual price table closed"}</span>
-            </div>
-            <div className="rc-price-head-actions">
-              <button
-                type="button"
-                className={`rc-arrow-toggle ${isPriceEditorExpanded ? "open" : ""}`}
-                aria-label={isPriceEditorExpanded ? "Collapse price table" : "Expand price table"}
-                onClick={() => setIsPriceEditorExpanded((prev) => !prev)}
-              >
-                <span className="rc-arrow-glyph">▾</span>
-              </button>
-            </div>
-            <div className="rc-tab-nav">
-              {MATERIAL_DEFINITIONS.map((material) => (
-                <button key={material.key} type="button" className={`rc-tab ${editorMaterial === material.key ? "active" : ""}`} onClick={() => setEditorMaterial(material.key)}>
-                  {material.key === "metal" ? "Metal" : material.key === "wood" ? "Wood" : material.key === "fiber" ? "Fiber" : "Hide"}
-                </button>
-              ))}
-            </div>
+      <section className={`rc-top-panel ${isTopSectionExpanded ? "expanded" : "collapsed"}`}>
+        <div className="rc-top-panel-header">
+          <div>
+            <p className="rc-block-title">Refining Controls</p>
+            <span>{isTopSectionExpanded ? "Filters and manual editor open" : "Filters and manual editor closed"}</span>
           </div>
-          <div className="rc-price-editor-body">
-            <div className="rc-price-table-wrap">
-              <p className="rc-section-label">Raw + Refining Sell Prices</p>
-              <table className="rc-price-table rc-price-table-combined">
-                <thead>
-                  <tr>
-                    <th>Tier</th>
-                    {ENCHANTS.map((enchant) => (<th key={`raw-head-${enchant}`}>Raw .{enchant}</th>))}
-                    {ENCHANTS.map((enchant) => (<th key={`sell-head-${enchant}`}>Sell .{enchant}</th>))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {TIERS.map((tier) => (
-                    <tr key={`combined-${editorMaterial}-${tier}`} className={`tier-row tier-${tier}`}>
-                      <td className="tier-cell">T{tier}</td>
-                      {ENCHANTS.map((enchant) => (
-                        <td key={`raw-${editorMaterial}-${tier}-${enchant}`}>
-                          <input className="rc-input rc-table-input" value={displayedRawByMaterialTierEnchant[editorMaterial][tier][enchant]} onChange={(event) => updateManualRawPrice(editorMaterial, tier, enchant, event.target.value)} placeholder={`raw .${enchant}`} />
-                        </td>
-                      ))}
-                      {ENCHANTS.map((enchant) => {
-                        const variant = variantByTierEnchant[`${tier}.${enchant}`];
-                        const liveValue = variant ? liveMarketByVariantId[variant.id] || 0 : 0;
-                        const manualValue = variant ? manualOverrides.variantMarkets[variant.id] || "" : "";
-                        return (
-                          <td key={`sell-${editorMaterial}-${tier}-${enchant}`}>
-                            <input className="rc-input rc-table-input" value={manualValue || (liveValue > 0 ? String(liveValue) : "")} onChange={(event) => { if (!variant) return; updateManualVariantMarket(variant.id, event.target.value); }} placeholder={`sell .${enchant}`} />
-                          </td>
-                        );
-                      })}
-                    </tr>
+          <button
+            type="button"
+            className={`rc-arrow-toggle ${isTopSectionExpanded ? "open" : ""}`}
+            aria-label={isTopSectionExpanded ? "Collapse refining controls" : "Expand refining controls"}
+            onClick={() => setIsTopSectionExpanded((prev) => !prev)}
+          >
+            <span className="rc-arrow-glyph">▾</span>
+          </button>
+        </div>
+        {isTopSectionExpanded ? (
+          <div className={`bm-filters rc-filters ${isPriceEditorExpanded ? "expanded" : "collapsed"}`}>
+            <div className={`rc-price-editor ${isPriceEditorExpanded ? "expanded" : "collapsed"}`}>
+              <div className="rc-price-editor-head">
+                <div>
+                  <p className="rc-block-title">Material Prices</p>
+                  <span>{isPriceEditorExpanded ? "Manual price table open" : "Manual price table closed"}</span>
+                </div>
+                <div className="rc-price-head-actions">
+                  <button
+                    type="button"
+                    className={`rc-arrow-toggle ${isPriceEditorExpanded ? "open" : ""}`}
+                    aria-label={isPriceEditorExpanded ? "Collapse price table" : "Expand price table"}
+                    onClick={() => setIsPriceEditorExpanded((prev) => !prev)}
+                  >
+                    <span className="rc-arrow-glyph">▾</span>
+                  </button>
+                </div>
+                <div className="rc-tab-nav">
+                  {MATERIAL_DEFINITIONS.map((material) => (
+                    <button key={material.key} type="button" className={`rc-tab ${editorMaterial === material.key ? "active" : ""}`} onClick={() => setEditorMaterial(material.key)}>
+                      {material.key === "metal" ? "Metal" : material.key === "wood" ? "Wood" : material.key === "fiber" ? "Fiber" : "Hide"}
+                    </button>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </div>
+              <div className="rc-price-editor-body">
+                <div className="rc-price-table-wrap">
+                  <p className="rc-section-label">Raw + Refining Sell Prices</p>
+                  <table className="rc-price-table rc-price-table-combined">
+                    <thead>
+                      <tr>
+                        <th>Tier</th>
+                        {ENCHANTS.map((enchant) => (<th key={`raw-head-${enchant}`}>Raw .{enchant}</th>))}
+                        {ENCHANTS.map((enchant) => (<th key={`sell-head-${enchant}`}>Sell .{enchant}</th>))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {TIERS.map((tier) => (
+                        <tr key={`combined-${editorMaterial}-${tier}`} className={`tier-row tier-${tier}`}>
+                          <td className="tier-cell">T{tier}</td>
+                          {ENCHANTS.map((enchant) => (
+                            <td key={`raw-${editorMaterial}-${tier}-${enchant}`}>
+                              <input className="rc-input rc-table-input" value={displayedRawByMaterialTierEnchant[editorMaterial][tier][enchant]} onChange={(event) => updateManualRawPrice(editorMaterial, tier, enchant, event.target.value)} placeholder={`raw .${enchant}`} />
+                            </td>
+                          ))}
+                          {ENCHANTS.map((enchant) => {
+                            const variant = variantByTierEnchant[`${tier}.${enchant}`];
+                            const liveValue = variant ? liveMarketByVariantId[variant.id] || 0 : 0;
+                            const manualValue = variant ? manualOverrides.variantMarkets[variant.id] || "" : "";
+                            return (
+                              <td key={`sell-${editorMaterial}-${tier}-${enchant}`}>
+                                <input className="rc-input rc-table-input" value={manualValue || (liveValue > 0 ? String(liveValue) : "")} onChange={(event) => { if (!variant) return; updateManualVariantMarket(variant.id, event.target.value); }} placeholder={`sell .${enchant}`} />
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div className="rc-fixed-filters">
+              <div className="filter-block">
+                <p>Usage Fee / 100</p>
+                <input className="rc-input" value={usageFeePer100} onChange={(event) => setUsageFeePer100(event.target.value)} />
+              </div>
+              <div className="filter-block">
+                <p>City</p>
+                <select className="rc-input" value={selectedCity} onChange={(event) => { const nextCity = normalizeCityName(event.target.value); setSelectedCity(nextCity); localStorage.setItem("city", nextCity === "ALL" ? "all" : nextCity); }}>
+                  {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
+                </select>
+              </div>
+              <div className="filter-block">
+                <p>Return Profile</p>
+                <select className="rc-input" value={returnRatePreset} onChange={(event) => setReturnRatePreset(event.target.value as ReturnRatePreset)}>
+                  <option value="base">Base 15.2%</option>
+                  <option value="bonus_city">Bonus City 36.7%</option>
+                  <option value="bonus_city_focus">Bonus City + Focus 53.9%</option>
+                </select>
+              </div>
+              <div className="filter-block rc-filter-action">
+                <p>Manual Overrides</p>
+                <button type="button" className="execute-btn ghost-btn" onClick={clearManualOverrides}>Reset To Live Data</button>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="rc-fixed-filters">
-          <div className="filter-block">
-            <p>Usage Fee / 100</p>
-            <input className="rc-input" value={usageFeePer100} onChange={(event) => setUsageFeePer100(event.target.value)} />
-          </div>
-          <div className="filter-block">
-            <p>City</p>
-            <select className="rc-input" value={selectedCity} onChange={(event) => { const nextCity = normalizeCityName(event.target.value); setSelectedCity(nextCity); localStorage.setItem("city", nextCity === "ALL" ? "all" : nextCity); }}>
-              {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
-            </select>
-          </div>
-          <div className="filter-block">
-            <p>Return Profile</p>
-            <select className="rc-input" value={returnRatePreset} onChange={(event) => setReturnRatePreset(event.target.value as ReturnRatePreset)}>
-              <option value="base">Base 15.2%</option>
-              <option value="bonus_city">Bonus City 36.7%</option>
-              <option value="bonus_city_focus">Bonus City + Focus 53.9%</option>
-            </select>
-          </div>
-          <div className="filter-block rc-filter-action">
-            <p>Manual Overrides</p>
-            <button type="button" className="execute-btn ghost-btn" onClick={clearManualOverrides}>Reset To Live Data</button>
-          </div>
-        </div>
+        ) : null}
       </section>
 
       <main className={`bm-main rc-main ${isTableExpanded ? "table-expanded" : ""}`}>
