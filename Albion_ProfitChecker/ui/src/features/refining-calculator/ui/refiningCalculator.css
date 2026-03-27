@@ -286,14 +286,6 @@
   height: calc(100vh - 176px);
 }
 
-.rc-main.table-expanded .bm-table {
-  flex: 1 1 auto;
-}
-
-.rc-main.table-expanded .bm-side.compressed {
-  max-width: 300px;
-}
-
 .bm-table.expanded .table-wrap {
   min-height: 72vh;
 }
@@ -351,10 +343,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-}
-
-.table-toggle {
-  flex: 0 0 auto;
 }
 
 .rc-side-stat strong {

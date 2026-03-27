@@ -176,7 +176,6 @@ export function RefiningCalculatorPage() {
   const [editorMaterial, setEditorMaterial] = useState<MaterialKey>("metal");
   const [isTopSectionExpanded, setIsTopSectionExpanded] = useState(true);
   const [isPriceEditorExpanded, setIsPriceEditorExpanded] = useState(false);
-  const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [liveMarketByVariantId, setLiveMarketByVariantId] = useState<Record<string, number>>({});
   const [liveRawByMaterialTierEnchant, setLiveRawByMaterialTierEnchant] = useState<Record<MaterialKey, Record<Tier, Record<Enchant, number>>>>(() => createEmptyLiveRawByMaterialTierEnchant());
   const [manualOverrides, setManualOverrides] = useState<ManualOverrides>(() => createEmptyManualOverrides());
@@ -574,11 +573,11 @@ export function RefiningCalculatorPage() {
         ) : null}
       </section>
 
-      <main className={`bm-main rc-main ${isTableExpanded ? "table-expanded" : ""}`}>
-        <section className={`bm-table ${isTableExpanded ? "expanded" : ""}`}>
+      <main className="bm-main rc-main">
+        <section className="bm-table expanded">
           <div className="rc-table-toolbar">
             <span>Results Table</span>
-            <span>{isTableExpanded ? "Expanded" : "Normal"}</span>
+            <span>Always open</span>
           </div>
           <div className="table-wrap custom-scrollbar">
             <table>
@@ -603,18 +602,10 @@ export function RefiningCalculatorPage() {
           <div className="table-footer">
             <p>Showing {rows.length} variants</p>
             <p>Region {region.toUpperCase()}</p>
-            <button
-              type="button"
-              className={`rc-arrow-toggle table-toggle ${isTableExpanded ? "open" : ""}`}
-              aria-label={isTableExpanded ? "Collapse results table" : "Expand results table"}
-              onClick={() => setIsTableExpanded((prev) => !prev)}
-            >
-              <span className="rc-arrow-glyph">▾</span>
-            </button>
           </div>
         </section>
 
-        <aside className={`bm-side ${isTableExpanded ? "compressed" : ""}`}>
+        <aside className="bm-side">
           <div className="side-card teal-glow custom-scrollbar">
             <div className="side-header"><h3>Refining Insight</h3><span className="material-symbols-outlined">tune</span></div>
             <div className="side-hero teal-gradient-bg">
