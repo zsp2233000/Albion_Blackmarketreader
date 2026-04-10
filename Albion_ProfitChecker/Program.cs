@@ -518,15 +518,15 @@ internal static class Program
             if (!string.IsNullOrWhiteSpace(dir) && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
-            var payload = winners.Select(w => new
+            var payload = winners.Select(w => new object[]
             {
-                city = w.City,
-                id = w.ItemId,
-                lym = w.CityBuyPrice,
-                bm = Math.Round(w.BmAvgPrice),
-                sold = Math.Round(w.BmSoldPerDay, 1),
-                profit = Math.Round(w.ProfitPercent, 1),
-                span = $"{w.DaysUsed}d"
+                w.City,
+                w.ItemId,
+                w.CityBuyPrice,
+                Math.Round(w.BmAvgPrice),
+                Math.Round(w.BmSoldPerDay, 1),
+                Math.Round(w.ProfitPercent, 1),
+                $"{w.DaysUsed}d"
             }).ToList();
 
             var json = JsonSerializer.Serialize(payload);

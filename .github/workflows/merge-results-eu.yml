@@ -43,14 +43,38 @@ jobs:
           };
 
           const merge = (paths) => paths.flatMap((path) => read(path));
-          const pick = (rows) => rows.flatMap((r) => {
-            if (!r || typeof r !== 'object') return [];
-            const id = typeof r.id === 'string' ? r.id : '';
-            if (!id) return [];
-            const bm = Number.isFinite(r.bm) ? r.bm : (typeof r.bm === 'string' && r.bm.trim() !== '' && Number.isFinite(Number(r.bm)) ? Number(r.bm) : null);
-            const sold = Number.isFinite(r.sold) ? r.sold : (typeof r.sold === 'string' && r.sold.trim() !== '' && Number.isFinite(Number(r.sold)) ? Number(r.sold) : null);
-            return [[id, bm, sold]];
-          });
+          const pick = (rows) => {
+            const bestById = new Map();
+            const toFinite = (value) => Number.isFinite(value)
+              ? value
+              : (typeof value === 'string' && value.trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null);
+            for (const r of rows) {
+              let id = '';
+              let bm = null;
+              let sold = null;
+              if (Array.isArray(r)) {
+                id = typeof r[1] === 'string' ? r[1] : '';
+                bm = toFinite(r[3]);
+                sold = toFinite(r[4]);
+              } else if (r && typeof r === 'object') {
+                id = typeof r.id === 'string' ? r.id : '';
+                bm = toFinite(r.bm);
+                sold = toFinite(r.sold);
+              }
+              if (!id) continue;
+              const current = bestById.get(id);
+              if (!current) {
+                bestById.set(id, [id, bm, sold]);
+                continue;
+              }
+              const currentBm = current[1] ?? -Infinity;
+              const nextBm = bm ?? -Infinity;
+              if (nextBm > currentBm || (nextBm === currentBm && (sold ?? -Infinity) > (current[2] ?? -Infinity))) {
+                bestById.set(id, [id, bm, sold]);
+              }
+            }
+            return Array.from(bestById.values());
+          };
           const writeCompact = (file, region, rows) => {
             const payload = {
               generatedAt: new Date().toISOString(),

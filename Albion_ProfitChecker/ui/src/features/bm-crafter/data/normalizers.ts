@@ -44,17 +44,36 @@ export function normalizeMarketPayload(payload: unknown, fallbackRegion: MarketR
   const root = isRecord(payload) ? payload : {};
   const list = Array.isArray(root.items) ? root.items : [];
 
-  const items: BmMarketItem[] = [];
+  const byItemId = new Map<string, BmMarketItem>();
   for (const entry of list) {
     const item = normalizeMarketItem(entry);
     if (!item) continue;
-    items.push(item);
+    const current = byItemId.get(item.id);
+    if (!current) {
+      byItemId.set(item.id, item);
+      continue;
+    }
+
+    const currentBm = current.bm ?? -Infinity;
+    const nextBm = item.bm ?? -Infinity;
+    if (nextBm > currentBm) {
+      byItemId.set(item.id, item);
+      continue;
+    }
+
+    if (nextBm === currentBm) {
+      const currentSold = current.sold ?? -Infinity;
+      const nextSold = item.sold ?? -Infinity;
+      if (nextSold > currentSold) {
+        byItemId.set(item.id, item);
+      }
+    }
   }
 
   return {
     region: normalizeRegion(root.region, fallbackRegion),
     generatedAt: typeof root.generatedAt === "string" ? root.generatedAt : null,
-    items
+    items: Array.from(byItemId.values())
   };
 }
 

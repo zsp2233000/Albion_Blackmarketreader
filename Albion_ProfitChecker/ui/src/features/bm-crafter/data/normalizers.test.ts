@@ -37,6 +37,24 @@ describe("bm crafter data normalizers", () => {
     expect(normalized.items[1]).toEqual({ id: "T5_MAIN_AXE", bm: 1000, sold: 10.5 });
   });
 
+  it("deduplicates market items by item id and keeps the best bm row", () => {
+    const payload = {
+      region: "eu",
+      generatedAt: "2026-01-01T00:00:00Z",
+      items: [
+        ["T4_MAIN_SWORD", 1000, 20],
+        ["T4_MAIN_SWORD", 1200, 10],
+        ["T4_MAIN_SWORD", 1200, 30],
+        ["T5_MAIN_AXE", 900, 15]
+      ]
+    };
+
+    const normalized = normalizeMarketPayload(payload, "us");
+    expect(normalized.items).toHaveLength(2);
+    expect(normalized.items[0]).toEqual({ id: "T4_MAIN_SWORD", bm: 1200, sold: 30 });
+    expect(normalized.items[1]).toEqual({ id: "T5_MAIN_AXE", bm: 900, sold: 15 });
+  });
+
   it("normalizes price payload into list and map", () => {
     const payload = {
       region: "eu",
