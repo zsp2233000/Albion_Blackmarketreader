@@ -15,7 +15,7 @@ type ManualOverrides = {
   rawByMaterialTierEnchant: RawPriceOverrides;
 };
 
-const KNOWN_CITIES = ["ALL", "Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford"] as const;
+const KNOWN_CITIES = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford"] as const;
 type SelectedCity = (typeof KNOWN_CITIES)[number];
 const MANUAL_OVERRIDE_STORAGE_KEY = "refining-manual-overrides-v1";
 const TIERS = [4, 5, 6, 7, 8] as const;
@@ -35,6 +35,13 @@ const allowedAvatars = [
   "/picture/Lymhurstwappen.png",
   "/picture/Thefortwappen.png"
 ];
+
+function materialDisplayName(materialKey: MaterialKey): string {
+  if (materialKey === "metal") return "Ore";
+  if (materialKey === "wood") return "Wood";
+  if (materialKey === "fiber") return "Fiber";
+  return "Hide";
+}
 
 function createEmptyRawByMaterialTierEnchant(): RawPriceOverrides {
   return MATERIAL_DEFINITIONS.reduce((acc, material) => {
@@ -125,18 +132,18 @@ function sanitizeAvatarUrl(value?: string | null): string {
 
 function normalizeCityName(raw: string | null): SelectedCity {
   const text = String(raw || "").trim().toLowerCase();
-  if (!text || text === "all" || text === "all cities") return "ALL";
+  if (!text || text === "all" || text === "all cities") return "Bridgewatch";
   const match = KNOWN_CITIES.find((city) => city.toLowerCase() === text);
-  return (match || "ALL") as SelectedCity;
+  return (match || "Bridgewatch") as SelectedCity;
 }
 
 function getCurrentCity(): SelectedCity {
   const keys = ["city", "selectedCity", "cityFilter", "currentCity"];
   for (const key of keys) {
     const found = normalizeCityName(localStorage.getItem(key));
-    if (found !== "ALL") return found;
+    if (found) return found;
   }
-  return "ALL";
+  return "Bridgewatch";
 }
 
 function hasManualOverrideValues(overrides: ManualOverrides): boolean {
@@ -174,8 +181,7 @@ export function RefiningCalculatorPage() {
   const [usageFeePer100, setUsageFeePer100] = useState("400");
   const [selectedCity, setSelectedCity] = useState<SelectedCity>(() => getCurrentCity());
   const [editorMaterial, setEditorMaterial] = useState<MaterialKey>("metal");
-  const [isTopSectionExpanded, setIsTopSectionExpanded] = useState(true);
-  const [isPriceEditorExpanded, setIsPriceEditorExpanded] = useState(false);
+  const [isTopSectionExpanded, setIsTopSectionExpanded] = useState(false);
   const [liveMarketByVariantId, setLiveMarketByVariantId] = useState<Record<string, number>>({});
   const [liveRawByMaterialTierEnchant, setLiveRawByMaterialTierEnchant] = useState<Record<MaterialKey, Record<Tier, Record<Enchant, number>>>>(() => createEmptyLiveRawByMaterialTierEnchant());
   const [manualOverrides, setManualOverrides] = useState<ManualOverrides>(() => createEmptyManualOverrides());
@@ -253,19 +259,7 @@ export function RefiningCalculatorPage() {
         const snapshot = buildRefiningLiveSnapshot(payload, REFINE_VARIANTS, selectedCity);
 
         setLiveMarketByVariantId(snapshot.marketByVariantId);
-        setLiveRawByMaterialTierEnchant(
-          MATERIAL_DEFINITIONS.reduce((acc, material) => {
-            acc[material.key] = TIERS.reduce<Record<Tier, Record<Enchant, number>>>((tierAcc, tier) => {
-              tierAcc[tier] = ENCHANTS.reduce<Record<Enchant, number>>((enchantAcc, enchant) => {
-                const variant = REFINE_VARIANTS.find((entry) => entry.materialKey === material.key && entry.tier === tier && entry.enchant === enchant);
-                enchantAcc[enchant] = variant ? snapshot.marketByVariantId[variant.id] || 0 : 0;
-                return enchantAcc;
-              }, { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
-              return tierAcc;
-            }, { 4: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }, 5: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }, 6: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }, 7: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }, 8: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 } });
-            return acc;
-          }, {} as Record<MaterialKey, Record<Tier, Record<Enchant, number>>>)
-        );
+        setLiveRawByMaterialTierEnchant(snapshot.rawByMaterialTierEnchant);
         setHasLiveData(Object.values(snapshot.marketByVariantId).some((value) => value > 0));
         if (snapshot.generatedAt) {
           const dt = new Date(snapshot.generatedAt);
@@ -322,7 +316,7 @@ export function RefiningCalculatorPage() {
     const profile = getReturnRatePresetConfig(returnRatePreset);
     // Rubric marker: the closure returned by makeRefiner captures config once and is reused for each variant.
     const refiner = makeRefiner({
-      city: selectedCity === "ALL" ? "Bridgewatch" : selectedCity,
+      city: selectedCity,
       baseReturnRate: profile.baseReturnRate,
       cityBonusRate: profile.cityBonusRate,
       refiningBonusRate: profile.refiningBonusRate,
@@ -479,38 +473,28 @@ export function RefiningCalculatorPage() {
             aria-label={isTopSectionExpanded ? "Collapse refining controls" : "Expand refining controls"}
             onClick={() => setIsTopSectionExpanded((prev) => !prev)}
           >
+            <span className="rc-arrow-label">{isTopSectionExpanded ? "Hide" : "Show"}</span>
             <span className="rc-arrow-glyph">▾</span>
           </button>
         </div>
         {isTopSectionExpanded ? (
-          <div className={`bm-filters rc-filters ${isPriceEditorExpanded ? "expanded" : "collapsed"}`}>
-            <div className={`rc-price-editor ${isPriceEditorExpanded ? "expanded" : "collapsed"}`}>
+          <div className="bm-filters rc-filters">
+            <div className="rc-price-editor">
               <div className="rc-price-editor-head">
-                <div>
+                <div className="rc-price-editor-copy">
                   <p className="rc-block-title">Material Prices</p>
-                  <span>{isPriceEditorExpanded ? "Manual price table open" : "Manual price table closed"}</span>
-                </div>
-                <div className="rc-price-head-actions">
-                  <button
-                    type="button"
-                    className={`rc-arrow-toggle ${isPriceEditorExpanded ? "open" : ""}`}
-                    aria-label={isPriceEditorExpanded ? "Collapse price table" : "Expand price table"}
-                    onClick={() => setIsPriceEditorExpanded((prev) => !prev)}
-                  >
-                    <span className="rc-arrow-glyph">▾</span>
-                  </button>
+                  <span>Raw + refining sell prices</span>
                 </div>
                 <div className="rc-tab-nav">
                   {MATERIAL_DEFINITIONS.map((material) => (
                     <button key={material.key} type="button" className={`rc-tab ${editorMaterial === material.key ? "active" : ""}`} onClick={() => setEditorMaterial(material.key)}>
-                      {material.key === "metal" ? "Metal" : material.key === "wood" ? "Wood" : material.key === "fiber" ? "Fiber" : "Hide"}
+                      {materialDisplayName(material.key)}
                     </button>
                   ))}
                 </div>
               </div>
               <div className="rc-price-editor-body">
                 <div className="rc-price-table-wrap">
-                  <p className="rc-section-label">Raw + Refining Sell Prices</p>
                   <table className="rc-price-table rc-price-table-combined">
                     <thead>
                       <tr>
@@ -552,7 +536,7 @@ export function RefiningCalculatorPage() {
               </div>
               <div className="filter-block">
                 <p>City</p>
-                <select className="rc-input" value={selectedCity} onChange={(event) => { const nextCity = normalizeCityName(event.target.value); setSelectedCity(nextCity); localStorage.setItem("city", nextCity === "ALL" ? "all" : nextCity); }}>
+                <select className="rc-input" value={selectedCity} onChange={(event) => { const nextCity = normalizeCityName(event.target.value); setSelectedCity(nextCity); localStorage.setItem("city", nextCity); }}>
                   {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
                 </select>
               </div>

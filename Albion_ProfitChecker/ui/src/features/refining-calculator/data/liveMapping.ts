@@ -17,10 +17,8 @@ type LiveMaterialsPayload = {
 export type RefiningLiveSnapshot = {
   generatedAt: string | null;
   marketByVariantId: Record<string, number>;
-  tierBaseRawByMaterial: Record<MaterialKey, Record<Tier, number>>;
+  rawByMaterialTierEnchant: Record<MaterialKey, Record<Tier, Record<Enchant, number>>>;
 };
-
-const KNOWN_CITIES = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford"] as const;
 
 const TOKEN_BY_MATERIAL: Record<MaterialKey, "METALBAR" | "PLANKS" | "CLOTH" | "LEATHER"> = MATERIAL_DEFINITIONS.reduce(
   (acc, material) => {
@@ -30,8 +28,21 @@ const TOKEN_BY_MATERIAL: Record<MaterialKey, "METALBAR" | "PLANKS" | "CLOTH" | "
   {} as Record<MaterialKey, "METALBAR" | "PLANKS" | "CLOTH" | "LEATHER">
 );
 
-function itemIdFor(materialKey: MaterialKey, tier: Tier, enchant: Enchant): string {
+const RAW_TOKEN_BY_MATERIAL: Record<MaterialKey, "ORE" | "WOOD" | "FIBER" | "HIDE"> = {
+  metal: "ORE",
+  wood: "WOOD",
+  fiber: "FIBER",
+  hide: "HIDE",
+};
+
+function refinedItemIdFor(materialKey: MaterialKey, tier: Tier, enchant: Enchant): string {
   const token = TOKEN_BY_MATERIAL[materialKey];
+  if (enchant <= 0) return `T${tier}_${token}`;
+  return `T${tier}_${token}_LEVEL${enchant}@${enchant}`;
+}
+
+function rawItemIdFor(materialKey: MaterialKey, tier: Tier, enchant: Enchant): string {
+  const token = RAW_TOKEN_BY_MATERIAL[materialKey];
   if (enchant <= 0) return `T${tier}_${token}`;
   return `T${tier}_${token}_LEVEL${enchant}@${enchant}`;
 }
@@ -39,12 +50,8 @@ function itemIdFor(materialKey: MaterialKey, tier: Tier, enchant: Enchant): stri
 function resolvePriceByCity(entry: LiveMaterialEntry | undefined, selectedCity: string): number {
   if (!entry) return 0;
   if (entry.prices && typeof entry.prices === "object") {
-    if (selectedCity !== "ALL") {
-      const cityPrice = Number(entry.prices[selectedCity] || 0);
-      return cityPrice > 0 ? cityPrice : 0;
-    }
-    const values = KNOWN_CITIES.map((city) => Number(entry.prices?.[city] || 0)).filter((value) => value > 0);
-    return values.length ? Math.min(...values) : 0;
+    const cityPrice = Number(entry.prices[selectedCity] || 0);
+    return cityPrice > 0 ? cityPrice : 0;
   }
   const single = Number(entry.price || 0);
   return single > 0 ? single : 0;
@@ -61,18 +68,18 @@ function resolveVariantMarket(variant: RefineVariant, items: ReadonlyArray<LiveM
   if (direct !== null) return direct;
 
   if (variant.enchant === 4) {
-    const lvl3 = byId(items, itemIdFor(variant.materialKey, variant.tier, 3), selectedCity);
+    const lvl3 = byId(items, refinedItemIdFor(variant.materialKey, variant.tier, 3), selectedCity);
     if (lvl3 !== null) return lvl3;
-    const lvl2 = byId(items, itemIdFor(variant.materialKey, variant.tier, 2), selectedCity);
+    const lvl2 = byId(items, refinedItemIdFor(variant.materialKey, variant.tier, 2), selectedCity);
     if (lvl2 !== null) return lvl2;
   }
 
   return variant.market;
 }
 
-function resolveTierBase(materialKey: MaterialKey, tier: Tier, items: ReadonlyArray<LiveMaterialEntry>, selectedCity: string): number {
-  const base = byId(items, itemIdFor(materialKey, tier, 0), selectedCity);
-  return base !== null ? base : 0;
+function resolveRawPrice(materialKey: MaterialKey, tier: Tier, enchant: Enchant, items: ReadonlyArray<LiveMaterialEntry>, selectedCity: string): number {
+  const rawPrice = byId(items, rawItemIdFor(materialKey, tier, enchant), selectedCity);
+  return rawPrice !== null ? rawPrice : 0;
 }
 
 export function buildRefiningLiveSnapshot(
@@ -87,21 +94,30 @@ export function buildRefiningLiveSnapshot(
     return acc;
   }, {});
 
-  const tierBaseRawByMaterial = (Object.keys(TOKEN_BY_MATERIAL) as MaterialKey[]).reduce<Record<MaterialKey, Record<Tier, number>>>(
+  const rawByMaterialTierEnchant = (Object.keys(TOKEN_BY_MATERIAL) as MaterialKey[]).reduce<Record<MaterialKey, Record<Tier, Record<Enchant, number>>>>(
     (acc, materialKey) => {
-      acc[materialKey] = ([4, 5, 6, 7, 8] as const).reduce<Record<Tier, number>>((tierAcc, tier) => {
-        tierAcc[tier] = resolveTierBase(materialKey, tier, items, selectedCity);
+      acc[materialKey] = ([4, 5, 6, 7, 8] as const).reduce<Record<Tier, Record<Enchant, number>>>((tierAcc, tier) => {
+        tierAcc[tier] = ([0, 1, 2, 3, 4] as const).reduce<Record<Enchant, number>>((enchantAcc, enchant) => {
+          enchantAcc[enchant] = resolveRawPrice(materialKey, tier, enchant, items, selectedCity);
+          return enchantAcc;
+        }, { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
         return tierAcc;
-      }, { 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 });
+      }, {
+        4: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+        5: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+        6: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+        7: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+        8: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+      });
       return acc;
     },
-    {} as Record<MaterialKey, Record<Tier, number>>
+    {} as Record<MaterialKey, Record<Tier, Record<Enchant, number>>>
   );
 
   return {
     generatedAt: typeof payload.generatedAt === "string" ? payload.generatedAt : null,
     marketByVariantId,
-    tierBaseRawByMaterial
+    rawByMaterialTierEnchant
   };
 }
 
