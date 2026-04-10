@@ -393,7 +393,7 @@ function getEnchantLevel(id: string): 0 | 1 | 2 | 3 | 4 {
 }
 
 async function loadResultsByRegion(region: Region): Promise<ResultItem[]> {
-  const files = region === "eu" ? ["results-eu.js", "results-eu-1.js", "results-eu-2.js"] : ["results.js", "results-1.js", "results-2.js"];
+  const files = region === "eu" ? ["results-eu-1.js", "results-eu-2.js", "results-eu.js"] : ["results-1.js", "results-2.js", "results.js"];
   const all: ResultItem[] = [];
 
   for (const file of files) {

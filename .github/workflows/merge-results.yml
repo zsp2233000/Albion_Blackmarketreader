@@ -5,9 +5,6 @@ on:
   schedule:
     - cron: "0 8 * * *"
 
-permissions:
-  contents: write
-
 jobs:
   merge:
     runs-on: ubuntu-latest
@@ -15,32 +12,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Merge results-1.js + results-2.js -> results.js
+      - name: Validate split result files
         working-directory: Albion_ProfitChecker/ui
         run: |
-          node -e "const fs=require('fs'); const read=(p)=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^window\.results\s*=\s*/,'').replace(/;?\s*$/,'')); const a=read('public/results-1.js'); const b=read('public/results-2.js'); const merged=[...a,...b]; fs.writeFileSync('public/results.js','window.results = '+JSON.stringify(merged)+';'); console.log('Merged',a.length,'+',b.length,'=',merged.length);"
-
-      - name: Commit merged results
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/results.js)" ]; then
-            git add Albion_ProfitChecker/ui/public/results.js
-            git commit -m "chore: merge results"
-          else
-            echo "Keine Änderungen in results.js"
-          fi
-
-      - name: Push changes
-        if: success()
-        run: |
-          branch=$(git rev-parse --abbrev-ref HEAD)
-          git pull --rebase origin "$branch" || true
-          if [ -n "$(git log origin/$(git rev-parse --abbrev-ref HEAD)..HEAD)" ]; then
-            git push
-          else
-            echo "Nichts zu pushen"
-          fi
+          node - <<'NODE'
+          const fs = require('fs');
+          const paths = ['public/results-1.js', 'public/results-2.js'];
+          for (const path of paths) {
+            if (!fs.existsSync(path)) {
+              throw new Error(`Missing required split file: ${path}`);
+            }
+            const bytes = fs.statSync(path).size;
+            console.log(path, bytes, 'bytes');
+          }
+          console.log('Dashboard reads split result files directly. Skipping merged results.js generation.');
+          NODE
 
       - name: Trigger Vercel Deploy Hook
         if: env.VERCEL_DEPLOY_HOOK_URL != ''

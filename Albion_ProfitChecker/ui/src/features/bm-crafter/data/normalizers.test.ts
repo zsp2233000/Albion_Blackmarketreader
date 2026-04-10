@@ -19,6 +19,24 @@ describe("bm crafter data normalizers", () => {
     expect(normalized.items[1]).toEqual({ id: "T5_MAIN_AXE", bm: 1000, sold: 10.5 });
   });
 
+  it("normalizes compact market tuple payload", () => {
+    const payload = {
+      region: "eu",
+      generatedAt: "2026-01-01T00:00:00Z",
+      items: [
+        ["T4_MAIN_SWORD", 12345, 99.2],
+        ["", 1, 1],
+        ["T5_MAIN_AXE", "1000", "10.5"]
+      ]
+    };
+
+    const normalized = normalizeMarketPayload(payload, "us");
+    expect(normalized.region).toBe("eu");
+    expect(normalized.items).toHaveLength(2);
+    expect(normalized.items[0]).toEqual({ id: "T4_MAIN_SWORD", bm: 12345, sold: 99.2 });
+    expect(normalized.items[1]).toEqual({ id: "T5_MAIN_AXE", bm: 1000, sold: 10.5 });
+  });
+
   it("normalizes price payload into list and map", () => {
     const payload = {
       region: "eu",
