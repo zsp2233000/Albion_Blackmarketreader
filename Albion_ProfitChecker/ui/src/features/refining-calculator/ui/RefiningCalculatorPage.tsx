@@ -181,7 +181,7 @@ export function RefiningCalculatorPage() {
   const [usageFeePer100, setUsageFeePer100] = useState("400");
   const [selectedCity, setSelectedCity] = useState<SelectedCity>(() => getCurrentCity());
   const [editorMaterial, setEditorMaterial] = useState<MaterialKey>("metal");
-  const [isTopSectionExpanded, setIsTopSectionExpanded] = useState(false);
+  const [isTopSectionExpanded, setIsTopSectionExpanded] = useState(true);
   const [liveMarketByVariantId, setLiveMarketByVariantId] = useState<Record<string, number>>({});
   const [liveRawByMaterialTierEnchant, setLiveRawByMaterialTierEnchant] = useState<Record<MaterialKey, Record<Tier, Record<Enchant, number>>>>(() => createEmptyLiveRawByMaterialTierEnchant());
   const [manualOverrides, setManualOverrides] = useState<ManualOverrides>(() => createEmptyManualOverrides());
@@ -252,11 +252,17 @@ export function RefiningCalculatorPage() {
     let cancelled = false;
     (async () => {
       try {
-        const response = await fetch(`/data/materials-cities-${region}.json`);
-        if (!response.ok) return;
-        const payload = await response.json();
+        const [refinedResponse, rawResponse] = await Promise.all([
+          fetch(`/data/materials-cities-${region}.json`),
+          fetch(`/data/raw-materials-cities-${region}.json`)
+        ]);
+        if (!refinedResponse.ok || !rawResponse.ok) return;
+        const [refinedPayload, rawPayload] = await Promise.all([
+          refinedResponse.json(),
+          rawResponse.json()
+        ]);
         if (cancelled) return;
-        const snapshot = buildRefiningLiveSnapshot(payload, REFINE_VARIANTS, selectedCity);
+        const snapshot = buildRefiningLiveSnapshot(refinedPayload, rawPayload, REFINE_VARIANTS, selectedCity);
 
         setLiveMarketByVariantId(snapshot.marketByVariantId);
         setLiveRawByMaterialTierEnchant(snapshot.rawByMaterialTierEnchant);
@@ -335,6 +341,7 @@ export function RefiningCalculatorPage() {
 
   const selectedRow = rows.find((row) => row.variant.id === selectedRowKey) || rows[0];
   const maxDailyProfit = rows.reduce((sum, row) => sum + Math.max(0, row.profit), 0) * 5;
+  const profitableCount = rows.filter((row) => row.positive).length;
   const hasDisplayData = hasLiveData || hasManualOverrideValues(manualOverrides);
   const variantByTierEnchant = useMemo(
     () => REFINE_VARIANTS.filter((variant) => variant.materialKey === editorMaterial).reduce<Record<string, (typeof REFINE_VARIANTS)[number]>>((acc, variant) => {
@@ -561,7 +568,7 @@ export function RefiningCalculatorPage() {
         <section className="bm-table expanded">
           <div className="rc-table-toolbar">
             <span>Results Table</span>
-            <span>Always open</span>
+            <span>{profitableCount} profitable</span>
           </div>
           <div className="table-wrap custom-scrollbar">
             <table>

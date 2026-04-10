@@ -677,6 +677,7 @@ export function CraftingCalculatorPage() {
               <Link className="nav-tab" to="/">Home</Link>
               <Link className="nav-tab" to="/dashboard">Dashboard</Link>
               <Link className="nav-tab" to="/bm-crafter">Blackmarket Crafter</Link>
+              <Link className="nav-tab" to="/refining-calculator">Refining Calculator</Link>
               <span className="nav-tab active">Crafting Calculator</span>
             </div>
           </div>

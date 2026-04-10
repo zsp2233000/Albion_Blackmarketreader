@@ -83,14 +83,16 @@ function resolveRawPrice(materialKey: MaterialKey, tier: Tier, enchant: Enchant,
 }
 
 export function buildRefiningLiveSnapshot(
-  payload: LiveMaterialsPayload,
+  refinedPayload: LiveMaterialsPayload,
+  rawPayload: LiveMaterialsPayload,
   variants: ReadonlyArray<RefineVariant>,
   selectedCity: string
 ): RefiningLiveSnapshot {
-  const items = Array.isArray(payload.items) ? payload.items : [];
+  const refinedItems = Array.isArray(refinedPayload.items) ? refinedPayload.items : [];
+  const rawItems = Array.isArray(rawPayload.items) ? rawPayload.items : [];
 
   const marketByVariantId = variants.reduce<Record<string, number>>((acc, variant) => {
-    acc[variant.id] = resolveVariantMarket(variant, items, selectedCity);
+    acc[variant.id] = resolveVariantMarket(variant, refinedItems, selectedCity);
     return acc;
   }, {});
 
@@ -98,7 +100,7 @@ export function buildRefiningLiveSnapshot(
     (acc, materialKey) => {
       acc[materialKey] = ([4, 5, 6, 7, 8] as const).reduce<Record<Tier, Record<Enchant, number>>>((tierAcc, tier) => {
         tierAcc[tier] = ([0, 1, 2, 3, 4] as const).reduce<Record<Enchant, number>>((enchantAcc, enchant) => {
-          enchantAcc[enchant] = resolveRawPrice(materialKey, tier, enchant, items, selectedCity);
+          enchantAcc[enchant] = resolveRawPrice(materialKey, tier, enchant, rawItems, selectedCity);
           return enchantAcc;
         }, { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
         return tierAcc;
@@ -115,7 +117,11 @@ export function buildRefiningLiveSnapshot(
   );
 
   return {
-    generatedAt: typeof payload.generatedAt === "string" ? payload.generatedAt : null,
+    generatedAt: typeof rawPayload.generatedAt === "string"
+      ? rawPayload.generatedAt
+      : typeof refinedPayload.generatedAt === "string"
+        ? refinedPayload.generatedAt
+        : null,
     marketByVariantId,
     rawByMaterialTierEnchant
   };
