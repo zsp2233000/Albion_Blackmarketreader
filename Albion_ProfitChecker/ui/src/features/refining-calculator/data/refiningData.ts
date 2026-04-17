@@ -64,7 +64,7 @@ function itemIdFor(token: MaterialDefinition["token"], tier: Tier, enchant: Ench
 }
 
 function iconFor(token: MaterialDefinition["token"], tier: Tier, enchant: Enchant): string {
-  return `https://render.albiononline.com/v1/item/${itemIdFor(token, tier, enchant)}.png`;
+  return `/itemicons/${itemIdFor(token, tier, enchant)}.png`;
 }
 
 function labelFor(tier: Tier, enchant: Enchant): string {
@@ -105,6 +105,26 @@ export const DEFAULT_RAW_BY_MATERIAL_TIER: Record<MaterialKey, Record<Tier, numb
     return acc;
   },
   {} as Record<MaterialKey, Record<Tier, number>>
+);
+
+export const DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT: Record<MaterialKey, Record<Tier, Record<Enchant, number>>> = MATERIAL_DEFINITIONS.reduce(
+  (acc, material) => {
+    acc[material.key] = ([4, 5, 6, 7, 8] as const).reduce<Record<Tier, Record<Enchant, number>>>((tierAcc, tier) => {
+      tierAcc[tier] = ([0, 1, 2, 3, 4] as const).reduce<Record<Enchant, number>>((enchantAcc, enchant) => {
+        enchantAcc[enchant] = Math.round(material.defaultTierBaseRaw[tier] * ENCHANT_MULTIPLIER[enchant]);
+        return enchantAcc;
+      }, { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
+      return tierAcc;
+    }, {
+      4: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+      5: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+      6: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+      7: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+      8: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+    });
+    return acc;
+  },
+  {} as Record<MaterialKey, Record<Tier, Record<Enchant, number>>>
 );
 
 export const DEFAULT_RAW_BY_TIER: Record<Tier, number> = DEFAULT_RAW_BY_MATERIAL_TIER.metal;

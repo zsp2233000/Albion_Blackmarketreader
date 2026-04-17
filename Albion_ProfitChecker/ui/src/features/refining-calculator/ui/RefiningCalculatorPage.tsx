@@ -4,7 +4,7 @@ import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type ReturnRatePreset, type Tier } from "../core";
-import { buildRefiningLiveSnapshot, MATERIAL_DEFINITIONS, REFINE_VARIANTS } from "../data";
+import { buildRefiningLiveSnapshot, DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT, MATERIAL_DEFINITIONS, REFINE_VARIANTS } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
 import "./refiningCalculator.css";
 
@@ -60,9 +60,15 @@ function createEmptyManualOverrides(): ManualOverrides {
 function createEmptyLiveRawByMaterialTierEnchant(): Record<MaterialKey, Record<Tier, Record<Enchant, number>>> {
   return MATERIAL_DEFINITIONS.reduce((acc, material) => {
     acc[material.key] = TIERS.reduce<Record<Tier, Record<Enchant, number>>>((tierAcc, tier) => {
-      tierAcc[tier] = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 };
+      tierAcc[tier] = { ...DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT[material.key][tier] };
       return tierAcc;
-    }, { 4: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }, 5: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }, 6: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }, 7: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }, 8: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 } });
+    }, {
+      4: { ...DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT[material.key][4] },
+      5: { ...DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT[material.key][5] },
+      6: { ...DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT[material.key][6] },
+      7: { ...DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT[material.key][7] },
+      8: { ...DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT[material.key][8] }
+    });
     return acc;
   }, {} as Record<MaterialKey, Record<Tier, Record<Enchant, number>>>);
 }
@@ -108,6 +114,10 @@ function formatNumber(value: number): string {
 
 function formatPct(value: number): string {
   return Number.isFinite(value) ? `${value.toFixed(1)}%` : "--";
+}
+
+function onRefiningIconError(event: React.SyntheticEvent<HTMLImageElement>): void {
+  event.currentTarget.src = assetUrl("picture/accountsymbol.png");
 }
 
 function readStoredRegion(): MarketRegion | null {
@@ -252,20 +262,35 @@ export function RefiningCalculatorPage() {
     let cancelled = false;
     (async () => {
       try {
-        const [refinedResponse, rawResponse] = await Promise.all([
-          fetch(`/data/materials-cities-${region}.json`),
-          fetch(`/data/raw-materials-cities-${region}.json`)
-        ]);
-        if (!refinedResponse.ok || !rawResponse.ok) return;
-        const [refinedPayload, rawPayload] = await Promise.all([
-          refinedResponse.json(),
-          rawResponse.json()
-        ]);
+        const refinedResponse = await fetch(`/data/materials-cities-${region}.json`);
+        if (!refinedResponse.ok) return;
+        const refinedPayload = await refinedResponse.json();
+        const rawPayload = await fetch(`/data/raw-materials-cities-${region}.json`)
+          .then((response) => (response.ok ? response.json() : null))
+          .catch(() => null);
         if (cancelled) return;
-        const snapshot = buildRefiningLiveSnapshot(refinedPayload, rawPayload, REFINE_VARIANTS, selectedCity);
+        const snapshot = buildRefiningLiveSnapshot(refinedPayload, rawPayload || {}, REFINE_VARIANTS, selectedCity);
 
         setLiveMarketByVariantId(snapshot.marketByVariantId);
-        setLiveRawByMaterialTierEnchant(snapshot.rawByMaterialTierEnchant);
+        setLiveRawByMaterialTierEnchant(
+          MATERIAL_DEFINITIONS.reduce<Record<MaterialKey, Record<Tier, Record<Enchant, number>>>>((acc, material) => {
+            acc[material.key] = TIERS.reduce<Record<Tier, Record<Enchant, number>>>((tierAcc, tier) => {
+              tierAcc[tier] = ENCHANTS.reduce<Record<Enchant, number>>((enchantAcc, enchant) => {
+                const liveRaw = snapshot.rawByMaterialTierEnchant[material.key]?.[tier]?.[enchant] || 0;
+                enchantAcc[enchant] = liveRaw > 0 ? liveRaw : DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT[material.key][tier][enchant];
+                return enchantAcc;
+              }, { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
+              return tierAcc;
+            }, {
+              4: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+              5: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+              6: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+              7: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+              8: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }
+            });
+            return acc;
+          }, {} as Record<MaterialKey, Record<Tier, Record<Enchant, number>>>)
+        );
         setHasLiveData(Object.values(snapshot.marketByVariantId).some((value) => value > 0));
         if (snapshot.generatedAt) {
           const dt = new Date(snapshot.generatedAt);
@@ -577,7 +602,7 @@ export function RefiningCalculatorPage() {
                 {!hasDisplayData || !rows.length ? (<tr><td colSpan={8}>No refining data available for the selected region/city.</td></tr>) : null}
                 {rows.map((row, index) => (
                   <tr key={row.variant.id} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.variant.id ? "selected-row" : ""}`} onClick={() => setSelectedRowKey(row.variant.id)}>
-                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={row.variant.id} /></div><div><div className="item-name">{row.variant.id}</div><div className="item-meta">{row.variant.label}</div></div></div></div></td>
+                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={row.variant.id} onError={onRefiningIconError} /></div><div><div className="item-name">{row.variant.id}</div><div className="item-meta">{row.variant.label}</div></div></div></div></td>
                     <td className="num">{formatNumber(row.grossMaterialCost)}</td>
                     <td className="num profit">-{formatNumber(row.returnedMaterialCost)}</td>
                     <td className="num muted">{formatNumber(row.refiningFee)}</td>
@@ -600,7 +625,7 @@ export function RefiningCalculatorPage() {
           <div className="side-card teal-glow custom-scrollbar">
             <div className="side-header"><h3>Refining Insight</h3><span className="material-symbols-outlined">tune</span></div>
             <div className="side-hero teal-gradient-bg">
-              <div className="side-icon"><div className="side-icon-inner"><img src={selectedRow?.variant.icon || ""} alt="" /></div></div>
+              <div className="side-icon"><div className="side-icon-inner"><img src={selectedRow?.variant.icon || ""} alt="" onError={onRefiningIconError} /></div></div>
               <h2>{selectedRow?.variant.id || "Select a variant"}</h2>
             </div>
             <div className="side-metrics">
