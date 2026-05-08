@@ -1,0 +1,53 @@
+name: Build Crafting Results Prices (EU + US)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # After other morning jobs to reduce API overlap.
+    - cron: "5 10 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crafting-results-prices
+  cancel-in-progress: true
+
+jobs:
+  build-crafting-results-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Refresh crafting calculator datasets
+        working-directory: Albion_ProfitChecker/ui
+        run: npm run refresh:crafting-data
+
+      - name: Commit outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/data/materials-cities-eu.json Albion_ProfitChecker/ui/public/data/materials-cities-us.json Albion_ProfitChecker/ui/public/data/materials-eu.json Albion_ProfitChecker/ui/public/data/materials-us.json Albion_ProfitChecker/ui/public/data/artefacts-eu.json Albion_ProfitChecker/ui/public/data/artefacts-us.json Albion_ProfitChecker/ui/public/data/crafting-results-eu.json Albion_ProfitChecker/ui/public/data/crafting-results-us.json Albion_ProfitChecker/ui/public/results-crafting-eu.js Albion_ProfitChecker/ui/public/results-crafting-us.js)" ]; then
+            git add Albion_ProfitChecker/ui/public/data/materials-cities-eu.json Albion_ProfitChecker/ui/public/data/materials-cities-us.json Albion_ProfitChecker/ui/public/data/materials-eu.json Albion_ProfitChecker/ui/public/data/materials-us.json Albion_ProfitChecker/ui/public/data/artefacts-eu.json Albion_ProfitChecker/ui/public/data/artefacts-us.json Albion_ProfitChecker/ui/public/data/crafting-results-eu.json Albion_ProfitChecker/ui/public/data/crafting-results-us.json Albion_ProfitChecker/ui/public/results-crafting-eu.js Albion_ProfitChecker/ui/public/results-crafting-us.js
+            git add Albion_ProfitChecker/ui/scripts/refresh-crafting-data.mjs Albion_ProfitChecker/ui/package.json
+            git commit -m "chore: refresh crafting calculator data"
+          else
+            echo "No crafting calculator data changes"
+          fi
+
+      - name: Push changes
+        if: success()
+        run: |
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          git pull --rebase origin "$branch" || true
+          if [ -n "$(git log origin/$(git rev-parse --abbrev-ref HEAD)..HEAD)" ]; then
+            git push
+          else
+            echo "Nichts zu pushen"
+          fi

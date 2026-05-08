@@ -1,10 +1,23 @@
-import { Fragment, type FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import "../bm-crafter/ui/bmCrafter.css";
 import "./craftingCalculator.css";
+import {
+  buildMaterialItemId,
+  calculateEconomics,
+  clampNumber,
+  getBonusCityForItem,
+  KNOWN_CITIES,
+  MATERIAL_BASES,
+  productionBonusToReturnRate,
+  resolveArtefactPriceByCity,
+  resolveBlackMarketPrice,
+  resolvePriceByCity,
+  resolveResultPrice
+} from "./craftingCalculator.logic";
 
 type MarketRegion = "eu" | "us";
 
@@ -20,11 +33,14 @@ type MaterialDraft = {
   name: string;
   qty: number;
   price: number;
+  isArtifact: boolean;
+  isRequired: boolean;
 };
 
 type CraftingItem = {
   id: string;
   name: string;
+  categoryKey?: string;
   materials?: Array<{ itemId?: string; id?: string; name?: string; qty?: number }>;
   artifact?: string | null;
   artifactId?: string | null;
@@ -63,6 +79,20 @@ type MaterialsCityPayload = {
   items?: Array<{ itemId?: string; prices?: Record<string, number> }>;
 };
 
+type ArtefactsPayload = {
+  items?: Array<{ itemId?: string; city?: string; price?: number }>;
+};
+
+type ResultItem = {
+  city?: string;
+  id?: string;
+  price?: number;
+  prices?: Record<string, number>;
+  lym?: number;
+  bm?: number;
+  sold?: number;
+};
+
 declare global {
   interface Window {
     env?: {
@@ -72,8 +102,11 @@ declare global {
   }
 }
 
-const MATERIAL_BASES = new Set(["METALBAR", "PLANKS", "CLOTH", "LEATHER"]);
-const KNOWN_CITIES = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford"];
+const CITY_FILTER_OPTIONS = [...KNOWN_CITIES] as const;
+const SELL_CITY_OPTIONS = [...KNOWN_CITIES, "Black Market"] as const;
+const BASE_PRODUCTION_BONUS = 18;
+const BONUS_CITY_PRODUCTION_BONUS = 15;
+const FOCUS_PRODUCTION_BONUS = 59;
 
 const allowedAvatars = [
   "/picture/accountsymbol.png",
@@ -161,12 +194,21 @@ function formatNumber(value: number): string {
   return new Intl.NumberFormat("en-US").format(Math.round(value || 0));
 }
 
+function formatMaybeNumber(value: number | null | undefined): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "-";
+  return formatNumber(value);
+}
+
 function formatCompact(value: number): string {
   const num = Number(value) || 0;
   const abs = Math.abs(num);
   if (abs >= 1000000) return `${(num / 1000000).toFixed(1).replace(/\.0$/, "")}M`;
   if (abs >= 1000) return `${(num / 1000).toFixed(1).replace(/\.0$/, "")}k`;
   return String(Math.round(num));
+}
+
+function formatCompactOrDash(value: number): string {
+  return Number(value) > 0 ? formatCompact(value) : "-";
 }
 
 function parseCompactNumber(value: string): number {
@@ -184,6 +226,53 @@ function parseTierEnchant(uid: string): { tier: number; enchant: number } {
   return { tier: Number.isFinite(tier) ? tier : 4, enchant: Number.isFinite(enchant) ? enchant : 0 };
 }
 
+function rowTierFromKey(rowKey: string): number {
+  const row = TABLE_SECTIONS.flatMap((section) => section.rows).find((entry) => entry.key === rowKey);
+  if (!row) return 4;
+  return parseTierEnchant(row.uid).tier;
+}
+
+function normalizeSearchText(value: string): string {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[_\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function scoreSearchItem(item: CraftingItem, query: string): number {
+  const q = normalizeSearchText(query);
+  if (!q) return 0;
+
+  const name = normalizeSearchText(item.name);
+  const id = normalizeSearchText(item.id);
+  const combined = `${name} ${id}`.trim();
+  const tokens = q.split(" ").filter(Boolean);
+  if (!tokens.length) return 0;
+
+  // Require every token to appear in name or id.
+  const allTokensMatch = tokens.every((token) => combined.includes(token));
+  if (!allTokensMatch) return 0;
+
+  let score = 0;
+  if (name === q || id === q) score += 1000;
+  if (name.startsWith(q)) score += 700;
+  if (id.startsWith(q)) score += 650;
+  if (name.includes(q)) score += 420;
+  if (id.includes(q)) score += 380;
+
+  for (const token of tokens) {
+    if (name.startsWith(token)) score += 120;
+    if (id.startsWith(token)) score += 110;
+    if (name.includes(token)) score += 70;
+    if (id.includes(token)) score += 60;
+  }
+
+  // Slight preference for shorter names when scores are close.
+  score -= Math.min(name.length, 80) * 0.5;
+  return score;
+}
+
 function normalizeCityName(raw: string | null): string {
   const text = String(raw || "").trim().toLowerCase();
   if (!text || text === "all" || text === "all cities") return "ALL";
@@ -191,27 +280,54 @@ function normalizeCityName(raw: string | null): string {
   return hit || "ALL";
 }
 
-function getCurrentCity(): string {
-  const keys = ["city", "selectedCity", "cityFilter", "currentCity"];
+function getStoredCity(keys: string[], fallback = "Lymhurst"): string {
   for (const key of keys) {
     const city = normalizeCityName(localStorage.getItem(key));
-    if (city !== "ALL") return city;
+    if (KNOWN_CITIES.includes(city)) return city;
   }
-  return "ALL";
+  return fallback;
 }
 
-function buildMaterialItemId(base: string, tier: number, enchant: number): string | null {
-  if (!MATERIAL_BASES.has(base)) return null;
-  if (enchant > 0) return `T${tier}_${base}_LEVEL${enchant}@${enchant}`;
-  return `T${tier}_${base}`;
+function buildCraftedItemId(baseId: string, tier: number, enchant: number): string {
+  const root = `T${tier}_${baseId}`;
+  return enchant > 0 ? `${root}@${enchant}` : root;
 }
 
-function resolvePriceByCity(prices: Record<string, number> | undefined, city: string): number {
-  if (!prices) return 0;
-  if (city !== "ALL") return Number(prices[city] || 0);
-  const values = KNOWN_CITIES.map((c) => Number(prices[c] || 0)).filter((n) => n > 0);
-  return values.length ? Math.min(...values) : 0;
+async function loadResultsByRegion(region: MarketRegion): Promise<ResultItem[]> {
+  try {
+    const response = await fetch(`/data/crafting-results-${region}.json`);
+    if (response.ok) {
+      const payload = await response.json();
+      const items = Array.isArray(payload?.items) ? payload.items : [];
+      if (items.length) return items as ResultItem[];
+    }
+  } catch {
+    // fall back to legacy sparse result shards below
+  }
+
+  const files = region === "eu"
+    ? ["results-crafting-eu.js", "results-eu.js", "results-eu-1.js", "results-eu-2.js"]
+    : ["results-crafting-us.js", "results.js", "results-1.js", "results-2.js"];
+  const all: ResultItem[] = [];
+
+  for (const file of files) {
+    try {
+      const response = await fetch(`/${file}`);
+      if (!response.ok) continue;
+      const raw = await response.text();
+      const start = raw.indexOf("[");
+      const end = raw.lastIndexOf("]");
+      if (start < 0 || end <= start) continue;
+      const parsed = JSON.parse(raw.slice(start, end + 1)) as ResultItem[];
+      if (Array.isArray(parsed)) all.push(...parsed);
+    } catch {
+      // ignore broken shard files and keep loading others
+    }
+  }
+
+  return all;
 }
+
 
 function sanitizeAvatarUrl(value?: string | null): string {
   const fallback = "/picture/accountsymbol.png";
@@ -244,12 +360,8 @@ function useRegion(): [MarketRegion, (next: MarketRegion) => void] {
 }
 
 export function CraftingCalculatorPage() {
-  const configuredGatePassword = "testo";
-  const [isPasswordUnlocked, setIsPasswordUnlocked] = useState(() => sessionStorage.getItem("ccPasswordUnlocked") === "1");
-  const [gatePasswordInput, setGatePasswordInput] = useState("");
-  const [gateError, setGateError] = useState("");
-
   const [region, setRegion] = useRegion();
+  const [craftCity, setCraftCity] = useState<string>(() => getStoredCity(["craftCity", "selectedCity", "city", "cityFilter", "currentCity"]));
   const [authService, setAuthService] = useState<AuthService | null>(null);
   const [user, setUser] = useState<UserState | null>(null);
   const [showAccount, setShowAccount] = useState(false);
@@ -266,6 +378,8 @@ export function CraftingCalculatorPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [materialState, setMaterialState] = useState<MaterialDraft[]>([]);
   const [materialPriceMap, setMaterialPriceMap] = useState<Map<string, Record<string, number>>>(new Map());
+  const [artefactPriceMap, setArtefactPriceMap] = useState<Map<string, Record<string, number>>>(new Map());
+  const [resultsItems, setResultsItems] = useState<ResultItem[]>([]);
   const [rowEdits, setRowEdits] = useState<Record<string, RowEdit>>(() => {
     const entries: Array<[string, RowEdit]> = TABLE_SECTIONS
       .flatMap((section) => section.rows)
@@ -281,17 +395,67 @@ export function CraftingCalculatorPage() {
       ]);
     return Object.fromEntries(entries);
   });
+  const [usePremium, setUsePremium] = useState(true);
+  const [useFocus, setUseFocus] = useState(false);
+  const [dailyBonusPercent, setDailyBonusPercent] = useState<0 | 10 | 20>(0);
+  const [sellCity, setSellCity] = useState<string>(() => {
+    const stored = localStorage.getItem("sellCity");
+    return stored === "Black Market" ? "Black Market" : getStoredCity(["sellCity"], "Lymhurst");
+  });
+  const [itemValue, setItemValue] = useState(256);
+  const [stationFee, setStationFee] = useState(1000);
+  const [setupFeePercent, setSetupFeePercent] = useState(2.5);
+  const [transactionTaxPercent, setTransactionTaxPercent] = useState(4);
 
-  const selectedRow = useMemo(() => TABLE_SECTIONS.flatMap((s) => s.rows).find((r) => r.key === selectedRowKey) || TABLE_SECTIONS[5].rows[4], [selectedRowKey]);
+  const allTableRows = useMemo(() => TABLE_SECTIONS.flatMap((section) => section.rows), []);
+  const selectedRow = useMemo(
+    () => allTableRows.find((row) => row.key === selectedRowKey) || allTableRows[allTableRows.length - 1],
+    [allTableRows, selectedRowKey]
+  );
+  const artefactByTier = useMemo<Record<number, number>>(() => {
+    const map: Record<number, number> = {};
+    for (const section of TABLE_SECTIONS) {
+      const firstRow = section.rows[0];
+      const tier = parseTierEnchant(firstRow.uid).tier;
+      const fromEdits = rowEdits[firstRow.key]?.artefact;
+      map[tier] = typeof fromEdits === "number" ? fromEdits : parseCompactNumber(firstRow.artefact);
+    }
+    return map;
+  }, [rowEdits]);
   const selectedRowValues = useMemo<RowEdit>(() => {
+    const selectedTier = parseTierEnchant(selectedRow.uid).tier;
     return rowEdits[selectedRow.key] || {
       mat1: parseCompactNumber(selectedRow.mat1),
       mat2: parseCompactNumber(selectedRow.mat2),
-      artefact: parseCompactNumber(selectedRow.artefact),
+      artefact: artefactByTier[selectedTier] ?? parseCompactNumber(selectedRow.artefact),
       tax: parseCompactNumber(selectedRow.tax),
       market: parseCompactNumber(selectedRow.market)
     };
-  }, [rowEdits, selectedRow]);
+  }, [rowEdits, selectedRow, artefactByTier]);
+  const bonusCity = useMemo(() => getBonusCityForItem(selectedItem), [selectedItem]);
+  const isBonusCityActive = Boolean(bonusCity && bonusCity === craftCity);
+  const productionBonusWithoutFocus = useMemo(() => {
+    return BASE_PRODUCTION_BONUS
+      + (isBonusCityActive ? BONUS_CITY_PRODUCTION_BONUS : 0)
+      + dailyBonusPercent;
+  }, [isBonusCityActive, dailyBonusPercent]);
+  const totalProductionBonus = useMemo(() => {
+    return productionBonusWithoutFocus + (useFocus ? FOCUS_PRODUCTION_BONUS : 0);
+  }, [productionBonusWithoutFocus, useFocus]);
+  const returnRatePercent = useMemo(() => productionBonusToReturnRate(totalProductionBonus) * 100, [totalProductionBonus]);
+  const returnRate = useMemo(() => returnRatePercent / 100, [returnRatePercent]);
+  const returnRateWithoutFocus = useMemo(
+    () => productionBonusToReturnRate(productionBonusWithoutFocus),
+    [productionBonusWithoutFocus]
+  );
+  const isBlackMarketSell = sellCity === "Black Market";
+  const effectiveSellCity = isBlackMarketSell ? "Caerleon" : sellCity;
+  const effectiveSetupFeePercent = isBlackMarketSell ? 0 : setupFeePercent;
+  const selectedFocusCost = useMemo(() => Math.max(0, parseCompactNumber(selectedRow.focus)), [selectedRow.focus]);
+
+  useEffect(() => {
+    setTransactionTaxPercent(usePremium ? 4 : 8);
+  }, [usePremium]);
 
   useEffect(() => {
     document.body.classList.add("crafting-calculator-body");
@@ -426,16 +590,28 @@ export function CraftingCalculatorPage() {
         if (!response.ok) return;
         const payload = await response.json();
         const categories = Array.isArray(payload?.categories) ? payload.categories : [];
-        const items = categories.flatMap((category: { items?: CraftingItem[] }) => (Array.isArray(category.items) ? category.items : []));
+        const items = categories.flatMap((category: { key?: string; items?: CraftingItem[] }) =>
+          (Array.isArray(category.items) ? category.items : []).map((item) => ({ ...item, categoryKey: category.key || "" }))
+        );
         setAllItems(items);
         const defaultItem = items.find((item: CraftingItem) => item.id === "2H_BOW") || items[0] || null;
         setSelectedItem(defaultItem);
-        setSearchTerm(defaultItem?.name || "");
+        setSearchTerm("");
       } catch {
         setAllItems([]);
       }
     })();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("craftCity", craftCity);
+    localStorage.setItem("selectedCity", craftCity);
+    localStorage.setItem("city", craftCity);
+  }, [craftCity]);
+
+  useEffect(() => {
+    localStorage.setItem("sellCity", sellCity);
+  }, [sellCity]);
 
   useEffect(() => {
     (async () => {
@@ -459,6 +635,46 @@ export function CraftingCalculatorPage() {
   }, [region]);
 
   useEffect(() => {
+    (async () => {
+      try {
+        const rows = await loadResultsByRegion(region);
+        setResultsItems(rows);
+      } catch {
+        setResultsItems([]);
+      }
+    })();
+  }, [region]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch(`/data/artefacts-${region}.json`);
+        if (!response.ok) {
+          setArtefactPriceMap(new Map());
+          return;
+        }
+        const payload = (await response.json()) as ArtefactsPayload;
+        const items = Array.isArray(payload.items) ? payload.items : [];
+        const map = new Map<string, Record<string, number>>();
+        items.forEach((entry) => {
+          const itemId = String(entry?.itemId || "").trim();
+          const city = normalizeCityName(entry?.city || null);
+          const price = Number(entry?.price || 0);
+          if (!itemId || !Number.isFinite(price) || price <= 0) return;
+          const key = city === "ALL" ? "ALL" : city;
+          const current = map.get(itemId) || {};
+          const previous = Number(current[key] || 0);
+          if (!previous || price < previous) current[key] = price;
+          map.set(itemId, current);
+        });
+        setArtefactPriceMap(map);
+      } catch {
+        setArtefactPriceMap(new Map());
+      }
+    })();
+  }, [region]);
+
+  useEffect(() => {
     if (!selectedItem) {
       setMaterialState([]);
       return;
@@ -475,13 +691,31 @@ export function CraftingCalculatorPage() {
         key: `${selectedItem.id}-${name}-${index}`,
         name: name.replace(/_/g, " "),
         qty: Number(mat.qty) || 0,
-        price: 0
+        price: 0,
+        isArtifact: false,
+        isRequired: true
       });
     });
 
     if (selectedItem.artifactId || selectedItem.artifact) {
       const artifactName = String(selectedItem.artifact || selectedItem.artifactId || "Artifact").replace(/_/g, " ");
-      next.push({ key: `${selectedItem.id}-artifact`, name: artifactName, qty: 1, price: 0 });
+      next.push({
+        key: `${selectedItem.id}-artifact`,
+        name: artifactName,
+        qty: 1,
+        price: 0,
+        isArtifact: true,
+        isRequired: true
+      });
+    } else {
+      next.push({
+        key: `${selectedItem.id}-artifact-none`,
+        name: "Non Artefakt",
+        qty: 0,
+        price: 0,
+        isArtifact: true,
+        isRequired: false
+      });
     }
 
     setMaterialState(next);
@@ -489,25 +723,23 @@ export function CraftingCalculatorPage() {
 
   useEffect(() => {
     if (!materialState.length) return;
-    const city = getCurrentCity();
     const { tier, enchant } = parseTierEnchant(selectedRow.uid);
 
     setMaterialState((prev) =>
       prev.map((mat) => {
-        if (mat.key.endsWith("-artifact")) return mat;
+        if (mat.isArtifact) return mat;
         const normalized = mat.name.toUpperCase().replace(/\s+/g, "_").replace(/^T\d+_/, "").replace(/^T\d+/, "");
         if (!MATERIAL_BASES.has(normalized)) return mat;
         const itemId = buildMaterialItemId(normalized, tier, enchant);
         if (!itemId) return mat;
-        const price = resolvePriceByCity(materialPriceMap.get(itemId), city);
+        const price = resolvePriceByCity(materialPriceMap.get(itemId), craftCity);
         return { ...mat, price };
       })
     );
-  }, [selectedRow.uid, materialPriceMap]);
+  }, [selectedRow.uid, materialPriceMap, craftCity]);
 
   useEffect(() => {
     if (!selectedItem || !materialPriceMap.size) return;
-    const currentCity = getCurrentCity();
     const baseMaterials = (Array.isArray(selectedItem.materials) ? selectedItem.materials : [])
       .map((mat) => String(mat.itemId || mat.id || mat.name || "").trim())
       .map((name) => name.toUpperCase().replace(/\s+/g, "_").replace(/^T\d+_/, "").replace(/^T\d+/, ""))
@@ -523,8 +755,8 @@ export function CraftingCalculatorPage() {
         const { tier, enchant } = parseTierEnchant(row.uid);
         const mat1Id = buildMaterialItemId(baseMaterials[0], tier, enchant);
         const mat2Id = baseMaterials[1] ? buildMaterialItemId(baseMaterials[1], tier, enchant) : null;
-        const mat1 = resolvePriceByCity(mat1Id ? materialPriceMap.get(mat1Id) : undefined, currentCity) * (quantities[0] || 0);
-        const mat2 = resolvePriceByCity(mat2Id ? materialPriceMap.get(mat2Id) : undefined, currentCity) * (quantities[1] || 0);
+        const mat1 = resolvePriceByCity(mat1Id ? materialPriceMap.get(mat1Id) : undefined, craftCity) * (quantities[0] || 0);
+        const mat2 = resolvePriceByCity(mat2Id ? materialPriceMap.get(mat2Id) : undefined, craftCity) * (quantities[1] || 0);
         const current = next[row.key] || {
           mat1: parseCompactNumber(row.mat1),
           mat2: parseCompactNumber(row.mat2),
@@ -534,28 +766,172 @@ export function CraftingCalculatorPage() {
         };
         next[row.key] = {
           ...current,
-          mat1: mat1 > 0 ? mat1 : current.mat1,
-          mat2: mat2 > 0 ? mat2 : current.mat2
+          mat1: mat1 > 0 ? mat1 : 0,
+          mat2: mat2 > 0 ? mat2 : 0
         };
       });
       return next;
     });
-  }, [selectedItem, materialPriceMap, region]);
+  }, [selectedItem, materialPriceMap, craftCity]);
+
+  useEffect(() => {
+    if (!selectedItem || !resultsItems.length) return;
+
+    setRowEdits((prev) => {
+      const next = { ...prev };
+      TABLE_SECTIONS.flatMap((section) => section.rows).forEach((row) => {
+        const { tier, enchant } = parseTierEnchant(row.uid);
+        const targetItemId = buildCraftedItemId(selectedItem.id, tier, enchant);
+        const matches = resultsItems.filter((entry) => String(entry.id || "").trim() === targetItemId);
+        const resolvedMarket = matches.length
+          ? (isBlackMarketSell ? resolveBlackMarketPrice(matches) : resolveResultPrice(matches, effectiveSellCity))
+          : 0;
+
+        const current = next[row.key] || {
+          mat1: parseCompactNumber(row.mat1),
+          mat2: parseCompactNumber(row.mat2),
+          artefact: parseCompactNumber(row.artefact),
+          tax: parseCompactNumber(row.tax),
+          market: parseCompactNumber(row.market)
+        };
+        next[row.key] = { ...current, market: resolvedMarket > 0 ? resolvedMarket : 0 };
+      });
+      return next;
+    });
+  }, [selectedItem, resultsItems, effectiveSellCity, isBlackMarketSell]);
+
+  useEffect(() => {
+    if (!selectedItem) return;
+    const artifactId = String(selectedItem.artifactId || "").trim();
+
+    setRowEdits((prev) => {
+      const next = { ...prev };
+      for (const tier of [4, 5, 6, 7, 8]) {
+        const artefactKey = artifactId ? `T${tier}_${artifactId}` : "";
+        const resolved = artefactKey ? resolveArtefactPriceByCity(artefactPriceMap.get(artefactKey), craftCity) : 0;
+        const artefactValue = Number.isFinite(resolved) && resolved > 0 ? resolved : 0;
+
+        TABLE_SECTIONS.flatMap((section) => section.rows).forEach((row) => {
+          if (parseTierEnchant(row.uid).tier !== tier) return;
+          const current = next[row.key] || {
+            mat1: parseCompactNumber(row.mat1),
+            mat2: parseCompactNumber(row.mat2),
+            artefact: parseCompactNumber(row.artefact),
+            tax: parseCompactNumber(row.tax),
+            market: parseCompactNumber(row.market)
+          };
+          next[row.key] = { ...current, artefact: artefactValue };
+        });
+      }
+      return next;
+    });
+  }, [selectedItem, artefactPriceMap, craftCity]);
 
   const totals = useMemo(() => {
-    const netCost = materialState.reduce((sum, mat) => sum + (Number(mat.qty) || 0) * (Number(mat.price) || 0), 0);
-    const profit = (Number(selectedRowValues.market) || 0) - (Number(selectedRowValues.tax) || 0) - netCost;
-    const roi = netCost > 0 ? (profit / netCost) * 100 : 0;
-    return { netCost, profit, roi };
-  }, [materialState, selectedRowValues.market, selectedRowValues.tax]);
-  const focusValue = useMemo(() => parseCompactNumber(selectedRow.focus), [selectedRow.focus]);
-  const roiBarWidth = useMemo(() => `${Math.max(0, Math.min(100, Math.abs(totals.roi)))}%`, [totals.roi]);
+    const requiredMaterials = Array.isArray(selectedItem?.materials) ? selectedItem.materials : [];
+    const requiresMat1 = (Number(requiredMaterials[0]?.qty) || 0) > 0;
+    const requiresMat2 = (Number(requiredMaterials[1]?.qty) || 0) > 0;
+    const requiresArtefact = Boolean(selectedItem?.artifactId || selectedItem?.artifact);
+    const calculation = calculateEconomics({
+      mat1: selectedRowValues.mat1,
+      mat2: selectedRowValues.mat2,
+      artefact: selectedRowValues.artefact,
+      market: Number(selectedRowValues.market) || 0,
+      requiresMat1,
+      requiresMat2,
+      requiresArtefact,
+      returnRate,
+      itemValue,
+      stationFee,
+      setupFeePercent: effectiveSetupFeePercent,
+      transactionTaxPercent
+    });
+    const withoutFocus = calculateEconomics({
+      mat1: selectedRowValues.mat1,
+      mat2: selectedRowValues.mat2,
+      artefact: selectedRowValues.artefact,
+      market: Number(selectedRowValues.market) || 0,
+      requiresMat1,
+      requiresMat2,
+      requiresArtefact,
+      returnRate: returnRateWithoutFocus,
+      itemValue,
+      stationFee,
+      setupFeePercent: effectiveSetupFeePercent,
+      transactionTaxPercent
+    });
+    const silverPerFocus =
+      useFocus &&
+      selectedFocusCost > 0 &&
+      typeof calculation.profit === "number" &&
+      typeof withoutFocus.profit === "number"
+        ? (calculation.profit - withoutFocus.profit) / selectedFocusCost
+        : null;
+
+    return {
+      ...calculation,
+      returnRatePercent,
+      silverPerFocus
+    };
+  }, [
+    selectedItem,
+    selectedRowValues.mat1,
+    selectedRowValues.mat2,
+    selectedRowValues.artefact,
+    returnRatePercent,
+    returnRate,
+    returnRateWithoutFocus,
+    itemValue,
+    stationFee,
+    effectiveSetupFeePercent,
+    transactionTaxPercent,
+    selectedRowValues.market,
+    useFocus,
+    selectedFocusCost
+  ]);
+  const roiBarWidth = useMemo(
+    () => `${Math.max(0, Math.min(100, Math.abs(typeof totals.roi === "number" ? totals.roi : 0)))}%`,
+    [totals.roi]
+  );
 
   const searchResults = useMemo(() => {
-    const q = searchTerm.trim().toLowerCase();
-    if (!q) return [];
-    return allItems.filter((item) => item.name.toLowerCase().includes(q) || item.id.toLowerCase().includes(q)).slice(0, 15);
+    const q = normalizeSearchText(searchTerm);
+    if (q.length < 2) return [];
+    return allItems
+      .map((item) => ({ item, score: scoreSearchItem(item, q) }))
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name))
+      .slice(0, 20)
+      .map((entry) => entry.item);
   }, [allItems, searchTerm]);
+
+  const searchSuggestions = useMemo(
+    () => searchResults.map((item) => item.name),
+    [searchResults]
+  );
+
+  function findItemBySearchInput(raw: string): CraftingItem | null {
+    const text = String(raw || "").trim();
+    if (!text) return null;
+
+    const idFromLabel = text.match(/\(([^)]+)\)\s*$/)?.[1]?.trim();
+    if (idFromLabel) {
+      const byId = allItems.find((item) => item.id === idFromLabel);
+      if (byId) return byId;
+    }
+
+    const normalized = normalizeSearchText(text);
+    return (
+      allItems.find((item) => normalizeSearchText(item.id) === normalized) ||
+      allItems.find((item) => normalizeSearchText(item.name) === normalized) ||
+      null
+    );
+  }
+
+  function onSelectSearchItem(item: CraftingItem) {
+    setSelectedItem(item);
+    setSearchTerm(item.name);
+  }
 
   async function onRegionSave(next: MarketRegion) {
     setRegion(next);
@@ -604,6 +980,22 @@ export function CraftingCalculatorPage() {
 
   function updateRowField(rowKey: string, field: keyof RowEdit, rawValue: string) {
     const parsed = Math.max(0, parseCompactNumber(rawValue));
+    if (field === "artefact") {
+      const targetTier = rowTierFromKey(rowKey);
+      setRowEdits((prev) => {
+        const next = { ...prev };
+        TABLE_SECTIONS.flatMap((section) => section.rows).forEach((row) => {
+          const tier = parseTierEnchant(row.uid).tier;
+          if (tier !== targetTier) return;
+          next[row.key] = {
+            ...(next[row.key] || { mat1: 0, mat2: 0, artefact: 0, tax: 0, market: 0 }),
+            artefact: parsed
+          };
+        });
+        return next;
+      });
+      return;
+    }
     setRowEdits((prev) => ({
       ...prev,
       [rowKey]: {
@@ -611,44 +1003,6 @@ export function CraftingCalculatorPage() {
         [field]: parsed
       }
     }));
-  }
-
-  function onUnlockSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (gatePasswordInput === configuredGatePassword) {
-      sessionStorage.setItem("ccPasswordUnlocked", "1");
-      setIsPasswordUnlocked(true);
-      setGateError("");
-      setGatePasswordInput("");
-      return;
-    }
-    setGateError("Incorrect password.");
-  }
-
-  if (!isPasswordUnlocked) {
-    return (
-      <div className="cc-page cc-gate-page">
-        <div className="cc-gate-backdrop" />
-        <div className="cc-gate-modal" role="dialog" aria-modal="true" aria-labelledby="ccGateTitle">
-          <h2 id="ccGateTitle">Crafting Calculator</h2>
-          <p>This feature is still in development and currently password-protected.</p>
-          <form onSubmit={onUnlockSubmit} className="cc-gate-form">
-            <input
-              type="password"
-              value={gatePasswordInput}
-              onChange={(event) => {
-                setGatePasswordInput(event.target.value);
-                if (gateError) setGateError("");
-              }}
-              placeholder="Enter access password"
-              autoComplete="off"
-            />
-            <button type="submit">Unlock</button>
-          </form>
-          {gateError ? <div className="cc-gate-error">{gateError}</div> : null}
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -757,28 +1111,65 @@ export function CraftingCalculatorPage() {
               {TABLE_SECTIONS.map((section) => (
                 <Fragment key={section.key}>
                   <tr className="tier-header-row" key={`${section.key}-head`}><td colSpan={9}><label><span className={`neon-strip ${section.stripClass}`}></span>{section.label}</label></td></tr>
-                  {section.rows.map((row) => {
+                  {section.rows.map((row, rowIndex) => {
                     const selected = row.key === selectedRowKey;
+                    const { tier: rowTier } = parseTierEnchant(row.uid);
+                    const requiredMaterials = Array.isArray(selectedItem?.materials) ? selectedItem.materials : [];
+                    const requiresMat1 = (Number(requiredMaterials[0]?.qty) || 0) > 0;
+                    const requiresMat2 = (Number(requiredMaterials[1]?.qty) || 0) > 0;
                     const values = rowEdits[row.key] || {
                       mat1: parseCompactNumber(row.mat1),
                       mat2: parseCompactNumber(row.mat2),
-                      artefact: parseCompactNumber(row.artefact),
+                      artefact: artefactByTier[rowTier] ?? parseCompactNumber(row.artefact),
                       tax: parseCompactNumber(row.tax),
                       market: parseCompactNumber(row.market)
                     };
-                    const rowCost = values.mat1 + values.mat2 + values.artefact;
-                    const rowProfit = values.market - values.tax - rowCost;
-                    const rowGain = rowCost > 0 ? (rowProfit / rowCost) * 100 : 0;
+                    const itemNeedsArtifact = Boolean(selectedItem?.artifactId || selectedItem?.artifact);
+                    const rowEconomics = calculateEconomics({
+                      mat1: values.mat1,
+                      mat2: values.mat2,
+                      artefact: values.artefact,
+                      market: values.market,
+                      requiresMat1,
+                      requiresMat2,
+                      requiresArtefact: itemNeedsArtifact,
+                      returnRate,
+                      itemValue,
+                      stationFee,
+                      setupFeePercent: effectiveSetupFeePercent,
+                      transactionTaxPercent
+                    });
+                    const rowProfit = rowEconomics.profit;
+                    const rowGain = rowEconomics.roi;
                     return (
                       <tr key={row.key} className={`sub-row ${section.fogClass} ${selected ? "selected" : ""}`} onClick={() => setSelectedRowKey(row.key)}>
                         <td>{row.uid}</td>
-                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "mat1", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompact(values.mat1)}</td>
-                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "mat2", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompact(values.mat2)}</td>
-                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "artefact", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompact(values.artefact)}</td>
-                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "tax", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompact(values.tax)}</td>
-                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "market", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompact(values.market)}</td>
-                        <td className={`mono-num ${rowProfit >= 0 ? "value-positive" : "value-negative"}`}>{formatCompact(rowProfit)}</td>
-                        <td className={`mono-num ${rowGain >= 0 ? "value-positive" : "value-negative"}`}>{rowGain.toFixed(1)}%</td>
+                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "mat1", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompactOrDash(values.mat1)}</td>
+                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "mat2", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompactOrDash(values.mat2)}</td>
+                        {rowIndex === 0 ? (itemNeedsArtifact ? (
+                          <td
+                            rowSpan={section.rows.length}
+                            className="mono-num editable-cell"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => updateRowField(section.rows[0].key, "artefact", e.currentTarget.textContent || "0")}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); }
+                            }}
+                          >
+                            {(artefactByTier[rowTier] ?? 0) > 0 ? formatCompact(artefactByTier[rowTier]) : "-"}
+                          </td>
+                        ) : (
+                          <td rowSpan={section.rows.length} className="mono-num muted">Non Artefakt</td>
+                        )) : null}
+                        <td className="mono-num">{typeof rowEconomics.totalFees === "number" ? formatCompact(rowEconomics.totalFees) : "-"}</td>
+                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "market", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompactOrDash(values.market)}</td>
+                        <td className={`mono-num ${typeof rowProfit === "number" ? (rowProfit >= 0 ? "value-positive" : "value-negative") : ""}`}>
+                          {typeof rowProfit === "number" ? formatCompact(rowProfit) : "-"}
+                        </td>
+                        <td className={`mono-num ${typeof rowGain === "number" ? (rowGain >= 0 ? "value-positive" : "value-negative") : ""}`}>
+                          {typeof rowGain === "number" ? `${rowGain.toFixed(1)}%` : "-"}
+                        </td>
                         <td className="mono-num">{row.focus}</td>
                       </tr>
                     );
@@ -792,11 +1183,29 @@ export function CraftingCalculatorPage() {
         <aside className="detail-side">
           <div className="detail-grid-12">
             <div className="bento-card span-8">
-              <span className="cc-caption">Selection Focus</span>
-              <h2 id="selectedItemTitle">{selectedItem?.name || `Selected ${selectedRow.uid}`}</h2>
-              <div className="badge-row">
-                <span className="badge-chip">{selectedRow.uid}</span>
-                <span className="badge-chip muted">{totals.roi >= 0 ? "PROFIT" : "LOSS"}</span>
+              <div className="focus-layout">
+                <div className="focus-main">
+                  <span className="cc-caption">Selection Focus</span>
+                  <h2 id="selectedItemTitle">{selectedItem?.name || `Selected ${selectedRow.uid}`}</h2>
+                  <div className="badge-row">
+                    <span className="badge-chip">{selectedRow.uid}</span>
+                    <span className="badge-chip muted">
+                      {typeof totals.roi === "number" ? (totals.roi >= 0 ? "PROFIT" : "LOSS") : "PENDING"}
+                    </span>
+                  </div>
+                </div>
+                <div className="focus-stats">
+                  <div className="focus-stat">
+                    <span className="cc-caption">Return Rate</span>
+                    <strong className="profit-cell">
+                      {totals.returnRatePercent.toFixed(2)}%
+                    </strong>
+                  </div>
+                  <div className="focus-stat">
+                    <span className="cc-caption">Bonus City</span>
+                    <strong>{bonusCity ? (isBonusCityActive ? `${bonusCity} active` : bonusCity) : "None"}</strong>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="bento-card span-4 item-preview-card">
@@ -809,77 +1218,201 @@ export function CraftingCalculatorPage() {
             </div>
           </div>
 
-          <div className="metric-grid-2">
-            <div className="bento-card metric-card">
-              <div className="cc-caption">ROI Analysis</div>
-              <div className={`metric-value ${totals.roi >= 0 ? "profit-cell" : "loss-cell"}`}>
-                {totals.roi >= 0 ? "+" : ""}{totals.roi.toFixed(1)}%
-              </div>
-              <div className="roi-track">
-                <div className="roi-fill" style={{ width: roiBarWidth }} />
-              </div>
-            </div>
-
-            <div className="bento-card metric-card">
-              <div className="cc-caption">Focus Yield</div>
-              <div className="metric-value profit-cell">{formatNumber(focusValue)}</div>
-              <div className="metric-sub">Efficiency Tier</div>
-            </div>
-          </div>
-
-          <div className="bento-card search-card">
-            <div className="cc-caption">Item Search</div>
-            <input className="detail-input" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search item" />
-            {searchTerm ? (
-              <div className="search-results">
-                {searchResults.length ? searchResults.map((item) => (
-                  <button key={item.id} className="search-result" onClick={() => { setSelectedItem(item); setSearchTerm(item.name); }}>
-                    {item.name} ({item.id})
-                  </button>
-                )) : <div className="search-empty">No items found.</div>}
-              </div>
-            ) : null}
-          </div>
-
           <div className="bento-card">
-            <div className="cc-caption">Input Bill of Materials</div>
-            <div id="materialInputs" className="material-inputs">
-              {materialState.length ? materialState.map((mat) => (
-                <div key={mat.key} className="mat-row">
-                  <div>
-                    <div className="mat-name">{mat.name}</div>
-                    <div className="mat-qty">Qty: {mat.qty}</div>
-                  </div>
-                  <input className="detail-input" type="number" min={0} step={1} value={Math.round(mat.price)} onChange={(e) => {
-                    const price = Number(e.target.value) || 0;
-                    setMaterialState((prev) => prev.map((entry) => entry.key === mat.key ? { ...entry, price } : entry));
-                  }} />
-                  <div className="mat-line">{formatNumber(mat.qty * mat.price)}</div>
-                </div>
-              )) : <div className="search-empty">Choose an item to load materials.</div>}
+            <div className="cc-caption">Item Search</div>
+            <div className="cc-grid-2 compact-grid">
+              <div>
+                <div className="cc-caption">Craft City</div>
+                <select
+                  className="detail-input"
+                  value={craftCity}
+                  onChange={(e) => setCraftCity(normalizeCityName(e.target.value))}
+                >
+                  {CITY_FILTER_OPTIONS.map((city) => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <div className="cc-caption">Sell City</div>
+                <select
+                  className="detail-input"
+                  value={sellCity}
+                  onChange={(e) => setSellCity(e.target.value === "Black Market" ? "Black Market" : normalizeCityName(e.target.value))}
+                >
+                  {SELL_CITY_OPTIONS.map((city) => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <input
+              className="detail-input"
+              list="cc-item-suggestions"
+              value={searchTerm}
+              onChange={(e) => {
+                const next = e.target.value;
+                setSearchTerm(next);
+                const exact = findItemBySearchInput(next);
+                if (exact) onSelectSearchItem(exact);
+              }}
+              onBlur={() => {
+                const exact = findItemBySearchInput(searchTerm);
+                if (exact) {
+                  onSelectSearchItem(exact);
+                  return;
+                }
+                if (searchResults.length) onSelectSearchItem(searchResults[0]);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && searchResults.length) {
+                  e.preventDefault();
+                  const exact = findItemBySearchInput(searchTerm);
+                  onSelectSearchItem(exact || searchResults[0]);
+                }
+              }}
+              placeholder="Search by item name"
+            />
+            <datalist id="cc-item-suggestions">
+              {searchSuggestions.map((value) => (
+                <option key={value} value={value} />
+              ))}
+            </datalist>
+
+            <div className="cc-grid-2">
+              <div>
+                <div className="cc-caption">{isBlackMarketSell ? "Black Market Value" : "Market Value"}</div>
+                <input className="detail-input" type="number" min={0} step={1} value={Math.round(selectedRowValues.market)} onChange={(e) => updateRowField(selectedRow.key, "market", e.target.value)} />
+              </div>
+              <div>
+                <div className="cc-caption">Item Value (Craft)</div>
+                <input className="detail-input" type="number" min={0} step={1} value={Math.round(itemValue)} onChange={(e) => setItemValue(Math.max(0, Number(e.target.value) || 0))} />
+              </div>
             </div>
 
             <div className="cc-grid-2">
               <div>
-                <div className="cc-caption">Market Value</div>
-                <input className="detail-input" type="number" min={0} step={1} value={Math.round(selectedRowValues.market)} onChange={(e) => updateRowField(selectedRow.key, "market", e.target.value)} />
+                <div className="cc-caption">Station Usage Fee</div>
+                <input className="detail-input" type="number" min={0} step={1} value={Math.round(stationFee)} onChange={(e) => setStationFee(Math.max(0, Number(e.target.value) || 0))} />
               </div>
               <div>
-                <div className="cc-caption">Tax + Fees</div>
-                <input className="detail-input" type="number" min={0} step={1} value={Math.round(selectedRowValues.tax)} onChange={(e) => updateRowField(selectedRow.key, "tax", e.target.value)} />
+                <div className="cc-caption">Craft Bonus City</div>
+                <input className="detail-input" value={bonusCity || "None"} readOnly />
+              </div>
+            </div>
+
+            <div className="bonus-section">
+              <div>
+                <div className="cc-caption">Return Bonuses</div>
+                <div className="bonus-grid">
+                  <button
+                    type="button"
+                    className={`bonus-tile ${isBonusCityActive ? "active" : ""}`}
+                    onClick={() => { if (bonusCity && KNOWN_CITIES.includes(bonusCity)) setCraftCity(bonusCity); }}
+                  >
+                    <span>Bonus City</span>
+                    <strong>{bonusCity || "None"}</strong>
+                  </button>
+                  <button
+                    type="button"
+                    className={`bonus-tile ${dailyBonusPercent === 10 ? "active" : ""}`}
+                    onClick={() => setDailyBonusPercent((prev) => (prev === 10 ? 0 : 10))}
+                  >
+                    <span>Daily Bonus</span>
+                    <strong>+10%</strong>
+                  </button>
+                  <button
+                    type="button"
+                    className={`bonus-tile ${dailyBonusPercent === 20 ? "active" : ""}`}
+                    onClick={() => setDailyBonusPercent((prev) => (prev === 20 ? 0 : 20))}
+                  >
+                    <span>Daily Bonus</span>
+                    <strong>+20%</strong>
+                  </button>
+                  <button
+                    type="button"
+                    className={`bonus-tile ${useFocus ? "active" : ""}`}
+                    onClick={() => setUseFocus((prev) => !prev)}
+                  >
+                    <span>Focus</span>
+                    <strong>{useFocus ? "Active" : "Off"}</strong>
+                  </button>
+                </div>
+              </div>
+
+              <div className="coming-soon-note" aria-label="Focus Specs coming soon">
+                <span className="cc-caption">Next Upgrade</span>
+                <strong>Focus Specs coming soon</strong>
+              </div>
+
+              <div>
+                <div className="cc-caption">Premium</div>
+                <label className="checkbox-chip premium-chip">
+                  <input type="checkbox" checked={usePremium} onChange={(e) => setUsePremium(e.target.checked)} />
+                  <span>Use Premium market tax (4% instead of 8%)</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="cc-grid-2">
+              <div>
+                <div className="cc-caption">Market Setup Fee %</div>
+                <input
+                  className="detail-input"
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={0.1}
+                  value={Number((isBlackMarketSell ? 0 : setupFeePercent).toFixed(2))}
+                  disabled={isBlackMarketSell}
+                  onChange={(e) => setSetupFeePercent(clampNumber(Number(e.target.value) || 0, 0, 100))}
+                />
+              </div>
+              <div>
+                <div className="cc-caption">Market Tax %</div>
+                <input
+                  className="detail-input"
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={0.1}
+                  value={Number(transactionTaxPercent.toFixed(2))}
+                  onChange={(e) => setTransactionTaxPercent(clampNumber(Number(e.target.value) || 0, 0, 100))}
+                />
               </div>
             </div>
           </div>
 
           <div className="bento-card totals">
-            <div><span>Net Resource Cost</span><strong>{formatNumber(totals.netCost)}</strong></div>
-            <div><span>Profit</span><strong className={totals.profit >= 0 ? "profit-cell" : "loss-cell"}>{totals.profit >= 0 ? "+" : ""}{formatNumber(totals.profit)}</strong></div>
-            <div><span>ROI</span><strong className={totals.roi >= 0 ? "profit-cell" : "loss-cell"}>{totals.roi >= 0 ? "+" : ""}{totals.roi.toFixed(1)}%</strong></div>
+            <div><span>Gross Resource Cost</span><strong>{formatMaybeNumber(totals.canCalculate ? totals.grossResourceCost : null)}</strong></div>
+            <div><span>Net Resource Cost (after RRR)</span><strong>{formatMaybeNumber(totals.netResourceCost)}</strong></div>
+            <div><span>Crafting Usage Fee</span><strong>{formatMaybeNumber(totals.craftingUsageFee)}</strong></div>
+            <div><span>Market Setup + Tax</span><strong>{formatMaybeNumber(
+              typeof totals.marketSetupFee === "number" && typeof totals.marketTransactionTax === "number"
+                ? totals.marketSetupFee + totals.marketTransactionTax
+                : null
+            )}</strong></div>
+            <div><span>Total Cost</span><strong>{formatMaybeNumber(totals.totalCost)}</strong></div>
+            <div>
+              <span>Profit</span>
+              <strong className={typeof totals.profit === "number" ? (totals.profit >= 0 ? "profit-cell" : "loss-cell") : ""}>
+                {typeof totals.profit === "number" ? `${totals.profit >= 0 ? "+" : ""}${formatNumber(totals.profit)}` : "-"}
+              </strong>
+            </div>
+            <div>
+              <span>ROI</span>
+              <strong className={typeof totals.roi === "number" ? (totals.roi >= 0 ? "profit-cell" : "loss-cell") : ""}>
+                {typeof totals.roi === "number" ? `${totals.roi >= 0 ? "+" : ""}${totals.roi.toFixed(1)}%` : "-"}
+              </strong>
+            </div>
+            <div>
+              <span>Silver per Focus</span>
+              <strong className={typeof totals.silverPerFocus === "number" ? (totals.silverPerFocus >= 0 ? "profit-cell" : "loss-cell") : ""}>
+                {typeof totals.silverPerFocus === "number" ? formatNumber(totals.silverPerFocus) : "-"}
+              </strong>
+            </div>
           </div>
 
-          <button className="execute-btn" type="button">
-            EXECUTE MASTER CRAFT: {totals.profit >= 0 ? "+" : ""}{formatNumber(totals.profit)}
-          </button>
         </aside>
       </div>
     </div>

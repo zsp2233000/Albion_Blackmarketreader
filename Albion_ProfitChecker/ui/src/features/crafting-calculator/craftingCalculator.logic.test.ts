@@ -1,0 +1,110 @@
+import { describe, expect, it } from "vitest";
+import {
+  buildMaterialItemId,
+  calculateEconomics,
+  getBonusCityForItem,
+  productionBonusToReturnRate,
+  resolveBlackMarketPrice,
+  resolveResultPrice
+} from "./craftingCalculator.logic";
+
+describe("crafting calculator city and id helpers", () => {
+  it("maps special categories to the expected bonus city", () => {
+    expect(getBonusCityForItem({ id: "BAG", categoryKey: "bags" })).toBe("Brecilien");
+    expect(getBonusCityForItem({ id: "CAPE", categoryKey: "capes" })).toBe("Brecilien");
+    expect(getBonusCityForItem({ id: "2H_TOOL_HAMMER" })).toBe("Bridgewatch");
+    expect(getBonusCityForItem({ id: "HEAD_GATHERER_FISH" })).toBe("Martlock");
+  });
+
+  it("builds normal material ids and stone block ids correctly", () => {
+    expect(buildMaterialItemId("PLANKS", 6, 2)).toBe("T6_PLANKS_LEVEL2@2");
+    expect(buildMaterialItemId("STONEBLOCK", 6, 3)).toBe("T6_STONEBLOCK");
+    expect(buildMaterialItemId("UNKNOWN", 6, 0)).toBeNull();
+  });
+});
+
+describe("crafting calculator pricing helpers", () => {
+  it("converts production bonus into a return rate decimal", () => {
+    expect(productionBonusToReturnRate(15.25)).toBeCloseTo(0.132321, 6);
+    expect(productionBonusToReturnRate(0)).toBe(0);
+  });
+
+  it("prefers structured city prices and falls back to legacy entries", () => {
+    const structured = [
+      {
+        prices: {
+          Lymhurst: 19000,
+          Caerleon: 23000
+        },
+        bm: 50000
+      },
+      {
+        prices: {
+          Lymhurst: 17000,
+          Caerleon: 21000
+        },
+        bm: 54000
+      }
+    ];
+
+    expect(resolveResultPrice(structured, "Lymhurst")).toBe(17000);
+
+    const legacy = [
+      { city: "Lymhurst", price: 29000 },
+      { city: "Lymhurst", price: 25000 },
+      { city: "Caerleon", price: 27000 }
+    ];
+
+    expect(resolveResultPrice(legacy, "Lymhurst")).toBe(25000);
+    expect(resolveBlackMarketPrice(structured)).toBe(54000);
+  });
+});
+
+describe("crafting calculator economics", () => {
+  it("includes artefact, return rate, crafting fee and market fees", () => {
+    const result = calculateEconomics({
+      mat1: 100000,
+      mat2: 50000,
+      artefact: 60000,
+      market: 300000,
+      requiresMat1: true,
+      requiresMat2: true,
+      requiresArtefact: true,
+      returnRate: 0.2481,
+      itemValue: 256,
+      stationFee: 1000,
+      setupFeePercent: 2.5,
+      transactionTaxPercent: 4
+    });
+
+    expect(result.canCalculate).toBe(true);
+    expect(result.grossResourceCost).toBe(210000);
+    expect(result.netResourceCost).toBeCloseTo(157899, 3);
+    expect(result.craftingUsageFee).toBeCloseTo(288, 3);
+    expect(result.totalFees).toBeCloseTo(19788, 3);
+    expect(result.totalCost).toBeCloseTo(177687, 3);
+    expect(result.profit).toBeCloseTo(122313, 3);
+    expect(result.roi).toBeCloseTo(68.8363, 3);
+  });
+
+  it("refuses to calculate when a required price is missing", () => {
+    const result = calculateEconomics({
+      mat1: 100000,
+      mat2: 0,
+      artefact: 0,
+      market: 300000,
+      requiresMat1: true,
+      requiresMat2: true,
+      requiresArtefact: false,
+      returnRate: 0.1525,
+      itemValue: 256,
+      stationFee: 1000,
+      setupFeePercent: 2.5,
+      transactionTaxPercent: 4
+    });
+
+    expect(result.canCalculate).toBe(false);
+    expect(result.totalCost).toBeNull();
+    expect(result.profit).toBeNull();
+  });
+});

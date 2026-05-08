@@ -30,15 +30,16 @@ export class AuthService {
     if (!user) return null;
 
     const meta = user.user_metadata || {};
-    const region = (meta.region || "").toLowerCase();
-    const normalizedRegion: Region | null = region === "eu" || region === "us" ? region : null;
+    const metaRegion = this.normalizeRegion(meta.region);
+    const metaAvatar = typeof meta.avatar === "string" ? meta.avatar : null;
+    const profilePrefs = await this.getProfilePreferences(user.id);
 
     return {
       id: user.id,
       email: user.email || null,
       emailConfirmed: Boolean(user.email_confirmed_at),
-      avatar: (meta.avatar as string) || null,
-      region: normalizedRegion
+      avatar: profilePrefs?.avatar ?? metaAvatar,
+      region: profilePrefs?.region ?? metaRegion
     };
   }
 
@@ -62,6 +63,47 @@ export class AuthService {
   async updateUserMetadata(data: Record<string, unknown>): Promise<void> {
     const { error } = await this.supabase.auth.updateUser({ data });
     if (error) throw error;
+
+    const profilePatch: Record<string, unknown> = {};
+    if (typeof data.avatar === "string" || data.avatar === null) {
+      profilePatch.avatar = data.avatar;
+    }
+    const nextRegion = this.normalizeRegion(data.region);
+    if (nextRegion) {
+      profilePatch.region = nextRegion;
+    }
+
+    if (!Object.keys(profilePatch).length) return;
+
+    const { data: userData, error: userError } = await this.supabase.auth.getUser();
+    if (userError) throw userError;
+    const userId = userData.user?.id;
+    if (!userId) return;
+
+    const { error: profileError } = await this.supabase
+      .from("profiles")
+      .upsert({ id: userId, ...profilePatch });
+    if (profileError) throw profileError;
+  }
+
+  private normalizeRegion(value: unknown): Region | null {
+    const region = String(value || "").toLowerCase();
+    return region === "eu" || region === "us" ? region : null;
+  }
+
+  private async getProfilePreferences(userId: string): Promise<{ avatar: string | null; region: Region | null } | null> {
+    const { data, error } = await this.supabase
+      .from("profiles")
+      .select("avatar, region")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (error || !data) return null;
+
+    return {
+      avatar: typeof data.avatar === "string" ? data.avatar : null,
+      region: this.normalizeRegion(data.region)
+    };
   }
 }
 

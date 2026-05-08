@@ -8,6 +8,8 @@ type ToolSlide = {
   badge?: string;
   image?: string;
   href?: string;
+  ctaLabel?: string;
+  placeholderText?: string;
 };
 
 const CAROUSEL_DURATION_MS = 6000;
@@ -23,11 +25,15 @@ export function LandingPage() {
       {
         title: "Black Market Crafter",
         image: assets.bmCrafterPreview,
-        href: "/bm-crafter"
+        href: "/bm-crafter",
+        ctaLabel: "Open BM Crafter"
       },
       {
         title: "Crafting Calculator",
-        badge: "Coming Soon"
+        badge: "Ready",
+        href: "/crafting-calculator",
+        ctaLabel: "Open Crafting Calculator",
+        placeholderText: "Image Placeholder"
       },
       {
         title: "Refining Calculator",
@@ -43,25 +49,25 @@ export function LandingPage() {
   const heroSrcSet = `${heroMobile} 768w, ${heroDesktop} 1280w, ${heroOriginal} 1740w`;
 
   useSeo({
-    title: "Albion Market Tool | Albion Blackmarket Flipper & Crafter",
+    title: "Albion Online Tool | Blackmarket Reader & Blackmarket Crafter",
     description:
-      "Albion Blackmarket tools by RomulusKings: live dashboard, city comparison, profit filters, and Blackmarket Crafter for profitable crafting runs.",
+      "Albion Online Tool by RomulusKings: Blackmarket Reader dashboard, city comparison, profit filters, and Blackmarket Crafter for profitable crafting routes.",
     keywords:
-      "Albion Blackmarket, Albion Black Market, Blackmarket Crafter, Albion Online market, RomulusKings Market Reader",
+      "Albion Online Tool, Blackmarket Reader, Blackmarket Crafter, Albion Black Market, Albion Blackmarket",
     canonical: "https://blackmarketreader.com/",
-    ogTitle: "RomulusKings Market Reader | Albion Blackmarket Dashboard & Crafter",
-    ogDescription: "Live Albion Blackmarket scans, city filters, profit views, and BM Crafter access.",
+    ogTitle: "Albion Online Tool | Blackmarket Reader Dashboard & Blackmarket Crafter",
+    ogDescription: "Live Albion Black Market scans, city filters, profit views, and Blackmarket Crafter access.",
     ogUrl: "https://blackmarketreader.com/",
     ogImage: "https://blackmarketreader.com/picture/bm-crafter-table.png",
-    twitterTitle: "RomulusKings Market Reader | Albion Blackmarket Dashboard & Crafter",
-    twitterDescription: "Live Albion Blackmarket scans, city filters, profit views, and BM Crafter access.",
+    twitterTitle: "Albion Online Tool | Blackmarket Reader Dashboard & Blackmarket Crafter",
+    twitterDescription: "Live Albion Black Market scans, city filters, profit views, and Blackmarket Crafter access.",
     twitterImage: "https://blackmarketreader.com/picture/bm-crafter-table.png",
     structuredData: {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "RomulusKings Market Reader",
+      name: "Blackmarket Reader",
       url: "https://blackmarketreader.com/",
-      description: "Albion Blackmarket dashboard and Blackmarket Crafter tool for live profit analysis.",
+      description: "Albion Online Tool with Blackmarket Reader dashboard and Blackmarket Crafter for live profit analysis.",
       potentialAction: {
         "@type": "SearchAction",
         target: "https://blackmarketreader.com/#platform-overview",
@@ -120,6 +126,7 @@ export function LandingPage() {
 
   const leftIndex = (activeIndex - 1 + slides.length) % slides.length;
   const rightIndex = (activeIndex + 1) % slides.length;
+  const activeSlide = slides[activeIndex];
 
   return (
     <>
@@ -190,10 +197,10 @@ export function LandingPage() {
               <button
                 className="mockup-zoom"
                 type="button"
-                aria-label="Zoom BM Crafter preview"
+                aria-label="Zoom Blackmarket Crafter tool preview"
                 onClick={() => setZoomSrc(assets.bmCrafterPreview)}
               >
-                <img className="mockup-preview" src={assets.bmCrafterPreview} alt="BM Crafter preview" />
+                <img className="mockup-preview" src={assets.bmCrafterPreview} alt="Blackmarket Crafter full tool preview" />
               </button>
             </div>
           </div>
@@ -232,7 +239,7 @@ export function LandingPage() {
           <div className="container">
             <div className="premium-carousel-head">
               <span className="section-eyebrow">Premium+ Institutional</span>
-              <h2>BM Crafter Access</h2>
+              <h2>Crafter Tools</h2>
             </div>
             <div
               className="premium-carousel carousel-perspective"
@@ -278,13 +285,13 @@ export function LandingPage() {
                         </div>
                       ) : (
                         <div className="tool-placeholder">
-                          <span>Coming Soon</span>
+                          <span>{slide.placeholderText || "Coming Soon"}</span>
                         </div>
                       )}
 
                       {slide.href ? (
                         <a className="tool-cta" href={slide.href}>
-                          Open BM Crafter
+                          {slide.ctaLabel || `Open ${slide.title}`}
                         </a>
                       ) : null}
                     </article>
@@ -303,10 +310,14 @@ export function LandingPage() {
               </div>
 
               <div className="carousel-cta-row">
-                <a className="premium-plus-cta" href="/bm-crafter">
-                  Open BM Crafter
-                </a>
-                <span className="carousel-note">RomulusKings BM-Crafter</span>
+                {activeSlide.href ? (
+                  <a className="premium-plus-cta" href={activeSlide.href}>
+                    {activeSlide.ctaLabel || `Open ${activeSlide.title}`}
+                  </a>
+                ) : (
+                  <span className="premium-plus-cta disabled">Coming Soon</span>
+                )}
+                <span className="carousel-note">{activeSlide.title}</span>
               </div>
             </div>
           </div>
@@ -427,11 +438,11 @@ export function LandingPage() {
             <div className="footer-brand">
               <span className="material-symbols-outlined">terminal</span>
               <span>
-                Elite <span>Crafter</span>
+                Blackmarket <span>Reader</span>
               </span>
             </div>
             <p>
-              Institutional Trading Suite <br />
+              Albion Online Tool for Blackmarket Reader & Blackmarket Crafter <br />
               All Rights Reserved // 2024
             </p>
           </div>

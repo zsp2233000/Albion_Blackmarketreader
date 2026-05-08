@@ -1,7 +1,7 @@
 {
     "meta":  {
-                 "category_count":  21,
-                 "item_count":  243,
+                 "category_count":  25,
+                 "item_count":  278,
                  "source":  "user-provided nameMap (1:1)"
              },
     "categories":  [
@@ -3077,6 +3077,450 @@
                                                                }
                                                            ],
                                              "artifactId":  "ARTEFACT_SHOES_LEATHER_MORGANA"
+                                         }
+                                     ]
+                       },
+                       {
+                           "key":  "bags",
+                           "label":  "Bags",
+                           "items":  [
+                                         {
+                                             "id":  "BAG",
+                                             "name":  "Bag",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  8
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "BAG_INSIGHT",
+                                             "name":  "Satchel of Insight",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  8
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  8
+                                                               }
+                                                           ],
+                                             "artifact":  "Tome of Insight",
+                                             "artifactId":  "SKILLBOOK_STANDARD"
+                                         }
+                                     ]
+                       },
+                       {
+                           "key":  "capes",
+                           "label":  "Capes",
+                           "items":  [
+                                         {
+                                             "id":  "CAPE",
+                                             "name":  "Cape",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  4
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  4
+                                                               }
+                                                           ]
+                                         }
+                                     ]
+                       },
+                       {
+                           "key":  "gathering-gear",
+                           "label":  "Gathering Gear",
+                           "items":  [
+                                         {
+                                             "id":  "HEAD_GATHERER_FIBER",
+                                             "name":  "Harvester Cap",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "ARMOR_GATHERER_FIBER",
+                                             "name":  "Harvester Garb",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  16
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "SHOES_GATHERER_FIBER",
+                                             "name":  "Harvester Workboots",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "BACKPACK_GATHERER_FIBER",
+                                             "name":  "Harvester Backpack",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  4
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  4
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "HEAD_GATHERER_HIDE",
+                                             "name":  "Skinner Cap",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "ARMOR_GATHERER_HIDE",
+                                             "name":  "Skinner Garb",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  16
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "SHOES_GATHERER_HIDE",
+                                             "name":  "Skinner Workboots",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "BACKPACK_GATHERER_HIDE",
+                                             "name":  "Skinner Backpack",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  4
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  4
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "HEAD_GATHERER_ORE",
+                                             "name":  "Miner Cap",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "METALBAR",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "ARMOR_GATHERER_ORE",
+                                             "name":  "Miner Garb",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "METALBAR",
+                                                                   "qty":  16
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "SHOES_GATHERER_ORE",
+                                             "name":  "Miner Workboots",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "METALBAR",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "BACKPACK_GATHERER_ORE",
+                                             "name":  "Miner Backpack",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  4
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  4
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "HEAD_GATHERER_ROCK",
+                                             "name":  "Quarrier Cap",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "STONEBLOCK",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "ARMOR_GATHERER_ROCK",
+                                             "name":  "Quarrier Garb",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "STONEBLOCK",
+                                                                   "qty":  16
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "SHOES_GATHERER_ROCK",
+                                             "name":  "Quarrier Workboots",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "STONEBLOCK",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "BACKPACK_GATHERER_ROCK",
+                                             "name":  "Quarrier Backpack",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  4
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  4
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "HEAD_GATHERER_WOOD",
+                                             "name":  "Lumberjack Cap",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "ARMOR_GATHERER_WOOD",
+                                             "name":  "Lumberjack Garb",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  16
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "SHOES_GATHERER_WOOD",
+                                             "name":  "Lumberjack Workboots",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "BACKPACK_GATHERER_WOOD",
+                                             "name":  "Lumberjack Backpack",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  4
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  4
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "HEAD_GATHERER_FISH",
+                                             "name":  "Fisherman Cap",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "ARMOR_GATHERER_FISH",
+                                             "name":  "Fisherman Garb",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  16
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "SHOES_GATHERER_FISH",
+                                             "name":  "Fisherman Workboots",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "BACKPACK_GATHERER_FISH",
+                                             "name":  "Fisherman Backpack",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  4
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  4
+                                                               }
+                                                           ]
+                                         }
+                                     ]
+                       },
+                       {
+                           "key":  "tools",
+                           "label":  "Tools",
+                           "items":  [
+                                         {
+                                             "id":  "2H_TOOL_AXE",
+                                             "name":  "Axe",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "PLANKS",
+                                                                   "qty":  6
+                                                               },
+                                                               {
+                                                                   "itemId":  "METALBAR",
+                                                                   "qty":  2
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "2H_TOOL_PICK",
+                                             "name":  "Pickaxe",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "PLANKS",
+                                                                   "qty":  6
+                                                               },
+                                                               {
+                                                                   "itemId":  "METALBAR",
+                                                                   "qty":  2
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "2H_TOOL_SICKLE",
+                                             "name":  "Sickle",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "PLANKS",
+                                                                   "qty":  6
+                                                               },
+                                                               {
+                                                                   "itemId":  "METALBAR",
+                                                                   "qty":  2
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "2H_TOOL_HAMMER",
+                                             "name":  "Stone Hammer",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "PLANKS",
+                                                                   "qty":  6
+                                                               },
+                                                               {
+                                                                   "itemId":  "METALBAR",
+                                                                   "qty":  2
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "2H_TOOL_KNIFE",
+                                             "name":  "Skinning Knife",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "PLANKS",
+                                                                   "qty":  6
+                                                               },
+                                                               {
+                                                                   "itemId":  "METALBAR",
+                                                                   "qty":  2
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "2H_TOOL_FISHINGROD",
+                                             "name":  "Fishing Rod",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "PLANKS",
+                                                                   "qty":  6
+                                                               },
+                                                               {
+                                                                   "itemId":  "CLOTH",
+                                                                   "qty":  2
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "2H_TOOL_TRACKING",
+                                             "name":  "Tracking Toolkit",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "PLANKS",
+                                                                   "qty":  2
+                                                               },
+                                                               {
+                                                                   "itemId":  "LEATHER",
+                                                                   "qty":  6
+                                                               }
+                                                           ]
+                                         },
+                                         {
+                                             "id":  "2H_TOOL_SIEGEHAMMER",
+                                             "name":  "Siege Hammer",
+                                             "materials":  [
+                                                               {
+                                                                   "itemId":  "PLANKS",
+                                                                   "qty":  8
+                                                               },
+                                                               {
+                                                                   "itemId":  "STONEBLOCK",
+                                                                   "qty":  8
+                                                               }
+                                                           ]
                                          }
                                      ]
                        }

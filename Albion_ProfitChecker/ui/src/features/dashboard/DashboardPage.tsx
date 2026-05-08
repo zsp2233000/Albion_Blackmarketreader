@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createAuthService, RegionService, assetUrl } from "@shared/index";
 import type { AuthService } from "@shared/index";
+import { useSeo } from "../../shared/seo/useSeo";
 import "./dashboard.css";
 
 type Region = "us" | "eu";
@@ -577,6 +578,23 @@ export function DashboardPage() {
   const toastHideTimerRef = useRef<number | null>(null);
   const toastClearTimerRef = useRef<number | null>(null);
   const [chartHover, setChartHover] = useState<{ index: number; left: number; top: number } | null>(null);
+  useSeo({
+    title: "Blackmarket Reader Dashboard | Albion Online Tool",
+    description:
+      "Blackmarket Reader Dashboard for Albion Online: live Black Market profit scans, city filters, tiers, and fast deal discovery.",
+    keywords:
+      "Blackmarket Reader, Albion Online Tool, Albion Black Market Dashboard, Albion Blackmarket, Market Reader",
+    canonical: "https://blackmarketreader.com/dashboard",
+    ogTitle: "Blackmarket Reader Dashboard | Albion Online Tool",
+    ogDescription:
+      "Live Albion Black Market data with city comparison, tier filters, and profit tracking in the Blackmarket Reader dashboard.",
+    ogUrl: "https://blackmarketreader.com/dashboard",
+    ogImage: "https://blackmarketreader.com/picture/Profit-Dashboard.png",
+    twitterTitle: "Blackmarket Reader Dashboard | Albion Online Tool",
+    twitterDescription:
+      "Live Albion Black Market data with city comparison, tier filters, and profit tracking in the Blackmarket Reader dashboard.",
+    twitterImage: "https://blackmarketreader.com/picture/Profit-Dashboard.png"
+  });
 
   const showToast = useCallback((message: string) => {
     if (!message) return;
@@ -1224,7 +1242,7 @@ export function DashboardPage() {
                 <span className="premium-badge"><span className="premium-dot" />New</span>
               </div>
               <button className="premium-preview" type="button" onClick={() => setShowPremiumPreview(true)}>
-                <img src={assetUrl("picture/bm-crafter-table.png")} alt="BM Crafter preview" />
+                <img src={assetUrl("picture/bm-crafter-table.png")} alt="Blackmarket Crafter tool preview" />
               </button>
               <a className="premium-button" href="/#bm-crafter-access">Crafting tools</a>
             </div>
@@ -1253,6 +1271,10 @@ export function DashboardPage() {
 
         <section className="cards-section">
           <div className="filters-wrap">
+            <div className="filters-intro">
+              <span className="filters-kicker">Signal Filters</span>
+              <h3 className="filters-title">Deal Scanner Controls</h3>
+            </div>
             <div className="filters-bar">
               <div className="tier-filters" role="group" aria-label="Tier filters">
                 {["ALL", "T4", "T5", "T6", "T7", "T8"].map((entry) => (
@@ -1263,17 +1285,17 @@ export function DashboardPage() {
               </div>
               <div className="filters-right">
                 <label className="filter-field">
-                  <span>Min Profit %</span>
+                  <span className="field-label">Min Profit %</span>
                   <input type="number" value={minProfitDraft} onChange={(e) => setMinProfitDraft(e.target.value)} />
                 </label>
                 <label className="filter-field">
-                  <span>Max Cost per Item</span>
+                  <span className="field-label">Max Cost per Item</span>
                   <input type="number" value={maxCostDraft} onChange={(e) => setMaxCostDraft(e.target.value)} placeholder="100000" />
                 </label>
                 <div className="filter-actions">
-                  <button type="button" onClick={applyFilters}>Apply filter</button>
-                  <button type="button" onClick={() => setSortBySilver(true)}>Sort by silver</button>
-                  <button type="button" onClick={() => setSortBySilver(false)} style={{ display: sortBySilver ? "inline-block" : "none" }}>Reset</button>
+                  <button className="filter-btn filter-btn-primary" type="button" onClick={applyFilters}>Apply filter</button>
+                  <button className="filter-btn filter-btn-secondary" type="button" onClick={() => setSortBySilver(true)}>Sort by silver</button>
+                  <button className="filter-btn filter-btn-ghost" type="button" onClick={() => setSortBySilver(false)} style={{ display: sortBySilver ? "inline-block" : "none" }}>Reset</button>
                 </div>
               </div>
             </div>
@@ -1318,7 +1340,7 @@ export function DashboardPage() {
         <div className="preview-modal" onClick={() => setShowPremiumPreview(false)}>
           <div className="preview-card" onClick={(e) => e.stopPropagation()}>
             <button className="preview-close" onClick={() => setShowPremiumPreview(false)} aria-label="Close preview">x</button>
-            <img src={assetUrl("picture/bm-crafter-table.png")} alt="BM Crafter preview large" />
+            <img src={assetUrl("picture/bm-crafter-table.png")} alt="Blackmarket Crafter full tool preview" />
           </div>
         </div>
       ) : null}

@@ -5,6 +5,15 @@ import "./login.css";
 
 type AuthMode = "login" | "register";
 
+const ALLOWED_NEXT_PATHS = new Set([
+  "/",
+  "/dashboard",
+  "/bm-crafter",
+  "/crafting-calculator",
+  "/community",
+  "/legal"
+]);
+
 function getSafeNextPath(value: string | null): string | null {
   if (!value) return null;
   const trimmed = String(value).trim();
@@ -12,7 +21,21 @@ function getSafeNextPath(value: string | null): string | null {
   if (trimmed.startsWith("//")) return null;
   if (trimmed.includes("://")) return null;
   if (trimmed === "/login") return null;
-  return trimmed;
+
+  try {
+    const url = new URL(trimmed, window.location.origin);
+    if (url.origin !== window.location.origin) return null;
+    if (!ALLOWED_NEXT_PATHS.has(url.pathname)) return null;
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return null;
+  }
+}
+
+function navigateToInternalPath(path: string) {
+  const safePath = getSafeNextPath(path) || "/dashboard";
+  window.history.replaceState({}, "", safePath);
+  window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
 function sleep(ms: number) {
@@ -85,7 +108,7 @@ export function LoginPage() {
         setCheckingSession(false);
         return;
       }
-      window.location.href = nextPath;
+      navigateToInternalPath(nextPath);
     })();
     return () => {
       cancelled = true;
@@ -122,7 +145,7 @@ export function LoginPage() {
       if (sessionStorage.getItem("postRegisterReload") === "1") {
         sessionStorage.removeItem("postRegisterReload");
       }
-      window.location.href = nextPath;
+      navigateToInternalPath(nextPath);
     } catch (error: any) {
       setAuthError(error?.message || "Login failed");
     }
