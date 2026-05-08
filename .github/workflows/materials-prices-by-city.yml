@@ -27,11 +27,16 @@ jobs:
           const fs = require("fs");
           const path = require("path");
 
-          const refinedBases = ["METALBAR", "PLANKS", "CLOTH", "LEATHER"];
-          const rawBases = ["ORE", "WOOD", "FIBER", "HIDE"];
-          const tiers = [4, 5, 6, 7, 8];
-          const enchants = [0, 1, 2, 3];
-          const cities = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford"];
+          const materials = [
+            { raw: "ORE", refined: "METALBAR" },
+            { raw: "WOOD", refined: "PLANKS" },
+            { raw: "FIBER", refined: "CLOTH" },
+            { raw: "HIDE", refined: "LEATHER" },
+            { raw: "ROCK", refined: "STONEBLOCK" }
+          ];
+          const tiers = [2, 3, 4, 5, 6, 7, 8];
+          const enchants = [0, 1, 2, 3, 4];
+          const cities = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford", "Brecilien"];
           const chunkSize = 50;
           const delayMs = 1400;
 
@@ -41,11 +46,22 @@ jobs:
             { key: "us", host: "https://west.albion-online-data.com/api/v2/stats" }
           ];
 
-          function buildItemIds(bases) {
+          function isEnchantAvailable(tier, enchant) {
+            return tier >= 4 || enchant === 0;
+          }
+
+          function isItemAvailable(material, kind, tier, enchant) {
+            if (!isEnchantAvailable(tier, enchant)) return false;
+            return !(material.raw === "ROCK" && kind === "refined" && enchant > 0);
+          }
+
+          function buildItemIds(kind) {
             const ids = [];
-            for (const base of bases) {
+            for (const material of materials) {
+              const base = material[kind];
               for (const tier of tiers) {
                 for (const enchant of enchants) {
+                  if (!isItemAvailable(material, kind, tier, enchant)) continue;
                   if (enchant > 0) {
                     ids.push(`T${tier}_${base}_LEVEL${enchant}@${enchant}`);
                   } else {
@@ -101,20 +117,20 @@ jobs:
 
           (async () => {
             fs.mkdirSync(outputDir, { recursive: true });
-            const refinedItemIds = buildItemIds(refinedBases);
-            const rawItemIds = buildItemIds(rawBases);
+            const refinedItemIds = buildItemIds("refined");
+            const rawItemIds = buildItemIds("raw");
             const generatedAt = new Date().toISOString();
 
             for (const region of regions) {
               const refinedByItem = await fetchCurrentByCity(region.host, refinedItemIds);
               const rawByItem = await fetchCurrentByCity(region.host, rawItemIds);
 
-              function toItems(itemIds, byItem) {
+              function buildItems(itemIds, byItem) {
                 const items = [];
                 for (const itemId of itemIds) {
-                  const { tier, enchant } = parseMeta(itemId);
-                  const cityPrices = {};
-                  const itemCityMap = byItem.get(itemId) || new Map();
+                const { tier, enchant } = parseMeta(itemId);
+                const cityPrices = {};
+                const itemCityMap = byItem.get(itemId) || new Map();
 
                   for (const city of cities) {
                     cityPrices[city] = Number(itemCityMap.get(city) || 0);
@@ -129,9 +145,11 @@ jobs:
                 }
                 return items;
               }
+                return items;
+              }
 
-              const refinedItems = toItems(refinedItemIds, refinedByItem);
-              const rawItems = toItems(rawItemIds, rawByItem);
+              const refinedItems = buildItems(refinedItemIds, refinedByItem);
+              const rawItems = buildItems(rawItemIds, rawByItem);
 
               const refinedPayload = {
                 generatedAt,
@@ -150,10 +168,11 @@ jobs:
               };
 
               const refinedOutPath = path.join(outputDir, `materials-cities-${region.key}.json`);
-              const rawOutPath = path.join(outputDir, `raw-materials-cities-${region.key}.json`);
               fs.writeFileSync(refinedOutPath, JSON.stringify(refinedPayload));
-              fs.writeFileSync(rawOutPath, JSON.stringify(rawPayload));
               console.log(`Wrote ${refinedOutPath}: ${refinedItems.length} items x ${cities.length} cities`);
+
+              const rawOutPath = path.join(outputDir, `raw-materials-cities-${region.key}.json`);
+              fs.writeFileSync(rawOutPath, JSON.stringify(rawPayload));
               console.log(`Wrote ${rawOutPath}: ${rawItems.length} items x ${cities.length} cities`);
             }
           })().catch((err) => {

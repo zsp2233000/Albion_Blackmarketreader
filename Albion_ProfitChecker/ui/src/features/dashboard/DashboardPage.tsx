@@ -1082,6 +1082,14 @@ export function DashboardPage() {
           </span>
           <span className="tool-rail-label">Crafting Calculator</span>
         </a>
+        <a className="tool-rail-link" href="/refining-calculator" title="Refining Calculator">
+          <span className="tool-rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M7 3h10v2H7V3Zm2 4h6l4 6-7 8-7-8 4-6Zm.96 2-2.23 3.35L12 17.2l4.27-4.85L14.04 9H9.96Z" />
+            </svg>
+          </span>
+          <span className="tool-rail-label">Refining Calculator</span>
+        </a>
       </aside>
 
       <header className={`topbar ${topbarHidden ? "topbar-hidden" : ""}`}>

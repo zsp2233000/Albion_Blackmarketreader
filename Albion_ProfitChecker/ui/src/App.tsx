@@ -10,6 +10,9 @@ const CraftingCalculatorPage = lazy(() =>
   import("./features/crafting-calculator").then((m) => ({ default: m.CraftingCalculatorPage }))
 );
 const BmCrafterPage = lazy(() => import("./features/bm-crafter").then((m) => ({ default: m.BmCrafterPage })));
+const RefiningCalculatorPage = lazy(() =>
+  import("./features/refining-calculator").then((m) => ({ default: m.RefiningCalculatorPage }))
+);
 
 export function App() {
   return (
@@ -22,9 +25,12 @@ export function App() {
         <Route path="/legal" element={<LegalPage />} />
         <Route path="/bm-crafter" element={<BmCrafterPage />} />
         <Route path="/crafting-calculator" element={<CraftingCalculatorPage />} />
+        <Route path="/refining-calculator" element={<RefiningCalculatorPage />} />
         <Route path="/Blackmarket-Crafter" element={<Navigate to="/bm-crafter" replace />} />
         <Route path="/Blackmarket-Crafter/index.html" element={<Navigate to="/bm-crafter" replace />} />
         <Route path="/crafting-calculator/index.html" element={<Navigate to="/crafting-calculator" replace />} />
+        <Route path="/Refining%20Calculator" element={<Navigate to="/refining-calculator" replace />} />
+        <Route path="/Refining%20Calculator/index.html" element={<Navigate to="/refining-calculator" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
