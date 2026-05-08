@@ -30,9 +30,10 @@ internal static class Program
     private const int DEFAULT_HISTORY_RETRY_DELAY_MS = 1200;
     private const int DEFAULT_HISTORY_SPAN_DELAY_MS = 1000;
     private const int DEFAULT_MAX_HISTORY_CONCURRENCY = 3;
-    // Verwende das aktuelle Arbeitsverzeichnis, damit ui/results.js im Repo geschrieben wird (auch in CI).
+    // Verwende das aktuelle Arbeitsverzeichnis, damit ui/public/results.js im Repo geschrieben wird (auch in CI).
     private static readonly string BaseDir = Directory.GetCurrentDirectory();
     private static readonly string UiDir = Path.Combine(BaseDir, "ui");
+    private static readonly string PublicDir = Path.Combine(UiDir, "public");
     private static readonly string PictureDir = Path.Combine(BaseDir, "picture");
     private static readonly string ProgressPath = Path.Combine(UiDir, "progress.json");
 
@@ -343,7 +344,7 @@ internal static class Program
             .ThenByDescending(r => r.BmSoldPerDay)
             .ToList();
 
-        ExportResultsToJs(winners, Path.Combine(UiDir, "results.js"));
+        ExportResultsToJs(winners, Path.Combine(PublicDir, "results.js"));
 
         Console.WriteLine();
         Console.WriteLine($"Gefundene profitable Varianten (>= {options.MinProfitPercent:0}% Profit, Zeitraum {string.Join("/", options.BmFallbackDays)} Tage):");
