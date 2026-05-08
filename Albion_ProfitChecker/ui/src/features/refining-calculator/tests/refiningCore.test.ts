@@ -11,7 +11,7 @@ import {
   makeRefiner,
   sumRepeatedValue
 } from "../core";
-import { DEFAULT_PRICE_BY_ITEM_ID, MATERIAL_BY_KEY, REFINE_VARIANTS } from "../data";
+import { DEFAULT_PRICE_BY_ITEM_ID, MATERIAL_BY_KEY, REFINE_VARIANTS, refinedItemIdFor } from "../data";
 
 function inputsForVariant(variant = REFINE_VARIANTS[0]) {
   return variant.ingredients.map((ingredient) => ({
@@ -75,6 +75,30 @@ describe("refining core", () => {
     });
     expect(computeReturnRate(focused)).toBeGreaterThan(computeReturnRate(base));
     expect(calculateRefining(focused).focusCost).toBeGreaterThan(0);
+  });
+
+  it("uses the current refining bonus cities per material", () => {
+    expect(MATERIAL_BY_KEY.metal.bonusCity).toBe("Thetford");
+    expect(MATERIAL_BY_KEY.wood.bonusCity).toBe("Fort Sterling");
+    expect(MATERIAL_BY_KEY.fiber.bonusCity).toBe("Lymhurst");
+    expect(MATERIAL_BY_KEY.hide.bonusCity).toBe("Martlock");
+    expect(MATERIAL_BY_KEY.stone.bonusCity).toBe("Bridgewatch");
+  });
+
+  it("models enchanted stone as more flat stone blocks, not enchanted blocks", () => {
+    const variant = REFINE_VARIANTS.find((entry) => entry.tier === 5 && entry.enchant === 3 && entry.materialKey === "stone")!;
+    const result = makeRefiner({
+      city: "Bridgewatch",
+      materialBonusCity: "Bridgewatch",
+      ...getReturnRatePresetConfig("city")
+    })(variant, inputsForVariant(variant), 400);
+    expect(variant.itemId).toBe(refinedItemIdFor("stone", 5, 0));
+    expect(variant.outputQuantity).toBe(8);
+    expect(variant.ingredients).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: "raw", itemId: "T5_ROCK_LEVEL3@3", quantity: 1 }),
+      expect.objectContaining({ kind: "refined", itemId: "T5_STONEBLOCK", quantity: 8 }),
+    ]));
+    expect(result.outputAmount).toBe(8);
   });
 
   it("uses full recipe cost including previous refined input", () => {

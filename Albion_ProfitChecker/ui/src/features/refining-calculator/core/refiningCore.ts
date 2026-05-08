@@ -110,10 +110,11 @@ function getInputPrice(tierInputs: ReadonlyArray<RefineTierInput>, itemId: strin
 }
 
 function createInitialState(input: RefiningInput): RefiningState {
+  const outputAmount = input.amount * input.variant.outputQuantity;
   return {
     input,
     returnRate: input.baseReturnRate,
-    outputAmount: input.amount,
+    outputAmount,
     grossMaterialCost: 0,
     returnedMaterialCost: 0,
     effectiveMaterialCost: 0,
@@ -122,7 +123,7 @@ function createInitialState(input: RefiningInput): RefiningState {
     refiningFee: 0,
     marketTax: 0,
     totalCost: 0,
-    revenue: input.variant.market * input.amount,
+    revenue: input.variant.market * outputAmount,
     netRevenue: 0,
     focusCost: 0,
     maxRunsByFocus: 0,

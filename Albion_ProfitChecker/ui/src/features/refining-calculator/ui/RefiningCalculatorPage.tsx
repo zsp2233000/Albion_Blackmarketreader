@@ -12,17 +12,27 @@ type UserState = { id: string; email: string | null; avatar: string; region: Mar
 type ManualOverrides = {
   pricesByItemId: Record<string, string>;
 };
+type FocusSpecTier = 4 | 5 | 6 | 7 | 8;
+type MaterialFocusSpecs = {
+  mastery: string;
+  tierSpecs: Record<FocusSpecTier, string>;
+};
+type FocusSpecs = {
+  name: string;
+  focusBudget: string;
+  materials: Record<MaterialKey, MaterialFocusSpecs>;
+};
 
 const KNOWN_CITIES = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford", "Brecilien"] as const;
 type SelectedCity = (typeof KNOWN_CITIES)[number];
-type TaxMode = "premiumSellOrder" | "premiumInstant" | "nonPremiumSellOrder" | "nonPremiumInstant" | "custom";
+type TaxMode = "premiumSellOrder" | "nonPremiumSellOrder" | "custom";
 const MANUAL_OVERRIDE_STORAGE_KEY = "refining-manual-overrides-v1";
+const FOCUS_SPECS_STORAGE_KEY = "refining-focus-specs-v1";
 const ROW_BATCH_SIZE = 20;
+const FOCUS_SPEC_TIERS = [4, 5, 6, 7, 8] as const;
 const TAX_PRESETS: Record<TaxMode, { label: string; totalRate: number; description: string }> = {
-  premiumSellOrder: { label: "Premium Sell Order", totalRate: 6.5, description: "2.5% setup + 4% sales tax" },
-  premiumInstant: { label: "Premium Instant Sell", totalRate: 4, description: "4% sales tax, no setup fee" },
-  nonPremiumSellOrder: { label: "No Premium Sell Order", totalRate: 10.5, description: "2.5% setup + 8% sales tax" },
-  nonPremiumInstant: { label: "No Premium Instant Sell", totalRate: 8, description: "8% sales tax, no setup fee" },
+  premiumSellOrder: { label: "Premium Sell Order (6.5%)", totalRate: 6.5, description: "2.5% setup + 4% sales tax" },
+  nonPremiumSellOrder: { label: "No Premium Sell Order (10.5%)", totalRate: 10.5, description: "2.5% setup + 8% sales tax" },
   custom: { label: "Custom", totalRate: 6.5, description: "Manual fee percent" },
 };
 
@@ -51,6 +61,61 @@ function materialDisplayName(materialKey: MaterialKey): string {
 
 function createEmptyManualOverrides(): ManualOverrides {
   return { pricesByItemId: {} };
+}
+
+function createDefaultMaterialFocusSpecs(): MaterialFocusSpecs {
+  return {
+    mastery: "0",
+    tierSpecs: { 4: "0", 5: "0", 6: "0", 7: "0", 8: "0" },
+  };
+}
+
+function createDefaultFocusMaterials(): Record<MaterialKey, MaterialFocusSpecs> {
+  return MATERIAL_DEFINITIONS.reduce((acc, material) => {
+    acc[material.key] = createDefaultMaterialFocusSpecs();
+    return acc;
+  }, {} as Record<MaterialKey, MaterialFocusSpecs>);
+}
+
+function createDefaultFocusSpecs(): FocusSpecs {
+  return { name: "Default", focusBudget: "10000", materials: createDefaultFocusMaterials() };
+}
+
+function normalizeFocusSpecs(raw: unknown): FocusSpecs {
+  const fallback = createDefaultFocusSpecs();
+  if (!raw || typeof raw !== "object") return fallback;
+  const source = raw as Partial<FocusSpecs>;
+  const sourceMaterials = source.materials && typeof source.materials === "object"
+    ? source.materials as Partial<Record<MaterialKey, Partial<MaterialFocusSpecs>>>
+    : {};
+  return {
+    name: String(source.name || fallback.name),
+    focusBudget: String(source.focusBudget || fallback.focusBudget),
+    materials: MATERIAL_DEFINITIONS.reduce((acc, material) => {
+      const materialSource = sourceMaterials[material.key] as Partial<MaterialFocusSpecs> | undefined;
+      const defaultMaterialSpecs = createDefaultMaterialFocusSpecs();
+      const tierSpecsSource = materialSource?.tierSpecs && typeof materialSource.tierSpecs === "object"
+        ? materialSource.tierSpecs as Partial<Record<FocusSpecTier, string>>
+        : {};
+      acc[material.key] = {
+        mastery: String(materialSource?.mastery ?? defaultMaterialSpecs.mastery),
+        tierSpecs: FOCUS_SPEC_TIERS.reduce((tiers, tier) => {
+          tiers[tier] = String(tierSpecsSource[tier] ?? defaultMaterialSpecs.tierSpecs[tier]);
+          return tiers;
+        }, {} as Record<FocusSpecTier, string>),
+      };
+      return acc;
+    }, {} as Record<MaterialKey, MaterialFocusSpecs>),
+  };
+}
+
+function readFocusSpecs(): FocusSpecs {
+  try {
+    const stored = localStorage.getItem(FOCUS_SPECS_STORAGE_KEY);
+    return normalizeFocusSpecs(stored ? JSON.parse(stored) : null);
+  } catch {
+    return createDefaultFocusSpecs();
+  }
 }
 
 function createDefaultBonusCityOverrides(): Record<MaterialKey, SelectedCity> {
@@ -92,6 +157,45 @@ function parseAmount(raw: string, fallback = 0): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function clampSpecLevel(raw: string): number {
+  return Math.min(120, Math.max(0, parseAmount(raw, 0)));
+}
+
+function parseSpecLevel(raw: string): number | null {
+  const trimmed = String(raw || "").trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function isSpecLevelInvalid(raw: string): boolean {
+  const parsed = parseSpecLevel(raw);
+  return parsed !== null && (parsed < 0 || parsed > 120);
+}
+
+function getFocusSpecValidationError(specs: FocusSpecs): string {
+  for (const material of MATERIAL_DEFINITIONS) {
+    const materialSpecs = specs.materials[material.key] || createDefaultMaterialFocusSpecs();
+    if (isSpecLevelInvalid(materialSpecs.mastery)) return `${materialDisplayName(material.key)} Mastery must be between 0 and 120.`;
+    for (const tier of FOCUS_SPEC_TIERS) {
+      if (isSpecLevelInvalid(materialSpecs.tierSpecs[tier])) return `${materialDisplayName(material.key)} T${tier} must be between 0 and 120.`;
+    }
+  }
+  return "";
+}
+
+function focusSpecTierFor(tier: Tier): FocusSpecTier | null {
+  return tier >= 4 && tier <= 8 ? (tier as FocusSpecTier) : null;
+}
+
+function computeFocusEfficiencyForVariant(variant: { materialKey: MaterialKey; tier: Tier }, specs: FocusSpecs): number {
+  const materialSpecs = specs.materials[variant.materialKey] || createDefaultMaterialFocusSpecs();
+  const masteryEfficiency = clampSpecLevel(materialSpecs.mastery) * 30;
+  const specTier = focusSpecTierFor(variant.tier);
+  const tierEfficiency = specTier ? clampSpecLevel(materialSpecs.tierSpecs[specTier]) * 250 : 0;
+  return masteryEfficiency + tierEfficiency;
+}
+
 function formatNumber(value: number): string {
   return Number.isFinite(value) ? Math.round(value).toLocaleString("de-DE") : "--";
 }
@@ -104,6 +208,14 @@ function formatIngredientName(row: { variant: { materialKey: MaterialKey }; kind
   const material = MATERIAL_BY_KEY[row.variant.materialKey];
   const baseName = row.kind === "raw" ? material.rawLabel : material.refinedLabel;
   return `T${row.tier}.${row.enchant} ${baseName}`;
+}
+
+function formatVariantName(variant: { materialKey: MaterialKey; tier: Tier; enchant: Enchant; label: string }): string {
+  const material = MATERIAL_BY_KEY[variant.materialKey];
+  if (variant.materialKey === "stone" && variant.enchant > 0) {
+    return `T${variant.tier} ${material.refinedLabel} from ${variant.label} ${material.rawLabel}`;
+  }
+  return `${variant.label} ${material.refinedLabel}`;
 }
 
 function onRefiningIconError(event: React.SyntheticEvent<HTMLImageElement>): void {
@@ -179,8 +291,11 @@ export function RefiningCalculatorPage() {
   const [selectedRefineCity, setSelectedRefineCity] = useState<SelectedCity>(() => getCurrentCity());
   const [selectedSellCity, setSelectedSellCity] = useState<SelectedCity>(() => getCurrentCity());
   const [amount, setAmount] = useState("1");
-  const [focusBudget, setFocusBudget] = useState("10000");
-  const [focusEfficiency, setFocusEfficiency] = useState("0");
+  const [focusSpecs, setFocusSpecs] = useState<FocusSpecs>(() => readFocusSpecs());
+  const [focusSpecsDraft, setFocusSpecsDraft] = useState<FocusSpecs>(() => readFocusSpecs());
+  const [showFocusSpecs, setShowFocusSpecs] = useState(false);
+  const [focusSpecsStatus, setFocusSpecsStatus] = useState("");
+  const [resultSearchTerm, setResultSearchTerm] = useState("");
   const [taxMode, setTaxMode] = useState<TaxMode>("premiumSellOrder");
   const [customMarketTaxRate, setCustomMarketTaxRate] = useState("6.5");
   const [bonusCityOverrides, setBonusCityOverrides] = useState<Record<MaterialKey, SelectedCity>>(() => createDefaultBonusCityOverrides());
@@ -195,12 +310,17 @@ export function RefiningCalculatorPage() {
 
   const accountPanelRef = useRef<HTMLDivElement | null>(null);
   const accountBtnRef = useRef<HTMLButtonElement | null>(null);
+  const showFocusSpecsRef = useRef(false);
 
   useEffect(() => {
     document.body.classList.add("refining-calculator-body");
     document.body.classList.remove("landing-body", "dashboard-body", "bm-crafter", "crafting-calculator-body");
     return () => document.body.classList.remove("refining-calculator-body");
   }, []);
+
+  useEffect(() => {
+    showFocusSpecsRef.current = showFocusSpecs;
+  }, [showFocusSpecs]);
 
   useEffect(() => {
     const cfg = window.env;
@@ -218,8 +338,12 @@ export function RefiningCalculatorPage() {
       if (!session) return;
       const profile = await authService.getUserProfile().catch(() => null);
       if (cancelled || !profile?.emailConfirmed) return;
+      const { data } = await authService.client.auth.getUser().catch(() => ({ data: { user: null } }));
+      const savedFocusSpecs = normalizeFocusSpecs(data.user?.user_metadata?.refiningFocusSpecs);
       const safeRegion = readStoredRegion() || profile.region || "eu";
       setUser({ id: profile.id, email: profile.email, avatar: sanitizeAvatarUrl(profile.avatar || localStorage.getItem("avatar")), region: safeRegion });
+      setFocusSpecs(savedFocusSpecs);
+      if (!showFocusSpecsRef.current) setFocusSpecsDraft(savedFocusSpecs);
       setRegion(safeRegion);
     })();
     return () => {
@@ -334,13 +458,13 @@ export function RefiningCalculatorPage() {
     const profile = getReturnRatePresetConfig(returnRatePreset);
     const feeValue = parseAmount(usageFeePer100, 400);
     const runAmount = parseAmount(amount, 1);
-    const parsedFocusBudget = parseAmount(focusBudget, 10000);
-    const parsedFocusEfficiency = parseAmount(focusEfficiency, 0);
+    const parsedFocusBudget = parseAmount(focusSpecs.focusBudget, 10000);
     const parsedMarketTaxRate = (taxMode === "custom" ? parseAmount(customMarketTaxRate, 6.5) : TAX_PRESETS[taxMode].totalRate) / 100;
     return REFINE_VARIANTS.map((variant) => {
       const marketValue = displayedPriceByItemId[variant.itemId] || "";
       const market = parseAmount(marketValue, 0);
       const withMarket = { ...variant, market };
+      const parsedFocusEfficiency = computeFocusEfficiencyForVariant(variant, focusSpecs);
       const refiner = makeRefiner({
         city: selectedRefineCity,
         materialBonusCity: bonusCityOverrides[variant.materialKey] || MATERIAL_BY_KEY[variant.materialKey].bonusCity,
@@ -356,13 +480,31 @@ export function RefiningCalculatorPage() {
       const result = refiner(withMarket, tierInputs, feeValue);
       return { variant: withMarket, ...result, positive: result.profit >= 0 };
     }).sort((left, right) => right.profit - left.profit);
-  }, [amount, bonusCityOverrides, customMarketTaxRate, displayedPriceByItemId, focusBudget, focusEfficiency, returnRatePreset, selectedRefineCity, taxMode, tierInputs, usageFeePer100]);
+  }, [amount, bonusCityOverrides, customMarketTaxRate, displayedPriceByItemId, focusSpecs, returnRatePreset, selectedRefineCity, taxMode, tierInputs, usageFeePer100]);
 
   const selectedRow = rows.find((row) => row.variant.id === selectedRowKey) || rows[0];
-  const visibleRows = rows.slice(0, visibleRowCount);
-  const maxDailyProfit = rows.reduce((sum, row) => sum + Math.max(0, row.profit), 0);
-  const profitableCount = rows.filter((row) => row.positive).length;
+  const selectedEditorRow = rows.find((row) => row.variant.materialKey === editorMaterial) || selectedRow;
+  const filteredRows = useMemo(() => {
+    const search = resultSearchTerm.trim().toLowerCase();
+    if (!search) return rows;
+    return rows.filter((row) => {
+      const ingredientText = row.variant.ingredients
+        .map((ingredient) => formatIngredientName({ ...ingredient, variant: row.variant }))
+        .join(" ");
+      return [
+        row.variant.id,
+        row.variant.itemId,
+        formatVariantName(row.variant),
+        materialDisplayName(row.variant.materialKey),
+        ingredientText,
+      ].some((value) => value.toLowerCase().includes(search));
+    });
+  }, [resultSearchTerm, rows]);
+  const visibleRows = filteredRows.slice(0, visibleRowCount);
+  const profitableCount = filteredRows.filter((row) => row.positive).length;
   const hasDisplayData = hasLiveData || hasManualOverrideValues(manualOverrides);
+  const focusSpecsValidationError = useMemo(() => getFocusSpecValidationError(focusSpecsDraft), [focusSpecsDraft]);
+
   useEffect(() => {
     if (!rows.length) return;
     if (!rows.some((row) => row.variant.id === selectedRowKey)) setSelectedRowKey(rows[0].variant.id);
@@ -370,13 +512,13 @@ export function RefiningCalculatorPage() {
 
   useEffect(() => {
     setVisibleRowCount(ROW_BATCH_SIZE);
-  }, [amount, editorMaterial, focusBudget, focusEfficiency, customMarketTaxRate, region, returnRatePreset, selectedBuyCity, selectedRefineCity, selectedSellCity, taxMode, usageFeePer100]);
+  }, [amount, editorMaterial, focusSpecs, customMarketTaxRate, region, resultSearchTerm, returnRatePreset, selectedBuyCity, selectedRefineCity, selectedSellCity, taxMode, usageFeePer100]);
 
   function onResultsScroll(event: React.UIEvent<HTMLDivElement>) {
     const el = event.currentTarget;
     const remaining = el.scrollHeight - el.scrollTop - el.clientHeight;
-    if (remaining > 260 || visibleRowCount >= rows.length) return;
-    setVisibleRowCount((current) => Math.min(rows.length, current + ROW_BATCH_SIZE));
+    if (remaining > 260 || visibleRowCount >= filteredRows.length) return;
+    setVisibleRowCount((current) => Math.min(filteredRows.length, current + ROW_BATCH_SIZE));
   }
 
   const updateManualPrice = useCallback((itemId: string, value: string) => {
@@ -395,6 +537,61 @@ export function RefiningCalculatorPage() {
     setBonusCityOverrides((prev) => ({ ...prev, [materialKey]: city }));
   }, []);
 
+  const updateFocusDraftMaterial = useCallback((materialKey: MaterialKey, patch: Partial<MaterialFocusSpecs>) => {
+    setFocusSpecsDraft((prev) => ({
+      ...prev,
+      materials: {
+        ...prev.materials,
+        [materialKey]: {
+          ...(prev.materials[materialKey] || createDefaultMaterialFocusSpecs()),
+          ...patch,
+        },
+      },
+    }));
+  }, []);
+
+  const updateFocusDraftTierSpec = useCallback((materialKey: MaterialKey, tier: FocusSpecTier, value: string) => {
+    setFocusSpecsDraft((prev) => {
+      const current = prev.materials[materialKey] || createDefaultMaterialFocusSpecs();
+      return {
+        ...prev,
+        materials: {
+          ...prev.materials,
+          [materialKey]: {
+            ...current,
+            tierSpecs: {
+              ...current.tierSpecs,
+              [tier]: value,
+            },
+          },
+        },
+      };
+    });
+  }, []);
+
+  const saveFocusSpecs = useCallback(async () => {
+    const validationError = getFocusSpecValidationError(focusSpecsDraft);
+    if (validationError) {
+      setFocusSpecsStatus(validationError);
+      window.setTimeout(() => setFocusSpecsStatus(""), 3000);
+      return;
+    }
+    const next = normalizeFocusSpecs(focusSpecsDraft);
+    setFocusSpecs(next);
+    setFocusSpecsDraft(next);
+    localStorage.setItem(FOCUS_SPECS_STORAGE_KEY, JSON.stringify(next));
+    if (authService && user) {
+      await authService.updateUserMetadata({ refiningFocusSpecs: next }).then(
+        () => setFocusSpecsStatus("Saved to account"),
+        () => setFocusSpecsStatus("Saved locally"),
+      );
+    } else {
+      setFocusSpecsStatus("Saved locally");
+    }
+    window.setTimeout(() => setFocusSpecsStatus(""), 2400);
+    setShowFocusSpecs(false);
+  }, [authService, focusSpecsDraft, user]);
+
   const priceControls = useMemo(() => (
     <div className="bm-filters rc-filters">
       <div className="rc-price-editor">
@@ -405,7 +602,11 @@ export function RefiningCalculatorPage() {
           </div>
           <div className="rc-tab-nav">
             {MATERIAL_DEFINITIONS.map((material) => (
-              <button key={material.key} type="button" className={`rc-tab ${editorMaterial === material.key ? "active" : ""}`} onClick={() => setEditorMaterial(material.key)}>
+              <button key={material.key} type="button" className={`rc-tab ${editorMaterial === material.key ? "active" : ""}`} onClick={() => {
+                setEditorMaterial(material.key);
+                const firstMaterialRow = rows.find((row) => row.variant.materialKey === material.key);
+                if (firstMaterialRow) setSelectedRowKey(firstMaterialRow.variant.id);
+              }}>
                 {materialDisplayName(material.key)}
               </button>
             ))}
@@ -437,7 +638,7 @@ export function RefiningCalculatorPage() {
                       );
                     })}
                     {ENCHANTS.map((enchant) => {
-                      if (!isEnchantAvailable(tier, enchant)) {
+                      if (!isEnchantAvailable(tier, enchant) || (editorMaterial === "stone" && enchant > 0)) {
                         return <td key={`sell-${editorMaterial}-${tier}-${enchant}`} className="rc-unavailable-cell">-</td>;
                       }
                       const refinedId = refinedItemIdFor(editorMaterial, tier, enchant);
@@ -454,9 +655,15 @@ export function RefiningCalculatorPage() {
           </div>
         </div>
         <div className="rc-return-card">
-          <span>Current Return Rate</span>
-          <strong>{formatPct((selectedRow?.returnRate || 0) * 100)}</strong>
-          <small>{selectedRow ? `${bonusCityOverrides[selectedRow.variant.materialKey] || MATERIAL_BY_KEY[selectedRow.variant.materialKey].bonusCity} bonus for ${MATERIAL_BY_KEY[selectedRow.variant.materialKey].rawLabel}` : "Select a row"}</small>
+          <div className="rc-return-stat">
+            <span>Current Return</span>
+            <strong>{formatPct((selectedEditorRow?.returnRate || 0) * 100)}</strong>
+          </div>
+          <div className="rc-return-stat">
+            <span>Profitable Items</span>
+            <strong>{formatNumber(profitableCount)}</strong>
+          </div>
+          <small>{`${bonusCityOverrides[editorMaterial] || MATERIAL_BY_KEY[editorMaterial].bonusCity} bonus for ${MATERIAL_BY_KEY[editorMaterial].rawLabel}`}</small>
         </div>
       </div>
       <div className="rc-fixed-filters">
@@ -495,16 +702,11 @@ export function RefiningCalculatorPage() {
           </select>
         </div>
         <div className="filter-block">
-          <p>Focus Budget</p>
-          <input className="rc-input" value={focusBudget} onChange={(event) => setFocusBudget(event.target.value)} />
-        </div>
-        <div className="filter-block">
-          <p>Focus Efficiency</p>
-          <input className="rc-input" value={focusEfficiency} onChange={(event) => setFocusEfficiency(event.target.value)} />
-        </div>
-        <div className="filter-block">
           <p>Focus Specs</p>
-          <button type="button" className="execute-btn rc-soon-btn" disabled>Coming Soon</button>
+          <button type="button" className="execute-btn" onClick={() => {
+            setFocusSpecsDraft(focusSpecs);
+            setShowFocusSpecs(true);
+          }}>Specs</button>
         </div>
         <div className="filter-block">
           <p>Tax Mode</p>
@@ -525,11 +727,11 @@ export function RefiningCalculatorPage() {
         </div>
         <div className="filter-block rc-filter-action">
           <p>Manual Overrides</p>
-          <button type="button" className="execute-btn ghost-btn" onClick={clearManualOverrides}>Reset To Live Data</button>
+          <button type="button" className="execute-btn ghost-btn" onClick={clearManualOverrides}>Reset Live</button>
         </div>
       </div>
     </div>
-  ), [amount, bonusCityOverrides, clearManualOverrides, customMarketTaxRate, displayedPriceByItemId, editorMaterial, focusBudget, focusEfficiency, returnRatePreset, selectedBuyCity, selectedRefineCity, selectedRow, selectedSellCity, taxMode, updateBonusCityOverride, updateManualPrice, usageFeePer100]);
+  ), [amount, bonusCityOverrides, clearManualOverrides, customMarketTaxRate, displayedPriceByItemId, editorMaterial, focusSpecs, returnRatePreset, rows, selectedBuyCity, selectedEditorRow, selectedRefineCity, selectedSellCity, taxMode, updateBonusCityOverride, updateManualPrice, usageFeePer100]);
 
   async function onRegionSave(next: MarketRegion) {
     setRegion(next);
@@ -565,6 +767,67 @@ export function RefiningCalculatorPage() {
           </div>
         </div>
       </div>
+      {showFocusSpecs ? (
+        <div className="modal-overlay open" aria-hidden="false" onClick={() => setShowFocusSpecs(false)}>
+          <div className="modal-card rc-focus-modal" role="dialog" aria-modal="true" aria-labelledby="focusSpecsTitle" onClick={(event) => event.stopPropagation()}>
+            <h3 id="focusSpecsTitle">Focus Specs</h3>
+            <p>Enter your refining specs here. The result table automatically uses the matching material and tier for each row.</p>
+            <div className="rc-focus-table-wrap">
+              <table className="rc-focus-table">
+                <thead>
+                  <tr>
+                    <th>Material</th>
+                    <th>Mastery</th>
+                    {FOCUS_SPEC_TIERS.map((tier) => <th key={tier}>T{tier}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {MATERIAL_DEFINITIONS.map((material) => {
+                    const specs = focusSpecsDraft.materials[material.key] || createDefaultMaterialFocusSpecs();
+                    return (
+                      <tr key={material.key}>
+                        <td>{materialDisplayName(material.key)}</td>
+                        <td>
+                          <input
+                            className={`rc-input rc-focus-input ${isSpecLevelInvalid(specs.mastery) ? "invalid" : ""}`}
+                            inputMode="numeric"
+                            value={specs.mastery}
+                            onFocus={(event) => {
+                              if (event.currentTarget.value === "0") updateFocusDraftMaterial(material.key, { mastery: "" });
+                            }}
+                            onChange={(event) => updateFocusDraftMaterial(material.key, { mastery: event.target.value })}
+                            placeholder="0"
+                          />
+                        </td>
+                        {FOCUS_SPEC_TIERS.map((tier) => (
+                          <td key={`${material.key}-${tier}`}>
+                            <input
+                              className={`rc-input rc-focus-input ${isSpecLevelInvalid(specs.tierSpecs[tier]) ? "invalid" : ""}`}
+                              inputMode="numeric"
+                              value={specs.tierSpecs[tier]}
+                              onFocus={(event) => {
+                                if (event.currentTarget.value === "0") updateFocusDraftTierSpec(material.key, tier, "");
+                              }}
+                              onChange={(event) => updateFocusDraftTierSpec(material.key, tier, event.target.value)}
+                              placeholder="0"
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {focusSpecsValidationError ? <p className="rc-focus-error">{focusSpecsValidationError}</p> : null}
+            <div className="modal-actions">
+              <button type="button" className="modal-btn ghost" onClick={() => setShowFocusSpecs(false)}>Cancel</button>
+              <button type="button" className="modal-btn primary" disabled={Boolean(focusSpecsValidationError)} onClick={() => void saveFocusSpecs()}>Save</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {focusSpecsStatus ? <div className="rc-toast">{focusSpecsStatus}</div> : null}
 
       <header className="bm-header">
         <div className="bm-header-row">
@@ -644,16 +907,20 @@ export function RefiningCalculatorPage() {
         <section className="bm-table expanded">
           <div className="rc-table-toolbar">
             <span>Results Table</span>
-            <span>{profitableCount} profitable | Selected return {formatPct((selectedRow?.returnRate || 0) * 100)}</span>
+            <label className="rc-result-search">
+              <span className="material-symbols-outlined">search</span>
+              <input type="search" value={resultSearchTerm} onChange={(event) => setResultSearchTerm(event.target.value)} placeholder="Search results" />
+            </label>
+            <span>{profitableCount} profitable | Showing {filteredRows.length}</span>
           </div>
           <div className="table-wrap custom-scrollbar" onScroll={onResultsScroll}>
             <table>
-              <thead><tr><th>Variant ID</th><th className="num">Return</th><th className="num">Gross Cost</th><th className="num">Return Save</th><th className="num">Fee</th><th className="num">Tax</th><th className="num">Net Cost</th><th className="num">Net Revenue</th><th className="num">Focus</th><th className="num">Profit/Focus</th><th className="num">Profit</th><th className="num">Profit %</th></tr></thead>
+              <thead><tr><th>Variant</th><th className="num">Return</th><th className="num">Gross Cost</th><th className="num">Return Save</th><th className="num">Fee</th><th className="num">Tax</th><th className="num">Net Cost</th><th className="num">Net Revenue</th><th className="num">Focus</th><th className="num">Profit/Focus</th><th className="num">Profit</th><th className="num">Profit %</th></tr></thead>
               <tbody>
-                {!hasDisplayData || !rows.length ? (<tr><td colSpan={12}>No refining data available for the selected region/city.</td></tr>) : null}
+                {!hasDisplayData || !filteredRows.length ? (<tr><td colSpan={12}>{resultSearchTerm ? "No matching refining rows." : "No refining data available for the selected region/city."}</td></tr>) : null}
                 {visibleRows.map((row, index) => (
                   <tr key={row.variant.id} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.variant.id ? "selected-row" : ""}`} onClick={() => setSelectedRowKey(row.variant.id)}>
-                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={row.variant.id} onError={onRefiningIconError} /></div><div><div className="item-name">{row.variant.id}{row.missingInputCost ? " *" : ""}</div><div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant })}`).join(" + ")}</div></div></div></div></td>
+                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={formatVariantName(row.variant)} onError={onRefiningIconError} /></div><div><div className="item-name">{formatVariantName(row.variant)}{row.missingInputCost ? " *" : ""}</div><div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant })}`).join(" + ")}</div></div></div></div></td>
                     <td className="num">{formatPct(row.returnRate * 100)}</td>
                     <td className="num">{formatNumber(row.grossMaterialCost)}</td>
                     <td className="num profit">-{formatNumber(row.returnedMaterialCost)}</td>
@@ -667,7 +934,7 @@ export function RefiningCalculatorPage() {
                     <td className={`num ${row.positive ? "profit" : "loss"}`}>{formatPct(row.profitPercent)}</td>
                   </tr>
                 ))}
-                {visibleRowCount < rows.length ? (
+                {visibleRowCount < filteredRows.length ? (
                   <tr className="rc-load-more-row">
                     <td colSpan={12}>Scroll for more rows</td>
                   </tr>
@@ -676,7 +943,7 @@ export function RefiningCalculatorPage() {
             </table>
           </div>
           <div className="table-footer">
-            <p>Showing {Math.min(visibleRowCount, rows.length)} / {rows.length} variants</p>
+            <p>Showing {Math.min(visibleRowCount, filteredRows.length)} / {filteredRows.length} variants</p>
             <p>Region {region.toUpperCase()} | Missing raw live prices: {missingRawCount}</p>
           </div>
         </section>
@@ -686,27 +953,22 @@ export function RefiningCalculatorPage() {
             <div className="side-header"><h3>Refining Insight</h3><span className="material-symbols-outlined">tune</span></div>
             <div className="side-hero teal-gradient-bg">
               <div className="side-icon"><div className="side-icon-inner"><img src={selectedRow?.variant.icon || ""} alt="" onError={onRefiningIconError} /></div></div>
-              <h2>{selectedRow?.variant.id || "Select a variant"}</h2>
+              <h2>{selectedRow ? formatVariantName(selectedRow.variant) : "Select a variant"}</h2>
             </div>
             <div className="side-metrics">
-              <div><span>Gross Material Cost</span><strong>{formatNumber(selectedRow?.grossMaterialCost || 0)}</strong></div>
-              <div><span>Returned Material Value</span><strong className="profit">-{formatNumber(selectedRow?.returnedMaterialCost || 0)}</strong></div>
-              <div><span>Effective Material Cost</span><strong>{formatNumber(selectedRow?.effectiveMaterialCost || 0)}</strong></div>
-              <div><span>Nutrition Cost</span><strong>{formatNumber(selectedRow?.nutritionCost || 0)}</strong></div>
-              <div><span>Station Fee</span><strong>{formatNumber(selectedRow?.refiningFee || 0)}</strong></div>
-              <div><span>Market Tax</span><strong>{formatNumber(selectedRow?.marketTax || 0)}</strong></div>
-              <div><span>Total Cost</span><strong>{formatNumber(selectedRow?.totalCost || 0)}</strong></div>
-              <div><span>Revenue</span><strong>{formatNumber(selectedRow?.revenue || 0)}</strong></div>
-              <div><span>Net Revenue</span><strong>{formatNumber(selectedRow?.netRevenue || 0)}</strong></div>
-              <div><span>Return Rate</span><strong>{formatPct((selectedRow?.returnRate || 0) * 100)}</strong></div>
-              <div><span>Bonus City</span><strong>{selectedRow ? bonusCityOverrides[selectedRow.variant.materialKey] || MATERIAL_BY_KEY[selectedRow.variant.materialKey].bonusCity : "--"}</strong></div>
-              <div><span>Focus Cost</span><strong>{formatNumber(selectedRow?.focusCost || 0)}</strong></div>
-              <div><span>Max Runs By Focus</span><strong>{formatNumber(selectedRow?.maxRunsByFocus || 0)}</strong></div>
-              <div><span>Profit / Focus</span><strong className={selectedRow?.profitPerFocus && selectedRow.profitPerFocus >= 0 ? "profit" : "loss"}>{selectedRow?.focusCost ? formatNumber(selectedRow.profitPerFocus) : "--"}</strong></div>
               <div><span>Profit</span><strong className={selectedRow?.profit && selectedRow.profit >= 0 ? "profit" : "loss"}>{selectedRow?.profit && selectedRow.profit >= 0 ? "+" : ""}{formatNumber(selectedRow?.profit || 0)}</strong></div>
               <div><span>Profit %</span><strong className={selectedRow?.profitPercent && selectedRow.profitPercent >= 0 ? "profit" : "loss"}>{formatPct(selectedRow?.profitPercent || 0)}</strong></div>
+              <div><span>Profit / Focus</span><strong className={selectedRow?.profitPerFocus && selectedRow.profitPerFocus >= 0 ? "profit" : "loss"}>{selectedRow?.focusCost ? formatNumber(selectedRow.profitPerFocus) : "--"}</strong></div>
+              <div><span>Return Rate</span><strong>{formatPct((selectedRow?.returnRate || 0) * 100)}</strong></div>
+              <div><span>Returned Value</span><strong className="profit">-{formatNumber(selectedRow?.returnedMaterialCost || 0)}</strong></div>
+              <div><span>Total Cost</span><strong>{formatNumber(selectedRow?.totalCost || 0)}</strong></div>
+              <div><span>Material Cost</span><strong>{formatNumber(selectedRow?.grossMaterialCost || 0)}</strong></div>
+              <div><span>Net Revenue</span><strong>{formatNumber(selectedRow?.netRevenue || 0)}</strong></div>
+              <div><span>Output Amount</span><strong>{formatNumber(selectedRow?.outputAmount || 0)}</strong></div>
+              <div><span>Focus Cost</span><strong>{formatNumber(selectedRow?.focusCost || 0)}</strong></div>
+              <div><span>Runs By Focus</span><strong>{selectedRow?.focusCost ? formatNumber(selectedRow.maxRunsByFocus) : "--"}</strong></div>
+              <div><span>Bonus City</span><strong>{selectedRow ? bonusCityOverrides[selectedRow.variant.materialKey] || MATERIAL_BY_KEY[selectedRow.variant.materialKey].bonusCity : "--"}</strong></div>
             </div>
-            <div className="rc-side-footer"><div className="rc-side-stat"><span>Positive Batch Profit</span><strong>{formatNumber(maxDailyProfit)}</strong></div></div>
           </div>
         </aside>
       </main>

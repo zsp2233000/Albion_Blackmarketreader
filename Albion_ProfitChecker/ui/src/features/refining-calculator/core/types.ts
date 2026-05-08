@@ -31,6 +31,7 @@ export interface RefineVariant {
   readonly label: string;
   readonly tier: Tier;
   readonly enchant: Enchant;
+  readonly outputQuantity: number;
   readonly ingredients: ReadonlyArray<RefineIngredient>;
   readonly baseFocusCost: number;
   readonly market: number;
