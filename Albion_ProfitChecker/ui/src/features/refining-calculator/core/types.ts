@@ -1,24 +1,38 @@
-export type City = "Bridgewatch" | "Lymhurst" | "Fort Sterling" | "Martlock" | "Thetford" | "Caerleon";
+export type City = "Bridgewatch" | "Lymhurst" | "Fort Sterling" | "Martlock" | "Thetford" | "Caerleon" | "Brecilien";
 export type MarketRegion = "eu" | "us";
-export type Tier = 4 | 5 | 6 | 7 | 8;
+export type Tier = 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export type Enchant = 0 | 1 | 2 | 3 | 4;
-export type MaterialKey = "metal" | "wood" | "fiber" | "hide";
+export type MaterialKey = "metal" | "wood" | "fiber" | "hide" | "stone";
+export type IngredientKind = "raw" | "refined";
 
 export interface RefineTierInput {
   readonly materialKey: MaterialKey;
+  readonly kind: IngredientKind;
   readonly tier: Tier;
   readonly enchant: Enchant;
-  readonly unitRawPrice: number;
+  readonly itemId: string;
+  readonly unitPrice: number;
+}
+
+export interface RefineIngredient {
+  readonly materialKey: MaterialKey;
+  readonly kind: IngredientKind;
+  readonly tier: Tier;
+  readonly enchant: Enchant;
+  readonly itemId: string;
+  readonly quantity: number;
 }
 
 export interface RefineVariant {
   readonly id: string;
   readonly itemId: string;
+  readonly rawItemId: string;
   readonly materialKey: MaterialKey;
   readonly label: string;
   readonly tier: Tier;
   readonly enchant: Enchant;
-  readonly multiplier: number;
+  readonly ingredients: ReadonlyArray<RefineIngredient>;
+  readonly baseFocusCost: number;
   readonly market: number;
   readonly itemValue: number;
   readonly icon: string;
@@ -27,17 +41,22 @@ export interface RefineVariant {
 
 export interface BonusConfig {
   readonly city: City;
-  readonly cityBonusRate: number;
-  readonly refiningBonusRate: number;
+  readonly materialBonusCity: City;
+  readonly royalBonusPercent: number;
+  readonly materialBonusPercent: number;
   readonly focusEnabled: boolean;
-  readonly focusReturnRate: number;
+  readonly focusBonusPercent: number;
+  readonly focusEfficiency: number;
+  readonly focusBudget: number;
 }
 
 export interface RefiningInput {
   readonly variant: RefineVariant;
   readonly tierInputs: ReadonlyArray<RefineTierInput>;
+  readonly amount: number;
   readonly usageFeePer100: number;
   readonly nutritionFactor: number;
+  readonly marketTaxRate: number;
   readonly baseReturnRate: number;
   readonly bonuses: BonusConfig;
 }
@@ -49,10 +68,16 @@ export interface RefiningState {
   readonly grossMaterialCost: number;
   readonly returnedMaterialCost: number;
   readonly effectiveMaterialCost: number;
+  readonly missingInputCost: boolean;
   readonly nutritionCost: number;
   readonly refiningFee: number;
+  readonly marketTax: number;
   readonly totalCost: number;
   readonly revenue: number;
+  readonly netRevenue: number;
+  readonly focusCost: number;
+  readonly maxRunsByFocus: number;
+  readonly profitPerFocus: number;
   readonly profit: number;
   readonly profitPercent: number;
 }

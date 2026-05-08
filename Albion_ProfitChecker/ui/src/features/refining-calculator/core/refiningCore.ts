@@ -1,24 +1,22 @@
 import type {
   BonusConfig,
-  Enchant,
+  City,
   MaterialKey,
   RefineTierInput,
   RefineVariant,
   RefiningInput,
   RefiningResult,
   RefiningState,
-  Tier,
 } from "./types";
 
 type RefiningStep = (state: RefiningState) => RefiningState;
 type BonusStep = (state: RefiningState, bonuses: BonusConfig) => RefiningState;
 
-export type ReturnRatePreset = "base" | "bonus_city" | "bonus_city_focus";
+export type ReturnRatePreset = "base" | "city" | "focus";
 
 const clamp = (value: number, min: number, max: number): number =>
   Math.max(min, Math.min(max, value));
 
-// Rubric marker: function composition is centered in one reusable pipeline helper.
 export function pipe<T>(
   ...fns: ReadonlyArray<(value: T) => T>
 ): (value: T) => T {
@@ -32,61 +30,65 @@ export function withBonus(
   return (state) => bonusFn(state, bonuses);
 }
 
-export function computeProfit(cost: number, revenue: number): number {
-  return revenue - cost;
+export function computeProfit(cost: number, netRevenue: number): number {
+  return netRevenue - cost;
 }
 
 export function computeStationFee(
   itemValue: number,
   usageFeePer100: number,
   nutritionFactor: number,
+  amount = 1,
 ): number {
-  const nutritionCost = itemValue * nutritionFactor;
+  const nutritionCost = itemValue * nutritionFactor * amount;
   return (usageFeePer100 / 100) * nutritionCost;
 }
 
+export function computeReturnRateFromBonusPercent(totalBonusPercent: number): number {
+  const positiveBonus = Math.max(0, totalBonusPercent);
+  return clamp(1 - 1 / (1 + positiveBonus / 100), 0, 0.99);
+}
+
+export function isMaterialBonusCity(materialKey: MaterialKey, city: City, materialBonusCity: City): boolean {
+  void materialKey;
+  return city === materialBonusCity;
+}
+
 export function computeReturnRate(input: RefiningInput): number {
-  const combined =
-    input.baseReturnRate +
-    input.bonuses.cityBonusRate +
-    input.bonuses.refiningBonusRate;
-  const withFocus = input.bonuses.focusEnabled
-    ? combined + input.bonuses.focusReturnRate
-    : combined;
-  return clamp(withFocus, 0, 0.99);
+  const materialBonus = isMaterialBonusCity(input.variant.materialKey, input.bonuses.city, input.bonuses.materialBonusCity)
+    ? input.bonuses.materialBonusPercent
+    : 0;
+  const focusBonus = input.bonuses.focusEnabled ? input.bonuses.focusBonusPercent : 0;
+  return computeReturnRateFromBonusPercent(input.bonuses.royalBonusPercent + materialBonus + focusBonus);
 }
 
 export function getReturnRatePresetConfig(preset: ReturnRatePreset): {
-  baseReturnRate: number;
-  cityBonusRate: number;
-  refiningBonusRate: number;
   focusEnabled: boolean;
-  focusReturnRate: number;
+  royalBonusPercent: number;
+  materialBonusPercent: number;
+  focusBonusPercent: number;
 } {
-  if (preset === "bonus_city") {
+  if (preset === "focus") {
     return {
-      baseReturnRate: 0.152,
-      cityBonusRate: 0.215,
-      refiningBonusRate: 0,
-      focusEnabled: false,
-      focusReturnRate: 0,
+      focusEnabled: true,
+      royalBonusPercent: 18,
+      materialBonusPercent: 40,
+      focusBonusPercent: 59,
     };
   }
-  if (preset === "bonus_city_focus") {
+  if (preset === "city") {
     return {
-      baseReturnRate: 0.152,
-      cityBonusRate: 0.215,
-      refiningBonusRate: 0,
-      focusEnabled: true,
-      focusReturnRate: 0.172,
+      focusEnabled: false,
+      royalBonusPercent: 18,
+      materialBonusPercent: 40,
+      focusBonusPercent: 59,
     };
   }
   return {
-    baseReturnRate: 0.152,
-    cityBonusRate: 0,
-    refiningBonusRate: 0,
     focusEnabled: false,
-    focusReturnRate: 0,
+    royalBonusPercent: 18,
+    materialBonusPercent: 0,
+    focusBonusPercent: 59,
   };
 }
 
@@ -94,106 +96,113 @@ export function applyBonuses(
   state: RefiningState,
   bonuses: BonusConfig,
 ): RefiningState {
-  const nextReturnRate = clamp(
-    state.returnRate +
-      bonuses.cityBonusRate +
-      bonuses.refiningBonusRate +
-      (bonuses.focusEnabled ? bonuses.focusReturnRate : 0),
-    0,
-    0.99,
-  );
-
-  return { ...state, returnRate: nextReturnRate };
+  return { ...state, returnRate: computeReturnRate({ ...state.input, bonuses }) };
 }
 
-// Rubric marker: recursive helper used intentionally in the functional core instead of a mutable loop.
 export function sumRepeatedValue(value: number, times: number): number {
   if (times <= 0) return 0;
   return value + sumRepeatedValue(value, times - 1);
 }
 
-function getTierPrice(
-  tierInputs: ReadonlyArray<RefineTierInput>,
-  materialKey: MaterialKey,
-  tier: Tier,
-  enchant: Enchant,
-): number {
-  const match = tierInputs.find(
-    (entry) =>
-      entry.materialKey === materialKey &&
-      entry.tier === tier &&
-      entry.enchant === enchant,
-  );
-  return match ? match.unitRawPrice : 0;
+function getInputPrice(tierInputs: ReadonlyArray<RefineTierInput>, itemId: string): number {
+  const match = tierInputs.find((entry) => entry.itemId === itemId);
+  return match ? match.unitPrice : 0;
 }
 
 function createInitialState(input: RefiningInput): RefiningState {
   return {
     input,
     returnRate: input.baseReturnRate,
-    outputAmount: 1,
+    outputAmount: input.amount,
     grossMaterialCost: 0,
     returnedMaterialCost: 0,
     effectiveMaterialCost: 0,
+    missingInputCost: false,
     nutritionCost: 0,
     refiningFee: 0,
+    marketTax: 0,
     totalCost: 0,
-    revenue: input.variant.market,
+    revenue: input.variant.market * input.amount,
+    netRevenue: 0,
+    focusCost: 0,
+    maxRunsByFocus: 0,
+    profitPerFocus: 0,
     profit: 0,
     profitPercent: 0,
   };
 }
 
+function computeFocusCost(variant: RefineVariant, efficiency: number, amount: number, focusEnabled: boolean): number {
+  if (!focusEnabled) return 0;
+  const safeEfficiency = Math.max(0, efficiency);
+  const costPerRun = Math.ceil(variant.baseFocusCost / Math.pow(2, safeEfficiency / 10000));
+  return costPerRun * amount;
+}
+
 function computeBase(state: RefiningState): RefiningState {
-  const basePrice = getTierPrice(
-    state.input.tierInputs,
-    state.input.variant.materialKey,
-    state.input.variant.tier,
-    state.input.variant.enchant,
-  );
-  // Rubric marker: recursion is part of the domain calculation, not only a toy example.
-  const grossMaterialCost = sumRepeatedValue(
-    basePrice,
-    state.input.variant.multiplier,
-  );
-  const nutritionCost =
-    state.input.variant.itemValue * state.input.nutritionFactor;
+  const amount = state.input.amount;
+  const materialCosts = state.input.variant.ingredients.map((ingredient) => {
+    const unitPrice = getInputPrice(state.input.tierInputs, ingredient.itemId);
+    return {
+      unitPrice,
+      total: unitPrice * ingredient.quantity * amount,
+    };
+  });
+  const grossMaterialCost = materialCosts.reduce((sum, entry) => sum + entry.total, 0);
+  const missingInputCost = materialCosts.some((entry) => entry.unitPrice <= 0);
+  const nutritionCost = state.input.variant.itemValue * state.input.nutritionFactor * amount;
   const refiningFee = computeStationFee(
     state.input.variant.itemValue,
     state.input.usageFeePer100,
     state.input.nutritionFactor,
+    amount,
   );
+  const focusCost = computeFocusCost(
+    state.input.variant,
+    state.input.bonuses.focusEfficiency,
+    amount,
+    state.input.bonuses.focusEnabled,
+  );
+  const maxRunsByFocus = focusCost > 0
+    ? Math.floor(state.input.bonuses.focusBudget / Math.max(1, focusCost / amount))
+    : 0;
 
   return {
     ...state,
     grossMaterialCost,
+    missingInputCost,
     nutritionCost,
     refiningFee,
+    focusCost,
+    maxRunsByFocus,
   };
 }
 
 function applyReturnSavings(state: RefiningState): RefiningState {
   const returnedMaterialCost = state.grossMaterialCost * state.returnRate;
   const effectiveMaterialCost = state.grossMaterialCost - returnedMaterialCost;
+  const marketTax = state.revenue * state.input.marketTaxRate;
+  const netRevenue = state.revenue - marketTax;
   return {
     ...state,
-    outputAmount: 1,
     returnedMaterialCost,
     effectiveMaterialCost,
+    marketTax,
+    netRevenue,
     totalCost: effectiveMaterialCost + state.refiningFee,
   };
 }
 
 function finalizeProfit(state: RefiningState): RefiningState {
-  const profit = computeProfit(state.totalCost, state.revenue);
+  const profit = computeProfit(state.totalCost, state.netRevenue);
   const profitPercent =
     state.totalCost > 0 ? (profit / state.totalCost) * 100 : 0;
-  return { ...state, profit, profitPercent };
+  const profitPerFocus = state.focusCost > 0 ? profit / state.focusCost : 0;
+  return { ...state, profit, profitPercent, profitPerFocus };
 }
 
 export function calculateRefining(input: RefiningInput): RefiningResult {
   const baseState = createInitialState(input);
-  // Rubric marker: small pure functions are composed into one explicit data pipeline.
   const flow = pipe(
     computeBase,
     withBonus(applyBonuses, input.bonuses),
@@ -206,47 +215,59 @@ export function calculateRefining(input: RefiningInput): RefiningResult {
 export interface BuildInputParams {
   readonly variant: RefineVariant;
   readonly tierInputs: ReadonlyArray<RefineTierInput>;
+  readonly amount?: number;
   readonly usageFeePer100: number;
   readonly city: BonusConfig["city"];
-  readonly baseReturnRate: number;
-  readonly cityBonusRate: number;
-  readonly refiningBonusRate: number;
+  readonly materialBonusCity: BonusConfig["materialBonusCity"];
+  readonly royalBonusPercent: number;
+  readonly materialBonusPercent: number;
   readonly focusEnabled: boolean;
-  readonly focusReturnRate: number;
+  readonly focusBonusPercent: number;
+  readonly focusEfficiency?: number;
+  readonly focusBudget?: number;
   readonly nutritionFactor?: number;
+  readonly marketTaxRate?: number;
 }
 
 export function createRefiningInput(params: BuildInputParams): RefiningInput {
   return {
     variant: params.variant,
     tierInputs: [...params.tierInputs],
+    amount: Math.max(1, Math.floor(params.amount ?? 1)),
     usageFeePer100: Math.max(0, params.usageFeePer100),
     nutritionFactor:
       typeof params.nutritionFactor === "number"
         ? params.nutritionFactor
         : 0.1125,
-    baseReturnRate: clamp(params.baseReturnRate, 0, 0.99),
+    marketTaxRate: clamp(params.marketTaxRate ?? 0.065, 0, 1),
+    baseReturnRate: 0,
     bonuses: {
       city: params.city,
-      cityBonusRate: clamp(params.cityBonusRate, 0, 0.99),
-      refiningBonusRate: clamp(params.refiningBonusRate, 0, 0.99),
+      materialBonusCity: params.materialBonusCity,
+      royalBonusPercent: Math.max(0, params.royalBonusPercent),
+      materialBonusPercent: Math.max(0, params.materialBonusPercent),
       focusEnabled: params.focusEnabled,
-      focusReturnRate: clamp(params.focusReturnRate, 0, 0.99),
+      focusBonusPercent: Math.max(0, params.focusBonusPercent),
+      focusEfficiency: Math.max(0, params.focusEfficiency ?? 0),
+      focusBudget: Math.max(0, params.focusBudget ?? 10000),
     },
   };
 }
 
 export interface RefinerConfig {
   readonly city: BonusConfig["city"];
-  readonly baseReturnRate: number;
-  readonly cityBonusRate: number;
-  readonly refiningBonusRate: number;
+  readonly materialBonusCity: BonusConfig["materialBonusCity"];
+  readonly royalBonusPercent: number;
+  readonly materialBonusPercent: number;
   readonly focusEnabled: boolean;
-  readonly focusReturnRate: number;
+  readonly focusBonusPercent: number;
+  readonly focusEfficiency?: number;
+  readonly focusBudget?: number;
   readonly nutritionFactor?: number;
+  readonly marketTaxRate?: number;
+  readonly amount?: number;
 }
 
-// Rubric marker: closure builder captures the configuration once and returns a specialized calculator.
 export function makeRefiner(config: RefinerConfig) {
   return (
     variant: RefineVariant,
@@ -259,12 +280,16 @@ export function makeRefiner(config: RefinerConfig) {
         tierInputs,
         usageFeePer100,
         city: config.city,
-        baseReturnRate: config.baseReturnRate,
-        cityBonusRate: config.cityBonusRate,
-        refiningBonusRate: config.refiningBonusRate,
+        materialBonusCity: config.materialBonusCity,
+        royalBonusPercent: config.royalBonusPercent,
+        materialBonusPercent: config.materialBonusPercent,
         focusEnabled: config.focusEnabled,
-        focusReturnRate: config.focusReturnRate,
+        focusBonusPercent: config.focusBonusPercent,
+        focusEfficiency: config.focusEfficiency,
+        focusBudget: config.focusBudget,
         nutritionFactor: config.nutritionFactor,
+        marketTaxRate: config.marketTaxRate,
+        amount: config.amount,
       }),
     );
 }

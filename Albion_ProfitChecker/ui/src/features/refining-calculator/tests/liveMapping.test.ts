@@ -2,36 +2,31 @@ import { describe, expect, it } from "vitest";
 import { REFINE_VARIANTS, buildRefiningLiveSnapshot } from "../data";
 
 describe("refining live mapping", () => {
-  it("maps live market prices and enchanted raw material prices", () => {
+  it("maps live refined prices and raw ingredient prices by city", () => {
     const refinedPayload = {
       generatedAt: "2026-02-27T09:00:00.000Z",
       items: [
         { itemId: "T8_METALBAR_LEVEL3@3", prices: { Bridgewatch: 700000, Lymhurst: 710000 } },
-        { itemId: "T8_METALBAR_LEVEL1@1", prices: { Bridgewatch: 80000 } },
-        { itemId: "T7_METALBAR_LEVEL3@3", prices: { Bridgewatch: 250000 } }
+        { itemId: "T8_METALBAR_LEVEL2@2", prices: { Bridgewatch: 250000 } },
       ]
     };
 
     const rawPayload = {
       generatedAt: "2026-02-27T09:05:00.000Z",
       items: [
-        { itemId: "T4_ORE", prices: { Bridgewatch: 300 } },
-        { itemId: "T5_ORE", prices: { Bridgewatch: 900 } },
-        { itemId: "T6_ORE", prices: { Bridgewatch: 3500 } },
-        { itemId: "T7_ORE", prices: { Bridgewatch: 8000 } },
-        { itemId: "T8_ORE", prices: { Bridgewatch: 30000 } },
-        { itemId: "T8_ORE_LEVEL1@1", prices: { Bridgewatch: 42000 } },
-        { itemId: "T8_ORE_LEVEL3@3", prices: { Bridgewatch: 160000 } }
+        { itemId: "T8_ORE_LEVEL3@3", prices: { Lymhurst: 160000, Bridgewatch: 170000 } }
       ]
     };
 
-    const result = buildRefiningLiveSnapshot(refinedPayload, rawPayload, REFINE_VARIANTS, "Bridgewatch");
+    const result = buildRefiningLiveSnapshot(refinedPayload, rawPayload, REFINE_VARIANTS, "Lymhurst", "Bridgewatch");
     expect(result.generatedAt).toBe("2026-02-27T09:05:00.000Z");
-    expect(result.marketByVariantId["T8.3 Metal Bar"]).toBe(700000);
-    expect(result.marketByVariantId["T8.4 Metal Bar"]).toBe(700000);
-    expect(result.rawByMaterialTierEnchant.metal[8][0]).toBe(30000);
-    expect(result.rawByMaterialTierEnchant.metal[8][1]).toBe(42000);
-    expect(result.rawByMaterialTierEnchant.metal[8][3]).toBe(160000);
-    expect(result.rawByMaterialTierEnchant.metal[4][0]).toBe(300);
+    expect(result.priceByItemId["T8_METALBAR_LEVEL3@3"]).toBe(710000);
+    expect(result.priceByItemId["T8_ORE_LEVEL3@3"]).toBe(160000);
+  });
+
+  it("reports missing raw live prices while keeping defaults", () => {
+    const result = buildRefiningLiveSnapshot({ items: [] }, { items: [] }, REFINE_VARIANTS.slice(0, 1), "Bridgewatch", "Bridgewatch");
+    expect(result.missingRawItemIds.length).toBeGreaterThan(0);
+    expect(result.priceByItemId[REFINE_VARIANTS[0].itemId]).toBeGreaterThan(0);
   });
 });

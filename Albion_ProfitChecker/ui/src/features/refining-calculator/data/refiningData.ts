@@ -1,18 +1,32 @@
-import type { Enchant, MaterialKey, RefineVariant, Tier } from "../core";
+import type { City, Enchant, MaterialKey, RefineIngredient, RefineVariant, Tier } from "../core";
 
-type MaterialDefinition = {
+type RefinedToken = "METALBAR" | "PLANKS" | "CLOTH" | "LEATHER" | "STONEBLOCK";
+type RawToken = "ORE" | "WOOD" | "FIBER" | "HIDE" | "ROCK";
+
+export type MaterialDefinition = {
   key: MaterialKey;
-  token: "METALBAR" | "PLANKS" | "CLOTH" | "LEATHER";
-  label: string;
-  defaultTierBaseRaw: Record<Tier, number>;
+  rawToken: RawToken;
+  refinedToken: RefinedToken;
+  rawLabel: string;
+  refinedLabel: string;
+  bonusCity: City;
+  defaultRaw: Record<Tier, number>;
+  defaultRefined: Record<Tier, number>;
 };
 
-const ENCHANT_MULTIPLIER: Record<Enchant, number> = {
+export const TIERS = [2, 3, 4, 5, 6, 7, 8] as const;
+export const ENCHANTS = [0, 1, 2, 3, 4] as const;
+
+export const FOCUS_BONUS_PERCENT = 59;
+export const ROYAL_REFINING_BONUS_PERCENT = 18;
+export const MATERIAL_REFINING_BONUS_PERCENT = 40;
+
+const ENCHANT_PRICE_MULTIPLIER: Record<Enchant, number> = {
   0: 1,
   1: 1.5,
   2: 4,
   3: 12,
-  4: 35
+  4: 35,
 };
 
 const ENCHANT_ITEM_VALUE_MULTIPLIER: Record<Enchant, number> = {
@@ -20,55 +34,145 @@ const ENCHANT_ITEM_VALUE_MULTIPLIER: Record<Enchant, number> = {
   1: 1.4,
   2: 2.6,
   3: 4.8,
-  4: 7.2
+  4: 7.2,
 };
 
 const BASE_ITEM_VALUE_BY_TIER: Record<Tier, number> = {
+  2: 18,
+  3: 90,
   4: 600,
   5: 1200,
   6: 2600,
   7: 5800,
-  8: 12000
+  8: 12000,
 };
+
+const BASE_FOCUS_COST_BY_POWER = [18, 31, 54, 94, 164, 287, 503, 880, 1539, 2694, 4714] as const;
 
 export const MATERIAL_DEFINITIONS: ReadonlyArray<MaterialDefinition> = [
   {
     key: "metal",
-    token: "METALBAR",
-    label: "Metal Bar",
-    defaultTierBaseRaw: { 4: 142, 5: 450, 6: 1240, 7: 4800, 8: 12400 }
+    rawToken: "ORE",
+    refinedToken: "METALBAR",
+    rawLabel: "Ore",
+    refinedLabel: "Metal Bar",
+    bonusCity: "Lymhurst",
+    defaultRaw: { 2: 16, 3: 44, 4: 142, 5: 450, 6: 1240, 7: 4800, 8: 12400 },
+    defaultRefined: { 2: 20, 3: 70, 4: 260, 5: 900, 6: 3400, 7: 9000, 8: 29000 },
   },
   {
     key: "wood",
-    token: "PLANKS",
-    label: "Planks",
-    defaultTierBaseRaw: { 4: 130, 5: 390, 6: 1100, 7: 4300, 8: 11000 }
+    rawToken: "WOOD",
+    refinedToken: "PLANKS",
+    rawLabel: "Wood",
+    refinedLabel: "Planks",
+    bonusCity: "Thetford",
+    defaultRaw: { 2: 15, 3: 40, 4: 130, 5: 390, 6: 1100, 7: 4300, 8: 11000 },
+    defaultRefined: { 2: 20, 3: 65, 4: 260, 5: 760, 6: 3100, 7: 11000, 8: 32000 },
   },
   {
     key: "fiber",
-    token: "CLOTH",
-    label: "Cloth",
-    defaultTierBaseRaw: { 4: 125, 5: 400, 6: 1180, 7: 4550, 8: 11600 }
+    rawToken: "FIBER",
+    refinedToken: "CLOTH",
+    rawLabel: "Fiber",
+    refinedLabel: "Cloth",
+    bonusCity: "Fort Sterling",
+    defaultRaw: { 2: 15, 3: 42, 4: 125, 5: 400, 6: 1180, 7: 4550, 8: 11600 },
+    defaultRefined: { 2: 20, 3: 65, 4: 280, 5: 950, 6: 3300, 7: 9500, 8: 29000 },
   },
   {
     key: "hide",
-    token: "LEATHER",
-    label: "Leather",
-    defaultTierBaseRaw: { 4: 150, 5: 470, 6: 1320, 7: 5200, 8: 13200 }
-  }
+    rawToken: "HIDE",
+    refinedToken: "LEATHER",
+    rawLabel: "Hide",
+    refinedLabel: "Leather",
+    bonusCity: "Caerleon",
+    defaultRaw: { 2: 18, 3: 48, 4: 150, 5: 470, 6: 1320, 7: 5200, 8: 13200 },
+    defaultRefined: { 2: 22, 3: 75, 4: 330, 5: 1150, 6: 5000, 7: 15000, 8: 36000 },
+  },
+  {
+    key: "stone",
+    rawToken: "ROCK",
+    refinedToken: "STONEBLOCK",
+    rawLabel: "Stone",
+    refinedLabel: "Stone Block",
+    bonusCity: "Bridgewatch",
+    defaultRaw: { 2: 8, 3: 24, 4: 80, 5: 250, 6: 780, 7: 2900, 8: 8600 },
+    defaultRefined: { 2: 12, 3: 42, 4: 160, 5: 520, 6: 1800, 7: 6800, 8: 21000 },
+  },
 ];
 
-function itemIdFor(token: MaterialDefinition["token"], tier: Tier, enchant: Enchant): string {
+export const MATERIAL_BY_KEY = MATERIAL_DEFINITIONS.reduce<Record<MaterialKey, MaterialDefinition>>((acc, material) => {
+  acc[material.key] = material;
+  return acc;
+}, {} as Record<MaterialKey, MaterialDefinition>);
+
+export function itemIdForToken(token: RawToken | RefinedToken, tier: Tier, enchant: Enchant): string {
   if (enchant <= 0) return `T${tier}_${token}`;
   return `T${tier}_${token}_LEVEL${enchant}@${enchant}`;
 }
 
-function iconFor(token: MaterialDefinition["token"], tier: Tier, enchant: Enchant): string {
-  return `/itemicons/${itemIdFor(token, tier, enchant)}.png`;
+export function rawItemIdFor(materialKey: MaterialKey, tier: Tier, enchant: Enchant): string {
+  return itemIdForToken(MATERIAL_BY_KEY[materialKey].rawToken, tier, enchant);
+}
+
+export function refinedItemIdFor(materialKey: MaterialKey, tier: Tier, enchant: Enchant): string {
+  return itemIdForToken(MATERIAL_BY_KEY[materialKey].refinedToken, tier, enchant);
+}
+
+export function isEnchantAvailable(tier: Tier, enchant: Enchant): boolean {
+  return tier >= 4 || enchant === 0;
+}
+
+export function enchantsForTier(tier: Tier): ReadonlyArray<Enchant> {
+  return ENCHANTS.filter((enchant) => isEnchantAvailable(tier, enchant));
+}
+
+function iconFor(materialKey: MaterialKey, tier: Tier, enchant: Enchant): string {
+  return `https://render.albiononline.com/v1/item/${refinedItemIdFor(materialKey, tier, enchant)}.png`;
 }
 
 function labelFor(tier: Tier, enchant: Enchant): string {
   return `T${tier}.${enchant}`;
+}
+
+function recipeRawQuantity(tier: Tier): number {
+  if (tier <= 2) return 1;
+  if (tier <= 4) return 2;
+  if (tier === 5) return 3;
+  if (tier === 6) return 4;
+  return 5;
+}
+
+export function createRefiningIngredients(materialKey: MaterialKey, tier: Tier, enchant: Enchant): ReadonlyArray<RefineIngredient> {
+  const raw: RefineIngredient = {
+    materialKey,
+    kind: "raw",
+    tier,
+    enchant,
+    itemId: rawItemIdFor(materialKey, tier, enchant),
+    quantity: recipeRawQuantity(tier),
+  };
+
+  if (tier === 2) return [raw];
+
+  const previousTier = enchant > 0 ? tier : ((tier - 1) as Tier);
+  const previousEnchant = enchant > 0 ? ((enchant - 1) as Enchant) : 0;
+  return [
+    raw,
+    {
+      materialKey,
+      kind: "refined",
+      tier: previousTier,
+      enchant: previousEnchant,
+      itemId: refinedItemIdFor(materialKey, previousTier, previousEnchant),
+      quantity: 1,
+    },
+  ];
+}
+
+function baseFocusCost(tier: Tier, enchant: Enchant): number {
+  return BASE_FOCUS_COST_BY_POWER[(tier - 2) + enchant] ?? BASE_FOCUS_COST_BY_POWER[BASE_FOCUS_COST_BY_POWER.length - 1];
 }
 
 function trendFor(enchant: Enchant): string {
@@ -80,55 +184,37 @@ function trendFor(enchant: Enchant): string {
 }
 
 function buildVariant(material: MaterialDefinition, tier: Tier, enchant: Enchant): RefineVariant {
-  const id = `${labelFor(tier, enchant)} ${material.label}`;
-  const itemValue = BASE_ITEM_VALUE_BY_TIER[tier] * ENCHANT_ITEM_VALUE_MULTIPLIER[enchant];
-  const marketSeed = material.defaultTierBaseRaw[tier] * ENCHANT_MULTIPLIER[enchant] * 2.2;
-
+  const id = `${labelFor(tier, enchant)} ${material.refinedLabel}`;
+  const marketSeed = material.defaultRefined[tier] * ENCHANT_PRICE_MULTIPLIER[enchant];
   return {
     id,
-    itemId: itemIdFor(material.token, tier, enchant),
+    itemId: refinedItemIdFor(material.key, tier, enchant),
+    rawItemId: rawItemIdFor(material.key, tier, enchant),
     materialKey: material.key,
     label: labelFor(tier, enchant),
     tier,
     enchant,
-    multiplier: ENCHANT_MULTIPLIER[enchant],
+    ingredients: createRefiningIngredients(material.key, tier, enchant),
+    baseFocusCost: baseFocusCost(tier, enchant),
     market: Math.round(marketSeed),
-    itemValue: Math.round(itemValue),
-    icon: iconFor(material.token, tier, enchant),
-    trend: trendFor(enchant)
+    itemValue: Math.round(BASE_ITEM_VALUE_BY_TIER[tier] * ENCHANT_ITEM_VALUE_MULTIPLIER[enchant]),
+    icon: iconFor(material.key, tier, enchant),
+    trend: trendFor(enchant),
   };
 }
 
-export const DEFAULT_RAW_BY_MATERIAL_TIER: Record<MaterialKey, Record<Tier, number>> = MATERIAL_DEFINITIONS.reduce(
-  (acc, material) => {
-    acc[material.key] = material.defaultTierBaseRaw;
-    return acc;
-  },
-  {} as Record<MaterialKey, Record<Tier, number>>
-);
-
-export const DEFAULT_RAW_BY_MATERIAL_TIER_ENCHANT: Record<MaterialKey, Record<Tier, Record<Enchant, number>>> = MATERIAL_DEFINITIONS.reduce(
-  (acc, material) => {
-    acc[material.key] = ([4, 5, 6, 7, 8] as const).reduce<Record<Tier, Record<Enchant, number>>>((tierAcc, tier) => {
-      tierAcc[tier] = ([0, 1, 2, 3, 4] as const).reduce<Record<Enchant, number>>((enchantAcc, enchant) => {
-        enchantAcc[enchant] = Math.round(material.defaultTierBaseRaw[tier] * ENCHANT_MULTIPLIER[enchant]);
-        return enchantAcc;
-      }, { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
-      return tierAcc;
-    }, {
-      4: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
-      5: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
-      6: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
-      7: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
-      8: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 },
+export const DEFAULT_PRICE_BY_ITEM_ID: Record<string, number> = MATERIAL_DEFINITIONS.reduce<Record<string, number>>((acc, material) => {
+  TIERS.forEach((tier) => {
+    enchantsForTier(tier).forEach((enchant) => {
+      acc[rawItemIdFor(material.key, tier, enchant)] = Math.round(material.defaultRaw[tier] * ENCHANT_PRICE_MULTIPLIER[enchant]);
+      acc[refinedItemIdFor(material.key, tier, enchant)] = Math.round(material.defaultRefined[tier] * ENCHANT_PRICE_MULTIPLIER[enchant]);
     });
-    return acc;
-  },
-  {} as Record<MaterialKey, Record<Tier, Record<Enchant, number>>>
-);
+  });
+  return acc;
+}, {});
 
-export const DEFAULT_RAW_BY_TIER: Record<Tier, number> = DEFAULT_RAW_BY_MATERIAL_TIER.metal;
+export const DEFAULT_RAW_BY_TIER: Record<Tier, number> = MATERIAL_BY_KEY.metal.defaultRaw;
 
 export const REFINE_VARIANTS: ReadonlyArray<RefineVariant> = MATERIAL_DEFINITIONS.flatMap((material) =>
-  ([4, 5, 6, 7, 8] as const).flatMap((tier) => ([0, 1, 2, 3, 4] as const).map((enchant) => buildVariant(material, tier, enchant)))
+  TIERS.flatMap((tier) => enchantsForTier(tier).map((enchant) => buildVariant(material, tier, enchant))),
 );
