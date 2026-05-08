@@ -9,6 +9,7 @@ type ToolSlide = {
   image?: string;
   href?: string;
   ctaLabel?: string;
+  placeholderText?: string;
 };
 
 const CAROUSEL_DURATION_MS = 6000;

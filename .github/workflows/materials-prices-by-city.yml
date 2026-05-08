@@ -3,8 +3,8 @@ name: Build Material Prices by City (EU + US)
 on:
   workflow_dispatch:
   schedule:
-    # Runs after existing 09:00/09:15/09:20 jobs to avoid overlap.
-    - cron: "45 9 * * *"
+    # Raw material city prices for refining, after crafting calculator refresh.
+    - cron: "35 10 * * *"
 
 permissions:
   contents: write
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build city material prices with zero fallback
+      - name: Build raw material prices by city
         working-directory: Albion_ProfitChecker/ui
         run: |
           node - <<'NODE'
@@ -117,20 +117,18 @@ jobs:
 
           (async () => {
             fs.mkdirSync(outputDir, { recursive: true });
-            const refinedItemIds = buildItemIds("refined");
             const rawItemIds = buildItemIds("raw");
             const generatedAt = new Date().toISOString();
 
             for (const region of regions) {
-              const refinedByItem = await fetchCurrentByCity(region.host, refinedItemIds);
               const rawByItem = await fetchCurrentByCity(region.host, rawItemIds);
 
               function buildItems(itemIds, byItem) {
                 const items = [];
                 for (const itemId of itemIds) {
-                const { tier, enchant } = parseMeta(itemId);
-                const cityPrices = {};
-                const itemCityMap = byItem.get(itemId) || new Map();
+                  const { tier, enchant } = parseMeta(itemId);
+                  const cityPrices = {};
+                  const itemCityMap = byItem.get(itemId) || new Map();
 
                   for (const city of cities) {
                     cityPrices[city] = Number(itemCityMap.get(city) || 0);
@@ -145,19 +143,8 @@ jobs:
                 }
                 return items;
               }
-                return items;
-              }
 
-              const refinedItems = buildItems(refinedItemIds, refinedByItem);
               const rawItems = buildItems(rawItemIds, rawByItem);
-
-              const refinedPayload = {
-                generatedAt,
-                region: region.key,
-                cities,
-                count: refinedItems.length,
-                items: refinedItems
-              };
 
               const rawPayload = {
                 generatedAt,
@@ -166,10 +153,6 @@ jobs:
                 count: rawItems.length,
                 items: rawItems
               };
-
-              const refinedOutPath = path.join(outputDir, `materials-cities-${region.key}.json`);
-              fs.writeFileSync(refinedOutPath, JSON.stringify(refinedPayload));
-              console.log(`Wrote ${refinedOutPath}: ${refinedItems.length} items x ${cities.length} cities`);
 
               const rawOutPath = path.join(outputDir, `raw-materials-cities-${region.key}.json`);
               fs.writeFileSync(rawOutPath, JSON.stringify(rawPayload));
@@ -185,11 +168,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/data/materials-cities-eu.json Albion_ProfitChecker/ui/public/data/materials-cities-us.json Albion_ProfitChecker/ui/public/data/raw-materials-cities-eu.json Albion_ProfitChecker/ui/public/data/raw-materials-cities-us.json)" ]; then
-            git add Albion_ProfitChecker/ui/public/data/materials-cities-eu.json Albion_ProfitChecker/ui/public/data/materials-cities-us.json Albion_ProfitChecker/ui/public/data/raw-materials-cities-eu.json Albion_ProfitChecker/ui/public/data/raw-materials-cities-us.json
-            git commit -m "chore: update city material prices (eu/us)"
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/data/raw-materials-cities-eu.json Albion_ProfitChecker/ui/public/data/raw-materials-cities-us.json)" ]; then
+            git add Albion_ProfitChecker/ui/public/data/raw-materials-cities-eu.json Albion_ProfitChecker/ui/public/data/raw-materials-cities-us.json
+            git commit -m "chore: update raw material city prices (eu/us)"
           else
-            echo "No city material price changes"
+            echo "No raw city material price changes"
           fi
 
       - name: Push changes
