@@ -18,6 +18,10 @@ type ResultItem = {
   span: string;
 };
 
+type RawResultItem =
+  | ResultItem
+  | [string, string, number, number, number, number, string];
+
 type UserState = {
   id: string;
   email: string | null;
@@ -393,8 +397,39 @@ function getEnchantLevel(id: string): 0 | 1 | 2 | 3 | 4 {
   return 0;
 }
 
+function normalizeResultItem(entry: RawResultItem): ResultItem | null {
+  if (Array.isArray(entry)) {
+    const city = String(entry[0] || "").trim();
+    const id = String(entry[1] || "").trim();
+    if (!city || !id) return null;
+    return {
+      city,
+      id,
+      lym: Number(entry[2] || 0),
+      bm: Number(entry[3] || 0),
+      sold: Number(entry[4] || 0),
+      profit: Number(entry[5] || 0),
+      span: String(entry[6] || "14d")
+    };
+  }
+
+  if (!entry || typeof entry !== "object") return null;
+  const city = String(entry.city || "").trim();
+  const id = String(entry.id || "").trim();
+  if (!city || !id) return null;
+  return {
+    city,
+    id,
+    lym: Number(entry.lym || 0),
+    bm: Number(entry.bm || 0),
+    sold: Number(entry.sold || 0),
+    profit: Number(entry.profit || 0),
+    span: String(entry.span || "14d")
+  };
+}
+
 async function loadResultsByRegion(region: Region): Promise<ResultItem[]> {
-  const files = region === "eu" ? ["results-eu.js", "results-eu-1.js", "results-eu-2.js"] : ["results.js", "results-1.js", "results-2.js"];
+  const files = region === "eu" ? ["results-eu-1.js", "results-eu-2.js", "results-eu.js"] : ["results-1.js", "results-2.js", "results.js"];
   const all: ResultItem[] = [];
 
   for (const file of files) {
@@ -412,11 +447,23 @@ async function loadResultsByRegion(region: Region): Promise<ResultItem[]> {
         const end = raw.lastIndexOf("]");
         if (start < 0 || end <= start) continue;
 
-        const parsed = JSON.parse(raw.slice(start, end + 1)) as ResultItem[];
+        const parsed = JSON.parse(raw.slice(start, end + 1)) as RawResultItem[];
         if (!Array.isArray(parsed) || !parsed.length) continue;
 
-        all.push(...parsed);
+        const normalized = parsed
+          .map((entry) => normalizeResultItem(entry))
+          .filter((entry): entry is ResultItem => Boolean(entry));
+        if (!normalized.length) continue;
+
+        all.push(...normalized);
         chunkLoaded = true;
+
+        // Some historical workflow runs produced a full export in each split file.
+        // Avoid downloading/parsing duplicate 100MB chunks when one file already contains the full dataset.
+        if (normalized.length > 600_000) {
+          return normalized;
+        }
+
         break;
       } catch {
         // try next candidate

@@ -15,39 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Merge results-eu-1.js + results-eu-2.js -> results-eu.js
-        working-directory: Albion_ProfitChecker/ui
-        run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const read = (p) => {
-            if (!fs.existsSync(p)) {
-              console.error('Missing file:', p);
-              return [];
-            }
-            const raw = fs.readFileSync(p, 'utf8')
-              .replace(/^\uFEFF/, '')
-              .replace(/^window\.results\s*=\s*/, '')
-              .replace(/;?\s*$/, '');
-            const match = raw.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
-            if (!match) {
-              console.error('Invalid JSON format in:', p);
-              return [];
-            }
-            try {
-              return JSON.parse(match[0]);
-            } catch (err) {
-              console.error('JSON parse failed in:', p, err.message);
-              return [];
-            }
-          };
-          const a = read('public/results-eu-1.js');
-          const b = read('public/results-eu-2.js');
-          const merged = [...a, ...b];
-          fs.writeFileSync('public/results-eu.js', 'window.results = ' + JSON.stringify(merged) + ';');
-          console.log('Merged EU', a.length, '+', b.length, '=', merged.length);
-          NODE
-
       - name: Build Blackmarket-Crafter data/bm-crafter-us.json + data/bm-crafter-eu.json
         working-directory: Albion_ProfitChecker/ui
         run: |
@@ -75,48 +42,69 @@ jobs:
             }
           };
 
-          const pick = (rows, region) => rows.map((r) => ({
-            region,
-            id: r.id,
-            bm: r.bm,
-            sold: r.sold
-          }));
+          const merge = (paths) => paths.flatMap((path) => read(path));
+          const pick = (rows) => {
+            const bestById = new Map();
+            const toFinite = (value) => Number.isFinite(value)
+              ? value
+              : (typeof value === 'string' && value.trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null);
+            for (const r of rows) {
+              let id = '';
+              let bm = null;
+              let sold = null;
+              if (Array.isArray(r)) {
+                id = typeof r[1] === 'string' ? r[1] : '';
+                bm = toFinite(r[3]);
+                sold = toFinite(r[4]);
+              } else if (r && typeof r === 'object') {
+                id = typeof r.id === 'string' ? r.id : '';
+                bm = toFinite(r.bm);
+                sold = toFinite(r.sold);
+              }
+              if (!id) continue;
+              const current = bestById.get(id);
+              if (!current) {
+                bestById.set(id, [id, bm, sold]);
+                continue;
+              }
+              const currentBm = current[1] ?? -Infinity;
+              const nextBm = bm ?? -Infinity;
+              if (nextBm > currentBm || (nextBm === currentBm && (sold ?? -Infinity) > (current[2] ?? -Infinity))) {
+                bestById.set(id, [id, bm, sold]);
+              }
+            }
+            return Array.from(bestById.values());
+          };
+          const writeCompact = (file, region, rows) => {
+            const payload = {
+              generatedAt: new Date().toISOString(),
+              region,
+              items: rows
+            };
+            const target = `${dir}/${file}`;
+            fs.writeFileSync(target, JSON.stringify(payload));
+            console.log(file, fs.statSync(target).size, 'bytes', rows.length, 'items');
+          };
 
-          let us = read('public/results.js');
-          if (!us.length) {
-            us = [...read('public/results-1.js'), ...read('public/results-2.js')];
-          }
-          let eu = read('public/results-eu.js');
-          if (!eu.length) {
-            eu = [...read('public/results-eu-1.js'), ...read('public/results-eu-2.js')];
-          }
-
-          const outUs = pick(us, 'us');
-          const outEu = pick(eu, 'eu');
-          fs.writeFileSync(dir + '/bm-crafter-us.json', JSON.stringify({
+          const us = merge(['public/results-1.js', 'public/results-2.js']);
+          const eu = merge(['public/results-eu-1.js', 'public/results-eu-2.js']);
+          writeCompact('bm-crafter-us.json', 'us', pick(us));
+          writeCompact('bm-crafter-eu.json', 'eu', pick(eu));
+          fs.writeFileSync(dir + '/bm-crafter-metadata.json', JSON.stringify({
             generatedAt: new Date().toISOString(),
-            region: 'us',
-            count: outUs.length,
-            items: outUs
+            sources: ['results-1.js', 'results-2.js', 'results-eu-1.js', 'results-eu-2.js']
           }));
-          fs.writeFileSync(dir + '/bm-crafter-eu.json', JSON.stringify({
-            generatedAt: new Date().toISOString(),
-            region: 'eu',
-            count: outEu.length,
-            items: outEu
-          }));
-          console.log('BM Crafter US:', outUs.length, 'EU:', outEu.length);
           NODE
 
       - name: Commit merged results EU
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/results-eu.js Albion_ProfitChecker/ui/public/data/bm-crafter-us.json Albion_ProfitChecker/ui/public/data/bm-crafter-eu.json)" ]; then
-            git add Albion_ProfitChecker/ui/public/results-eu.js Albion_ProfitChecker/ui/public/data/bm-crafter-us.json Albion_ProfitChecker/ui/public/data/bm-crafter-eu.json
-            git commit -m "chore: merge results EU + bm crafter data"
+          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/data/bm-crafter-us.json Albion_ProfitChecker/ui/public/data/bm-crafter-eu.json Albion_ProfitChecker/ui/public/data/bm-crafter-metadata.json)" ]; then
+            git add Albion_ProfitChecker/ui/public/data/bm-crafter-us.json Albion_ProfitChecker/ui/public/data/bm-crafter-eu.json Albion_ProfitChecker/ui/public/data/bm-crafter-metadata.json
+            git commit -m "chore: refresh bm crafter data"
           else
-            echo "Keine Aenderungen in results-eu.js"
+            echo "Keine Aenderungen in bm-crafter data"
           fi
 
       - name: Push changes

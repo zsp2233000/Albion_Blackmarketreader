@@ -19,26 +19,61 @@ function normalizeRegion(raw: unknown, fallback: MarketRegion): MarketRegion {
   return text === "us" ? "us" : text === "eu" ? "eu" : fallback;
 }
 
+function normalizeMarketItem(entry: unknown): BmMarketItem | null {
+  if (Array.isArray(entry)) {
+    const id = String(entry[0] || "").trim();
+    if (!id) return null;
+    return {
+      id,
+      bm: toFiniteNumber(entry[1]),
+      sold: toFiniteNumber(entry[2])
+    };
+  }
+
+  if (!isRecord(entry)) return null;
+  const id = String(entry.id || "").trim();
+  if (!id) return null;
+  return {
+    id,
+    bm: toFiniteNumber(entry.bm),
+    sold: toFiniteNumber(entry.sold)
+  };
+}
+
 export function normalizeMarketPayload(payload: unknown, fallbackRegion: MarketRegion): BmCrafterMarketData {
   const root = isRecord(payload) ? payload : {};
   const list = Array.isArray(root.items) ? root.items : [];
 
-  const items: BmMarketItem[] = [];
+  const byItemId = new Map<string, BmMarketItem>();
   for (const entry of list) {
-    if (!isRecord(entry)) continue;
-    const id = String(entry.id || "").trim();
-    if (!id) continue;
-    items.push({
-      id,
-      bm: toFiniteNumber(entry.bm),
-      sold: toFiniteNumber(entry.sold)
-    });
+    const item = normalizeMarketItem(entry);
+    if (!item) continue;
+    const current = byItemId.get(item.id);
+    if (!current) {
+      byItemId.set(item.id, item);
+      continue;
+    }
+
+    const currentBm = current.bm ?? -Infinity;
+    const nextBm = item.bm ?? -Infinity;
+    if (nextBm > currentBm) {
+      byItemId.set(item.id, item);
+      continue;
+    }
+
+    if (nextBm === currentBm) {
+      const currentSold = current.sold ?? -Infinity;
+      const nextSold = item.sold ?? -Infinity;
+      if (nextSold > currentSold) {
+        byItemId.set(item.id, item);
+      }
+    }
   }
 
   return {
     region: normalizeRegion(root.region, fallbackRegion),
     generatedAt: typeof root.generatedAt === "string" ? root.generatedAt : null,
-    items
+    items: Array.from(byItemId.values())
   };
 }
 
