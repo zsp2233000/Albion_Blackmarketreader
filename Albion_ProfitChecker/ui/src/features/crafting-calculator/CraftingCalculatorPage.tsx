@@ -86,6 +86,8 @@ type ArtefactsPayload = {
 type ResultItem = {
   city?: string;
   id?: string;
+  itemId?: string;
+  baseId?: string;
   price?: number;
   prices?: Record<string, number>;
   lym?: number;
@@ -294,21 +296,22 @@ function buildCraftedItemId(baseId: string, tier: number, enchant: number): stri
 }
 
 async function loadResultsByRegion(region: MarketRegion): Promise<ResultItem[]> {
+  const all: ResultItem[] = [];
+
   try {
     const response = await fetch(`/data/crafting-results-${region}.json`);
     if (response.ok) {
       const payload = await response.json();
       const items = Array.isArray(payload?.items) ? payload.items : [];
-      if (items.length) return items as ResultItem[];
+      if (items.length) all.push(...(items as ResultItem[]));
     }
   } catch {
-    // fall back to legacy sparse result shards below
+    // keep loading legacy sparse result shards below
   }
 
   const files = region === "eu"
     ? ["results-crafting-eu.js", "results-eu.js", "results-eu-1.js", "results-eu-2.js"]
     : ["results-crafting-us.js", "results.js", "results-1.js", "results-2.js"];
-  const all: ResultItem[] = [];
 
   for (const file of files) {
     try {
@@ -782,9 +785,13 @@ export function CraftingCalculatorPage() {
       TABLE_SECTIONS.flatMap((section) => section.rows).forEach((row) => {
         const { tier, enchant } = parseTierEnchant(row.uid);
         const targetItemId = buildCraftedItemId(selectedItem.id, tier, enchant);
-        const matches = resultsItems.filter((entry) => String(entry.id || "").trim() === targetItemId);
+        const matches = resultsItems.filter((entry) => String(entry.id || entry.itemId || "").trim() === targetItemId);
         const resolvedMarket = matches.length
-          ? (isBlackMarketSell ? resolveBlackMarketPrice(matches) : resolveResultPrice(matches, effectiveSellCity))
+          ? (() => {
+            if (isBlackMarketSell) return resolveBlackMarketPrice(matches);
+            const exactCityPrice = resolveResultPrice(matches, effectiveSellCity);
+            return exactCityPrice > 0 ? exactCityPrice : resolveResultPrice(matches, "ALL");
+          })()
           : 0;
 
         const current = next[row.key] || {
