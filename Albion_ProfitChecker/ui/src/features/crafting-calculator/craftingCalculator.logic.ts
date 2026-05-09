@@ -5,10 +5,13 @@ export type CraftingItemLike = {
 
 export type ResultPriceEntry = {
   city?: string;
+  id?: string;
+  itemId?: string;
   price?: number;
   prices?: Record<string, number>;
   lym?: number;
   bm?: number;
+  sold?: number;
 };
 
 export type EconomyCalculationInput = {
@@ -29,6 +32,19 @@ export type EconomyCalculationInput = {
 export const MATERIAL_BASES = new Set(["METALBAR", "PLANKS", "CLOTH", "LEATHER", "STONEBLOCK"]);
 export const KNOWN_CITIES = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford", "Brecilien"];
 export const CRAFTING_FEE_FACTOR = 0.1125;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function toFiniteNumber(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return undefined;
+}
 
 export function clampNumber(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
@@ -188,6 +204,45 @@ export function buildMaterialItemId(base: string, tier: number, enchant: number)
   if (base === "STONEBLOCK") return `T${tier}_STONEBLOCK`;
   if (enchant > 0) return `T${tier}_${base}_LEVEL${enchant}@${enchant}`;
   return `T${tier}_${base}`;
+}
+
+export function normalizeResultPriceEntry(entry: unknown): ResultPriceEntry | null {
+  if (Array.isArray(entry)) {
+    const city = String(entry[0] || "").trim();
+    const id = String(entry[1] || "").trim();
+    if (!city || !id) return null;
+    return {
+      city,
+      id,
+      itemId: id,
+      lym: toFiniteNumber(entry[2]),
+      bm: toFiniteNumber(entry[3]),
+      sold: toFiniteNumber(entry[4])
+    };
+  }
+
+  if (!isRecord(entry)) return null;
+  const itemId = String(entry.id || entry.itemId || "").trim();
+  const city = typeof entry.city === "string" ? entry.city.trim() : undefined;
+  if (!itemId && !entry.prices) return null;
+
+  const prices = isRecord(entry.prices)
+    ? Object.fromEntries(
+      Object.entries(entry.prices)
+        .map(([key, value]) => [key, toFiniteNumber(value) || 0])
+    )
+    : undefined;
+
+  return {
+    city,
+    id: itemId || undefined,
+    itemId: itemId || undefined,
+    price: toFiniteNumber(entry.price),
+    prices,
+    lym: toFiniteNumber(entry.lym),
+    bm: toFiniteNumber(entry.bm),
+    sold: toFiniteNumber(entry.sold)
+  };
 }
 
 export function resolvePriceByCity(prices: Record<string, number> | undefined, city: string): number {
