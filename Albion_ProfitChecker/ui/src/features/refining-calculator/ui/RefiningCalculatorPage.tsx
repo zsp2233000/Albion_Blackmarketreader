@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
+import { useSeo } from "../../../shared/seo/useSeo";
 import { getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type ReturnRatePreset, type Tier } from "../core";
 import { buildRefiningLiveSnapshot, DEFAULT_PRICE_BY_ITEM_ID, ENCHANTS, MATERIAL_BY_KEY, MATERIAL_DEFINITIONS, REFINE_VARIANTS, TIERS, isEnchantAvailable, rawItemIdFor, refinedItemIdFor } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
@@ -307,6 +308,39 @@ export function RefiningCalculatorPage() {
   const [hasLiveData, setHasLiveData] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>("--:--");
   const [visibleRowCount, setVisibleRowCount] = useState(ROW_BATCH_SIZE);
+
+  useSeo({
+    title: "Albion Online Refining Calculator | Blackmarket Reader",
+    description:
+      "Albion Online Refining Calculator with raw-material city prices, refined output values, focus presets, taxes, and refining profit analysis.",
+    keywords:
+      "Albion Online Refining Calculator, Albion refining calculator, Albion refining profit, Albion resource refining tool",
+    canonical: "https://blackmarketreader.com/refining-calculator",
+    ogTitle: "Albion Online Refining Calculator | Blackmarket Reader",
+    ogDescription:
+      "Calculate Albion Online refining profit with city prices, focus presets, fees, and material-specific refining routes.",
+    ogUrl: "https://blackmarketreader.com/refining-calculator",
+    ogImage: "https://blackmarketreader.com/picture/Profit-Dashboard.png",
+    twitterTitle: "Albion Online Refining Calculator | Blackmarket Reader",
+    twitterDescription:
+      "Calculate Albion Online refining profit with city prices, focus presets, fees, and material-specific refining routes.",
+    twitterImage: "https://blackmarketreader.com/picture/Profit-Dashboard.png",
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Refining Calculator",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: "https://blackmarketreader.com/refining-calculator",
+      description:
+        "Albion Online refining calculator with raw-material market prices, city output comparisons, focus presets, and net profit analysis.",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD"
+      }
+    }
+  });
 
   const accountPanelRef = useRef<HTMLDivElement | null>(null);
   const accountBtnRef = useRef<HTMLButtonElement | null>(null);

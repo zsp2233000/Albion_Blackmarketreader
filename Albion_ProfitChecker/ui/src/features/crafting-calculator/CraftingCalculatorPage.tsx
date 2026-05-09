@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
+import { useSeo } from "../../shared/seo/useSeo";
 import "../bm-crafter/ui/bmCrafter.css";
 import "./craftingCalculator.css";
 import {
@@ -385,6 +386,39 @@ export function CraftingCalculatorPage() {
   const accountPanelRef = useRef<HTMLDivElement | null>(null);
   const accountBtnRef = useRef<HTMLButtonElement | null>(null);
   const profileChannelRef = useRef<BroadcastChannel | null>(null);
+
+  useSeo({
+    title: "Albion Online Crafting Calculator | Blackmarket Reader",
+    description:
+      "Albion Online Crafting Calculator with city prices, artefacts, return rate, Black Market selling, and profit breakdowns for crafted gear.",
+    keywords:
+      "Albion Online Crafting Calculator, Albion crafting calculator, Albion artifact crafting, Albion profit calculator, Albion black market crafting",
+    canonical: "https://blackmarketreader.com/crafting-calculator",
+    ogTitle: "Albion Online Crafting Calculator | Blackmarket Reader",
+    ogDescription:
+      "Calculate Albion Online crafting profit with material prices, return rate, artefacts, and Black Market sell values.",
+    ogUrl: "https://blackmarketreader.com/crafting-calculator",
+    ogImage: "https://blackmarketreader.com/picture/bm-crafter-table.png",
+    twitterTitle: "Albion Online Crafting Calculator | Blackmarket Reader",
+    twitterDescription:
+      "Calculate Albion Online crafting profit with material prices, return rate, artefacts, and Black Market sell values.",
+    twitterImage: "https://blackmarketreader.com/picture/bm-crafter-table.png",
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Crafting Calculator",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: "https://blackmarketreader.com/crafting-calculator",
+      description:
+        "Albion Online crafting calculator for gear profit analysis with city market prices, return rates, artefacts, and Black Market support.",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD"
+      }
+    }
+  });
 
   const [allItems, setAllItems] = useState<CraftingItem[]>([]);
   const [selectedRowKey, setSelectedRowKey] = useState("t8-4");

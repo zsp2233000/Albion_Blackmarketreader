@@ -44,6 +44,21 @@
       "source": "/crafting-calculator/index.html",
       "destination": "/crafting-calculator",
       "permanent": true
+    },
+    {
+      "source": "/refining-calculator/index.html",
+      "destination": "/refining-calculator",
+      "permanent": true
+    },
+    {
+      "source": "/Refining%20Calculator",
+      "destination": "/refining-calculator",
+      "permanent": true
+    },
+    {
+      "source": "/Refining%20Calculator/index.html",
+      "destination": "/refining-calculator",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -73,6 +88,10 @@
     },
     {
       "source": "/crafting-calculator",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/refining-calculator",
       "destination": "/index.html"
     }
   ],

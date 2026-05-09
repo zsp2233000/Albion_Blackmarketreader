@@ -640,7 +640,22 @@ export function DashboardPage() {
     twitterTitle: "Blackmarket Reader Dashboard | Albion Online Tool",
     twitterDescription:
       "Live Albion Black Market data with city comparison, tier filters, and profit tracking in the Blackmarket Reader dashboard.",
-    twitterImage: "https://blackmarketreader.com/picture/Profit-Dashboard.png"
+    twitterImage: "https://blackmarketreader.com/picture/Profit-Dashboard.png",
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Blackmarket Reader Dashboard",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: "https://blackmarketreader.com/dashboard",
+      description:
+        "Albion Online Black Market dashboard with live city comparison, deal filtering, and profit tracking.",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD"
+      }
+    }
   });
 
   const showToast = useCallback((message: string) => {
