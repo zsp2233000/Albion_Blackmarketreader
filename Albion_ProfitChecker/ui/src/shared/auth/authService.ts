@@ -63,27 +63,6 @@ export class AuthService {
   async updateUserMetadata(data: Record<string, unknown>): Promise<void> {
     const { error } = await this.supabase.auth.updateUser({ data });
     if (error) throw error;
-
-    const profilePatch: Record<string, unknown> = {};
-    if (typeof data.avatar === "string" || data.avatar === null) {
-      profilePatch.avatar = data.avatar;
-    }
-    const nextRegion = this.normalizeRegion(data.region);
-    if (nextRegion) {
-      profilePatch.region = nextRegion;
-    }
-
-    if (!Object.keys(profilePatch).length) return;
-
-    const { data: userData, error: userError } = await this.supabase.auth.getUser();
-    if (userError) throw userError;
-    const userId = userData.user?.id;
-    if (!userId) return;
-
-    const { error: profileError } = await this.supabase
-      .from("profiles")
-      .upsert({ id: userId, ...profilePatch });
-    if (profileError) throw profileError;
   }
 
   private normalizeRegion(value: unknown): Region | null {
@@ -92,18 +71,8 @@ export class AuthService {
   }
 
   private async getProfilePreferences(userId: string): Promise<{ avatar: string | null; region: Region | null } | null> {
-    const { data, error } = await this.supabase
-      .from("profiles")
-      .select("avatar, region")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (error || !data) return null;
-
-    return {
-      avatar: typeof data.avatar === "string" ? data.avatar : null,
-      region: this.normalizeRegion(data.region)
-    };
+    void userId;
+    return null;
   }
 }
 

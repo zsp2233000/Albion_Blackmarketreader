@@ -931,7 +931,7 @@ export function RefiningCalculatorPage() {
             onClick={() => setIsTopSectionExpanded((prev) => !prev)}
           >
             <span className="rc-arrow-label">{isTopSectionExpanded ? "Hide" : "Show"}</span>
-            <span className="rc-arrow-glyph">▾</span>
+            <span className="rc-arrow-glyph">v</span>
           </button>
         </div>
         {isTopSectionExpanded ? priceControls : null}
