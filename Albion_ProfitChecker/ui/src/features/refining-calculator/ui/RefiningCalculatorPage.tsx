@@ -627,7 +627,7 @@ export function RefiningCalculatorPage() {
   }, [authService, focusSpecsDraft, user]);
 
   const priceControls = useMemo(() => (
-    <div className="bm-filters rc-filters">
+    <div className="rc-filters-shell rc-filters">
       <div className="rc-price-editor">
         <div className="rc-price-editor-head">
           <div className="rc-price-editor-copy">

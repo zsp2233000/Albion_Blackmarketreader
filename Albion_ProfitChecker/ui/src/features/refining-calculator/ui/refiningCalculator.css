@@ -8,13 +8,13 @@
 }
 
 .rc-page .bm-header,
-.rc-page .bm-filters,
-.rc-page .side-card {
+.rc-page .side-card,
+.rc-filters-shell {
   position: static;
   top: auto;
 }
 
-.rc-page .bm-filters {
+.rc-filters-shell {
   z-index: auto;
   border-bottom: 0;
   background: transparent;
