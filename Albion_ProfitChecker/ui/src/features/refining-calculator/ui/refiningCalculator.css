@@ -136,9 +136,9 @@
 }
 
 .rc-price-editor-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(190px, 220px) minmax(0, 1fr);
+  align-items: start;
   gap: 14px;
   margin-bottom: 8px;
 }
@@ -198,14 +198,15 @@
 .rc-price-editor-copy {
   display: grid;
   gap: 8px;
-  min-width: 190px;
+  min-width: 0;
 }
 
 .rc-tab-nav {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
-  width: min(100%, 760px);
+  width: 100%;
+  min-width: 0;
   padding: 6px;
   border: 1px solid var(--border);
   border-radius: 24px;
@@ -767,8 +768,7 @@
   }
 
   .rc-price-editor-head {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: 1fr;
   }
 
   .rc-tab-nav {
