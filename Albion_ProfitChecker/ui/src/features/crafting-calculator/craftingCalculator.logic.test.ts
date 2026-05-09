@@ -3,6 +3,7 @@ import {
   buildMaterialItemId,
   calculateEconomics,
   getBonusCityForItem,
+  normalizeResultPriceEntry,
   productionBonusToReturnRate,
   resolveBlackMarketPrice,
   resolveResultPrice
@@ -57,6 +58,27 @@ describe("crafting calculator pricing helpers", () => {
 
     expect(resolveResultPrice(legacy, "Lymhurst")).toBe(25000);
     expect(resolveBlackMarketPrice(structured)).toBe(54000);
+  });
+
+  it("normalizes legacy tuple rows so black market values remain usable", () => {
+    const normalized = normalizeResultPriceEntry([
+      "Lymhurst",
+      "T4_2H_BOW",
+      4895,
+      12569,
+      206.8,
+      156.8,
+      "14d"
+    ]);
+
+    expect(normalized).toEqual({
+      city: "Lymhurst",
+      id: "T4_2H_BOW",
+      itemId: "T4_2H_BOW",
+      lym: 4895,
+      bm: 12569,
+      sold: 206.8
+    });
   });
 });
 

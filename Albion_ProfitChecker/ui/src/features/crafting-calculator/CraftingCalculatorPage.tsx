@@ -12,6 +12,7 @@ import {
   getBonusCityForItem,
   KNOWN_CITIES,
   MATERIAL_BASES,
+  normalizeResultPriceEntry,
   productionBonusToReturnRate,
   resolveArtefactPriceByCity,
   resolveBlackMarketPrice,
@@ -303,7 +304,12 @@ async function loadResultsByRegion(region: MarketRegion): Promise<ResultItem[]> 
     if (response.ok) {
       const payload = await response.json();
       const items = Array.isArray(payload?.items) ? payload.items : [];
-      if (items.length) all.push(...(items as ResultItem[]));
+      if (items.length) {
+        const normalized = items
+          .map((entry: unknown) => normalizeResultPriceEntry(entry))
+          .filter((entry: ResultItem | null): entry is ResultItem => Boolean(entry));
+        all.push(...normalized);
+      }
     }
   } catch {
     // keep loading legacy sparse result shards below
@@ -321,8 +327,13 @@ async function loadResultsByRegion(region: MarketRegion): Promise<ResultItem[]> 
       const start = raw.indexOf("[");
       const end = raw.lastIndexOf("]");
       if (start < 0 || end <= start) continue;
-      const parsed = JSON.parse(raw.slice(start, end + 1)) as ResultItem[];
-      if (Array.isArray(parsed)) all.push(...parsed);
+      const parsed = JSON.parse(raw.slice(start, end + 1)) as unknown[];
+      if (Array.isArray(parsed)) {
+        const normalized = parsed
+          .map((entry) => normalizeResultPriceEntry(entry))
+          .filter((entry: ResultItem | null): entry is ResultItem => Boolean(entry));
+        all.push(...normalized);
+      }
     } catch {
       // ignore broken shard files and keep loading others
     }
