@@ -209,9 +209,15 @@ export function resolveArtefactPriceByCity(prices: Record<string, number> | unde
 }
 
 export function resolveResultPrice(entries: ResultPriceEntry[], city: string): number {
-  const mappedValues = entries
-    .map((entry) => Number(entry.prices?.[city] || 0))
-    .filter((value) => Number.isFinite(value) && value > 0);
+  const mappedValues = city === "ALL"
+    ? entries.flatMap((entry) =>
+      KNOWN_CITIES
+        .map((name) => Number(entry.prices?.[name] || 0))
+        .filter((value) => Number.isFinite(value) && value > 0)
+    )
+    : entries
+      .map((entry) => Number(entry.prices?.[city] || 0))
+      .filter((value) => Number.isFinite(value) && value > 0);
   if (mappedValues.length) return Math.min(...mappedValues);
 
   const source = city !== "ALL"
