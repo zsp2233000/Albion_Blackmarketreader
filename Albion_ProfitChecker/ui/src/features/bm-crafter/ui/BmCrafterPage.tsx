@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
+import { useSeo } from "../../../shared/seo/useSeo";
 import {
   buildArtefactId,
   buildMaterialId,
@@ -109,6 +110,39 @@ export function BmCrafterPage() {
   const accountPanelRef = useRef<HTMLDivElement | null>(null);
   const accountBtnRef = useRef<HTMLButtonElement | null>(null);
   const profileChannelRef = useRef<BroadcastChannel | null>(null);
+
+  useSeo({
+    title: "Albion Online Black Market Crafter | Blackmarket Reader",
+    description:
+      "Albion Online Black Market Crafter with material costs, artefact prices, Black Market values, and profit views for profitable crafting routes.",
+    keywords:
+      "Albion Online Black Market Crafter, Albion crafting profit calculator, Albion black market tool, Albion Online crafting tool",
+    canonical: "https://blackmarketreader.com/bm-crafter",
+    ogTitle: "Albion Online Black Market Crafter | Blackmarket Reader",
+    ogDescription:
+      "Compare material costs, artefact prices, and Black Market values in the Albion Online Black Market Crafter.",
+    ogUrl: "https://blackmarketreader.com/bm-crafter",
+    ogImage: "https://blackmarketreader.com/picture/bm-crafter-table.png",
+    twitterTitle: "Albion Online Black Market Crafter | Blackmarket Reader",
+    twitterDescription:
+      "Compare material costs, artefact prices, and Black Market values in the Albion Online Black Market Crafter.",
+    twitterImage: "https://blackmarketreader.com/picture/bm-crafter-table.png",
+    structuredData: {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Black Market Crafter",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: "https://blackmarketreader.com/bm-crafter",
+      description:
+        "Albion Online Black Market crafting calculator with live market inputs, material cost breakdowns, and profit analysis.",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD"
+      }
+    }
+  });
 
   useEffect(() => {
     document.body.classList.add("bm-crafter");
