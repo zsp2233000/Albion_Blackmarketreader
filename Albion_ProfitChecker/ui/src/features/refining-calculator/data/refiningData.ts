@@ -165,13 +165,18 @@ export function createRefiningIngredients(materialKey: MaterialKey, tier: Tier, 
     tier,
     enchant,
     itemId: rawItemIdFor(materialKey, tier, enchant),
-    quantity: materialKey === "stone" && enchant > 0 ? 1 : recipeRawQuantity(tier),
+    quantity: recipeRawQuantity(tier),
   };
 
   if (tier === 2) return [raw];
 
-  const previousTier = enchant > 0 ? tier : ((tier - 1) as Tier);
-  const previousEnchant = materialKey === "stone" || enchant <= 0 ? 0 : ((enchant - 1) as Enchant);
+  const previousTier = (tier - 1) as Tier;
+  let previousEnchant: Enchant;
+  if (materialKey === "stone" || enchant === 0 || !isEnchantAvailable(previousTier, enchant)) {
+    previousEnchant = 0;
+  } else {
+    previousEnchant = enchant;
+  }
   return [
     raw,
     {

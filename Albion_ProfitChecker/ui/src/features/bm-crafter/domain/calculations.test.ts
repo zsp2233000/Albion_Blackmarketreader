@@ -56,16 +56,44 @@ describe("calculateItemEconomics", () => {
       item: { id: "T6_2H_AXE_AVALON@1", bm: 120000, sold: 10 },
       recipe,
       returnRate: 0.1525,
+      usageFeePer100: 0,
       getMaterialPrice: (materialId, tier, enchant) =>
         materialMap.get(buildMaterialId(materialId, tier, enchant) ?? "") ?? null,
       getArtefactPrice: (artefactId, tier) => artefactMap.get(buildArtefactId(artefactId, tier) ?? "") ?? null
     });
 
     expect(result).not.toBeNull();
-    expect(result!.craftCost).toBeCloseTo(69495, 6);
-    expect(result!.profit).toBeCloseTo(50505, 6);
-    expect(result!.dailyPotential).toBeCloseTo(505050, 6);
-    expect(result!.profitPct).toBeCloseTo(72.67429311, 6);
+    // materials: 16*1000 + 8*2000 = 32000; net = 32000 * (1-0.1525) = 27120
+    // craftCost = 27120 + 50000 (artefact, no return) + 0 (no fee) = 77120
+    expect(result!.craftCost).toBeCloseTo(77120, 6);
+    expect(result!.stationFee).toBe(0);
+    expect(result!.profit).toBeCloseTo(42880, 6);
+    expect(result!.dailyPotential).toBeCloseTo(428800, 6);
+    expect(result!.profitPct).toBeCloseTo(55.60166, 4);
+  });
+
+  it("applies station fee from item value and usage fee", () => {
+    const materialMap = new Map<string, number>([
+      ["T6_PLANKS_LEVEL1@1", 1000],
+      ["T6_METALBAR_LEVEL1@1", 2000]
+    ]);
+    const artefactMap = new Map<string, number>([["T6_ARTEFACT_2H_AXE_AVALON", 50000]]);
+
+    const result = calculateItemEconomics({
+      item: { id: "T6_2H_AXE_AVALON@1", bm: 120000, sold: 10 },
+      recipe,
+      returnRate: 0.1525,
+      usageFeePer100: 1500,
+      getMaterialPrice: (materialId, tier, enchant) =>
+        materialMap.get(buildMaterialId(materialId, tier, enchant) ?? "") ?? null,
+      getArtefactPrice: (artefactId, tier) => artefactMap.get(buildArtefactId(artefactId, tier) ?? "") ?? null
+    });
+
+    // T6.1 item value = 2880; fee = 2880 * 0.1125 * (1500/100) = 4860
+    expect(result).not.toBeNull();
+    expect(result!.stationFee).toBeCloseTo(4860, 6);
+    expect(result!.craftCost).toBeCloseTo(77120 + 4860, 6);
+    expect(result!.profit).toBeCloseTo(42880 - 4860, 6);
   });
 
   it("returns null when artifact price is required but missing", () => {
@@ -73,8 +101,21 @@ describe("calculateItemEconomics", () => {
       item: { id: "T6_2H_AXE_AVALON@1", bm: 120000, sold: 10 },
       recipe,
       returnRate: 0.1525,
+      usageFeePer100: 0,
       getMaterialPrice: () => 1000,
       getArtefactPrice: () => null
+    });
+    expect(result).toBeNull();
+  });
+
+  it("returns null when artifact price is zero (no live data)", () => {
+    const result = calculateItemEconomics({
+      item: { id: "T6_2H_AXE_AVALON@1", bm: 120000, sold: 10 },
+      recipe,
+      returnRate: 0.1525,
+      usageFeePer100: 0,
+      getMaterialPrice: () => 1000,
+      getArtefactPrice: () => 0
     });
     expect(result).toBeNull();
   });
@@ -89,6 +130,7 @@ describe("calculateItemEconomics", () => {
       item: { id: "T6_2H_AXE_AVALON@1", bm: 120000, sold: 10 },
       recipe: noMaterialRecipe,
       returnRate: 0.1525,
+      usageFeePer100: 0,
       getMaterialPrice: () => null,
       getArtefactPrice: () => null
     });

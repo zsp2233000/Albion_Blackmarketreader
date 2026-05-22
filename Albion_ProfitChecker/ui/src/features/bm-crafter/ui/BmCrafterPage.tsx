@@ -591,6 +591,42 @@ export function BmCrafterPage() {
             <span className="material-symbols-outlined">search</span>
           </div>
         </div>
+
+        <div className="filter-block">
+          <p>Craft City</p>
+          <div className="bm-city-field">
+            <span className="material-symbols-outlined">location_city</span>
+            <select
+              value={filters.craftCity}
+              onChange={(e) => filters.setCraftCity(e.target.value)}
+            >
+              <option value="Caerleon">Caerleon</option>
+              <option value="Lymhurst">Lymhurst</option>
+              <option value="Bridgewatch">Bridgewatch</option>
+              <option value="Martlock">Martlock</option>
+              <option value="Fort Sterling">Fort Sterling</option>
+              <option value="Thetford">Thetford</option>
+              <option value="Brecilien">Brecilien</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="filter-block">
+          <div className="filter-head">
+            <p>Usage Fee / 100</p>
+            <span className="filter-value">{filters.usageFeePer100}</span>
+          </div>
+          <div className="bm-fee-field">
+            <span className="material-symbols-outlined">construction</span>
+            <input
+              type="number"
+              min={0}
+              step={50}
+              value={filters.usageFeePer100}
+              onChange={(e) => filters.setUsageFeePer100(Math.max(0, Number(e.target.value) || 0))}
+            />
+          </div>
+        </div>
       </section>
 
       <main className="bm-main">
@@ -699,9 +735,11 @@ export function BmCrafterPage() {
               <div><span>BM Price</span><strong className="profit">{selectedRow ? formatNumber(selectedRow.item.bm) : "--"}</strong></div>
               <div><span>Sold / Day</span><strong className="primary">{selectedRow ? formatNumber(selectedRow.item.sold) : "--"}</strong></div>
               <div><span>Craft Cost</span><strong>{selectedRow ? formatNumber(selectedRow.economics.craftCost) : "--"}</strong></div>
+              <div><span>Station Fee</span><strong>{selectedRow ? formatNumber(selectedRow.economics.stationFee) : "--"}</strong></div>
               <div><span>Net Profit / U</span><strong className={selectedRow && selectedRow.economics.profit < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.profit) : "--"}</strong></div>
               <div><span>Profit %</span><strong className={selectedRow && (selectedRow.economics.profitPct ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatPct(selectedRow.economics.profitPct) : "--"}</strong></div>
               <div><span>Daily Potential</span><strong className={selectedRow && (selectedRow.economics.dailyPotential ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.dailyPotential) : "--"}</strong></div>
+              <div><span>Profit / Focus</span><strong className={selectedRow && (selectedRow.economics.profitPerFocus ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.profitPerFocus) : "--"}</strong></div>
               <div><span>Item ID</span><strong>{selectedRow?.item.id || "--"}</strong></div>
             </div>
             <div className="material-box">

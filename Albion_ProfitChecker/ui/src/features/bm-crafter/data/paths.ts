@@ -15,6 +15,7 @@ function regionFile(kind: Exclude<DataKind, "recipes">, region: MarketRegion): s
   const suffix = region === "us" ? "us" : "eu";
   if (kind === "bm") return `bm-crafter-${suffix}.json`;
   if (kind === "materials") return `materials-${suffix}.json`;
+  if (kind === "materials-cities") return `materials-cities-${suffix}.json`;
   return `artefacts-${suffix}.json`;
 }
 

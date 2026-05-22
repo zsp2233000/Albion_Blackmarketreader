@@ -232,8 +232,8 @@ body {
   top: 64px;
   z-index: 40;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 16px;
   padding: 12px 24px;
   background: rgba(13, 20, 24, 0.85);
   border-bottom: 1px solid var(--border);
@@ -451,6 +451,75 @@ body {
 .search-field .material-symbols-outlined {
   font-size: 16px;
   color: var(--text-secondary);
+}
+
+.bm-city-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.bm-city-field .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.bm-city-field select {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-size: 11px;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  padding-right: 4px;
+}
+
+.bm-city-field select:focus {
+  outline: none;
+}
+
+.bm-city-field select option {
+  background: #0c0f17;
+  color: #e2e8f0;
+}
+
+.bm-fee-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.bm-fee-field .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.bm-fee-field input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-size: 11px;
+  outline: none;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  width: 100%;
+}
+
+.bm-fee-field input::-webkit-outer-spin-button,
+.bm-fee-field input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .return-rate {
@@ -1209,6 +1278,12 @@ tbody td {
   }
   .bm-side {
     width: 100%;
+  }
+}
+
+@media (max-width: 1280px) {
+  .bm-filters {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

@@ -27,6 +27,11 @@ export function deriveBmCrafterRows(bundle: BmCrafterDataBundle | null, filters:
   const recipeMap = bundle.recipes.byItemId;
   const rows: BmCrafterRow[] = [];
   const search = toSearchKey(filters.searchTerm);
+
+  const cityEntries = bundle.cityMaterials ? Array.from(bundle.cityMaterials.entries()) : [];
+  const cityMaterialsFlat: Map<string, number> = cityEntries.length > 0
+    ? new Map(cityEntries.map(([itemId, prices]) => [itemId, prices[filters.craftCity] ?? 0]))
+    : bundle.materials.byItemId;
   let rowCounter = 0;
 
   for (const item of bundle.market.items) {
@@ -54,11 +59,13 @@ export function deriveBmCrafterRows(bundle: BmCrafterDataBundle | null, filters:
       if (!idKey.includes(search) && !nameKey.includes(search)) continue;
     }
 
+    const materialMap = cityMaterialsFlat;
     const economics = calculateItemEconomics({
       item,
       recipe,
       returnRate: filters.returnRate,
-      getMaterialPrice: (materialId, t, e) => getMaterialPriceFromMap(bundle.materials.byItemId, materialId, t, e),
+      usageFeePer100: filters.usageFeePer100,
+      getMaterialPrice: (materialId, t, e) => getMaterialPriceFromMap(materialMap, materialId, t, e),
       getArtefactPrice: (artefactId, t) => getArtefactPriceFromMap(bundle.artefacts.byItemId, artefactId, t)
     });
 
