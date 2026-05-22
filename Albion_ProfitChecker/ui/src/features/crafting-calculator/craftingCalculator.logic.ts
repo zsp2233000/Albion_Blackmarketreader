@@ -174,7 +174,7 @@ export function calculateEconomics(input: EconomyCalculationInput) {
   const hasMarketValue = Number.isFinite(market) && market > 0;
   const canCalculate = !missingRequiredPrices && hasMarketValue;
 
-  const netResourceCost = canCalculate ? grossResourceCost * (1 - returnRate) : null;
+  const netResourceCost = canCalculate ? (mat1 + mat2) * (1 - returnRate) + artefact : null;
   const craftingUsageFee = canCalculate ? calculateCraftingUsageFee(itemValue, stationFee) : null;
   const marketSetupFee = canCalculate ? (market * clampNumber(setupFeePercent, 0, 100)) / 100 : null;
   const marketTransactionTax = canCalculate ? (market * clampNumber(transactionTaxPercent, 0, 100)) / 100 : null;

@@ -135,6 +135,26 @@ function normalizeRecipeItem(entry: unknown): BmRecipe | null {
   return recipe;
 }
 
+export function normalizeCityMaterialsPayload(payload: unknown): Map<string, Record<string, number>> {
+  const root = isRecord(payload) ? payload : {};
+  const list = Array.isArray(root.items) ? root.items : [];
+  const map = new Map<string, Record<string, number>>();
+
+  for (const entry of list) {
+    if (!isRecord(entry)) continue;
+    const itemId = String(entry.itemId || "").trim();
+    if (!itemId || !isRecord(entry.prices)) continue;
+    const prices: Record<string, number> = {};
+    for (const [city, val] of Object.entries(entry.prices)) {
+      const price = toFiniteNumber(val);
+      if (price !== null) prices[city] = price;
+    }
+    if (Object.keys(prices).length) map.set(itemId, prices);
+  }
+
+  return map;
+}
+
 export function normalizeRecipesPayload(payload: unknown): BmCrafterRecipesData {
   const root = isRecord(payload) ? payload : {};
   const categories = Array.isArray(root.categories) ? root.categories : [];

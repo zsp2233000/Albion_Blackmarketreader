@@ -636,7 +636,7 @@ export function RefiningCalculatorPage() {
           </div>
           <div className="rc-tab-nav">
             {MATERIAL_DEFINITIONS.map((material) => (
-              <button key={material.key} type="button" className={`rc-tab ${editorMaterial === material.key ? "active" : ""}`} onClick={() => {
+              <button key={material.key} type="button" data-material={material.key} className={`rc-tab ${editorMaterial === material.key ? "active" : ""}`} onClick={() => {
                 setEditorMaterial(material.key);
                 const firstMaterialRow = rows.find((row) => row.variant.materialKey === material.key);
                 if (firstMaterialRow) setSelectedRowKey(firstMaterialRow.variant.id);
@@ -939,6 +939,27 @@ export function RefiningCalculatorPage() {
 
       <main className="bm-main rc-main">
         <section className="bm-table expanded">
+          <div className="rc-summary-bar">
+            <div className="rc-summary-stat">
+              <span>Profitable</span>
+              <strong className="profit">{profitableCount}</strong>
+            </div>
+            <div className="rc-summary-divider" />
+            <div className="rc-summary-stat">
+              <span>Showing</span>
+              <strong>{filteredRows.length}</strong>
+            </div>
+            <div className="rc-summary-divider" />
+            <div className="rc-summary-stat">
+              <span>Return</span>
+              <strong>{selectedEditorRow ? `${(selectedEditorRow.returnRate * 100).toFixed(2)}%` : "--"}</strong>
+            </div>
+            <div className="rc-summary-divider" />
+            <div className="rc-summary-stat">
+              <span>Region</span>
+              <strong>{region.toUpperCase()}</strong>
+            </div>
+          </div>
           <div className="rc-table-toolbar">
             <span>Results Table</span>
             <label className="rc-result-search">

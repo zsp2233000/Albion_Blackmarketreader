@@ -1112,6 +1112,7 @@ body.crafting-calculator-body {
   border-bottom: none;
 }
 
+
 .account-panel .city-select {
   -webkit-appearance: none !important;
   appearance: none !important;
@@ -1417,4 +1418,85 @@ body.panel-open::before {
   backdrop-filter: blur(6px);
   background: rgba(0,0,0,0.4);
   z-index: 999;
+}
+
+.materials-card {
+  gap: 0.4rem;
+}
+
+.materials-empty {
+  font-size: 11px;
+  color: rgba(226, 232, 240, 0.55);
+  font-style: italic;
+  padding: 4px 2px;
+}
+
+.materials-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.materials-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.materials-row-artefact {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: rgba(168, 85, 247, 0.25);
+}
+
+.materials-row-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.materials-qty {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #5cf0c8;
+  min-width: 32px;
+}
+
+.materials-name {
+  font-size: 11px;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.materials-row-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.materials-unit {
+  font-size: 9px;
+  color: rgba(148, 163, 184, 0.75);
+  font-family: "JetBrains Mono", monospace;
+}
+
+.materials-total {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", monospace;
+  min-width: 60px;
+  text-align: right;
 }

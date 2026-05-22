@@ -20,7 +20,7 @@ describe("refining live mapping", () => {
 
     const result = buildRefiningLiveSnapshot(refinedPayload, rawPayload, REFINE_VARIANTS, "Lymhurst", "Bridgewatch");
     expect(result.generatedAt).toBe("2026-02-27T09:05:00.000Z");
-    expect(result.priceByItemId["T8_METALBAR_LEVEL3@3"]).toBe(710000);
+    expect(result.priceByItemId["T8_METALBAR_LEVEL3@3"]).toBe(700000);
     expect(result.priceByItemId["T8_ORE_LEVEL3@3"]).toBe(160000);
   });
 

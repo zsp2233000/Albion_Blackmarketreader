@@ -12,6 +12,8 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
   const [showOnlyProfitable, setShowOnlyProfitable] = useState(true);
   const [bonusCity, setBonusCity] = useState(false);
   const [returnRatePercent, setReturnRatePercent] = useState(15.25);
+  const [craftCity, setCraftCity] = useState<string>("Lymhurst");
+  const [usageFeePer100, setUsageFeePer100] = useState<number>(1500);
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null);
 
   const setBonusCityPreset = (enabled: boolean) => {
@@ -30,9 +32,11 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
         searchTerm,
         returnRate,
         sortByDailyTop,
-        showOnlyProfitable
+        showOnlyProfitable,
+        craftCity,
+        usageFeePer100
       }),
-    [bundle, selectedTier, selectedEnchant, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable]
+    [bundle, selectedTier, selectedEnchant, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, craftCity, usageFeePer100]
   );
 
   useEffect(() => {
@@ -85,6 +89,10 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
       returnRatePercent,
       setReturnRatePercent,
       returnRate,
+      craftCity,
+      setCraftCity,
+      usageFeePer100,
+      setUsageFeePer100,
       toggleTier,
       toggleEnchant,
       resetFilters

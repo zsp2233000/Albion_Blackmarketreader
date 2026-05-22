@@ -101,12 +101,14 @@ describe("crafting calculator economics", () => {
 
     expect(result.canCalculate).toBe(true);
     expect(result.grossResourceCost).toBe(210000);
-    expect(result.netResourceCost).toBeCloseTo(157899, 3);
+    // materials only: (100000 + 50000) * (1 - 0.2481) = 150000 * 0.7519 = 112785
+    // + artefact (no return): 60000 = 172785
+    expect(result.netResourceCost).toBeCloseTo(172785, 3);
     expect(result.craftingUsageFee).toBeCloseTo(288, 3);
     expect(result.totalFees).toBeCloseTo(19788, 3);
-    expect(result.totalCost).toBeCloseTo(177687, 3);
-    expect(result.profit).toBeCloseTo(122313, 3);
-    expect(result.roi).toBeCloseTo(68.8363, 3);
+    expect(result.totalCost).toBeCloseTo(192573, 3);
+    expect(result.profit).toBeCloseTo(107427, 3);
+    expect(result.roi).toBeCloseTo(55.78508, 3);
   });
 
   it("refuses to calculate when a required price is missing", () => {

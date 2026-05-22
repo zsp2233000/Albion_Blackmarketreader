@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { normalizeItemId, parseEnchant, parseTier } from "../domain";
-import { normalizeMarketPayload, normalizePricePayload, normalizeRecipesPayload } from "../data";
+import { normalizeCityMaterialsPayload, normalizeMarketPayload, normalizePricePayload, normalizeRecipesPayload } from "../data";
 import { deriveBmCrafterRows } from "./deriveRows";
 
 function loadJson(relativePathFromRepoRoot: string): unknown {
@@ -13,6 +13,7 @@ function loadJson(relativePathFromRepoRoot: string): unknown {
 function buildRealBundle(region: "eu" | "us") {
   const marketPayload = loadJson(`public/data/bm-crafter-${region}.json`);
   const materialsPayload = loadJson(`public/data/materials-${region}.json`);
+  const cityMaterialsPayload = loadJson(`public/data/materials-cities-${region}.json`);
   const artefactsPayload = loadJson(`public/data/artefacts-${region}.json`);
   const recipesPayload = loadJson("public/items-categorized-crafting.json");
 
@@ -20,6 +21,7 @@ function buildRealBundle(region: "eu" | "us") {
     region,
     market: normalizeMarketPayload(marketPayload, region),
     materials: normalizePricePayload(materialsPayload, region),
+    cityMaterials: normalizeCityMaterialsPayload(cityMaterialsPayload),
     artefacts: normalizePricePayload(artefactsPayload, region),
     recipes: normalizeRecipesPayload(recipesPayload)
   };
@@ -35,7 +37,9 @@ describe("bm crafter parity integration", () => {
       searchTerm: "",
       returnRate: 0.1525,
       sortByDailyTop: false,
-      showOnlyProfitable: true
+      showOnlyProfitable: true,
+      craftCity: "Caerleon",
+      usageFeePer100: 0
     });
 
     expect(rows.length).toBeGreaterThan(100);
@@ -62,7 +66,9 @@ describe("bm crafter parity integration", () => {
       searchTerm: "",
       returnRate: 0.1525,
       sortByDailyTop: false,
-      showOnlyProfitable: false
+      showOnlyProfitable: false,
+      craftCity: "Caerleon",
+      usageFeePer100: 0
     });
 
     const sample = rows.find((row) => {
@@ -70,7 +76,8 @@ describe("bm crafter parity integration", () => {
       if (!tier) return false;
       return row.recipe.materials.every((m) => {
         const key = row.enchant > 0 ? `T${tier}_${m.itemId}_LEVEL${row.enchant}@${row.enchant}` : `T${tier}_${m.itemId}`;
-        return bundle.materials.byItemId.has(key);
+        const cityPrices = bundle.cityMaterials.get(key);
+        return typeof cityPrices?.["Caerleon"] === "number" && cityPrices["Caerleon"] > 0;
       });
     });
 
@@ -87,12 +94,12 @@ describe("bm crafter parity integration", () => {
     let materialSum = 0;
     for (const mat of recipe.materials) {
       const matKey = enchant > 0 ? `T${tier}_${mat.itemId}_LEVEL${enchant}@${enchant}` : `T${tier}_${mat.itemId}`;
-      const unit = bundle.materials.byItemId.get(matKey);
+      const unit = bundle.cityMaterials.get(matKey)?.["Caerleon"];
       expect(unit).toBeTypeOf("number");
       materialSum += (unit as number) * mat.qty;
     }
 
-    let craftCost = materialSum;
+    let craftCost = materialSum * (1 - 0.1525);
     if (recipe.artifactId) {
       const artefactKey = `T${tier}_${recipe.artifactId}`;
       const artefactPrice = bundle.artefacts.byItemId.get(artefactKey);
@@ -100,7 +107,6 @@ describe("bm crafter parity integration", () => {
         craftCost += artefactPrice;
       }
     }
-    craftCost = craftCost * (1 - 0.1525);
 
     expect(sample.economics.craftCost).toBeCloseTo(craftCost, 6);
     expect(sample.economics.profit).toBeCloseTo((sample.item.bm as number) - craftCost, 6);

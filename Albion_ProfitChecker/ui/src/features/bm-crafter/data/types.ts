@@ -1,6 +1,6 @@
 import type { BmMarketItem, BmRecipe, MarketRegion } from "../domain";
 
-export type DataKind = "bm" | "materials" | "artefacts" | "recipes";
+export type DataKind = "bm" | "materials" | "materials-cities" | "artefacts" | "recipes";
 
 export interface PriceEntry {
   itemId: string;
@@ -31,6 +31,7 @@ export interface BmCrafterDataBundle {
   region: MarketRegion;
   market: BmCrafterMarketData;
   materials: BmCrafterPriceData;
+  cityMaterials: Map<string, Record<string, number>>;
   artefacts: BmCrafterPriceData;
   recipes: BmCrafterRecipesData;
 }

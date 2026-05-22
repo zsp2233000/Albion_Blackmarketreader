@@ -71,7 +71,9 @@ describe("deriveBmCrafterRows", () => {
       searchTerm: "",
       returnRate: 0.1525,
       sortByDailyTop: false,
-      showOnlyProfitable: true
+      showOnlyProfitable: true,
+      craftCity: "Caerleon",
+      usageFeePer100: 0
     });
 
     expect(rows).toHaveLength(3);
@@ -91,7 +93,9 @@ describe("deriveBmCrafterRows", () => {
       searchTerm: "broad",
       returnRate: 0.1525,
       sortByDailyTop: false,
-      showOnlyProfitable: true
+      showOnlyProfitable: true,
+      craftCity: "Caerleon",
+      usageFeePer100: 0
     });
 
     expect(rows).toHaveLength(1);

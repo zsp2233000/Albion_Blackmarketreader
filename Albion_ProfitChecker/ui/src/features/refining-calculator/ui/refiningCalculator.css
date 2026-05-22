@@ -239,6 +239,78 @@
   color: #f8fafc;
 }
 
+/* Per-material tab accent colors */
+.rc-tab[data-material="metal"].active {
+  background: rgba(251, 146, 60, 0.18);
+  box-shadow: 0 0 0 1px rgba(251, 146, 60, 0.2);
+  color: #fed7aa;
+}
+.rc-tab[data-material="wood"].active {
+  background: rgba(74, 222, 128, 0.14);
+  box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.18);
+  color: #bbf7d0;
+}
+.rc-tab[data-material="fiber"].active {
+  background: rgba(45, 212, 191, 0.18);
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.18);
+  color: #99f6e4;
+}
+.rc-tab[data-material="hide"].active {
+  background: rgba(250, 204, 21, 0.14);
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.18);
+  color: #fef08a;
+}
+.rc-tab[data-material="stone"].active {
+  background: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+}
+
+/* Profit column highlight in results table */
+.rc-profit-col {
+  background: rgba(74, 222, 128, 0.04);
+}
+
+.rc-profit-col.loss {
+  background: rgba(248, 113, 113, 0.04);
+}
+
+/* Summary stats bar above results */
+.rc-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.rc-summary-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rc-summary-stat strong {
+  color: #e2e8f0;
+  font-size: 12px;
+}
+
+.rc-summary-stat strong.profit {
+  color: #4ade80;
+}
+
+.rc-summary-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+}
+
 .rc-price-table-wrap {
   border: 1px solid var(--border);
   border-radius: 16px;

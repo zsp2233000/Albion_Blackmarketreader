@@ -492,10 +492,6 @@ export function CraftingCalculatorPage() {
   }, [productionBonusWithoutFocus, useFocus]);
   const returnRatePercent = useMemo(() => productionBonusToReturnRate(totalProductionBonus) * 100, [totalProductionBonus]);
   const returnRate = useMemo(() => returnRatePercent / 100, [returnRatePercent]);
-  const returnRateWithoutFocus = useMemo(
-    () => productionBonusToReturnRate(productionBonusWithoutFocus),
-    [productionBonusWithoutFocus]
-  );
   const isBlackMarketSell = sellCity === "Black Market";
   const effectiveSellCity = isBlackMarketSell ? "Caerleon" : sellCity;
   const effectiveSetupFeePercent = isBlackMarketSell ? 0 : setupFeePercent;
@@ -788,12 +784,16 @@ export function CraftingCalculatorPage() {
 
   useEffect(() => {
     if (!selectedItem || !materialPriceMap.size) return;
-    const baseMaterials = (Array.isArray(selectedItem.materials) ? selectedItem.materials : [])
-      .map((mat) => String(mat.itemId || mat.id || mat.name || "").trim())
-      .map((name) => name.toUpperCase().replace(/\s+/g, "_").replace(/^T\d+_/, "").replace(/^T\d+/, ""))
-      .filter((name) => MATERIAL_BASES.has(name))
+    const filteredMaterialPairs = (Array.isArray(selectedItem.materials) ? selectedItem.materials : [])
+      .map((mat) => {
+        const source = String(mat.itemId || mat.id || mat.name || "").trim();
+        const name = source.toUpperCase().replace(/\s+/g, "_").replace(/^T\d+_/, "").replace(/^T\d+/, "");
+        return { name, qty: Number(mat.qty) || 0 };
+      })
+      .filter(({ name }) => MATERIAL_BASES.has(name))
       .slice(0, 2);
-    const quantities = (Array.isArray(selectedItem.materials) ? selectedItem.materials : []).map((mat) => Number(mat.qty) || 0);
+    const baseMaterials = filteredMaterialPairs.map(({ name }) => name);
+    const quantities = filteredMaterialPairs.map(({ qty }) => qty);
 
     if (!baseMaterials.length) return;
 
@@ -898,26 +898,9 @@ export function CraftingCalculatorPage() {
       setupFeePercent: effectiveSetupFeePercent,
       transactionTaxPercent
     });
-    const withoutFocus = calculateEconomics({
-      mat1: selectedRowValues.mat1,
-      mat2: selectedRowValues.mat2,
-      artefact: selectedRowValues.artefact,
-      market: Number(selectedRowValues.market) || 0,
-      requiresMat1,
-      requiresMat2,
-      requiresArtefact,
-      returnRate: returnRateWithoutFocus,
-      itemValue,
-      stationFee,
-      setupFeePercent: effectiveSetupFeePercent,
-      transactionTaxPercent
-    });
     const silverPerFocus =
-      useFocus &&
-      selectedFocusCost > 0 &&
-      typeof calculation.profit === "number" &&
-      typeof withoutFocus.profit === "number"
-        ? (calculation.profit - withoutFocus.profit) / selectedFocusCost
+      selectedFocusCost > 0 && typeof calculation.profit === "number"
+        ? calculation.profit / selectedFocusCost
         : null;
 
     return {
@@ -932,19 +915,43 @@ export function CraftingCalculatorPage() {
     selectedRowValues.artefact,
     returnRatePercent,
     returnRate,
-    returnRateWithoutFocus,
     itemValue,
     stationFee,
     effectiveSetupFeePercent,
     transactionTaxPercent,
     selectedRowValues.market,
-    useFocus,
     selectedFocusCost
   ]);
   const roiBarWidth = useMemo(
     () => `${Math.max(0, Math.min(100, Math.abs(typeof totals.roi === "number" ? totals.roi : 0)))}%`,
     [totals.roi]
   );
+
+  const materialBreakdown = useMemo(() => {
+    if (!selectedItem) return [] as Array<{ name: string; qty: number; unitPrice: number; total: number }>;
+    const { tier, enchant } = parseTierEnchant(selectedRow.uid);
+    const requiredMaterials = Array.isArray(selectedItem.materials) ? selectedItem.materials : [];
+    const entries: Array<{ name: string; qty: number; unitPrice: number; total: number }> = [];
+    requiredMaterials.slice(0, 2).forEach((mat, idx) => {
+      const source = String(mat.itemId || mat.id || mat.name || "").trim();
+      const baseName = source.toUpperCase().replace(/\s+/g, "_").replace(/^T\d+_/, "").replace(/^T\d+/, "");
+      const qty = Number(mat.qty) || 0;
+      if (qty <= 0) return;
+      const total = idx === 0 ? selectedRowValues.mat1 : selectedRowValues.mat2;
+      const unitPrice = qty > 0 && total > 0 ? total / qty : 0;
+      const enchantLabel = enchant > 0 ? `.${enchant}` : "";
+      entries.push({ name: `T${tier}${enchantLabel} ${baseName.replace(/_/g, " ")}`, qty, unitPrice, total });
+    });
+    return entries;
+  }, [selectedItem, selectedRow.uid, selectedRowValues.mat1, selectedRowValues.mat2]);
+
+  const artefactBreakdown = useMemo(() => {
+    if (!selectedItem) return null;
+    const artifactId = String(selectedItem.artifactId || "").trim();
+    if (!artifactId) return null;
+    const total = selectedRowValues.artefact;
+    return { name: artifactId, qty: 1, total };
+  }, [selectedItem, selectedRowValues.artefact]);
 
   const searchResults = useMemo(() => {
     const q = normalizeSearchText(searchTerm);
@@ -1434,6 +1441,40 @@ export function CraftingCalculatorPage() {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="bento-card materials-card">
+            <div className="cc-caption">Materials Required</div>
+            {materialBreakdown.length === 0 && !artefactBreakdown ? (
+              <div className="materials-empty">Select an item to see required materials.</div>
+            ) : (
+              <ul className="materials-list">
+                {materialBreakdown.map((mat) => (
+                  <li key={mat.name} className="materials-row">
+                    <div className="materials-row-main">
+                      <span className="materials-qty">x{mat.qty}</span>
+                      <span className="materials-name">{mat.name}</span>
+                    </div>
+                    <div className="materials-row-meta">
+                      <span className="materials-unit">{mat.unitPrice > 0 ? `@${formatNumber(Math.round(mat.unitPrice))}` : "@-"}</span>
+                      <span className="materials-total">{mat.total > 0 ? formatNumber(Math.round(mat.total)) : "-"}</span>
+                    </div>
+                  </li>
+                ))}
+                {artefactBreakdown ? (
+                  <li className="materials-row materials-row-artefact">
+                    <div className="materials-row-main">
+                      <span className="materials-qty">x{artefactBreakdown.qty}</span>
+                      <span className="materials-name">{artefactBreakdown.name}</span>
+                    </div>
+                    <div className="materials-row-meta">
+                      <span className="materials-unit">artefact</span>
+                      <span className="materials-total">{artefactBreakdown.total > 0 ? formatNumber(Math.round(artefactBreakdown.total)) : "-"}</span>
+                    </div>
+                  </li>
+                ) : null}
+              </ul>
+            )}
           </div>
 
           <div className="bento-card totals">

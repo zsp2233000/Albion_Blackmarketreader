@@ -2,7 +2,7 @@ import { fetchJson } from "@shared/api/apiClient";
 import type { MarketRegion } from "../domain";
 import type { BmCrafterDataBundle, DataKind, LoadJsonOptions } from "./types";
 import { buildDataPaths } from "./paths";
-import { normalizeMarketPayload, normalizePricePayload, normalizeRecipesPayload } from "./normalizers";
+import { normalizeCityMaterialsPayload, normalizeMarketPayload, normalizePricePayload, normalizeRecipesPayload } from "./normalizers";
 
 interface FetchWithFallbackArgs {
   paths: string[];
@@ -58,6 +58,15 @@ export class BmCrafterDataService {
     return normalizePricePayload(payload, region);
   }
 
+  async loadCityMaterials(region: MarketRegion, options?: LoadJsonOptions) {
+    const payload = await fetchWithFallback({
+      paths: getPaths("materials-cities", region),
+      dedupeKeyBase: `bm-crafter-city-materials:${region}`,
+      options
+    });
+    return normalizeCityMaterialsPayload(payload);
+  }
+
   async loadArtefacts(region: MarketRegion, options?: LoadJsonOptions) {
     const payload = await fetchWithFallback({
       paths: getPaths("artefacts", region),
@@ -77,9 +86,10 @@ export class BmCrafterDataService {
   }
 
   async loadAll(region: MarketRegion, options?: LoadJsonOptions): Promise<BmCrafterDataBundle> {
-    const [market, materials, artefacts, recipes] = await Promise.all([
+    const [market, materials, cityMaterials, artefacts, recipes] = await Promise.all([
       this.loadMarket(region, options),
       this.loadMaterials(region, options),
+      this.loadCityMaterials(region, options),
       this.loadArtefacts(region, options),
       this.loadRecipes(options)
     ]);
@@ -88,6 +98,7 @@ export class BmCrafterDataService {
       region,
       market,
       materials,
+      cityMaterials,
       artefacts,
       recipes
     };

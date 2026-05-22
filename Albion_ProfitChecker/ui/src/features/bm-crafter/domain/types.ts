@@ -26,15 +26,19 @@ export interface MaterialCostResult {
 
 export interface ItemEconomics {
   craftCost: number;
+  stationFee: number;
   profit: number;
   dailyPotential: number | null;
   profitPct: number | null;
+  focusCost: number | null;
+  profitPerFocus: number | null;
 }
 
 export interface CalculateItemEconomicsInput {
   item: BmMarketItem;
   recipe: BmRecipe | null;
   returnRate: number;
+  usageFeePer100: number;
   getMaterialPrice: (materialId: string, tier: number, enchant: number) => number | null;
   getArtefactPrice: (artefactId: string, tier: number) => number | null;
 }
