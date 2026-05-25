@@ -5,13 +5,20 @@ import type {
   MaterialCostResult
 } from "./types";
 
-const FOCUS_COST: Record<string, number> = {
-  "4-0": 24.5, "4-1": 32.1, "4-2": 48.2, "4-3": 85.4, "4-4": 112.5,
-  "5-0": 64.2, "5-1": 88.4, "5-2": 142, "5-3": 210, "5-4": 340,
-  "6-0": 92.1, "6-1": 125, "6-2": 195, "6-3": 284, "6-4": 480,
-  "7-0": 110, "7-1": 182, "7-2": 295, "7-3": 540, "7-4": 820,
-  "8-0": 185, "8-1": 290, "8-2": 480, "8-3": 870, "8-4": 1580,
-};
+// TRUE BASE focus cost PER MAT per power level (mastery 0, spec 0).
+// Sourced from community spreadsheet "Refining Focus - Fees" (Goldenium2024).
+// Power index = (tier - 2) + enchant. Doubles per tier and per enchant.
+// Per-craft base focus = Σ(mat.qty × BASE_FOCUS_PER_MAT_BY_POWER[mat power]).
+// Verified vs Gear Crafting C30 (e.g. T4.0 Bow with 32 PLANKS: 32 * 54 = 1728 vs sheet 1715).
+const BASE_FOCUS_PER_MAT_BY_POWER = [18, 31, 54, 94, 164, 287, 503, 880, 1539, 2694, 4714] as const;
+
+function getBaseFocusPerMat(tier: number, enchant: number): number {
+  const safeTier = Math.max(2, Math.min(8, Math.floor(tier)));
+  const safeEnchant = Math.max(0, Math.min(4, Math.floor(enchant)));
+  const power = (safeTier - 2) + safeEnchant;
+  const safePower = Math.max(0, Math.min(BASE_FOCUS_PER_MAT_BY_POWER.length - 1, power));
+  return BASE_FOCUS_PER_MAT_BY_POWER[safePower];
+}
 
 // Standard crafted-equipment ItemValue per (tier, enchant) used by Albion's
 // station fee formula: stationFee = itemValue * 0.1125 * usageFeePer100 / 100.
@@ -25,8 +32,15 @@ const STATION_ITEM_VALUE: Record<string, number> = {
 
 const STATION_FEE_NUTRITION_FACTOR = 0.1125;
 
-export function getFocusCost(tier: number, enchant: number): number | null {
-  return FOCUS_COST[`${tier}-${enchant}`] ?? null;
+export function getFocusCost(tier: number, enchant: number, recipe?: BmRecipe | null): number | null {
+  if (!recipe || !Array.isArray(recipe.materials) || recipe.materials.length === 0) return null;
+  const perMat = getBaseFocusPerMat(tier, enchant);
+  let total = 0;
+  for (const mat of recipe.materials) {
+    const qty = Number(mat?.qty);
+    if (Number.isFinite(qty) && qty > 0) total += qty * perMat;
+  }
+  return total > 0 ? total : null;
 }
 
 export function getStationItemValue(tier: number, enchant: number): number | null {
@@ -147,7 +161,7 @@ export function calculateItemEconomics(input: CalculateItemEconomicsInput): Item
 
   const dailyPotential = Number.isFinite(item.sold) ? profit * Number(item.sold) : null;
   const profitPct = craftCost > 0 ? (profit / craftCost) * 100 : null;
-  const focusCost = getFocusCost(tier, enchant);
+  const focusCost = getFocusCost(tier, enchant, recipe);
   const profitPerFocus = focusCost && focusCost > 0 ? profit / focusCost : null;
 
   return {
