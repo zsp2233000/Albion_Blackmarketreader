@@ -46,7 +46,8 @@ export function useCraftingSpecs({ authService, enabled }: UseCraftingSpecsOptio
   const [pendingSync, setPendingSync] = useState(false);
   const saveTimerRef = useRef<number | null>(null);
   const channelRef = useRef<BroadcastChannel | null>(null);
-  const lastRemoteRef = useRef<string>(JSON.stringify(progress));
+  // Set to sentinel so the first remote save fires regardless of local-only init data.
+  const lastRemoteRef = useRef<string>("");
 
   useEffect(() => {
     if (!enabled || !authService) {

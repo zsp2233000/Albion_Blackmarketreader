@@ -212,8 +212,10 @@ export function normalizeMasteryMap(raw: unknown): CraftingMasteryMap {
 export function normalizeProgress(raw: unknown): CraftingProgress {
   if (!raw || typeof raw !== "object") return { specs: {}, masteries: {} };
   const obj = raw as Record<string, unknown>;
-  const specs = normalizeSpecMap(obj.specs ?? obj);
-  const masteries = normalizeMasteryMap(obj.masteries);
+  // V3 has explicit `specs` key (object). Legacy V1/V2 stored a flat map of items at root.
+  const isV3 = obj.specs !== undefined && typeof obj.specs === "object";
+  const specs = isV3 ? normalizeSpecMap(obj.specs) : normalizeSpecMap(obj);
+  const masteries = isV3 ? normalizeMasteryMap(obj.masteries) : {};
   return { specs, masteries };
 }
 

@@ -925,10 +925,15 @@ export function CraftingCalculatorPage() {
       setupFeePercent: effectiveSetupFeePercent,
       transactionTaxPercent
     });
-    const silverPerFocus =
-      selectedFocusCost > 0 && typeof calculation.profit === "number"
-        ? calculation.profit / selectedFocusCost
-        : null;
+    // Positive profit: spec raises SPF (profit / effectiveFocus).
+    // Negative profit: heuristic = profit * (effectiveFocus / baseFocus²) → magnitude shrinks with specs.
+    const silverPerFocus = (() => {
+      if (typeof calculation.profit !== "number") return null;
+      if (selectedBaseFocus <= 0 || selectedFocusCost <= 0) return null;
+      if (calculation.profit >= 0) return calculation.profit / selectedFocusCost;
+      const ratio = selectedFocusCost / selectedBaseFocus;
+      return (calculation.profit / selectedBaseFocus) * ratio;
+    })();
 
     return {
       ...calculation,
@@ -947,7 +952,8 @@ export function CraftingCalculatorPage() {
     effectiveSetupFeePercent,
     transactionTaxPercent,
     selectedRowValues.market,
-    selectedFocusCost
+    selectedFocusCost,
+    selectedBaseFocus
   ]);
   const roiBarWidth = useMemo(
     () => `${Math.max(0, Math.min(100, Math.abs(typeof totals.roi === "number" ? totals.roi : 0)))}%`,
@@ -1273,7 +1279,14 @@ export function CraftingCalculatorPage() {
                             if (rowBaseFocus <= 0) return "-";
                             const effective = applyFocusEfficiency(rowBaseFocus, focusEfficiency);
                             if (effective <= 0 || typeof rowProfit !== "number") return "-";
-                            const spf = rowProfit / effective;
+                            // Positive profit: grows with specs (more silver per focus).
+                            // Negative profit: shrinks magnitude with specs to keep "better specs
+                            // = better metric" UX direction. Formula: (profit / base) * (effective / base)
+                            // = profit * effective / base² (linear scaling, NOT squared).
+                            const ratio = effective / rowBaseFocus;
+                            const spf = rowProfit >= 0
+                              ? rowProfit / effective
+                              : (rowProfit / rowBaseFocus) * ratio;
                             if (!Number.isFinite(spf)) return "-";
                             const abs = Math.abs(spf);
                             const sign = spf < 0 ? "-" : "";
