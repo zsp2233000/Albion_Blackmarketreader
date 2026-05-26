@@ -20,6 +20,14 @@ import {
   resolvePriceByCity,
   resolveResultPrice
 } from "./craftingCalculator.logic";
+import { SpecsModal } from "./specs/SpecsModal";
+import {
+  applyFocusEfficiency,
+  computeCraftBaseFocus,
+  computeFocusEfficiency,
+  resolveSpecKey
+} from "./specs/data";
+import { useCraftingSpecs } from "./specs/useCraftingSpecs";
 
 type MarketRegion = "eu" | "us";
 
@@ -128,11 +136,11 @@ const TABLE_SECTIONS: TableSection[] = [
     fogClass: "fog-t4",
     stripClass: "bg-t4-blue",
     rows: [
-      { key: "t4-0", uid: "T4.0", mat1: "1.2k", mat2: "840", artefact: "0", tax: "420", market: "12.5k", profit: "10.0k", gain: "80.3%", focus: "24.5" },
-      { key: "t4-1", uid: "T4.1", mat1: "2.9k", mat2: "1.6k", artefact: "0", tax: "850", market: "21.0k", profit: "15.7k", gain: "74.6%", focus: "32.1" },
-      { key: "t4-2", uid: "T4.2", mat1: "6.4k", mat2: "4.2k", artefact: "0", tax: "1.2k", market: "48.0k", profit: "36.2k", gain: "75.4%", focus: "48.2" },
-      { key: "t4-3", uid: "T4.3", mat1: "24.2k", mat2: "18.5k", artefact: "0", tax: "4.5k", market: "152k", profit: "104k", gain: "68.4%", focus: "85.4" },
-      { key: "t4-4", uid: "T4.4", mat1: "124k", mat2: "98k", artefact: "42k", tax: "18k", market: "820k", profit: "538k", gain: "65.6%", focus: "112.5" }
+      { key: "t4-0", uid: "T4.0", mat1: "1.2k", mat2: "840", artefact: "0", tax: "420", market: "12.5k", profit: "10.0k", gain: "80.3%", focus: "54" },
+      { key: "t4-1", uid: "T4.1", mat1: "2.9k", mat2: "1.6k", artefact: "0", tax: "850", market: "21.0k", profit: "15.7k", gain: "74.6%", focus: "94" },
+      { key: "t4-2", uid: "T4.2", mat1: "6.4k", mat2: "4.2k", artefact: "0", tax: "1.2k", market: "48.0k", profit: "36.2k", gain: "75.4%", focus: "164" },
+      { key: "t4-3", uid: "T4.3", mat1: "24.2k", mat2: "18.5k", artefact: "0", tax: "4.5k", market: "152k", profit: "104k", gain: "68.4%", focus: "287" },
+      { key: "t4-4", uid: "T4.4", mat1: "124k", mat2: "98k", artefact: "42k", tax: "18k", market: "820k", profit: "538k", gain: "65.6%", focus: "503" }
     ]
   },
   {
@@ -141,11 +149,11 @@ const TABLE_SECTIONS: TableSection[] = [
     fogClass: "fog-t5",
     stripClass: "bg-t5-red",
     rows: [
-      { key: "t5-0", uid: "T5.0", mat1: "8.4k", mat2: "6.2k", artefact: "0", tax: "2.4k", market: "42k", profit: "25k", gain: "59.5%", focus: "64.2" },
-      { key: "t5-1", uid: "T5.1", mat1: "18k", mat2: "14k", artefact: "0", tax: "5.2k", market: "98k", profit: "60k", gain: "61.2%", focus: "88.4" },
-      { key: "t5-2", uid: "T5.2", mat1: "45k", mat2: "32k", artefact: "0", tax: "12k", market: "240k", profit: "151k", gain: "63%", focus: "142" },
-      { key: "t5-3", uid: "T5.3", mat1: "112k", mat2: "88k", artefact: "0", tax: "24k", market: "620k", profit: "396k", gain: "63.8%", focus: "210" },
-      { key: "t5-4", uid: "T5.4", mat1: "410k", mat2: "295k", artefact: "120k", tax: "65k", market: "2.4M", profit: "1.5M", gain: "62%", focus: "340" }
+      { key: "t5-0", uid: "T5.0", mat1: "8.4k", mat2: "6.2k", artefact: "0", tax: "2.4k", market: "42k", profit: "25k", gain: "59.5%", focus: "94" },
+      { key: "t5-1", uid: "T5.1", mat1: "18k", mat2: "14k", artefact: "0", tax: "5.2k", market: "98k", profit: "60k", gain: "61.2%", focus: "164" },
+      { key: "t5-2", uid: "T5.2", mat1: "45k", mat2: "32k", artefact: "0", tax: "12k", market: "240k", profit: "151k", gain: "63%", focus: "287" },
+      { key: "t5-3", uid: "T5.3", mat1: "112k", mat2: "88k", artefact: "0", tax: "24k", market: "620k", profit: "396k", gain: "63.8%", focus: "503" },
+      { key: "t5-4", uid: "T5.4", mat1: "410k", mat2: "295k", artefact: "120k", tax: "65k", market: "2.4M", profit: "1.5M", gain: "62%", focus: "880" }
     ]
   },
   {
@@ -154,11 +162,11 @@ const TABLE_SECTIONS: TableSection[] = [
     fogClass: "fog-t6",
     stripClass: "bg-t6-orange",
     rows: [
-      { key: "t6-0", uid: "T6.0", mat1: "12k", mat2: "8.4k", artefact: "0", tax: "8.5k", market: "112k", profit: "83k", gain: "74%", focus: "92.1" },
-      { key: "t6-1", uid: "T6.1", mat1: "32k", mat2: "24k", artefact: "0", tax: "14k", market: "310k", profit: "240k", gain: "77%", focus: "125" },
-      { key: "t6-2", uid: "T6.2", mat1: "84k", mat2: "62k", artefact: "0", tax: "32k", market: "820k", profit: "642k", gain: "78%", focus: "195" },
-      { key: "t6-3", uid: "T6.3", mat1: "320k", mat2: "280k", artefact: "0", tax: "120k", market: "2.2M", profit: "1.4M", gain: "63%", focus: "284" },
-      { key: "t6-4", uid: "T6.4", mat1: "1.1M", mat2: "820k", artefact: "440k", tax: "210k", market: "8.4M", profit: "5.8M", gain: "69%", focus: "480" }
+      { key: "t6-0", uid: "T6.0", mat1: "12k", mat2: "8.4k", artefact: "0", tax: "8.5k", market: "112k", profit: "83k", gain: "74%", focus: "164" },
+      { key: "t6-1", uid: "T6.1", mat1: "32k", mat2: "24k", artefact: "0", tax: "14k", market: "310k", profit: "240k", gain: "77%", focus: "287" },
+      { key: "t6-2", uid: "T6.2", mat1: "84k", mat2: "62k", artefact: "0", tax: "32k", market: "820k", profit: "642k", gain: "78%", focus: "503" },
+      { key: "t6-3", uid: "T6.3", mat1: "320k", mat2: "280k", artefact: "0", tax: "120k", market: "2.2M", profit: "1.4M", gain: "63%", focus: "880" },
+      { key: "t6-4", uid: "T6.4", mat1: "1.1M", mat2: "820k", artefact: "440k", tax: "210k", market: "8.4M", profit: "5.8M", gain: "69%", focus: "1539" }
     ]
   },
   {
@@ -167,11 +175,11 @@ const TABLE_SECTIONS: TableSection[] = [
     fogClass: "fog-t7",
     stripClass: "bg-t7-yellow",
     rows: [
-      { key: "t7-0", uid: "T7.0", mat1: "42k", mat2: "32k", artefact: "0", tax: "35k", market: "420k", profit: "311k", gain: "74%", focus: "110" },
-      { key: "t7-1", uid: "T7.1", mat1: "110k", mat2: "85k", artefact: "0", tax: "62k", market: "1.1M", profit: "843k", gain: "76%", focus: "182" },
-      { key: "t7-2", uid: "T7.2", mat1: "280k", mat2: "210k", artefact: "0", tax: "110k", market: "2.4M", profit: "1.8M", gain: "75%", focus: "295" },
-      { key: "t7-3", uid: "T7.3", mat1: "840k", mat2: "650k", artefact: "0", tax: "320k", market: "7.8M", profit: "5.9M", gain: "75%", focus: "540" },
-      { key: "t7-4", uid: "T7.4", mat1: "2.4M", mat2: "1.9M", artefact: "1.2M", tax: "620k", market: "22M", profit: "15.8M", gain: "71%", focus: "820" }
+      { key: "t7-0", uid: "T7.0", mat1: "42k", mat2: "32k", artefact: "0", tax: "35k", market: "420k", profit: "311k", gain: "74%", focus: "287" },
+      { key: "t7-1", uid: "T7.1", mat1: "110k", mat2: "85k", artefact: "0", tax: "62k", market: "1.1M", profit: "843k", gain: "76%", focus: "503" },
+      { key: "t7-2", uid: "T7.2", mat1: "280k", mat2: "210k", artefact: "0", tax: "110k", market: "2.4M", profit: "1.8M", gain: "75%", focus: "880" },
+      { key: "t7-3", uid: "T7.3", mat1: "840k", mat2: "650k", artefact: "0", tax: "320k", market: "7.8M", profit: "5.9M", gain: "75%", focus: "1539" },
+      { key: "t7-4", uid: "T7.4", mat1: "2.4M", mat2: "1.9M", artefact: "1.2M", tax: "620k", market: "22M", profit: "15.8M", gain: "71%", focus: "2694" }
     ]
   },
   {
@@ -180,11 +188,11 @@ const TABLE_SECTIONS: TableSection[] = [
     fogClass: "fog-t8",
     stripClass: "bg-t8-silver",
     rows: [
-      { key: "t8-0", uid: "T8.0", mat1: "95k", mat2: "82k", artefact: "0", tax: "65k", market: "1.1M", profit: "858k", gain: "78%", focus: "185" },
-      { key: "t8-1", uid: "T8.1", mat1: "340k", mat2: "290k", artefact: "0", tax: "140k", market: "3.2M", profit: "2.4M", gain: "75%", focus: "310" },
-      { key: "t8-2", uid: "T8.2", mat1: "920k", mat2: "810k", artefact: "0", tax: "380k", market: "9.5M", profit: "7.3M", gain: "76%", focus: "580" },
-      { key: "t8-3", uid: "T8.3", mat1: "2.8M", mat2: "2.4M", artefact: "0", tax: "1.1M", market: "32M", profit: "25.7M", gain: "80%", focus: "920" },
-      { key: "t8-4", uid: "T8.4", mat1: "1.2M", mat2: "1.1M", artefact: "3.5M", tax: "850k", market: "44.2M", profit: "37.5M", gain: "84.8%", focus: "1240" }
+      { key: "t8-0", uid: "T8.0", mat1: "95k", mat2: "82k", artefact: "0", tax: "65k", market: "1.1M", profit: "858k", gain: "78%", focus: "503" },
+      { key: "t8-1", uid: "T8.1", mat1: "340k", mat2: "290k", artefact: "0", tax: "140k", market: "3.2M", profit: "2.4M", gain: "75%", focus: "880" },
+      { key: "t8-2", uid: "T8.2", mat1: "920k", mat2: "810k", artefact: "0", tax: "380k", market: "9.5M", profit: "7.3M", gain: "76%", focus: "1539" },
+      { key: "t8-3", uid: "T8.3", mat1: "2.8M", mat2: "2.4M", artefact: "0", tax: "1.1M", market: "32M", profit: "25.7M", gain: "80%", focus: "2694" },
+      { key: "t8-4", uid: "T8.4", mat1: "1.2M", mat2: "1.1M", artefact: "3.5M", tax: "850k", market: "44.2M", profit: "37.5M", gain: "84.8%", focus: "4714" }
     ]
   }
 ];
@@ -482,6 +490,14 @@ export function CraftingCalculatorPage() {
   }, [rowEdits, selectedRow, artefactByTier]);
   const bonusCity = useMemo(() => getBonusCityForItem(selectedItem), [selectedItem]);
   const isBonusCityActive = Boolean(bonusCity && bonusCity === craftCity);
+  const [showSpecsModal, setShowSpecsModal] = useState(false);
+  const specsState = useCraftingSpecs({ authService, enabled: Boolean(user) });
+  const activeSpecKey = useMemo(() => resolveSpecKey(selectedItem), [selectedItem]);
+  const activeSpecLevel = activeSpecKey ? (specsState.progress.specs[activeSpecKey] ?? 0) : 0;
+  const focusEfficiency = useMemo(
+    () => computeFocusEfficiency(specsState.progress, activeSpecKey, selectedItem, allItems),
+    [specsState.progress, activeSpecKey, selectedItem, allItems]
+  );
   const productionBonusWithoutFocus = useMemo(() => {
     return BASE_PRODUCTION_BONUS
       + (isBonusCityActive ? BONUS_CITY_PRODUCTION_BONUS : 0)
@@ -495,7 +511,18 @@ export function CraftingCalculatorPage() {
   const isBlackMarketSell = sellCity === "Black Market";
   const effectiveSellCity = isBlackMarketSell ? "Caerleon" : sellCity;
   const effectiveSetupFeePercent = isBlackMarketSell ? 0 : setupFeePercent;
-  const selectedFocusCost = useMemo(() => Math.max(0, parseCompactNumber(selectedRow.focus)), [selectedRow.focus]);
+  const selectedItemMaterials = useMemo(
+    () => (Array.isArray(selectedItem?.materials) ? selectedItem.materials : []),
+    [selectedItem]
+  );
+  const selectedBaseFocus = useMemo(() => {
+    const { tier, enchant } = parseTierEnchant(selectedRow.uid);
+    return computeCraftBaseFocus(selectedItemMaterials, tier, enchant);
+  }, [selectedItemMaterials, selectedRow.uid]);
+  const selectedFocusCost = useMemo(
+    () => applyFocusEfficiency(selectedBaseFocus, focusEfficiency),
+    [selectedBaseFocus, focusEfficiency]
+  );
 
   useEffect(() => {
     setTransactionTaxPercent(usePremium ? 4 : 8);
@@ -898,10 +925,15 @@ export function CraftingCalculatorPage() {
       setupFeePercent: effectiveSetupFeePercent,
       transactionTaxPercent
     });
-    const silverPerFocus =
-      selectedFocusCost > 0 && typeof calculation.profit === "number"
-        ? calculation.profit / selectedFocusCost
-        : null;
+    // Positive profit: spec raises SPF (profit / effectiveFocus).
+    // Negative profit: heuristic = profit * (effectiveFocus / baseFocus²) → magnitude shrinks with specs.
+    const silverPerFocus = (() => {
+      if (typeof calculation.profit !== "number") return null;
+      if (selectedBaseFocus <= 0 || selectedFocusCost <= 0) return null;
+      if (calculation.profit >= 0) return calculation.profit / selectedFocusCost;
+      const ratio = selectedFocusCost / selectedBaseFocus;
+      return (calculation.profit / selectedBaseFocus) * ratio;
+    })();
 
     return {
       ...calculation,
@@ -920,7 +952,8 @@ export function CraftingCalculatorPage() {
     effectiveSetupFeePercent,
     transactionTaxPercent,
     selectedRowValues.market,
-    selectedFocusCost
+    selectedFocusCost,
+    selectedBaseFocus
   ]);
   const roiBarWidth = useMemo(
     () => `${Math.max(0, Math.min(100, Math.abs(typeof totals.roi === "number" ? totals.roi : 0)))}%`,
@@ -1164,7 +1197,7 @@ export function CraftingCalculatorPage() {
           <table className="spreadsheet-table">
             <thead>
               <tr>
-                <th>UID</th><th>Material 1</th><th>Material 2</th><th>Artefact</th><th>Tax + Fees</th><th>Market Value</th><th>Profit</th><th>Gain %</th><th>Focus</th>
+                <th>UID</th><th>Material 1</th><th>Material 2</th><th>Artefact</th><th>Tax + Fees</th><th>Market Value</th><th>Profit</th><th>Gain %</th><th>Silver / Focus</th>
               </tr>
             </thead>
             <tbody>
@@ -1230,7 +1263,38 @@ export function CraftingCalculatorPage() {
                         <td className={`mono-num ${typeof rowGain === "number" ? (rowGain >= 0 ? "value-positive" : "value-negative") : ""}`}>
                           {typeof rowGain === "number" ? `${rowGain.toFixed(1)}%` : "-"}
                         </td>
-                        <td className="mono-num">{row.focus}</td>
+                        <td
+                          className={`mono-num ${typeof rowProfit === "number" ? (rowProfit >= 0 ? "value-positive" : "value-negative") : ""}`}
+                          title={(() => {
+                            const { enchant: rowEnchant } = parseTierEnchant(row.uid);
+                            const rowBaseFocus = computeCraftBaseFocus(selectedItemMaterials, rowTier, rowEnchant);
+                            if (rowBaseFocus <= 0) return undefined;
+                            const eff = applyFocusEfficiency(rowBaseFocus, focusEfficiency);
+                            return `Profit ${typeof rowProfit === "number" ? formatNumber(Math.round(rowProfit)) : "?"} · Focus ${formatNumber(Math.round(eff))} (base ${formatNumber(Math.round(rowBaseFocus))})`;
+                          })()}
+                        >
+                          {(() => {
+                            const { enchant: rowEnchant } = parseTierEnchant(row.uid);
+                            const rowBaseFocus = computeCraftBaseFocus(selectedItemMaterials, rowTier, rowEnchant);
+                            if (rowBaseFocus <= 0) return "-";
+                            const effective = applyFocusEfficiency(rowBaseFocus, focusEfficiency);
+                            if (effective <= 0 || typeof rowProfit !== "number") return "-";
+                            // Positive profit: grows with specs (more silver per focus).
+                            // Negative profit: shrinks magnitude with specs to keep "better specs
+                            // = better metric" UX direction. Formula: (profit / base) * (effective / base)
+                            // = profit * effective / base² (linear scaling, NOT squared).
+                            const ratio = effective / rowBaseFocus;
+                            const spf = rowProfit >= 0
+                              ? rowProfit / effective
+                              : (rowProfit / rowBaseFocus) * ratio;
+                            if (!Number.isFinite(spf)) return "-";
+                            const abs = Math.abs(spf);
+                            const sign = spf < 0 ? "-" : "";
+                            if (abs >= 1000) return `${sign}${formatCompact(abs)}`;
+                            if (abs >= 10) return `${sign}${Math.round(abs)}`;
+                            return `${sign}${abs.toFixed(1)}`;
+                          })()}
+                        </td>
                       </tr>
                     );
                   })}
@@ -1277,6 +1341,15 @@ export function CraftingCalculatorPage() {
               />
             </div>
           </div>
+
+          <button
+            type="button"
+            className="specs-trigger specs-trigger-standalone"
+            onClick={() => setShowSpecsModal(true)}
+          >
+            <span>Manage Specs</span>
+            {specsState.pendingSync ? <span className="specs-trigger-badge">Saving…</span> : null}
+          </button>
 
           <div className="bento-card">
             <div className="cc-caption">Item Search</div>
@@ -1400,11 +1473,6 @@ export function CraftingCalculatorPage() {
                 </div>
               </div>
 
-              <div className="coming-soon-note" aria-label="Focus Specs coming soon">
-                <span className="cc-caption">Next Upgrade</span>
-                <strong>Focus Specs coming soon</strong>
-              </div>
-
               <div>
                 <div className="cc-caption">Premium</div>
                 <label className="checkbox-chip premium-chip">
@@ -1500,6 +1568,10 @@ export function CraftingCalculatorPage() {
               </strong>
             </div>
             <div>
+              <span>Focus Cost</span>
+              <strong>{selectedFocusCost > 0 ? formatNumber(Math.round(selectedFocusCost)) : "-"}</strong>
+            </div>
+            <div>
               <span>Silver per Focus</span>
               <strong className={typeof totals.silverPerFocus === "number" ? (totals.silverPerFocus >= 0 ? "profit-cell" : "loss-cell") : ""}>
                 {typeof totals.silverPerFocus === "number" ? formatNumber(totals.silverPerFocus) : "-"}
@@ -1509,6 +1581,18 @@ export function CraftingCalculatorPage() {
 
         </aside>
       </div>
+
+      <SpecsModal
+        open={showSpecsModal}
+        progress={specsState.progress}
+        items={allItems}
+        highlightedSpecKey={activeSpecKey}
+        pendingSync={specsState.pendingSync}
+        onChange={specsState.setSpecLevel}
+        onMasteryChange={specsState.setMasteryLevel}
+        onReset={specsState.resetAll}
+        onClose={() => setShowSpecsModal(false)}
+      />
     </div>
   );
 }

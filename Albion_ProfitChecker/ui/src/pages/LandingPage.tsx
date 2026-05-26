@@ -30,11 +30,13 @@ export function LandingPage() {
       },
       {
         title: "Crafting Calculator",
+        image: assets.craftingCalcPreview,
         href: "/crafting-calculator",
         ctaLabel: "Open Crafting Calculator"
       },
       {
         title: "Refining Calculator",
+        image: assets.refiningCalcPreview,
         href: "/refining-calculator",
         ctaLabel: "Open Refining Calculator"
       }
