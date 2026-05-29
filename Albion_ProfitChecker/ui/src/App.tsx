@@ -13,6 +13,9 @@ const BmCrafterPage = lazy(() => import("./features/bm-crafter").then((m) => ({ 
 const RefiningCalculatorPage = lazy(() =>
   import("./features/refining-calculator").then((m) => ({ default: m.RefiningCalculatorPage }))
 );
+const FoodPotionCrafterPage = lazy(() =>
+  import("./features/food-potion-crafter").then((m) => ({ default: m.FoodPotionCrafterPage }))
+);
 
 export function App() {
   return (
@@ -26,6 +29,7 @@ export function App() {
         <Route path="/bm-crafter" element={<BmCrafterPage />} />
         <Route path="/crafting-calculator" element={<CraftingCalculatorPage />} />
         <Route path="/refining-calculator" element={<RefiningCalculatorPage />} />
+        <Route path="/food-potion-crafter" element={<FoodPotionCrafterPage />} />
         <Route path="/Blackmarket-Crafter" element={<Navigate to="/bm-crafter" replace />} />
         <Route path="/Blackmarket-Crafter/index.html" element={<Navigate to="/bm-crafter" replace />} />
         <Route path="/crafting-calculator/index.html" element={<Navigate to="/crafting-calculator" replace />} />

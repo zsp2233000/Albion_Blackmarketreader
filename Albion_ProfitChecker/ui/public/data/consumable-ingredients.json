@@ -1,0 +1,515 @@
+{
+  "count": 85,
+  "ingredients": [
+    {
+      "itemId": "T1_CARROT",
+      "name": "Carrots",
+      "tier": 1,
+      "rare": false
+    },
+    {
+      "itemId": "T1_FISHCHOPS",
+      "name": "Chopped Fish",
+      "tier": 1,
+      "rare": false
+    },
+    {
+      "itemId": "T1_SEAWEED",
+      "name": "Seaweed",
+      "tier": 1,
+      "rare": false
+    },
+    {
+      "itemId": "T2_AGARIC",
+      "name": "Arcane Agaric",
+      "tier": 2,
+      "rare": false
+    },
+    {
+      "itemId": "T2_BEAN",
+      "name": "Beans",
+      "tier": 2,
+      "rare": false
+    },
+    {
+      "itemId": "T3_COMFREY",
+      "name": "Brightleaf Comfrey",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_FARM_CHICKEN_GROWN",
+      "name": "Chicken",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_FLOUR",
+      "name": "Flour",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_FISH_FRESHWATER_SWAMP_RARE",
+      "name": "Greenmoor Clam",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_FISH_FRESHWATER_FOREST_RARE",
+      "name": "Greenriver Eel",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_EGG",
+      "name": "Hen Eggs",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_FISH_FRESHWATER_STEPPE_RARE",
+      "name": "Lowriver Crab",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_MEAT",
+      "name": "Raw Chicken",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_ALCHEMY_RARE_EAGLE",
+      "name": "Rugged Dawnfeather",
+      "tier": 3,
+      "rare": true
+    },
+    {
+      "itemId": "T3_ALCHEMY_RARE_IMP",
+      "name": "Rugged Imps Horn",
+      "tier": 3,
+      "rare": true
+    },
+    {
+      "itemId": "T3_ALCHEMY_RARE_ELEMENTAL",
+      "name": "Rugged Runestone Tooth",
+      "tier": 3,
+      "rare": true
+    },
+    {
+      "itemId": "T3_ALCHEMY_RARE_PANTHER",
+      "name": "Rugged Shadow Claws",
+      "tier": 3,
+      "rare": true
+    },
+    {
+      "itemId": "T3_ALCHEMY_RARE_DIREBEAR",
+      "name": "Rugged Spirit Paws",
+      "tier": 3,
+      "rare": true
+    },
+    {
+      "itemId": "T3_ALCHEMY_RARE_ENT",
+      "name": "Rugged Sylvian Root",
+      "tier": 3,
+      "rare": true
+    },
+    {
+      "itemId": "T3_ALCHEMY_RARE_WEREWOLF",
+      "name": "Rugged Werewolf Fangs",
+      "tier": 3,
+      "rare": true
+    },
+    {
+      "itemId": "T3_FISH_SALTWATER_ALL_RARE",
+      "name": "Shallowshore Squid",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_WHEAT",
+      "name": "Sheaf of Wheat",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_FISH_FRESHWATER_HIGHLANDS_RARE",
+      "name": "Stonestream Lurcher",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_FISH_FRESHWATER_MOUNTAIN_RARE",
+      "name": "Upland Coldeye",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T3_FISH_FRESHWATER_AVALON_RARE",
+      "name": "Whitefog Snapper",
+      "tier": 3,
+      "rare": false
+    },
+    {
+      "itemId": "T4_BREAD",
+      "name": "Bread",
+      "tier": 4,
+      "rare": false
+    },
+    {
+      "itemId": "T4_BURDOCK",
+      "name": "Crenellated Burdock",
+      "tier": 4,
+      "rare": false
+    },
+    {
+      "itemId": "T4_FARM_GOAT_GROWN",
+      "name": "Goat",
+      "tier": 4,
+      "rare": false
+    },
+    {
+      "itemId": "T4_BUTTER",
+      "name": "Goat's Butter",
+      "tier": 4,
+      "rare": false
+    },
+    {
+      "itemId": "T4_MILK",
+      "name": "Goat's Milk",
+      "tier": 4,
+      "rare": false
+    },
+    {
+      "itemId": "T4_MEAT",
+      "name": "Raw Goat",
+      "tier": 4,
+      "rare": false
+    },
+    {
+      "itemId": "T4_TURNIP",
+      "name": "Turnips",
+      "tier": 4,
+      "rare": false
+    },
+    {
+      "itemId": "T5_CABBAGE",
+      "name": "Cabbage",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_FISH_FRESHWATER_AVALON_RARE",
+      "name": "Clearhaze Snapper",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_TEASEL",
+      "name": "Dragon Teasel",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_FISH_FRESHWATER_STEPPE_RARE",
+      "name": "Drybrook Crab",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_ALCHEMY_RARE_EAGLE",
+      "name": "Fine Dawnfeather",
+      "tier": 5,
+      "rare": true
+    },
+    {
+      "itemId": "T5_ALCHEMY_RARE_IMP",
+      "name": "Fine Imps Horn",
+      "tier": 5,
+      "rare": true
+    },
+    {
+      "itemId": "T5_ALCHEMY_RARE_ELEMENTAL",
+      "name": "Fine Runestone Tooth",
+      "tier": 5,
+      "rare": true
+    },
+    {
+      "itemId": "T5_ALCHEMY_RARE_PANTHER",
+      "name": "Fine Shadow Claws",
+      "tier": 5,
+      "rare": true
+    },
+    {
+      "itemId": "T5_ALCHEMY_RARE_DIREBEAR",
+      "name": "Fine Spirit Paws",
+      "tier": 5,
+      "rare": true
+    },
+    {
+      "itemId": "T5_ALCHEMY_RARE_ENT",
+      "name": "Fine Sylvian Root",
+      "tier": 5,
+      "rare": true
+    },
+    {
+      "itemId": "T5_ALCHEMY_RARE_WEREWOLF",
+      "name": "Fine Werewolf Fangs",
+      "tier": 5,
+      "rare": true
+    },
+    {
+      "itemId": "T5_FARM_GOOSE_GROWN",
+      "name": "Goose",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_EGG",
+      "name": "Goose Eggs",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_FISH_SALTWATER_ALL_RARE",
+      "name": "Midwater Octopus",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_FISH_FRESHWATER_MOUNTAIN_RARE",
+      "name": "Mountain Blindeye",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_FISH_FRESHWATER_SWAMP_RARE",
+      "name": "Murkwater Clam",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_MEAT",
+      "name": "Raw Goose",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_FISH_FRESHWATER_FOREST_RARE",
+      "name": "Redspring Eel",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "T5_FISH_FRESHWATER_HIGHLANDS_RARE",
+      "name": "Rushwater Lurcher",
+      "tier": 5,
+      "rare": false
+    },
+    {
+      "itemId": "QUESTITEM_TOKEN_AVALON",
+      "name": "Avalonian Energy",
+      "tier": 6,
+      "rare": false
+    },
+    {
+      "itemId": "T6_FOXGLOVE",
+      "name": "Elusive Foxglove",
+      "tier": 6,
+      "rare": false
+    },
+    {
+      "itemId": "T6_ALCOHOL",
+      "name": "Potato Schnapps",
+      "tier": 6,
+      "rare": false
+    },
+    {
+      "itemId": "T6_POTATO",
+      "name": "Potatoes",
+      "tier": 6,
+      "rare": false
+    },
+    {
+      "itemId": "T6_MEAT",
+      "name": "Raw Mutton",
+      "tier": 6,
+      "rare": false
+    },
+    {
+      "itemId": "T6_FARM_SHEEP_GROWN",
+      "name": "Sheep",
+      "tier": 6,
+      "rare": false
+    },
+    {
+      "itemId": "T6_BUTTER",
+      "name": "Sheep's Butter",
+      "tier": 6,
+      "rare": false
+    },
+    {
+      "itemId": "T6_MILK",
+      "name": "Sheep's Milk",
+      "tier": 6,
+      "rare": false
+    },
+    {
+      "itemId": "T7_FISH_FRESHWATER_SWAMP_RARE",
+      "name": "Blackbog Clam",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_CORN",
+      "name": "Bundle of Corn",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_ALCOHOL",
+      "name": "Corn Hooch",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_FISH_FRESHWATER_FOREST_RARE",
+      "name": "Deadwater Eel",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_FISH_SALTWATER_ALL_RARE",
+      "name": "Deepwater Kraken",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_FISH_FRESHWATER_STEPPE_RARE",
+      "name": "Dusthole Crab",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_ALCHEMY_RARE_EAGLE",
+      "name": "Excellent Dawnfeather",
+      "tier": 7,
+      "rare": true
+    },
+    {
+      "itemId": "T7_ALCHEMY_RARE_IMP",
+      "name": "Excellent Imps Horn",
+      "tier": 7,
+      "rare": true
+    },
+    {
+      "itemId": "T7_ALCHEMY_RARE_ELEMENTAL",
+      "name": "Excellent Runestone Tooth",
+      "tier": 7,
+      "rare": true
+    },
+    {
+      "itemId": "T7_ALCHEMY_RARE_PANTHER",
+      "name": "Excellent Shadow Claws",
+      "tier": 7,
+      "rare": true
+    },
+    {
+      "itemId": "T7_ALCHEMY_RARE_DIREBEAR",
+      "name": "Excellent Spirit Paws",
+      "tier": 7,
+      "rare": true
+    },
+    {
+      "itemId": "T7_ALCHEMY_RARE_ENT",
+      "name": "Excellent Sylvian Root",
+      "tier": 7,
+      "rare": true
+    },
+    {
+      "itemId": "T7_ALCHEMY_RARE_WEREWOLF",
+      "name": "Excellent Werewolf Fangs",
+      "tier": 7,
+      "rare": true
+    },
+    {
+      "itemId": "T7_MULLEIN",
+      "name": "Firetouched Mullein",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_FISH_FRESHWATER_MOUNTAIN_RARE",
+      "name": "Frostpeak Deadeye",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_FARM_PIG_GROWN",
+      "name": "Pig",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_FISH_FRESHWATER_AVALON_RARE",
+      "name": "Puremist Snapper",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_MEAT",
+      "name": "Raw Pork",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T7_FISH_FRESHWATER_HIGHLANDS_RARE",
+      "name": "Thunderfall Lurcher",
+      "tier": 7,
+      "rare": false
+    },
+    {
+      "itemId": "T8_FARM_COW_GROWN",
+      "name": "Cow",
+      "tier": 8,
+      "rare": false
+    },
+    {
+      "itemId": "T8_BUTTER",
+      "name": "Cow's Butter",
+      "tier": 8,
+      "rare": false
+    },
+    {
+      "itemId": "T8_MILK",
+      "name": "Cow's Milk",
+      "tier": 8,
+      "rare": false
+    },
+    {
+      "itemId": "T8_YARROW",
+      "name": "Ghoul Yarrow",
+      "tier": 8,
+      "rare": false
+    },
+    {
+      "itemId": "T8_PUMPKIN",
+      "name": "Pumpkin",
+      "tier": 8,
+      "rare": false
+    },
+    {
+      "itemId": "T8_ALCOHOL",
+      "name": "Pumpkin Moonshine",
+      "tier": 8,
+      "rare": false
+    },
+    {
+      "itemId": "T8_MEAT",
+      "name": "Raw Beef",
+      "tier": 8,
+      "rare": false
+    }
+  ]
+}

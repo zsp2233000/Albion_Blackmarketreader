@@ -1135,6 +1135,7 @@ export function CraftingCalculatorPage() {
               <Link className="nav-tab" to="/dashboard">Dashboard</Link>
               <Link className="nav-tab" to="/bm-crafter">Blackmarket Crafter</Link>
               <Link className="nav-tab" to="/refining-calculator">Refining Calculator</Link>
+              <Link className="nav-tab" to="/food-potion-crafter">Food &amp; Potion Crafter</Link>
               <span className="nav-tab active">Crafting Calculator</span>
             </div>
           </div>

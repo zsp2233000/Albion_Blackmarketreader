@@ -39,6 +39,12 @@ export function LandingPage() {
         image: assets.refiningCalcPreview,
         href: "/refining-calculator",
         ctaLabel: "Open Refining Calculator"
+      },
+      {
+        title: "Food & Potion Crafter",
+        image: assets.bmCrafterPreview,
+        href: "/food-potion-crafter",
+        ctaLabel: "Open Food & Potion Crafter"
       }
     ],
     []

@@ -29,6 +29,15 @@ Per-material refining profit analysis (metal, wood, fiber, hide, stone) for all 
 - Bonus city overrides per material
 - Custom market tax modes (premium/non-premium/custom)
 
+### Food & Potion Crafter (`/food-potion-crafter`)
+Consumable crafting profit analysis with an internal Food ⇄ Potion tab (see `FOOD_POTION_LOGIC.md`).
+- 68 food + 43 potion recipes extracted from verified source data
+- Cook (Caerleon) / Alchemist (Brecilien) local production bonus
+- Return rate presets, station kind (city/hideout/island), flat station fee per craft
+- Manual ingredient pricing with optional live price snapshot
+- Avalonian recipes + rare alchemy ingredients highlighted
+- Per-ingredient breakdown, profit/item, demand-based daily potential
+
 ## Setup
 
 ```bash
@@ -48,6 +57,10 @@ Market data is fetched into `public/data/` JSON files:
 npm run refresh:crafting-data      # both regions
 npm run refresh:crafting-data:eu   # EU only
 npm run refresh:crafting-data:us   # US only
+
+npm run refresh:food-potion-data     # food + potion ingredient & output prices, both regions
+npm run refresh:food-potion-data:eu  # EU only
+npm run refresh:food-potion-data:us  # US only
 ```
 
 ### Data files in `public/data/`
@@ -57,6 +70,10 @@ npm run refresh:crafting-data:us   # US only
 - `artefacts-{eu|us}.json` — artefact prices per item ID
 - `raw-materials-cities-{eu|us}.json` — raw resource prices per city
 - `items-categorized-crafting.json` — crafting recipes (materials + artefact + qty)
+- `recipes-food.json` / `recipes-potions.json` — food/potion recipes (ingredients + qty + output)
+- `consumable-ingredients.json` — unique food/potion ingredient master list
+- `consumable-ingredient-prices-{eu|us}.json` — ingredient prices per city
+- `food-prices-{eu|us}.json` / `potion-prices-{eu|us}.json` — crafted consumable prices per city
 
 ## Key Formulas
 

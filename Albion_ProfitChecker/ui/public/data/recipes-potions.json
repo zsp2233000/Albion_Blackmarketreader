@@ -1,0 +1,1231 @@
+{
+  "generatedFrom": "try2blackmarket2222.xlsx",
+  "count": 43,
+  "recipes": [
+    {
+      "itemId": "T2_POTION_ENERGY",
+      "name": "Minor Energy Potion",
+      "tier": 2,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T2_AGARIC",
+          "name": "Arcane Agaric",
+          "qty": 8,
+          "tier": 2
+        }
+      ]
+    },
+    {
+      "itemId": "T2_POTION_HEAL",
+      "name": "Minor Healing Potion",
+      "tier": 2,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T2_AGARIC",
+          "name": "Arcane Agaric",
+          "qty": 8,
+          "tier": 2
+        }
+      ]
+    },
+    {
+      "itemId": "T3_POTION_ACID",
+      "name": "Minor Acid Potion",
+      "tier": 3,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 16,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_ALCHEMY_RARE_DIREBEAR",
+          "name": "Rugged Spirit Paws",
+          "qty": 1,
+          "tier": 3,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T3_POTION_MOB_RESET",
+      "name": "Minor Calming Potion",
+      "tier": 3,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 16,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_ALCHEMY_RARE_PANTHER",
+          "name": "Rugged Shadow Claws",
+          "qty": 1,
+          "tier": 3,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T3_POTION_CLEANSE2",
+      "name": "Minor Cleansing Potion",
+      "tier": 3,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 16,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_ALCHEMY_RARE_ENT",
+          "name": "Rugged Sylvian Root",
+          "qty": 1,
+          "tier": 3,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T3_POTION_REVIVE",
+      "name": "Minor Gigantify Potion",
+      "tier": 3,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 8,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_POTION_STONESKIN",
+      "name": "Minor Resistance Potion",
+      "tier": 3,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 8,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_POTION_SLOWFIELD",
+      "name": "Minor Sticky Potion",
+      "tier": 3,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 8,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T4_POTION_ENERGY",
+      "name": "Energy Potion",
+      "tier": 4,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 24,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_MILK",
+          "name": "Goats Milk",
+          "qty": 6,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T4_POTION_HEAL",
+      "name": "Healing Potion",
+      "tier": 4,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 24,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_EGG",
+          "name": "Hen Eggs",
+          "qty": 6,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T4_POTION_BERSERK",
+      "name": "Minor Berserk Potion",
+      "tier": 4,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 16,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_ALCHEMY_RARE_WEREWOLF",
+          "name": "Rugged Werewolf Fangs",
+          "qty": 1,
+          "tier": 3,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T4_POTION_GATHER",
+      "name": "Minor Gathering Potion",
+      "tier": 4,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BUTTER",
+          "name": "Goats Butter",
+          "qty": 16,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_ALCHEMY_RARE_ELEMENTAL",
+          "name": "Rugged Runestone Tooth",
+          "qty": 1,
+          "tier": 3,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T4_POTION_LAVA",
+      "name": "Minor Hellfire Potion",
+      "tier": 4,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_MILK",
+          "name": "Goats Milk",
+          "qty": 16,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_ALCHEMY_RARE_IMP",
+          "name": "Rugged Imps Horn",
+          "qty": 1,
+          "tier": 3,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T4_POTION_COOLDOWN",
+      "name": "Minor Poison Potion",
+      "tier": 4,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 8,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 4,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T4_POTION_TORNADO",
+      "name": "Minor Tornado in a Bottle",
+      "tier": 4,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 16,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_ALCHEMY_RARE_EAGLE",
+          "name": "Rugged Dawnfeather",
+          "qty": 1,
+          "tier": 3,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T5_POTION_ACID",
+      "name": "Acid Potion",
+      "tier": 5,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 48,
+          "tier": 5
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 24,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_MILK",
+          "name": "Goats Milk",
+          "qty": 12,
+          "tier": 4
+        },
+        {
+          "itemId": "T5_ALCHEMY_RARE_DIREBEAR",
+          "name": "Fine Spirit Paws",
+          "qty": 1,
+          "tier": 5,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T5_POTION_MOB_RESET",
+      "name": "Calming Potion",
+      "tier": 5,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 48,
+          "tier": 5
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 24,
+          "tier": 4
+        },
+        {
+          "itemId": "T2_AGARIC",
+          "name": "Arcane Agaric",
+          "qty": 12,
+          "tier": 2
+        },
+        {
+          "itemId": "T5_ALCHEMY_RARE_PANTHER",
+          "name": "Fine Shadow Claws",
+          "qty": 1,
+          "tier": 5,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T5_POTION_CLEANSE2",
+      "name": "Cleansing Potion",
+      "tier": 5,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 48,
+          "tier": 5
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 24,
+          "tier": 3
+        },
+        {
+          "itemId": "T4_BUTTER",
+          "name": "Goats Butter",
+          "qty": 12,
+          "tier": 4
+        },
+        {
+          "itemId": "T5_ALCHEMY_RARE_ENT",
+          "name": "Fine Sylvian Root",
+          "qty": 1,
+          "tier": 5,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T5_POTION_REVIVE",
+      "name": "Gigantify Potion",
+      "tier": 5,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 24,
+          "tier": 5
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 12,
+          "tier": 4
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 6,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T5_POTION_STONESKIN",
+      "name": "Resistance Potion",
+      "tier": 5,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 24,
+          "tier": 5
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 12,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_MILK",
+          "name": "Goats Milk",
+          "qty": 6,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T5_POTION_SLOWFIELD",
+      "name": "Sticky Potion",
+      "tier": 5,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 24,
+          "tier": 5
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 12,
+          "tier": 4
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 6,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T6_POTION_BERSERK",
+      "name": "Berserk Potion",
+      "tier": 6,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 48,
+          "tier": 6
+        },
+        {
+          "itemId": "T2_AGARIC",
+          "name": "Arcane Agaric",
+          "qty": 24,
+          "tier": 2
+        },
+        {
+          "itemId": "T5_ALCHEMY_RARE_WEREWOLF",
+          "name": "Fine Werewolf Fangs",
+          "qty": 1,
+          "tier": 5,
+          "rare": true
+        },
+        {
+          "itemId": "T6_ALCOHOL",
+          "name": "Potato Schnapps",
+          "qty": 12,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_POTION_GATHER",
+      "name": "Gathering Potion",
+      "tier": 6,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_BUTTER",
+          "name": "Sheeps Butter",
+          "qty": 48,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 24,
+          "tier": 6
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 12,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_ALCHEMY_RARE_ELEMENTAL",
+          "name": "Fine Runestone Tooth",
+          "qty": 1,
+          "tier": 5,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T6_POTION_LAVA",
+      "name": "Hellfire Potion",
+      "tier": 6,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_MILK",
+          "name": "Sheeps Milk",
+          "qty": 48,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 24,
+          "tier": 6
+        },
+        {
+          "itemId": "T3_EGG",
+          "name": "Hen Eggs",
+          "qty": 12,
+          "tier": 3
+        },
+        {
+          "itemId": "T5_ALCHEMY_RARE_IMP",
+          "name": "Fine Imps Horn",
+          "qty": 1,
+          "tier": 5,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T6_POTION_ENERGY",
+      "name": "Major Energy Potion",
+      "tier": 6,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 72,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_MILK",
+          "name": "Sheeps Milk",
+          "qty": 18,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_ALCOHOL",
+          "name": "Potato Schnapps",
+          "qty": 18,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_POTION_HEAL",
+      "name": "Major Healing Potion",
+      "tier": 6,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 72,
+          "tier": 6
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 18,
+          "tier": 5
+        },
+        {
+          "itemId": "T6_ALCOHOL",
+          "name": "Potato Schnapps",
+          "qty": 18,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_POTION_COOLDOWN",
+      "name": "Poison Potion",
+      "tier": 6,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 24,
+          "tier": 6
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 12,
+          "tier": 5
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 12,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T6_ALCOHOL",
+      "name": "Potato Schnapps",
+      "tier": 6,
+      "category": "potion",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_POTATO",
+          "name": "Potatoes",
+          "qty": 1,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_POTION_TORNADO",
+      "name": "Tornado in a Bottle",
+      "tier": 6,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 48,
+          "tier": 6
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 24,
+          "tier": 5
+        },
+        {
+          "itemId": "T3_EGG",
+          "name": "Hen Eggs",
+          "qty": 12,
+          "tier": 3
+        },
+        {
+          "itemId": "T5_ALCHEMY_RARE_EAGLE",
+          "name": "Fine Dawnfeather",
+          "qty": 1,
+          "tier": 5,
+          "rare": true
+        }
+      ]
+    },
+    {
+      "itemId": "T7_ALCOHOL",
+      "name": "Corn Hooch",
+      "tier": 7,
+      "category": "potion",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_CORN",
+          "name": "Bundle of Corn",
+          "qty": 1,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_POTION_ACID",
+      "name": "Major Acid Potion",
+      "tier": 7,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 144,
+          "tier": 7
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 72,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_ALCOHOL",
+          "name": "Potato Schnapps",
+          "qty": 72,
+          "tier": 6
+        },
+        {
+          "itemId": "T7_ALCHEMY_RARE_DIREBEAR",
+          "name": "Excellent Spirit Paws",
+          "qty": 1,
+          "tier": 7,
+          "rare": true
+        },
+        {
+          "itemId": "T7_ALCOHOL",
+          "name": "Corn Hooch",
+          "qty": 36,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_POTION_MOB_RESET",
+      "name": "Major Calming Potion",
+      "tier": 7,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 144,
+          "tier": 7
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 72,
+          "tier": 6
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 72,
+          "tier": 3
+        },
+        {
+          "itemId": "T7_ALCHEMY_RARE_PANTHER",
+          "name": "Excellent Shadow Claws",
+          "qty": 1,
+          "tier": 7,
+          "rare": true
+        },
+        {
+          "itemId": "T7_ALCOHOL",
+          "name": "Corn Hooch",
+          "qty": 36,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_POTION_CLEANSE2",
+      "name": "Major Cleansing Potion",
+      "tier": 7,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 144,
+          "tier": 7
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 72,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 72,
+          "tier": 3
+        },
+        {
+          "itemId": "T7_ALCHEMY_RARE_ENT",
+          "name": "Excellent Sylvian Root",
+          "qty": 1,
+          "tier": 7,
+          "rare": true
+        },
+        {
+          "itemId": "T7_ALCOHOL",
+          "name": "Corn Hooch",
+          "qty": 36,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_POTION_REVIVE",
+      "name": "Major Gigantify Potion",
+      "tier": 7,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 36,
+          "tier": 6
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 18,
+          "tier": 5
+        },
+        {
+          "itemId": "T7_ALCOHOL",
+          "name": "Corn Hooch",
+          "qty": 18,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_POTION_STONESKIN",
+      "name": "Major Resistance Potion",
+      "tier": 7,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 36,
+          "tier": 6
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 36,
+          "tier": 4
+        },
+        {
+          "itemId": "T7_ALCOHOL",
+          "name": "Corn Hooch",
+          "qty": 18,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_POTION_SLOWFIELD",
+      "name": "Major Sticky Potion",
+      "tier": 7,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 36,
+          "tier": 6
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 36,
+          "tier": 4
+        },
+        {
+          "itemId": "T7_ALCOHOL",
+          "name": "Corn Hooch",
+          "qty": 18,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T8_POTION_CLEANSE",
+      "name": "Invisibility Potion",
+      "tier": 8,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_YARROW",
+          "name": "Ghoul Yarrow",
+          "qty": 72,
+          "tier": 8
+        },
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 36,
+          "tier": 7
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 36,
+          "tier": 5
+        },
+        {
+          "itemId": "T8_ALCOHOL",
+          "name": "Pumpkin Moonshine",
+          "qty": 18,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_POTION_BERSERK",
+      "name": "Major Berserk Potion",
+      "tier": 8,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_YARROW",
+          "name": "Ghoul Yarrow",
+          "qty": 144,
+          "tier": 8
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 72,
+          "tier": 3
+        },
+        {
+          "itemId": "T6_ALCOHOL",
+          "name": "Potato Schnapps",
+          "qty": 72,
+          "tier": 6
+        },
+        {
+          "itemId": "T7_ALCHEMY_RARE_WEREWOLF",
+          "name": "Excellent Werewolf Fangs",
+          "qty": 1,
+          "tier": 7,
+          "rare": true
+        },
+        {
+          "itemId": "T8_ALCOHOL",
+          "name": "Pumpkin Moonshine",
+          "qty": 36,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_POTION_GATHER",
+      "name": "Major Gathering Potion",
+      "tier": 8,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_BUTTER",
+          "name": "Cows Butter",
+          "qty": 144,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_YARROW",
+          "name": "Ghoul Yarrow",
+          "qty": 72,
+          "tier": 8
+        },
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_ALCHEMY_RARE_ELEMENTAL",
+          "name": "Excellent Runestone Tooth",
+          "qty": 1,
+          "tier": 7,
+          "rare": true
+        },
+        {
+          "itemId": "T8_ALCOHOL",
+          "name": "Pumpkin Moonshine",
+          "qty": 36,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_POTION_LAVA",
+      "name": "Major Hellfire Potion",
+      "tier": 8,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_MILK",
+          "name": "Cows Milk",
+          "qty": 144,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_YARROW",
+          "name": "Ghoul Yarrow",
+          "qty": 72,
+          "tier": 8
+        },
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_ALCHEMY_RARE_IMP",
+          "name": "Excellent Imps Horn",
+          "qty": 1,
+          "tier": 7,
+          "rare": true
+        },
+        {
+          "itemId": "T8_ALCOHOL",
+          "name": "Pumpkin Moonshine",
+          "qty": 36,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_POTION_COOLDOWN",
+      "name": "Major Poison Potion",
+      "tier": 8,
+      "category": "potion",
+      "outputQty": 5,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_YARROW",
+          "name": "Ghoul Yarrow",
+          "qty": 72,
+          "tier": 8
+        },
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 36,
+          "tier": 7
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 36,
+          "tier": 5
+        },
+        {
+          "itemId": "T8_ALCOHOL",
+          "name": "Pumpkin Moonshine",
+          "qty": 18,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_POTION_TORNADO",
+      "name": "Major Tornado in a Bottle",
+      "tier": 8,
+      "category": "potion",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_YARROW",
+          "name": "Ghoul Yarrow",
+          "qty": 144,
+          "tier": 8
+        },
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_ALCOHOL",
+          "name": "Corn Hooch",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_ALCHEMY_RARE_EAGLE",
+          "name": "Excellent Dawnfeather",
+          "qty": 1,
+          "tier": 7,
+          "rare": true
+        },
+        {
+          "itemId": "T8_ALCOHOL",
+          "name": "Pumpkin Moonshine",
+          "qty": 36,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_ALCOHOL",
+      "name": "Pumpkin Moonshine",
+      "tier": 8,
+      "category": "potion",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_PUMPKIN",
+          "name": "Pumpkin",
+          "qty": 1,
+          "tier": 8
+        }
+      ]
+    }
+  ]
+}

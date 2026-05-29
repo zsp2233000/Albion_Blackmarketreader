@@ -401,6 +401,7 @@ export function BmCrafterPage() {
               <Link className="nav-tab active" to="/bm-crafter">Blackmarket Crafter</Link>
               <a className="nav-tab" href="/crafting-calculator">Crafting Calculator</a>
               <a className="nav-tab" href="/refining-calculator">Refining Calculator</a>
+              <a className="nav-tab" href="/food-potion-crafter">Food & Potion Crafter</a>
             </div>
           </div>
           <div className="bm-meta">

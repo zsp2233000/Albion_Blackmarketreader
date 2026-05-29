@@ -11,7 +11,10 @@
     "test:watch": "vitest",
     "refresh:crafting-data": "node scripts/refresh-crafting-data.mjs",
     "refresh:crafting-data:us": "node scripts/refresh-crafting-data.mjs us",
-    "refresh:crafting-data:eu": "node scripts/refresh-crafting-data.mjs eu"
+    "refresh:crafting-data:eu": "node scripts/refresh-crafting-data.mjs eu",
+    "refresh:food-potion-data": "node scripts/refresh-food-potion-data.mjs",
+    "refresh:food-potion-data:us": "node scripts/refresh-food-potion-data.mjs us",
+    "refresh:food-potion-data:eu": "node scripts/refresh-food-potion-data.mjs eu"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

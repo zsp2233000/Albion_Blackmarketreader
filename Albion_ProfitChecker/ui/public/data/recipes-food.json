@@ -1,0 +1,1826 @@
+{
+  "generatedFrom": "try2blackmarket2222.xlsx",
+  "count": 68,
+  "recipes": [
+    {
+      "itemId": "T1_FISHSAUCE_LEVEL1",
+      "name": "Basic Fish Sauce",
+      "tier": 1,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T1_FISHCHOPS",
+          "name": "Chopped Fish",
+          "qty": 15,
+          "tier": 1
+        },
+        {
+          "itemId": "T1_SEAWEED",
+          "name": "Seaweed",
+          "qty": 1,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "itemId": "T1_MEAL_SOUP",
+      "name": "Carrot Soup",
+      "tier": 1,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T1_CARROT",
+          "name": "Carrots",
+          "qty": 16,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "itemId": "T1_FISHSAUCE_LEVEL2",
+      "name": "Fancy Fish Sauce",
+      "tier": 1,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T1_FISHCHOPS",
+          "name": "Chopped Fish",
+          "qty": 45,
+          "tier": 1
+        },
+        {
+          "itemId": "T1_SEAWEED",
+          "name": "Seaweed",
+          "qty": 3,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "itemId": "T1_MEAL_SOUP_FISH",
+      "name": "Greenmoor Clam Soup",
+      "tier": 1,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FISH_FRESHWATER_SWAMP_RARE",
+          "name": "Greenmoor Clam",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T1_CARROT",
+          "name": "Carrots",
+          "qty": 2,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "itemId": "T1_MEAL_GRILLEDFISH",
+      "name": "Grilled Fish",
+      "tier": 1,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T1_FISHCHOPS",
+          "name": "Chopped Fish",
+          "qty": 10,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "itemId": "T1_MEAL_SEAWEEDSALAD",
+      "name": "Seaweed Salad",
+      "tier": 1,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T1_SEAWEED",
+          "name": "Seaweed",
+          "qty": 10,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "itemId": "T1_FISHSAUCE_LEVEL3",
+      "name": "Special Fish Sauce",
+      "tier": 1,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T1_FISHCHOPS",
+          "name": "Chopped Fish",
+          "qty": 135,
+          "tier": 1
+        },
+        {
+          "itemId": "T1_SEAWEED",
+          "name": "Seaweed",
+          "qty": 9,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "itemId": "T2_MEAL_SALAD",
+      "name": "Bean Salad",
+      "tier": 2,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T2_BEAN",
+          "name": "Beans",
+          "qty": 8,
+          "tier": 2
+        },
+        {
+          "itemId": "T1_CARROT",
+          "name": "Carrots",
+          "qty": 8,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "itemId": "T2_MEAL_SALAD_FISH",
+      "name": "Shallowshore Squid Salad",
+      "tier": 2,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FISH_SALTWATER_ALL_RARE",
+          "name": "Shallowshore Squid",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T2_BEAN",
+          "name": "Beans",
+          "qty": 1,
+          "tier": 2
+        },
+        {
+          "itemId": "T2_AGARIC",
+          "name": "Arcane Agaric",
+          "qty": 1,
+          "tier": 2
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_OMELETTE_AVALON",
+      "name": "Avalonian Chicken Omelette",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T4_MILK",
+          "name": "Goat's Milk",
+          "qty": 4,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_MEAT",
+          "name": "Raw Chicken",
+          "qty": 8,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_EGG",
+          "name": "Hen Eggs",
+          "qty": 2,
+          "tier": 3
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 10,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_OMELETTE",
+      "name": "Chicken Omelette",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_WHEAT",
+          "name": "Sheaf of Wheat",
+          "qty": 4,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_MEAT",
+          "name": "Raw Chicken",
+          "qty": 8,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_EGG",
+          "name": "Hen Eggs",
+          "qty": 2,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_PIE",
+      "name": "Chicken Pie",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_WHEAT",
+          "name": "Sheaf of Wheat",
+          "qty": 2,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_FLOUR",
+          "name": "Flour",
+          "qty": 4,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_MEAT",
+          "name": "Raw Chicken",
+          "qty": 8,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_FLOUR",
+      "name": "Flour",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_WHEAT",
+          "name": "Sheaf of Wheat",
+          "qty": 1,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_OMELETTE_FISH",
+      "name": "Lowriver Crab Omelette",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FISH_FRESHWATER_STEPPE_RARE",
+          "name": "Lowriver Crab",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_EGG",
+          "name": "Hen Eggs",
+          "qty": 1,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_SOUP_FISH",
+      "name": "Murkwater Clam Soup",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_FISH_FRESHWATER_SWAMP_RARE",
+          "name": "Murkwater Clam",
+          "qty": 1,
+          "tier": 5
+        },
+        {
+          "itemId": "T3_WHEAT",
+          "name": "Sheaf of Wheat",
+          "qty": 2,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 2,
+          "tier": 7
+        },
+        {
+          "itemId": "T3_MEAT",
+          "name": "Raw Chicken",
+          "qty": 2,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAT",
+      "name": "Raw Chicken",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 18,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FARM_CHICKEN_GROWN",
+          "name": "Chicken",
+          "qty": 1,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_ROAST",
+      "name": "Roast Chicken",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_MEAT",
+          "name": "Raw Chicken",
+          "qty": 8,
+          "tier": 3
+        },
+        {
+          "itemId": "T2_BEAN",
+          "name": "Beans",
+          "qty": 4,
+          "tier": 2
+        },
+        {
+          "itemId": "T4_MILK",
+          "name": "Goat's Milk",
+          "qty": 4,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_ROAST_FISH",
+      "name": "Roasted Whitefog Snapper",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FISH_FRESHWATER_AVALON_RARE",
+          "name": "Whitefog Snapper",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_COMFREY",
+          "name": "Brightleaf Comfrey",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T4_MILK",
+          "name": "Goat's Milk",
+          "qty": 1,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_PIE_FISH",
+      "name": "Upland Coldeye Pie",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FISH_FRESHWATER_MOUNTAIN_RARE",
+          "name": "Upland Coldeye",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_FLOUR",
+          "name": "Flour",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T3_EGG",
+          "name": "Hen Eggs",
+          "qty": 1,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T3_MEAL_SOUP",
+      "name": "Wheat Soup",
+      "tier": 3,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_WHEAT",
+          "name": "Sheaf of Wheat",
+          "qty": 48,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAL_SANDWICH_AVALON",
+      "name": "Avalonian Goat Sandwich",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 4,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_MEAT",
+          "name": "Raw Goat",
+          "qty": 8,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_BUTTER",
+          "name": "Goat's Butter",
+          "qty": 2,
+          "tier": 4
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 10,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAL_STEW_AVALON",
+      "name": "Avalonian Goat Stew",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T1_CARROT",
+          "name": "Carrots",
+          "qty": 4,
+          "tier": 1
+        },
+        {
+          "itemId": "T4_TURNIP",
+          "name": "Turnips",
+          "qty": 4,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_MEAT",
+          "name": "Raw Goat",
+          "qty": 8,
+          "tier": 4
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 10,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T4_BREAD",
+      "name": "Bread",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FLOUR",
+          "name": "Flour",
+          "qty": 1,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAL_SANDWICH",
+      "name": "Goat Sandwich",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 4,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_MEAT",
+          "name": "Raw Goat",
+          "qty": 8,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_BUTTER",
+          "name": "Goat's Butter",
+          "qty": 2,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAL_STEW",
+      "name": "Goat Stew",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_TURNIP",
+          "name": "Turnips",
+          "qty": 4,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 4,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_MEAT",
+          "name": "Raw Goat",
+          "qty": 8,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T4_BUTTER",
+      "name": "Goat's Butter",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_MILK",
+          "name": "Goat's Milk",
+          "qty": 1,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAL_STEW_FISH",
+      "name": "Greenriver Eel Stew",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FISH_FRESHWATER_FOREST_RARE",
+          "name": "Greenriver Eel",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T4_TURNIP",
+          "name": "Turnips",
+          "qty": 1,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 1,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAL_SALAD_FISH",
+      "name": "Midwater Octopus Salad",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_FISH_SALTWATER_ALL_RARE",
+          "name": "Midwater Octopus",
+          "qty": 1,
+          "tier": 5
+        },
+        {
+          "itemId": "T4_TURNIP",
+          "name": "Turnips",
+          "qty": 2,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_BURDOCK",
+          "name": "Crenellated Burdock",
+          "qty": 2,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_MEAT",
+          "name": "Raw Goat",
+          "qty": 2,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAT",
+      "name": "Raw Goat",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 18,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_FARM_GOAT_GROWN",
+          "name": "Goat",
+          "qty": 1,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAL_SANDWICH_FISH",
+      "name": "Stonestream Lurcher Sandwich",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T3_FISH_FRESHWATER_HIGHLANDS_RARE",
+          "name": "Stonestream Lurcher",
+          "qty": 1,
+          "tier": 3
+        },
+        {
+          "itemId": "T4_TURNIP",
+          "name": "Turnips",
+          "qty": 1,
+          "tier": 4
+        },
+        {
+          "itemId": "T4_BUTTER",
+          "name": "Goat's Butter",
+          "qty": 1,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T4_MEAL_SALAD",
+      "name": "Turnip Salad",
+      "tier": 4,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_TURNIP",
+          "name": "Turnips",
+          "qty": 24,
+          "tier": 4
+        },
+        {
+          "itemId": "T3_WHEAT",
+          "name": "Sheaf of Wheat",
+          "qty": 24,
+          "tier": 3
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_OMELETTE_AVALON",
+      "name": "Avalonian Goose Omelette",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T6_MILK",
+          "name": "Sheep's Milk",
+          "qty": 12,
+          "tier": 6
+        },
+        {
+          "itemId": "T5_MEAT",
+          "name": "Raw Goose",
+          "qty": 24,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 6,
+          "tier": 5
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 30,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_SOUP_FISH",
+      "name": "Blackbog Clam Soup",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_FISH_FRESHWATER_SWAMP_RARE",
+          "name": "Blackbog Clam",
+          "qty": 1,
+          "tier": 7
+        },
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 6,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 6,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_MEAT",
+          "name": "Raw Goose",
+          "qty": 6,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_SOUP",
+      "name": "Cabbage Soup",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 144,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_OMELETTE_FISH",
+      "name": "Drybrook Crab Omelette",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_FISH_FRESHWATER_STEPPE_RARE",
+          "name": "Drybrook Crab",
+          "qty": 1,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 2,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 2,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 2,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_OMELETTE",
+      "name": "Goose Omelette",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 12,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_MEAT",
+          "name": "Raw Goose",
+          "qty": 24,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 6,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_PIE",
+      "name": "Goose Pie",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 6,
+          "tier": 5
+        },
+        {
+          "itemId": "T3_FLOUR",
+          "name": "Flour",
+          "qty": 12,
+          "tier": 3
+        },
+        {
+          "itemId": "T5_MEAT",
+          "name": "Raw Goose",
+          "qty": 24,
+          "tier": 5
+        },
+        {
+          "itemId": "T4_MILK",
+          "name": "Goat's Milk",
+          "qty": 6,
+          "tier": 4
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_PIE_FISH",
+      "name": "Mountain Blindeye Pie",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_FISH_FRESHWATER_MOUNTAIN_RARE",
+          "name": "Mountain Blindeye",
+          "qty": 1,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 2,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 2,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 2,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAT",
+      "name": "Raw Goose",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 18,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_FARM_GOOSE_GROWN",
+          "name": "Goose",
+          "qty": 1,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_ROAST",
+      "name": "Roast Goose",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_MEAT",
+          "name": "Raw Goose",
+          "qty": 24,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 12,
+          "tier": 5
+        },
+        {
+          "itemId": "T6_MILK",
+          "name": "Sheep's Milk",
+          "qty": 12,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T5_MEAL_ROAST_FISH",
+      "name": "Roasted Clearhaze Snapper",
+      "tier": 5,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_FISH_FRESHWATER_AVALON_RARE",
+          "name": "Clearhaze Snapper",
+          "qty": 1,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 2,
+          "tier": 5
+        },
+        {
+          "itemId": "T5_TEASEL",
+          "name": "Dragon Teasel",
+          "qty": 2,
+          "tier": 5
+        },
+        {
+          "itemId": "T6_MILK",
+          "name": "Sheep's Milk",
+          "qty": 2,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAL_SANDWICH_AVALON",
+      "name": "Avalonian Mutton Sandwich",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 12,
+          "tier": 4
+        },
+        {
+          "itemId": "T6_MEAT",
+          "name": "Raw Mutton",
+          "qty": 24,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_BUTTER",
+          "name": "Sheep's Butter",
+          "qty": 6,
+          "tier": 6
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 30,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAL_STEW_AVALON",
+      "name": "Avalonian Mutton Stew",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 12,
+          "tier": 5
+        },
+        {
+          "itemId": "T6_POTATO",
+          "name": "Potatoes",
+          "qty": 12,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_MEAT",
+          "name": "Raw Mutton",
+          "qty": 24,
+          "tier": 6
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 30,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAL_SALAD_FISH",
+      "name": "Deepwater Kraken Salad",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_FISH_SALTWATER_ALL_RARE",
+          "name": "Deepwater Kraken",
+          "qty": 1,
+          "tier": 7
+        },
+        {
+          "itemId": "T6_POTATO",
+          "name": "Potatoes",
+          "qty": 6,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 6,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_MEAT",
+          "name": "Raw Mutton",
+          "qty": 6,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAL_SANDWICH",
+      "name": "Mutton Sandwich",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 12,
+          "tier": 4
+        },
+        {
+          "itemId": "T6_MEAT",
+          "name": "Raw Mutton",
+          "qty": 24,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_BUTTER",
+          "name": "Sheep's Butter",
+          "qty": 6,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAL_STEW",
+      "name": "Mutton Stew",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_POTATO",
+          "name": "Potatoes",
+          "qty": 12,
+          "tier": 6
+        },
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 12,
+          "tier": 4
+        },
+        {
+          "itemId": "T6_MEAT",
+          "name": "Raw Mutton",
+          "qty": 24,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAL_SALAD",
+      "name": "Potato Salad",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_POTATO",
+          "name": "Potatoes",
+          "qty": 72,
+          "tier": 6
+        },
+        {
+          "itemId": "T5_CABBAGE",
+          "name": "Cabbage",
+          "qty": 72,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAT",
+      "name": "Raw Mutton",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 18,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_FARM_SHEEP_GROWN",
+          "name": "Sheep",
+          "qty": 1,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAL_STEW_FISH",
+      "name": "Redspring Eel Stew",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_FISH_FRESHWATER_FOREST_RARE",
+          "name": "Redspring Eel",
+          "qty": 1,
+          "tier": 5
+        },
+        {
+          "itemId": "T6_POTATO",
+          "name": "Potatoes",
+          "qty": 2,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 2,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_MILK",
+          "name": "Sheep's Milk",
+          "qty": 2,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_MEAL_SANDWICH_FISH",
+      "name": "Rushwater Lurcher Sandwich",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T5_FISH_FRESHWATER_HIGHLANDS_RARE",
+          "name": "Rushwater Lurcher",
+          "qty": 1,
+          "tier": 5
+        },
+        {
+          "itemId": "T6_POTATO",
+          "name": "Potatoes",
+          "qty": 2,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_FOXGLOVE",
+          "name": "Elusive Foxglove",
+          "qty": 2,
+          "tier": 6
+        },
+        {
+          "itemId": "T6_BUTTER",
+          "name": "Sheep's Butter",
+          "qty": 2,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T6_BUTTER",
+      "name": "Sheep's Butter",
+      "tier": 6,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T6_MILK",
+          "name": "Sheep's Milk",
+          "qty": 0,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T7_MEAL_OMELETTE_AVALON",
+      "name": "Avalonian Pork Omelette",
+      "tier": 7,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T8_MILK",
+          "name": "Cow's Milk",
+          "qty": 36,
+          "tier": 8
+        },
+        {
+          "itemId": "T7_MEAT",
+          "name": "Raw Pork",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 18,
+          "tier": 5
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 90,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T7_MEAL_OMELETTE_FISH",
+      "name": "Dusthole Crab Omelette",
+      "tier": 7,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_FISH_FRESHWATER_STEPPE_RARE",
+          "name": "Dusthole Crab",
+          "qty": 1,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_CORN",
+          "name": "Bundle of Corn",
+          "qty": 6,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 6,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_MEAT",
+          "name": "Raw Pork",
+          "qty": 6,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_MEAL_PIE_FISH",
+      "name": "Frostpeak Deadeye Pie",
+      "tier": 7,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_FISH_FRESHWATER_MOUNTAIN_RARE",
+          "name": "Frostpeak Deadeye",
+          "qty": 1,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_CORN",
+          "name": "Bundle of Corn",
+          "qty": 6,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 6,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_MEAT",
+          "name": "Raw Pork",
+          "qty": 6,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_MEAL_OMELETTE",
+      "name": "Pork Omelette",
+      "tier": 7,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_CORN",
+          "name": "Bundle of Corn",
+          "qty": 36,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_MEAT",
+          "name": "Raw Pork",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T5_EGG",
+          "name": "Goose Eggs",
+          "qty": 18,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "itemId": "T7_MEAL_PIE",
+      "name": "Pork Pie",
+      "tier": 7,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_CORN",
+          "name": "Bundle of Corn",
+          "qty": 18,
+          "tier": 7
+        },
+        {
+          "itemId": "T3_FLOUR",
+          "name": "Flour",
+          "qty": 36,
+          "tier": 3
+        },
+        {
+          "itemId": "T7_MEAT",
+          "name": "Raw Pork",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T6_MILK",
+          "name": "Sheep's Milk",
+          "qty": 18,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T7_MEAT",
+      "name": "Raw Pork",
+      "tier": 7,
+      "category": "food",
+      "outputQty": 18,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_FARM_PIG_GROWN",
+          "name": "Pig",
+          "qty": 1,
+          "tier": 7
+        }
+      ]
+    },
+    {
+      "itemId": "T7_MEAL_ROAST",
+      "name": "Roast Pork",
+      "tier": 7,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_MEAT",
+          "name": "Raw Pork",
+          "qty": 72,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_CORN",
+          "name": "Bundle of Corn",
+          "qty": 36,
+          "tier": 7
+        },
+        {
+          "itemId": "T8_MILK",
+          "name": "Cow's Milk",
+          "qty": 36,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T7_MEAL_ROAST_FISH",
+      "name": "Roasted Puremist Snapper",
+      "tier": 7,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_FISH_FRESHWATER_AVALON_RARE",
+          "name": "Puremist Snapper",
+          "qty": 1,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_CORN",
+          "name": "Bundle of Corn",
+          "qty": 6,
+          "tier": 7
+        },
+        {
+          "itemId": "T7_MULLEIN",
+          "name": "Firetouched Mullein",
+          "qty": 6,
+          "tier": 7
+        },
+        {
+          "itemId": "T8_MILK",
+          "name": "Cow's Milk",
+          "qty": 6,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_MEAL_SANDWICH_AVALON",
+      "name": "Avalonian Beef Sandwich",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 36,
+          "tier": 4
+        },
+        {
+          "itemId": "T8_MEAT",
+          "name": "Raw Beef",
+          "qty": 72,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_BUTTER",
+          "name": "Cow's Butter",
+          "qty": 18,
+          "tier": 8
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 90,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T8_MEAL_STEW_AVALON",
+      "name": "Avalonian Beef Stew",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": true,
+      "ingredients": [
+        {
+          "itemId": "T7_CORN",
+          "name": "Bundle of Corn",
+          "qty": 36,
+          "tier": 7
+        },
+        {
+          "itemId": "T8_PUMPKIN",
+          "name": "Pumpkin",
+          "qty": 36,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_MEAT",
+          "name": "Raw Beef",
+          "qty": 72,
+          "tier": 8
+        },
+        {
+          "itemId": "QUESTITEM_TOKEN_AVALON",
+          "name": "Avalonian Energy",
+          "qty": 90,
+          "tier": 6
+        }
+      ]
+    },
+    {
+      "itemId": "T8_MEAL_SANDWICH",
+      "name": "Beef Sandwich",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 36,
+          "tier": 4
+        },
+        {
+          "itemId": "T8_MEAT",
+          "name": "Raw Beef",
+          "qty": 72,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_BUTTER",
+          "name": "Cow's Butter",
+          "qty": 18,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_MEAL_STEW",
+      "name": "Beef Stew",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_PUMPKIN",
+          "name": "Pumpkin",
+          "qty": 36,
+          "tier": 8
+        },
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 36,
+          "tier": 4
+        },
+        {
+          "itemId": "T8_MEAT",
+          "name": "Raw Beef",
+          "qty": 72,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_MEAL_STEW",
+      "name": "Beef Stew",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 10,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_PUMPKIN",
+          "name": "Pumpkin",
+          "qty": 36,
+          "tier": 8
+        },
+        {
+          "itemId": "T4_BREAD",
+          "name": "Bread",
+          "qty": 36,
+          "tier": 4
+        },
+        {
+          "itemId": "T8_MEAT",
+          "name": "Raw Beef",
+          "qty": 72,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_BUTTER",
+      "name": "Cow's Butter",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_MILK",
+          "name": "Cow's Milk",
+          "qty": 1,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_MEAL_STEW_FISH",
+      "name": "Deadwater Eel Stew",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_FISH_FRESHWATER_FOREST_RARE",
+          "name": "Deadwater Eel",
+          "qty": 1,
+          "tier": 7
+        },
+        {
+          "itemId": "T8_PUMPKIN",
+          "name": "Pumpkin",
+          "qty": 6,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_YARROW",
+          "name": "Ghoul Yarrow",
+          "qty": 6,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_MILK",
+          "name": "Cow's Milk",
+          "qty": 6,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_MEAT",
+      "name": "Raw Beef",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 18,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T8_FARM_COW_GROWN",
+          "name": "Cow",
+          "qty": 1,
+          "tier": 8
+        }
+      ]
+    },
+    {
+      "itemId": "T8_MEAL_SANDWICH_FISH",
+      "name": "Thunderfall Lurcher Sandwich",
+      "tier": 8,
+      "category": "food",
+      "outputQty": 1,
+      "isAvalonian": false,
+      "ingredients": [
+        {
+          "itemId": "T7_FISH_FRESHWATER_HIGHLANDS_RARE",
+          "name": "Thunderfall Lurcher",
+          "qty": 1,
+          "tier": 7
+        },
+        {
+          "itemId": "T8_PUMPKIN",
+          "name": "Pumpkin",
+          "qty": 6,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_YARROW",
+          "name": "Ghoul Yarrow",
+          "qty": 6,
+          "tier": 8
+        },
+        {
+          "itemId": "T8_BUTTER",
+          "name": "Cow's Butter",
+          "qty": 6,
+          "tier": 8
+        }
+      ]
+    }
+  ]
+}
