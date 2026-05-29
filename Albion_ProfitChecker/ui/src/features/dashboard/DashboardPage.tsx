@@ -1105,6 +1105,14 @@ export function DashboardPage() {
           </span>
           <span className="tool-rail-label">Refining Calculator</span>
         </a>
+        <a className="tool-rail-link" href="/food-potion-crafter" title="Food & Potion Crafter">
+          <span className="tool-rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M11 2h2v6h-2V2Zm-4 0h2v6a3 3 0 0 1-6 0V2h2v6a1 1 0 0 0 2 0V2Zm10 0h2v20h-2v-8h-2V7a5 5 0 0 1 2-5Z" />
+            </svg>
+          </span>
+          <span className="tool-rail-label">Food &amp; Potion Crafter</span>
+        </a>
       </aside>
 
       <header className={`topbar ${topbarHidden ? "topbar-hidden" : ""}`}>

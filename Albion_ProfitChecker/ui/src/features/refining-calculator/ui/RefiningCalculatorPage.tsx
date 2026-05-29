@@ -369,9 +369,19 @@ export function RefiningCalculatorPage() {
     (async () => {
       const session = await authService.getSession().catch(() => null);
       if (cancelled) return;
-      if (!session) return;
+      if (!session) {
+        const next = encodeURIComponent(window.location.pathname || "/refining-calculator");
+        window.location.href = `/login?next=${next}`;
+        return;
+      }
       const profile = await authService.getUserProfile().catch(() => null);
-      if (cancelled || !profile?.emailConfirmed) return;
+      if (cancelled) return;
+      if (!profile?.emailConfirmed) {
+        await authService.signOut().catch(() => undefined);
+        const next = encodeURIComponent(window.location.pathname || "/refining-calculator");
+        window.location.href = `/login?next=${next}`;
+        return;
+      }
       const { data } = await authService.client.auth.getUser().catch(() => ({ data: { user: null } }));
       const savedFocusSpecs = normalizeFocusSpecs(data.user?.user_metadata?.refiningFocusSpecs);
       const safeRegion = readStoredRegion() || profile.region || "eu";

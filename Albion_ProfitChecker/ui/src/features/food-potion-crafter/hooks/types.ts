@@ -6,6 +6,7 @@ import type {
   StationKind,
 } from "../core";
 import type { ReturnRatePreset } from "../core";
+import type { CraftingProgress } from "../specs/data";
 
 export interface FoodPotionRow {
   rowKey: string;
@@ -22,9 +23,12 @@ export interface FoodPotionFilters {
   sellCity: City;
   stationKind: StationKind;
   returnRatePreset: ReturnRatePreset;
+  customReturnRatePct: number;
   amount: number;
   stationFeePerCraft: number;
   marketTaxRate: number;
   demandPerDay: number;
   showOnlyProfitable: boolean;
+  /** Optional spec progress for focus calc. */
+  specProgress?: CraftingProgress;
 }

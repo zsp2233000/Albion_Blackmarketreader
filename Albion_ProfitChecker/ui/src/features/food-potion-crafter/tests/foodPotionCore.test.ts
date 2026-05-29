@@ -53,8 +53,8 @@ describe("food/potion return rate", () => {
   it("applies the city specialty bonus only in the production-bonus city", () => {
     const inCaerleon = computeReturnRate(makeBonuses({ city: "Caerleon", focusEnabled: false }));
     const elsewhere = computeReturnRate(makeBonuses({ city: "Martlock", focusEnabled: false }));
-    // Caerleon: 18 + 40 = 58 -> 0.3671 ; Martlock: 18 -> 0.1525
-    expect(inCaerleon).toBeCloseTo(computeReturnRateFromBonusPercent(58), 6);
+    // Caerleon: 18 + 15 = 33 -> 0.2481 ; Martlock: 18 -> 0.1525
+    expect(inCaerleon).toBeCloseTo(computeReturnRateFromBonusPercent(33), 6);
     expect(elsewhere).toBeCloseTo(computeReturnRateFromBonusPercent(18), 6);
     expect(inCaerleon).toBeGreaterThan(elsewhere);
   });
@@ -73,7 +73,7 @@ describe("calculateConsumable", () => {
       ["T5_A", 100],
       ["T5_B", 250],
     ]);
-    // City bonus only (no focus) -> 18 + 40 = 58% -> returnRate 0.36708...
+    // City bonus only (no focus) -> 18 + 15 = 33% -> returnRate 0.2481...
     const bonuses = makeBonuses({ focusEnabled: false });
     const result = calculateConsumable({
       recipe,
@@ -89,7 +89,7 @@ describe("calculateConsumable", () => {
     const gross = (100 * 4 + 250 * 2) * 2; // 1800
     expect(result.grossIngredientCost).toBe(gross);
 
-    const rate = computeReturnRateFromBonusPercent(58);
+    const rate = computeReturnRateFromBonusPercent(33);
     expect(result.returnRate).toBeCloseTo(rate, 6);
     expect(result.returnedIngredientCost).toBeCloseTo(gross * rate, 6);
     expect(result.effectiveIngredientCost).toBeCloseTo(gross - gross * rate, 6);

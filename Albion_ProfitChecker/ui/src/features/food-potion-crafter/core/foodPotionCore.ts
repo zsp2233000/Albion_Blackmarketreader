@@ -8,10 +8,13 @@ import type {
 
 const clamp = (value: number, min: number, max: number): number => Math.max(min, Math.min(max, value));
 
-export type ReturnRatePreset = "base" | "city" | "focus";
+export type ReturnRatePreset = "base" | "city" | "focus" | "custom";
 
 export const ROYAL_BONUS_PERCENT = 18;
-export const CITY_BONUS_PERCENT = 40;
+// Consumable (Cook/Alchemist) bonus-city specialty is +15% — NOT the +40% refining value.
+// Verified against community workbook: potion in bonus city w/o focus = 18+15=33 -> RR 0.2481;
+// food w/ focus only = 18+59=77 -> RR 0.4350 (both exact matches).
+export const CITY_BONUS_PERCENT = 15;
 export const FOCUS_BONUS_PERCENT = 59;
 
 /** Default flat station fee per craft action, by category (matches source workbook). */
@@ -91,7 +94,10 @@ export function calculateConsumable(input: ConsumableInput): ConsumableResult {
     grossIngredientCost += unitPrice * ingredient.qty * amount;
   }
 
-  const returnRate = computeReturnRate(input.bonuses);
+  const returnRate =
+    typeof input.returnRateOverride === "number" && Number.isFinite(input.returnRateOverride)
+      ? clamp(input.returnRateOverride, 0, 0.99)
+      : computeReturnRate(input.bonuses);
   const returnedIngredientCost = grossIngredientCost * returnRate;
   const effectiveIngredientCost = grossIngredientCost - returnedIngredientCost;
 
@@ -106,6 +112,12 @@ export function calculateConsumable(input: ConsumableInput): ConsumableResult {
   const profitPercent = totalCost > 0 ? (profit / totalCost) * 100 : 0;
   const profitPerOutput = outputAmount > 0 ? profit / outputAmount : 0;
   const dailyPotential = input.demandPerDay > 0 ? profitPerOutput * input.demandPerDay : null;
+
+  // Focus: base focus per craft reduced by spec/mastery efficiency (0.5 per 10k eff), times amount.
+  const baseFocus = Math.max(0, input.recipe.baseFocus ?? 0);
+  const efficiency = Math.max(0, input.focusEfficiency ?? 0);
+  const focusCost = baseFocus > 0 ? baseFocus * Math.pow(0.5, efficiency / 10000) * amount : 0;
+  const silverPerFocus = focusCost > 0 ? profit / focusCost : null;
 
   return {
     outputAmount,
@@ -123,5 +135,7 @@ export function calculateConsumable(input: ConsumableInput): ConsumableResult {
     profitPerOutput,
     dailyPotential,
     missingIngredientCost,
+    focusCost,
+    silverPerFocus,
   };
 }

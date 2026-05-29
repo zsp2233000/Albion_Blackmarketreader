@@ -22,6 +22,8 @@ export interface ConsumableRecipe {
   /** Items produced per single craft action (food/potion craft in batches, usually 10). */
   readonly outputQty: number;
   readonly isAvalonian: boolean;
+  /** Base focus cost per single craft action at 0 mastery / 0 spec. */
+  readonly baseFocus?: number;
   readonly ingredients: ReadonlyArray<RecipeIngredient>;
 }
 
@@ -58,6 +60,10 @@ export interface ConsumableInput {
   /** Optional manual demand/day for daily-potential display (does not affect profit). */
   readonly demandPerDay: number;
   readonly bonuses: BonusConfig;
+  /** Total focus cost efficiency from mastery + specs (0 = no spec). */
+  readonly focusEfficiency?: number;
+  /** When set (0..1), overrides the computed return rate (manual profile). */
+  readonly returnRateOverride?: number | null;
 }
 
 export interface ConsumableResult {
@@ -76,4 +82,8 @@ export interface ConsumableResult {
   readonly profitPerOutput: number;
   readonly dailyPotential: number | null;
   readonly missingIngredientCost: boolean;
+  /** Effective focus cost for the whole craft batch (base * 0.5^(eff/10000) * amount). */
+  readonly focusCost: number;
+  /** Profit per focus point (silver per focus); null when focus is unknown/zero. */
+  readonly silverPerFocus: number | null;
 }

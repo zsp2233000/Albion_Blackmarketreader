@@ -4,6 +4,7 @@ import {
   PRODUCTION_BONUS_CITY,
 } from "../core";
 import type { BonusConfig, ConsumableRecipe, PriceMap } from "../core";
+import { computeFocusEfficiency, resolveSpecFamily } from "../specs/data";
 import type { FoodPotionFilters, FoodPotionRow } from "./types";
 
 function toSearchKey(value: string): string {
@@ -34,8 +35,12 @@ export function deriveFoodPotionRows(
   priceByItemId: Map<string, number>
 ): FoodPotionRow[] {
   const search = toSearchKey(filters.searchTerm);
-  const presetConfig = getReturnRatePresetConfig(filters.returnRatePreset);
+  const presetConfig = getReturnRatePresetConfig(filters.returnRatePreset === "custom" ? "focus" : filters.returnRatePreset);
   const productionBonusCity = PRODUCTION_BONUS_CITY[filters.category];
+  const returnRateOverride =
+    filters.returnRatePreset === "custom"
+      ? Math.max(0, Math.min(99, filters.customReturnRatePct)) / 100
+      : null;
   const rows: FoodPotionRow[] = [];
 
   for (const recipe of recipes) {
@@ -58,6 +63,10 @@ export function deriveFoodPotionRows(
       hideoutBonusPercent: 0,
     };
 
+    const focusEfficiency = filters.specProgress
+      ? computeFocusEfficiency(filters.specProgress, filters.category, resolveSpecFamily(recipe.itemId, filters.category))
+      : 0;
+
     const result = calculateConsumable({
       recipe,
       ingredientPrices,
@@ -67,9 +76,13 @@ export function deriveFoodPotionRows(
       marketTaxRate: filters.marketTaxRate,
       demandPerDay: filters.demandPerDay,
       bonuses,
+      focusEfficiency,
+      returnRateOverride,
     });
 
-    if (filters.showOnlyProfitable && result.profit < 0) continue;
+    // Profit is only trustworthy when all ingredients are priced AND a sell price exists.
+    const priced = !result.missingIngredientCost && result.revenue > 0;
+    if (filters.showOnlyProfitable && (!priced || result.profit < 0)) continue;
 
     rows.push({
       rowKey: recipe.itemId,
@@ -78,5 +91,12 @@ export function deriveFoodPotionRows(
     });
   }
 
-  return rows.sort((a, b) => b.result.profit - a.result.profit);
+  // Priced rows first (by profit desc); unpriced rows sink to the bottom.
+  return rows.sort((a, b) => {
+    const aP = !a.result.missingIngredientCost && a.result.revenue > 0;
+    const bP = !b.result.missingIngredientCost && b.result.revenue > 0;
+    if (aP !== bP) return aP ? -1 : 1;
+    if (!aP) return a.recipe.tier - b.recipe.tier || a.recipe.name.localeCompare(b.recipe.name);
+    return b.result.profit - a.result.profit;
+  });
 }

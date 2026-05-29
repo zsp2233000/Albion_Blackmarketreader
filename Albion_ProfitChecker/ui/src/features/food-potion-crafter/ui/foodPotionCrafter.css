@@ -6,7 +6,30 @@
   --fp-potion: #a855f7;      /* violet */
   --fp-potion-soft: rgba(168, 85, 247, 0.16);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: var(--bg, #05080a);
+}
+
+/* Flexible main height so the scanner table scrolls within the viewport. */
+.fp-page .fp-main {
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fp-page .fp-main-scanner .bm-table {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.fp-scanner-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .fp-page .bm-header,
@@ -25,18 +48,20 @@ body.food-potion-crafter-body {
 
 /* --- Category segmented control --- */
 .fp-category-tabs {
-  display: inline-flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
   gap: 4px;
   padding: 4px;
   border-radius: 16px;
   background: rgba(13, 20, 24, 0.85);
   border: 1px solid var(--border);
+  flex: 0 0 auto;
 }
 
 .fp-category-tab {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   border: 1px solid transparent;
   background: transparent;
@@ -48,7 +73,9 @@ body.food-potion-crafter-body {
   padding: 8px 18px;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 140ms ease;
+  white-space: nowrap;
+  /* Only colour transitions — never layout — so active state never shifts tabs. */
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
 }
 
 .fp-category-tab .material-symbols-outlined {
@@ -76,10 +103,15 @@ body.food-potion-crafter-body {
 .fp-category-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 16px;
   padding: 16px 24px 0;
   flex-wrap: wrap;
+}
+
+/* Specs button anchored to the far right; tabs stay pinned left and never move. */
+.fp-category-bar .fp-specs-trigger {
+  margin-left: auto;
 }
 
 /* --- Mode layouts --- */
@@ -87,18 +119,148 @@ body.food-potion-crafter-body {
   width: 100%;
 }
 
+/* Crafter uses the full main width (table + inline workbench), like the scanner. */
 .fp-main-crafter {
-  justify-content: center;
+  justify-content: stretch;
 }
 
 .fp-crafter-stage {
   width: 100%;
-  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.fp-crafter-full {
+  flex: 1;
+}
+
+.fp-crafter-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.fp-crafter-toolbar .fp-recipe-picker {
+  min-width: 280px;
+  flex: 0 1 360px;
+}
+
+.fp-tier-wrap {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(13, 20, 24, 0.6);
+}
+
+/* Inline workbench below the tier table — full width bento layout. */
+.fp-workbench-inline {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(10, 15, 18, 0.92);
+  padding: 16px 18px;
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.06);
+}
+
+.fp-workbench-inline .detail-grid-12 {
+  margin-top: 12px;
+}
+
+.fp-workbench-inline .bento-card {
+  min-height: 0;
+}
+
+.bento-card-inner-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.material-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 8px;
+}
+
+.material-total {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary, #2dd4bf);
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* --- Redesigned profit summary card --- */
+.fp-summary-card {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-height: 0;
-  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(13, 24, 26, 0.96), rgba(8, 16, 18, 0.98));
+  border: 1px solid rgba(45, 212, 191, 0.22);
+}
+
+.fp-summary-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fp-summary-pill {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.fp-summary-pill.profit { background: rgba(74, 222, 128, 0.16); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); }
+.fp-summary-pill.loss { background: rgba(248, 113, 113, 0.16); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.4); }
+
+.fp-summary-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.fp-summary-hero-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted, #8ea3b9); font-weight: 700; }
+.fp-summary-hero strong { font-size: 28px; line-height: 1.05; font-weight: 800; font-family: "JetBrains Mono", monospace; }
+.fp-summary-hero strong.profit-cell { color: #4ade80; }
+.fp-summary-hero strong.loss-cell { color: #f87171; }
+.fp-summary-hero-sub { font-size: 11px; color: var(--text-secondary, #9db2c8); letter-spacing: 0.04em; }
+
+.fp-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.fp-summary-grid > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(10, 16, 20, 0.85);
+}
+.fp-summary-grid span { font-size: 11px; color: var(--text-secondary, #9db2c8); }
+.fp-summary-grid strong { font-size: 12px; font-family: "JetBrains Mono", monospace; color: #e2e8f0; }
+.fp-summary-grid strong.profit-cell { color: #4ade80; }
+.fp-summary-grid strong.loss-cell { color: #f87171; }
+
+@media (max-width: 720px) {
+  .fp-summary-grid { grid-template-columns: 1fr; }
 }
 
 .fp-recipe-picker {
@@ -110,11 +272,6 @@ body.food-potion-crafter-body {
 .fp-recipe-picker .fp-control {
   height: 42px;
   font-size: 13px;
-}
-
-.fp-crafter-stage .fp-workbench {
-  max-height: none;
-  overflow: visible;
 }
 
 .fp-category-hint {
@@ -133,49 +290,8 @@ body.food-potion-crafter-body {
   overflow: hidden;
 }
 
-.fp-controls-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 18px;
-}
-
-.fp-controls-head h2 {
-  margin: 0;
-  font-size: 12px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--primary);
-}
-
-.fp-controls-head p {
-  margin: 2px 0 0;
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-.fp-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 16px;
-  border: 1px solid rgba(45, 212, 191, 0.4);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(18, 31, 35, 0.98), rgba(10, 20, 24, 0.98));
-  color: #dffcf6;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 140ms ease;
-}
-
-.fp-toggle:hover {
-  border-color: rgba(45, 212, 191, 0.75);
-  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.2);
+.fp-controls-static {
+  padding-top: 4px;
 }
 
 .fp-filter-grid {
@@ -294,6 +410,15 @@ select.fp-control option {
   border: 1px solid rgba(168, 85, 247, 0.4);
 }
 
+.fp-missing-chip {
+  background: rgba(148, 163, 184, 0.16);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.fp-unpriced-row td { opacity: 0.55; }
+.fp-unpriced-row:hover td { opacity: 0.8; }
+
 /* --- Summary bar --- */
 .fp-summary-bar {
   display: flex;
@@ -337,15 +462,6 @@ select.fp-control option {
 }
 
 /* --- Calculator workbench (crafting-calculator bento design) --- */
-.fp-workbench {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-height: 100%;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
 .fp-workbench-title {
   display: flex;
   align-items: center;

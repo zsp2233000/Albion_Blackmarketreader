@@ -11,10 +11,15 @@ import type {
   StationKind,
 } from "../core";
 import { deriveFoodPotionRows } from "./deriveRows";
+import type { CraftingProgress } from "../specs/data";
 
 const SELL_CITY_DEFAULT: City = "Caerleon";
 
-export function useFoodPotionState(recipes: ConsumableRecipe[], priceByItemId: Map<string, number>) {
+export function useFoodPotionState(
+  recipes: ConsumableRecipe[],
+  priceByItemId: Map<string, number>,
+  specProgress?: CraftingProgress
+) {
   const [category, setCategoryState] = useState<ConsumableCategory>("food");
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,6 +28,7 @@ export function useFoodPotionState(recipes: ConsumableRecipe[], priceByItemId: M
   const [sellCity, setSellCity] = useState<City>(SELL_CITY_DEFAULT);
   const [stationKind, setStationKind] = useState<StationKind>("city");
   const [returnRatePreset, setReturnRatePreset] = useState<ReturnRatePreset>("focus");
+  const [customReturnRatePct, setCustomReturnRatePct] = useState<number>(43.5);
   const [amount, setAmount] = useState(1);
   const [stationFeePerCraft, setStationFeePerCraft] = useState<number>(DEFAULT_STATION_FEE.food);
   const [marketTaxRate, setMarketTaxRate] = useState(0.065);
@@ -51,11 +57,13 @@ export function useFoodPotionState(recipes: ConsumableRecipe[], priceByItemId: M
           sellCity,
           stationKind,
           returnRatePreset,
+          customReturnRatePct,
           amount,
           stationFeePerCraft,
           marketTaxRate,
           demandPerDay,
           showOnlyProfitable,
+          specProgress,
         },
         priceByItemId
       ),
@@ -70,11 +78,13 @@ export function useFoodPotionState(recipes: ConsumableRecipe[], priceByItemId: M
       sellCity,
       stationKind,
       returnRatePreset,
+      customReturnRatePct,
       amount,
       stationFeePerCraft,
       marketTaxRate,
       demandPerDay,
       showOnlyProfitable,
+      specProgress,
     ]
   );
 
@@ -115,6 +125,8 @@ export function useFoodPotionState(recipes: ConsumableRecipe[], priceByItemId: M
       setStationKind,
       returnRatePreset,
       setReturnRatePreset,
+      customReturnRatePct,
+      setCustomReturnRatePct,
       amount,
       setAmount,
       stationFeePerCraft,
