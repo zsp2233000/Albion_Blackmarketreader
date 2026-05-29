@@ -13,6 +13,7 @@
   - `dashboard/`
   - `bm-crafter/`
   - `crafting-calculator/`
+  - `refining-calculator/`
 - `shared/` cross-feature modules:
   - `auth/`, `region/`, `api/`, `assets/`, `ui/`, `icons/`, `seo/`
 

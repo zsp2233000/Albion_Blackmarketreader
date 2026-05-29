@@ -76,7 +76,20 @@ export class AuthService {
   }
 }
 
+const authServiceCache = new Map<string, AuthService>();
+
+/**
+ * Returns a singleton AuthService per (supabaseUrl, anonKey) pair so the
+ * underlying Supabase/GoTrue client is shared across pages. Multiple instances
+ * with the same storage key trigger Supabase's "Multiple GoTrueClient" warning
+ * and can cause undefined session behavior.
+ */
 export function createAuthService(config: AuthServiceConfig): AuthService {
-  return new AuthService(config);
+  const cacheKey = `${config.supabaseUrl}::${config.supabaseAnonKey}`;
+  const existing = authServiceCache.get(cacheKey);
+  if (existing) return existing;
+  const service = new AuthService(config);
+  authServiceCache.set(cacheKey, service);
+  return service;
 }
 

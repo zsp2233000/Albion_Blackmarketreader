@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { assetUrl } from "@shared/assets/assets";
+import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../shared/seo/useSeo";
@@ -1378,7 +1378,7 @@ export function CraftingCalculatorPage() {
               <img
                 className="cc-item-image"
                 src={selectedItem ? `/itemicons/T4_${selectedItem.id}.png` : assetUrl("picture/accountsymbol.png")}
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = assetUrl("picture/accountsymbol.png"); }}
+                onError={onItemIconError}
                 alt="item"
               />
             </div>

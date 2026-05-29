@@ -67,36 +67,13 @@ export function getBonusCityForItem(item: CraftingItemLike | null): string | nul
 
   const id = String(item.id || "").trim().toUpperCase();
 
-  const gatheringCityBySuffix: Record<string, string> = {
-    FIBER: "Fort Sterling",
-    HIDE: "Caerleon",
-    ORE: "Lymhurst",
-    ROCK: "Bridgewatch",
-    WOOD: "Thetford",
-    FISH: "Martlock"
-  };
-
   if (id === "BAG" || id === "BAG_INSIGHT" || id === "CAPE") return "Brecilien";
 
-  const gathererMatch = id.match(/GATHERER_(FIBER|HIDE|ORE|ROCK|WOOD|FISH)$/);
-  if (gathererMatch) return gatheringCityBySuffix[gathererMatch[1]] || null;
-
-  switch (id) {
-    case "2H_TOOL_PICK":
-      return "Lymhurst";
-    case "2H_TOOL_KNIFE":
-      return "Caerleon";
-    case "2H_TOOL_HAMMER":
-      return "Bridgewatch";
-    case "2H_TOOL_AXE":
-      return "Thetford";
-    case "2H_TOOL_SICKLE":
-      return "Fort Sterling";
-    case "2H_TOOL_FISHINGROD":
-      return "Martlock";
-    default:
-      break;
-  }
+  // All gathering tools (Pickaxe, Sickle, Hammer, Axe, Knife, Fishingrod)
+  // and all gathering gear (HEAD/ARMOR/SHOES/BACKPACK_GATHERER_*) have their
+  // Local Production Bonus in Caerleon, regardless of resource type.
+  if (/^2H_TOOL_(PICK|KNIFE|HAMMER|AXE|SICKLE|FISHINGROD)$/.test(id)) return "Caerleon";
+  if (/GATHERER_(FIBER|HIDE|ORE|ROCK|WOOD|FISH)$/.test(id)) return "Caerleon";
 
   switch (item.categoryKey) {
     case "swords":
@@ -141,11 +118,10 @@ export function getBonusCityForItem(item: CraftingItemLike | null): string | nul
       if (item.id.startsWith("SHOES_LEATHER")) return "Lymhurst";
       if (item.id.startsWith("SHOES_CLOTH")) return "Bridgewatch";
       return null;
+    case "gathering-gear":
+    case "tools":
+      return "Caerleon";
     default:
-      if (/^(HEAD_GATHERER|ARMOR_GATHERER|SHOES_GATHERER|BACKPACK_GATHERER)_/.test(id)) {
-        const match = id.match(/_(FIBER|HIDE|ORE|ROCK|WOOD|FISH)$/);
-        return match ? (gatheringCityBySuffix[match[1]] || null) : null;
-      }
       return null;
   }
 }

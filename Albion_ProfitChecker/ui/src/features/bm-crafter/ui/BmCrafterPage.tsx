@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type UIEvent } from "react";
 import { Link } from "react-router-dom";
-import { assetUrl } from "@shared/assets/assets";
+import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../../shared/seo/useSeo";
@@ -669,9 +669,7 @@ export function BmCrafterPage() {
                                 alt=""
                                 loading="lazy"
                                 decoding="async"
-                                onError={(e) => {
-                                  (e.currentTarget as HTMLImageElement).style.display = "none";
-                                }}
+                                onError={onItemIconError}
                               />
                             </div>
                             <div>
@@ -720,9 +718,7 @@ export function BmCrafterPage() {
                   <img
                     src={selectedRow ? `/itemicons/T4_${normalizeItemId(selectedRow.item.id)}.png` : ""}
                     alt=""
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).removeAttribute("src");
-                    }}
+                    onError={onItemIconError}
                   />
                 </div>
               </div>
