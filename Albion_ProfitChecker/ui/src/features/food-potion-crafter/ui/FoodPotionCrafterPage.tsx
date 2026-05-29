@@ -611,7 +611,7 @@ export function FoodPotionCrafterPage() {
                   <tr>
                     <th>Recipe</th><th className="num">Output</th><th className="num">Return</th>
                     <th className="num">Craft Cost</th><th className="num">Net Revenue</th>
-                    <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Daily</th>
+                    <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Sold / Day</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -621,8 +621,9 @@ export function FoodPotionCrafterPage() {
                     return (
                     <tr
                       key={row.rowKey}
-                      className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${row.recipe.isAvalonian ? "fp-avalonian-row" : ""} ${priced ? "" : "fp-unpriced-row"}`}
-                      onClick={() => setSelectedRowKey(row.rowKey)}
+                      className={`high-density-row fp-clickable-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${row.recipe.isAvalonian ? "fp-avalonian-row" : ""} ${priced ? "" : "fp-unpriced-row"}`}
+                      title="Open in crafter"
+                      onClick={() => { setSelectedFamily(familyBase(row.recipe.itemId)); setSelectedRowKey(row.rowKey); setMode("crafter"); }}
                     >
                       <td>
                         <div className="item">
@@ -668,21 +669,24 @@ export function FoodPotionCrafterPage() {
                   {families.map((f) => (<option key={f.base} value={f.base}>{f.label}</option>))}
                 </select>
               </div>
-              <span className="fp-category-hint">All tiers shown · edit sell price inline, click a tier for ingredient prices</span>
+              <span className="fp-batch-badge">
+                Figures shown for <strong>{filters.amount}</strong> craft{filters.amount === 1 ? "" : "s"}
+                {crafterSelected ? <> · <strong>{crafterSelected.recipe.outputQty * filters.amount}</strong> items produced</> : null}
+              </span>
             </div>
 
             <div className="fp-tier-wrap table-wrap custom-scrollbar">
               <table>
                 <thead>
                   <tr>
-                    <th>Tier</th><th>Recipe</th><th className="num">Output</th><th className="num">Return</th>
+                    <th>Tier</th><th>Recipe</th>
+                    <th className="num">Output ({filters.amount}×)</th><th className="num">Return</th>
                     <th className="num">Ingredient Cost</th><th className="num">Station Fee</th>
-                    <th className="num">Sell / Item</th><th className="num">Net Revenue</th>
                     <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {familyRows.length === 0 ? (<tr><td colSpan={11}>No tiers for this product.</td></tr>) : null}
+                  {familyRows.length === 0 ? (<tr><td colSpan={9}>No tiers for this product.</td></tr>) : null}
                   {familyRows.map((row) => (
                     <tr
                       key={row.rowKey}
@@ -700,17 +704,6 @@ export function FoodPotionCrafterPage() {
                       <td className="num">{formatPct(row.result.returnRate * 100)}</td>
                       <td className="num">{formatNumber(row.result.grossIngredientCost)}</td>
                       <td className="num muted">{formatNumber(row.result.stationFee)}</td>
-                      <td
-                        className="num editable-cell"
-                        contentEditable
-                        suppressContentEditableWarning
-                        onClick={(e) => e.stopPropagation()}
-                        onBlur={(e) => updatePrice(row.recipe.itemId, e.currentTarget.textContent || "0")}
-                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); (e.currentTarget as HTMLElement).blur(); } }}
-                      >
-                        {manualPrices[row.recipe.itemId] ?? (livePriceByItemId[row.recipe.itemId] ? String(livePriceByItemId[row.recipe.itemId]) : "")}
-                      </td>
-                      <td className="num">{formatNumber(row.result.netRevenue)}</td>
                       <td className={`num ${row.result.profit >= 0 ? "profit" : "loss"}`}>{row.result.profit >= 0 ? "+" : ""}{formatNumber(row.result.profit)}</td>
                       <td className={`num ${row.result.profit >= 0 ? "profit" : "loss"}`}>{formatPct(row.result.profitPercent)}</td>
                       <td className={`num ${(row.result.silverPerFocus ?? 0) >= 0 ? "profit" : "loss"}`}>{row.result.silverPerFocus === null ? "--" : formatNumber(row.result.silverPerFocus)}</td>
@@ -804,7 +797,7 @@ export function FoodPotionCrafterPage() {
                       <div><span>Focus Cost</span><strong>{crafterSelected.result.focusCost > 0 ? formatNumber(crafterSelected.result.focusCost) : "--"}</strong></div>
                       <div><span>Silver / Focus</span><strong className={(crafterSelected.result.silverPerFocus ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{crafterSelected.result.silverPerFocus === null ? "--" : formatNumber(crafterSelected.result.silverPerFocus)}</strong></div>
                       <div><span>Profit / Item</span><strong className={crafterSelected.result.profitPerOutput >= 0 ? "profit-cell" : "loss-cell"}>{formatNumber(crafterSelected.result.profitPerOutput)}</strong></div>
-                      <div><span>Daily Potential</span><strong className={(crafterSelected.result.dailyPotential ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{crafterSelected.result.dailyPotential === null ? "--" : formatNumber(crafterSelected.result.dailyPotential)}</strong></div>
+                      <div><span>Sold / Day</span><strong className={(crafterSelected.result.dailyPotential ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{crafterSelected.result.dailyPotential === null ? "--" : formatNumber(crafterSelected.result.dailyPotential)}</strong></div>
                     </div>
                   </div>
                 </div>

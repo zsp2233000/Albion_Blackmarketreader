@@ -30,6 +30,13 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: auto;
+}
+
+/* Keep every column reachable; don't let the wide results table clip on the right. */
+.fp-scanner-scroll table {
+  width: 100%;
+  min-width: 880px;
 }
 
 .fp-page .bm-header,
@@ -280,6 +287,22 @@ body.food-potion-crafter-body {
   letter-spacing: 0.04em;
 }
 
+.fp-batch-badge {
+  font-size: 11px;
+  color: var(--text-secondary, #9db2c8);
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  border-radius: 999px;
+  background: rgba(45, 212, 191, 0.08);
+  white-space: nowrap;
+}
+
+.fp-batch-badge strong {
+  color: var(--primary, #2dd4bf);
+  font-family: "JetBrains Mono", monospace;
+}
+
 /* --- Controls panel --- */
 .fp-controls {
   margin: 12px 24px 0;
@@ -418,6 +441,9 @@ select.fp-control option {
 
 .fp-unpriced-row td { opacity: 0.55; }
 .fp-unpriced-row:hover td { opacity: 0.8; }
+
+.fp-clickable-row { cursor: pointer; }
+.fp-clickable-row:hover td { background: rgba(45, 212, 191, 0.06); }
 
 /* --- Summary bar --- */
 .fp-summary-bar {

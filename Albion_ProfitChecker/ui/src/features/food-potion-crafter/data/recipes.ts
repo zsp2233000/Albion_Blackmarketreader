@@ -41,6 +41,8 @@ function normalizeRecipe(entry: unknown, fallbackCategory: ConsumableCategory): 
 
   const category: ConsumableCategory = entry.category === "potion" || entry.category === "food" ? entry.category : fallbackCategory;
 
+  const baseFocus = toFiniteNumber(entry.baseFocus, 0);
+
   return {
     itemId,
     name: typeof entry.name === "string" ? entry.name : itemId,
@@ -48,6 +50,7 @@ function normalizeRecipe(entry: unknown, fallbackCategory: ConsumableCategory): 
     category,
     outputQty: Math.max(1, toFiniteNumber(entry.outputQty, 1)),
     isAvalonian: entry.isAvalonian === true,
+    baseFocus: baseFocus > 0 ? baseFocus : undefined,
     ingredients,
   };
 }
