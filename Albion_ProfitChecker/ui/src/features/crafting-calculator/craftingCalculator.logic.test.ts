@@ -12,9 +12,17 @@ import {
 describe("crafting calculator city and id helpers", () => {
   it("maps special categories to the expected bonus city", () => {
     expect(getBonusCityForItem({ id: "BAG", categoryKey: "bags" })).toBe("Brecilien");
+    expect(getBonusCityForItem({ id: "BAG_INSIGHT", categoryKey: "bags" })).toBe("Brecilien");
     expect(getBonusCityForItem({ id: "CAPE", categoryKey: "capes" })).toBe("Brecilien");
-    expect(getBonusCityForItem({ id: "2H_TOOL_HAMMER" })).toBe("Bridgewatch");
-    expect(getBonusCityForItem({ id: "HEAD_GATHERER_FISH" })).toBe("Martlock");
+    // All gathering tools have their Local Production Bonus in Caerleon
+    expect(getBonusCityForItem({ id: "2H_TOOL_HAMMER" })).toBe("Caerleon");
+    expect(getBonusCityForItem({ id: "2H_TOOL_PICK" })).toBe("Caerleon");
+    expect(getBonusCityForItem({ id: "2H_TOOL_SICKLE" })).toBe("Caerleon");
+    expect(getBonusCityForItem({ id: "2H_TOOL_FISHINGROD" })).toBe("Caerleon");
+    // All gathering gear (regardless of resource) also Caerleon
+    expect(getBonusCityForItem({ id: "HEAD_GATHERER_FISH" })).toBe("Caerleon");
+    expect(getBonusCityForItem({ id: "ARMOR_GATHERER_FIBER" })).toBe("Caerleon");
+    expect(getBonusCityForItem({ id: "BACKPACK_GATHERER_ORE" })).toBe("Caerleon");
   });
 
   it("builds normal material ids and stone block ids correctly", () => {

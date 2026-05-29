@@ -39,6 +39,12 @@ export function LandingPage() {
         image: assets.refiningCalcPreview,
         href: "/refining-calculator",
         ctaLabel: "Open Refining Calculator"
+      },
+      {
+        title: "Food & Potion Crafter",
+        image: assets.bmCrafterPreview,
+        href: "/food-potion-crafter",
+        ctaLabel: "Open Food & Potion Crafter"
       }
     ],
     []
@@ -178,6 +184,9 @@ export function LandingPage() {
               </a>
               <a className="hero-cta" href="/refining-calculator">
                 Refining Calculator
+              </a>
+              <a className="hero-cta" href="/food-potion-crafter">
+                Food &amp; Potion Crafter
               </a>
             </div>
             <p>Zero latency market telemetry for high-volume stakeholders.</p>

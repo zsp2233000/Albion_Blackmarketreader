@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { assetUrl } from "@shared/assets/assets";
+import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../shared/seo/useSeo";
@@ -83,6 +83,7 @@ type RowEdit = {
   artefact: number;
   tax: number;
   market: number;
+  sold: number;
 };
 
 type MaterialsCityPayload = {
@@ -446,7 +447,8 @@ export function CraftingCalculatorPage() {
           mat2: parseCompactNumber(row.mat2),
           artefact: parseCompactNumber(row.artefact),
           tax: parseCompactNumber(row.tax),
-          market: parseCompactNumber(row.market)
+          market: parseCompactNumber(row.market),
+          sold: 0
         }
       ]);
     return Object.fromEntries(entries);
@@ -485,7 +487,8 @@ export function CraftingCalculatorPage() {
       mat2: parseCompactNumber(selectedRow.mat2),
       artefact: artefactByTier[selectedTier] ?? parseCompactNumber(selectedRow.artefact),
       tax: parseCompactNumber(selectedRow.tax),
-      market: parseCompactNumber(selectedRow.market)
+      market: parseCompactNumber(selectedRow.market),
+      sold: 0
     };
   }, [rowEdits, selectedRow, artefactByTier]);
   const bonusCity = useMemo(() => getBonusCityForItem(selectedItem), [selectedItem]);
@@ -837,7 +840,8 @@ export function CraftingCalculatorPage() {
           mat2: parseCompactNumber(row.mat2),
           artefact: parseCompactNumber(row.artefact),
           tax: parseCompactNumber(row.tax),
-          market: parseCompactNumber(row.market)
+          market: parseCompactNumber(row.market),
+          sold: 0
         };
         next[row.key] = {
           ...current,
@@ -866,14 +870,20 @@ export function CraftingCalculatorPage() {
           })()
           : 0;
 
+        const soldValue = matches
+          .map((entry) => Number(entry.sold || 0))
+          .filter((value) => Number.isFinite(value) && value > 0)
+          .reduce((max, value) => Math.max(max, value), 0);
+
         const current = next[row.key] || {
           mat1: parseCompactNumber(row.mat1),
           mat2: parseCompactNumber(row.mat2),
           artefact: parseCompactNumber(row.artefact),
           tax: parseCompactNumber(row.tax),
-          market: parseCompactNumber(row.market)
+          market: parseCompactNumber(row.market),
+          sold: 0
         };
-        next[row.key] = { ...current, market: resolvedMarket > 0 ? resolvedMarket : 0 };
+        next[row.key] = { ...current, market: resolvedMarket > 0 ? resolvedMarket : 0, sold: soldValue };
       });
       return next;
     });
@@ -897,7 +907,8 @@ export function CraftingCalculatorPage() {
             mat2: parseCompactNumber(row.mat2),
             artefact: parseCompactNumber(row.artefact),
             tax: parseCompactNumber(row.tax),
-            market: parseCompactNumber(row.market)
+            market: parseCompactNumber(row.market),
+            sold: 0
           };
           next[row.key] = { ...current, artefact: artefactValue };
         });
@@ -1080,7 +1091,7 @@ export function CraftingCalculatorPage() {
           const tier = parseTierEnchant(row.uid).tier;
           if (tier !== targetTier) return;
           next[row.key] = {
-            ...(next[row.key] || { mat1: 0, mat2: 0, artefact: 0, tax: 0, market: 0 }),
+            ...(next[row.key] || { mat1: 0, mat2: 0, artefact: 0, tax: 0, market: 0, sold: 0 }),
             artefact: parsed
           };
         });
@@ -1091,7 +1102,7 @@ export function CraftingCalculatorPage() {
     setRowEdits((prev) => ({
       ...prev,
       [rowKey]: {
-        ...(prev[rowKey] || { mat1: 0, mat2: 0, artefact: 0, tax: 0, market: 0 }),
+        ...(prev[rowKey] || { mat1: 0, mat2: 0, artefact: 0, tax: 0, market: 0, sold: 0 }),
         [field]: parsed
       }
     }));
@@ -1124,6 +1135,7 @@ export function CraftingCalculatorPage() {
               <Link className="nav-tab" to="/dashboard">Dashboard</Link>
               <Link className="nav-tab" to="/bm-crafter">Blackmarket Crafter</Link>
               <Link className="nav-tab" to="/refining-calculator">Refining Calculator</Link>
+              <Link className="nav-tab" to="/food-potion-crafter">Food &amp; Potion Crafter</Link>
               <span className="nav-tab active">Crafting Calculator</span>
             </div>
           </div>
@@ -1197,7 +1209,7 @@ export function CraftingCalculatorPage() {
           <table className="spreadsheet-table">
             <thead>
               <tr>
-                <th>UID</th><th>Material 1</th><th>Material 2</th><th>Artefact</th><th>Tax + Fees</th><th>Market Value</th><th>Profit</th><th>Gain %</th><th>Silver / Focus</th>
+                <th>UID</th><th>Material 1</th><th>Material 2</th><th>Artefact</th><th>Market Value</th><th>Sold/Day</th><th>Profit</th><th>Gain %</th><th>Silver / Focus</th>
               </tr>
             </thead>
             <tbody>
@@ -1208,15 +1220,20 @@ export function CraftingCalculatorPage() {
                     const selected = row.key === selectedRowKey;
                     const { tier: rowTier } = parseTierEnchant(row.uid);
                     const requiredMaterials = Array.isArray(selectedItem?.materials) ? selectedItem.materials : [];
-                    const requiresMat1 = (Number(requiredMaterials[0]?.qty) || 0) > 0;
-                    const requiresMat2 = (Number(requiredMaterials[1]?.qty) || 0) > 0;
+                    const qty1 = Number(requiredMaterials[0]?.qty) || 0;
+                    const qty2 = Number(requiredMaterials[1]?.qty) || 0;
+                    const requiresMat1 = qty1 > 0;
+                    const requiresMat2 = qty2 > 0;
                     const values = rowEdits[row.key] || {
                       mat1: parseCompactNumber(row.mat1),
                       mat2: parseCompactNumber(row.mat2),
                       artefact: artefactByTier[rowTier] ?? parseCompactNumber(row.artefact),
                       tax: parseCompactNumber(row.tax),
-                      market: parseCompactNumber(row.market)
+                      market: parseCompactNumber(row.market),
+                      sold: 0
                     };
+                    const mat1Unit = qty1 > 0 ? values.mat1 / qty1 : values.mat1;
+                    const mat2Unit = qty2 > 0 ? values.mat2 / qty2 : values.mat2;
                     const itemNeedsArtifact = Boolean(selectedItem?.artifactId || selectedItem?.artifact);
                     const rowEconomics = calculateEconomics({
                       mat1: values.mat1,
@@ -1237,8 +1254,34 @@ export function CraftingCalculatorPage() {
                     return (
                       <tr key={row.key} className={`sub-row ${section.fogClass} ${selected ? "selected" : ""}`} onClick={() => setSelectedRowKey(row.key)}>
                         <td>{row.uid}</td>
-                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "mat1", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompactOrDash(values.mat1)}</td>
-                        <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "mat2", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompactOrDash(values.mat2)}</td>
+                        <td
+                          className="mono-num editable-cell"
+                          contentEditable
+                          suppressContentEditableWarning
+                          title={qty1 > 0 ? `Unit price × ${qty1}` : undefined}
+                          onBlur={(e) => {
+                            const unit = Math.max(0, parseCompactNumber(e.currentTarget.textContent || "0"));
+                            const total = qty1 > 0 ? unit * qty1 : unit;
+                            updateRowField(row.key, "mat1", String(total));
+                          }}
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); (e.currentTarget as HTMLElement).blur(); } }}
+                        >
+                          {formatCompactOrDash(mat1Unit)}
+                        </td>
+                        <td
+                          className="mono-num editable-cell"
+                          contentEditable
+                          suppressContentEditableWarning
+                          title={qty2 > 0 ? `Unit price × ${qty2}` : undefined}
+                          onBlur={(e) => {
+                            const unit = Math.max(0, parseCompactNumber(e.currentTarget.textContent || "0"));
+                            const total = qty2 > 0 ? unit * qty2 : unit;
+                            updateRowField(row.key, "mat2", String(total));
+                          }}
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); (e.currentTarget as HTMLElement).blur(); } }}
+                        >
+                          {formatCompactOrDash(mat2Unit)}
+                        </td>
                         {rowIndex === 0 ? (itemNeedsArtifact ? (
                           <td
                             rowSpan={section.rows.length}
@@ -1255,8 +1298,8 @@ export function CraftingCalculatorPage() {
                         ) : (
                           <td rowSpan={section.rows.length} className="mono-num muted">Non Artefakt</td>
                         )) : null}
-                        <td className="mono-num">{typeof rowEconomics.totalFees === "number" ? formatCompact(rowEconomics.totalFees) : "-"}</td>
                         <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "market", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompactOrDash(values.market)}</td>
+                        <td className="mono-num muted">{values.sold > 0 ? formatCompact(values.sold) : "-"}</td>
                         <td className={`mono-num ${typeof rowProfit === "number" ? (rowProfit >= 0 ? "value-positive" : "value-negative") : ""}`}>
                           {typeof rowProfit === "number" ? formatCompact(rowProfit) : "-"}
                         </td>
@@ -1336,7 +1379,7 @@ export function CraftingCalculatorPage() {
               <img
                 className="cc-item-image"
                 src={selectedItem ? `/itemicons/T4_${selectedItem.id}.png` : assetUrl("picture/accountsymbol.png")}
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = assetUrl("picture/accountsymbol.png"); }}
+                onError={onItemIconError}
                 alt="item"
               />
             </div>

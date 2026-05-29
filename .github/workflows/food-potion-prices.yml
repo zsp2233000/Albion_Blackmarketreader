@@ -1,0 +1,58 @@
+name: Build Food & Potion Prices (EU + US)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 04:00 UTC — quiet slot, clear of the other data syncs (02:00 / 08:00+).
+    - cron: "0 4 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: food-potion-prices
+  cancel-in-progress: true
+
+jobs:
+  build-food-potion-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Refresh food & potion prices (EU + US)
+        working-directory: Albion_ProfitChecker/ui
+        run: node scripts/refresh-food-potion-data.mjs
+
+      - name: Commit outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          FILES="Albion_ProfitChecker/ui/public/data/consumable-ingredient-prices-eu.json \
+                 Albion_ProfitChecker/ui/public/data/consumable-ingredient-prices-us.json \
+                 Albion_ProfitChecker/ui/public/data/food-prices-eu.json \
+                 Albion_ProfitChecker/ui/public/data/food-prices-us.json \
+                 Albion_ProfitChecker/ui/public/data/potion-prices-eu.json \
+                 Albion_ProfitChecker/ui/public/data/potion-prices-us.json"
+          if [ -n "$(git status --porcelain $FILES)" ]; then
+            git add $FILES
+            git commit -m "chore: update food & potion prices (eu/us)"
+          else
+            echo "No food & potion price changes"
+          fi
+
+      - name: Push changes
+        if: success()
+        run: |
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          git pull --rebase origin "$branch" || true
+          if [ -n "$(git log origin/$(git rev-parse --abbrev-ref HEAD)..HEAD)" ]; then
+            git push
+          else
+            echo "Nichts zu pushen"
+          fi

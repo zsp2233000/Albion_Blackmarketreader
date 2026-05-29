@@ -1,0 +1,651 @@
+/* Food & Potion Crafter — layers on top of bmCrafter.css (dark teal theme). */
+
+.fp-page {
+  --fp-food: #f59e0b;        /* warm amber */
+  --fp-food-soft: rgba(245, 158, 11, 0.16);
+  --fp-potion: #a855f7;      /* violet */
+  --fp-potion-soft: rgba(168, 85, 247, 0.16);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg, #05080a);
+}
+
+/* Flexible main height so the scanner table scrolls within the viewport. */
+.fp-page .fp-main {
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fp-page .fp-main-scanner .bm-table {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.fp-scanner-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.fp-page .bm-header,
+.fp-page .side-card {
+  position: static;
+  top: auto;
+}
+
+.fp-page .bm-main {
+  align-items: start;
+}
+
+body.food-potion-crafter-body {
+  background: var(--bg, #05080a);
+}
+
+/* --- Category segmented control --- */
+.fp-category-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: rgba(13, 20, 24, 0.85);
+  border: 1px solid var(--border);
+  flex: 0 0 auto;
+}
+
+.fp-category-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  /* Only colour transitions — never layout — so active state never shifts tabs. */
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.fp-category-tab .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.fp-category-tab:hover {
+  color: #e8fff6;
+}
+
+.fp-category-tab.active[data-category="food"] {
+  background: var(--fp-food-soft);
+  border-color: var(--fp-food);
+  color: var(--fp-food);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.25);
+}
+
+.fp-category-tab.active[data-category="potion"] {
+  background: var(--fp-potion-soft);
+  border-color: var(--fp-potion);
+  color: var(--fp-potion);
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.25);
+}
+
+.fp-category-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 16px 24px 0;
+  flex-wrap: wrap;
+}
+
+/* Specs button anchored to the far right; tabs stay pinned left and never move. */
+.fp-category-bar .fp-specs-trigger {
+  margin-left: auto;
+}
+
+/* --- Mode layouts --- */
+.fp-main-scanner .bm-table {
+  width: 100%;
+}
+
+/* Crafter uses the full main width (table + inline workbench), like the scanner. */
+.fp-main-crafter {
+  justify-content: stretch;
+}
+
+.fp-crafter-stage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.fp-crafter-full {
+  flex: 1;
+}
+
+.fp-crafter-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.fp-crafter-toolbar .fp-recipe-picker {
+  min-width: 280px;
+  flex: 0 1 360px;
+}
+
+.fp-tier-wrap {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(13, 20, 24, 0.6);
+}
+
+/* Inline workbench below the tier table — full width bento layout. */
+.fp-workbench-inline {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(10, 15, 18, 0.92);
+  padding: 16px 18px;
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.06);
+}
+
+.fp-workbench-inline .detail-grid-12 {
+  margin-top: 12px;
+}
+
+.fp-workbench-inline .bento-card {
+  min-height: 0;
+}
+
+.bento-card-inner-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.material-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 8px;
+}
+
+.material-total {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary, #2dd4bf);
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* --- Redesigned profit summary card --- */
+.fp-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(13, 24, 26, 0.96), rgba(8, 16, 18, 0.98));
+  border: 1px solid rgba(45, 212, 191, 0.22);
+}
+
+.fp-summary-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fp-summary-pill {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.fp-summary-pill.profit { background: rgba(74, 222, 128, 0.16); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); }
+.fp-summary-pill.loss { background: rgba(248, 113, 113, 0.16); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.4); }
+
+.fp-summary-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.fp-summary-hero-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted, #8ea3b9); font-weight: 700; }
+.fp-summary-hero strong { font-size: 28px; line-height: 1.05; font-weight: 800; font-family: "JetBrains Mono", monospace; }
+.fp-summary-hero strong.profit-cell { color: #4ade80; }
+.fp-summary-hero strong.loss-cell { color: #f87171; }
+.fp-summary-hero-sub { font-size: 11px; color: var(--text-secondary, #9db2c8); letter-spacing: 0.04em; }
+
+.fp-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.fp-summary-grid > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(10, 16, 20, 0.85);
+}
+.fp-summary-grid span { font-size: 11px; color: var(--text-secondary, #9db2c8); }
+.fp-summary-grid strong { font-size: 12px; font-family: "JetBrains Mono", monospace; color: #e2e8f0; }
+.fp-summary-grid strong.profit-cell { color: #4ade80; }
+.fp-summary-grid strong.loss-cell { color: #f87171; }
+
+@media (max-width: 720px) {
+  .fp-summary-grid { grid-template-columns: 1fr; }
+}
+
+.fp-recipe-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fp-recipe-picker .fp-control {
+  height: 42px;
+  font-size: 13px;
+}
+
+.fp-category-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+/* --- Controls panel --- */
+.fp-controls {
+  margin: 12px 24px 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(10, 15, 18, 0.92);
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.06);
+  overflow: hidden;
+}
+
+.fp-controls-static {
+  padding-top: 4px;
+}
+
+.fp-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  padding: 0 18px 18px;
+  align-items: end;
+}
+
+.fp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fp-field > label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.fp-field.fp-field-wide {
+  grid-column: span 2;
+}
+
+.fp-control {
+  width: 100%;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: #e2e8f0;
+  padding: 0 10px;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.fp-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.2);
+}
+
+select.fp-control {
+  appearance: none;
+  cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+  background-position: calc(100% - 16px) 14px, calc(100% - 11px) 14px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 28px;
+}
+
+select.fp-control option {
+  background: #0c0f17;
+  color: #e2e8f0;
+}
+
+.fp-field .chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.fp-field .search-field {
+  height: 34px;
+}
+
+.fp-toggle-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.fp-toggle-field input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--primary);
+}
+
+/* --- Accent chips --- */
+.fp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.fp-avalonian-chip {
+  background: var(--fp-food-soft);
+  color: var(--fp-food);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.fp-rare-chip {
+  background: var(--fp-potion-soft);
+  color: var(--fp-potion);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.fp-missing-chip {
+  background: rgba(148, 163, 184, 0.16);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.fp-unpriced-row td { opacity: 0.55; }
+.fp-unpriced-row:hover td { opacity: 0.8; }
+
+/* --- Summary bar --- */
+.fp-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(13, 20, 24, 0.6);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.fp-summary-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fp-summary-stat span {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.fp-summary-stat strong {
+  font-size: 15px;
+  color: #e2e8f0;
+}
+
+.fp-summary-stat strong.profit {
+  color: var(--primary-bright, #4ade80);
+}
+
+.fp-summary-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+}
+
+/* --- Calculator workbench (crafting-calculator bento design) --- */
+.fp-workbench-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 2px 4px;
+}
+
+.fp-workbench-title .material-symbols-outlined {
+  font-size: 22px;
+  color: var(--primary, #2dd4bf);
+}
+
+.fp-workbench-title h3 {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e2e8f0;
+}
+
+.fp-workbench-title p {
+  margin: 1px 0 0;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.fp-output-price input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: #e2e8f0;
+  font-size: 13px;
+  padding: 8px 12px;
+  outline: none;
+}
+
+.fp-output-price input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.2);
+}
+
+/* --- Ingredient breakdown (side card) --- */
+.fp-ingredient-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.fp-ingredient-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.fp-ingredient-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fp-ingredient-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fp-ingredient-row.rare {
+  background: var(--fp-potion-soft);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.fp-ingredient-row.token {
+  background: var(--fp-food-soft);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.fp-ingredient-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.fp-ingredient-qty {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary, #2dd4bf);
+  min-width: 36px;
+}
+
+.fp-ingredient-name {
+  font-size: 11px;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fp-ingredient-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.fp-ingredient-price {
+  width: 84px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 11px;
+  padding: 4px 8px;
+  text-align: right;
+  outline: none;
+}
+
+.fp-ingredient-price:focus {
+  border-color: var(--primary);
+}
+
+.fp-ingredient-total {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", monospace;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* --- Output price input in side hero --- */
+.fp-output-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.fp-output-price input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: #e2e8f0;
+  font-size: 12px;
+  padding: 6px 12px;
+  outline: none;
+}
+
+.fp-output-price input:focus {
+  border-color: var(--primary);
+}
+
+/* --- Avalonian row accent in results table --- */
+tr.fp-avalonian-row td {
+  box-shadow: inset 2px 0 0 var(--fp-food);
+}
+
+/* --- Item icon in table --- */
+.fp-item-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.fp-item-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
