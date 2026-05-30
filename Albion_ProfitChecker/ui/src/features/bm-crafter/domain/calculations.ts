@@ -119,13 +119,17 @@ export function calculateMaterialCost(
   getMaterialPrice: (materialId: string, tier: number, enchant: number) => number | null
 ): MaterialCostResult {
   let sum = 0;
-  let hasPrice = false;
+  // Every material must have a real (>0) price, otherwise the craft cost is
+  // incomplete and would produce a bogus (too-high) profit. A 0/missing price
+  // (e.g. no Black Market/city listing for that tier) disqualifies the row.
+  let hasPrice = recipe.materials.length > 0;
 
   for (const mat of recipe.materials) {
     const unit = getMaterialPrice(mat.itemId, tier, enchant);
-    if (typeof unit === "number") {
+    if (typeof unit === "number" && unit > 0) {
       sum += unit * Number(mat.qty || 0);
-      hasPrice = true;
+    } else {
+      hasPrice = false;
     }
   }
 
