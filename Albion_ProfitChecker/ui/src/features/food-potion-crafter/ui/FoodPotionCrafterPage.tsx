@@ -129,8 +129,9 @@ export function FoodPotionCrafterPage() {
   const [ingredientMeta, setIngredientMeta] = useState<Map<string, RecipeIngredient>>(new Map());
   const [manualPrices, setManualPrices] = useState<Record<string, string>>(() => readManualPrices());
   const [livePriceByItemId, setLivePriceByItemId] = useState<Record<string, number>>({});
-  const [buyCity, setBuyCity] = useState<City>("Caerleon");
-  const [sellCity, setSellCity] = useState<City>("Caerleon");
+  const [soldByItemId, setSoldByItemId] = useState<Record<string, number>>({});
+  const [buyCity, setBuyCity] = useState<City>("Lymhurst");
+  const [sellCity, setSellCity] = useState<City>("Lymhurst");
   const [mode, setMode] = useState<"scanner" | "crafter">("scanner");
   const [selectedFamily, setSelectedFamily] = useState<string | null>(null);
   const [showSpecsModal, setShowSpecsModal] = useState(false);
@@ -323,6 +324,7 @@ export function FoodPotionCrafterPage() {
       const foodSnap = buildConsumablePriceSnapshot(ingredientPayload, foodPayload, buyCity, sellCity);
       const potionSnap = buildConsumablePriceSnapshot(ingredientPayload, potionPayload, buyCity, sellCity);
       setLivePriceByItemId({ ...foodSnap.priceByItemId, ...potionSnap.priceByItemId });
+      setSoldByItemId({ ...foodSnap.soldByItemId, ...potionSnap.soldByItemId });
     })();
     return () => {
       cancelled = true;
@@ -558,10 +560,6 @@ export function FoodPotionCrafterPage() {
             <label>Market Tax %</label>
             <input className="fp-control" inputMode="decimal" value={(filters.marketTaxRate * 100).toFixed(1)} onChange={(e) => filters.setMarketTaxRate(Math.max(0, Math.min(100, Number(e.target.value) || 0)) / 100)} />
           </div>
-          <div className="fp-field">
-            <label>Demand / Day</label>
-            <input className="fp-control" inputMode="numeric" value={filters.demandPerDay} onChange={(e) => filters.setDemandPerDay(Math.max(0, Number(e.target.value) || 0))} />
-          </div>
           {mode === "scanner" ? (
             <div className="fp-field fp-field-wide">
               <label>Tier</label>
@@ -610,7 +608,7 @@ export function FoodPotionCrafterPage() {
                 <thead>
                   <tr>
                     <th>Recipe</th><th className="num">Output</th><th className="num">Return</th>
-                    <th className="num">Craft Cost</th><th className="num">Net Revenue</th>
+                    <th className="num">Craft Cost</th><th className="num">Sell Price</th>
                     <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Sold / Day</th>
                   </tr>
                 </thead>
@@ -643,11 +641,11 @@ export function FoodPotionCrafterPage() {
                       <td className="num">{formatNumber(row.result.outputAmount)}</td>
                       <td className="num">{formatPct(row.result.returnRate * 100)}</td>
                       <td className="num">{priced ? formatNumber(row.result.totalCost) : "--"}</td>
-                      <td className="num">{priced ? formatNumber(row.result.netRevenue) : "--"}</td>
+                      <td className="num">{(() => { const p = priceByItemId.get(row.recipe.itemId) ?? 0; return p > 0 ? formatNumber(p) : "--"; })()}</td>
                       <td className={`num ${priced ? (row.result.profit >= 0 ? "profit" : "loss") : ""}`}>{priced ? `${row.result.profit >= 0 ? "+" : ""}${formatNumber(row.result.profit)}` : "--"}</td>
                       <td className={`num ${priced ? (row.result.profit >= 0 ? "profit" : "loss") : ""}`}>{priced ? formatPct(row.result.profitPercent) : "--"}</td>
                       <td className={`num ${priced && (row.result.silverPerFocus ?? 0) >= 0 ? "profit" : priced ? "loss" : ""}`}>{priced && row.result.silverPerFocus !== null ? formatNumber(row.result.silverPerFocus) : "--"}</td>
-                      <td className={`num ${priced && (row.result.dailyPotential ?? 0) >= 0 ? "profit" : priced ? "loss" : ""}`}>{priced && row.result.dailyPotential !== null ? formatNumber(row.result.dailyPotential) : "--"}</td>
+                      <td className="num">{(() => { const s = soldByItemId[row.recipe.itemId] ?? 0; return s > 0 ? formatNumber(s) : "--"; })()}</td>
                     </tr>
                     );
                   })}
@@ -797,7 +795,7 @@ export function FoodPotionCrafterPage() {
                       <div><span>Focus Cost</span><strong>{crafterSelected.result.focusCost > 0 ? formatNumber(crafterSelected.result.focusCost) : "--"}</strong></div>
                       <div><span>Silver / Focus</span><strong className={(crafterSelected.result.silverPerFocus ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{crafterSelected.result.silverPerFocus === null ? "--" : formatNumber(crafterSelected.result.silverPerFocus)}</strong></div>
                       <div><span>Profit / Item</span><strong className={crafterSelected.result.profitPerOutput >= 0 ? "profit-cell" : "loss-cell"}>{formatNumber(crafterSelected.result.profitPerOutput)}</strong></div>
-                      <div><span>Sold / Day</span><strong className={(crafterSelected.result.dailyPotential ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{crafterSelected.result.dailyPotential === null ? "--" : formatNumber(crafterSelected.result.dailyPotential)}</strong></div>
+                      <div><span>Sold / Day</span><strong>{(soldByItemId[crafterSelected.recipe.itemId] ?? 0) > 0 ? formatNumber(soldByItemId[crafterSelected.recipe.itemId]) : "--"}</strong></div>
                     </div>
                   </div>
                 </div>

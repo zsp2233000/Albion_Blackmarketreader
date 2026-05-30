@@ -556,6 +556,21 @@ export function BmCrafterPage() {
 
         <div className="filter-block">
           <div className="filter-head">
+            <p>Non-Artefact Only</p>
+            <span className="filter-value">{filters.nonArtefactOnly ? "On" : "Off"}</span>
+          </div>
+          <label className="daily-top-toggle">
+            <input
+              type="checkbox"
+              checked={filters.nonArtefactOnly}
+              onChange={(e) => filters.setNonArtefactOnly(e.target.checked)}
+            />
+            <span>Hide items that need an artefact</span>
+          </label>
+        </div>
+
+        <div className="filter-block">
+          <div className="filter-head">
             <p>Return Rate</p>
             <span className="filter-value">{filters.returnRatePercent.toFixed(2)}%</span>
           </div>

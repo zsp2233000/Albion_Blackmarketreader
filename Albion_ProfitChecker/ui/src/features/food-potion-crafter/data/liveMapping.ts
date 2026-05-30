@@ -1,7 +1,8 @@
-import { normalizeCityPricePayload, readGeneratedAt } from "./normalizers";
+import { normalizeCityPricePayload, normalizeSoldPayload, readGeneratedAt } from "./normalizers";
 
 export type ConsumablePriceSnapshot = {
   priceByItemId: Record<string, number>;
+  soldByItemId: Record<string, number>;
   generatedAt: string | null;
 };
 
@@ -35,8 +36,14 @@ export function buildConsumablePriceSnapshot(
   applyCityPrices(priceByItemId, ingredientMap, buyCity);
   applyCityPrices(priceByItemId, outputMap, sellCity);
 
+  const soldByItemId: Record<string, number> = {};
+  for (const [itemId, sold] of normalizeSoldPayload(outputPayload)) {
+    soldByItemId[itemId] = sold;
+  }
+
   return {
     priceByItemId,
+    soldByItemId,
     generatedAt: readGeneratedAt(outputPayload) ?? readGeneratedAt(ingredientPayload),
   };
 }

@@ -72,6 +72,7 @@ describe("deriveBmCrafterRows", () => {
       returnRate: 0.1525,
       sortByDailyTop: false,
       showOnlyProfitable: true,
+      nonArtefactOnly: false,
       craftCity: "Caerleon",
       usageFeePer100: 0
     });
@@ -94,6 +95,7 @@ describe("deriveBmCrafterRows", () => {
       returnRate: 0.1525,
       sortByDailyTop: false,
       showOnlyProfitable: true,
+      nonArtefactOnly: false,
       craftCity: "Caerleon",
       usageFeePer100: 0
     });

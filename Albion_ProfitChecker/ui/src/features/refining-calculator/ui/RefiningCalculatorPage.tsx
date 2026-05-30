@@ -885,8 +885,8 @@ export function RefiningCalculatorPage() {
               <Link className="nav-tab" to="/dashboard">Dashboard</Link>
               <Link className="nav-tab" to="/bm-crafter">Blackmarket Crafter</Link>
               <Link className="nav-tab" to="/crafting-calculator">Crafting Calculator</Link>
-              <Link className="nav-tab" to="/food-potion-crafter">Food &amp; Potion Crafter</Link>
               <span className="nav-tab active">Refining Calculator</span>
+              <Link className="nav-tab" to="/food-potion-crafter">Food &amp; Potion Crafter</Link>
             </div>
           </div>
           <div className="bm-meta">

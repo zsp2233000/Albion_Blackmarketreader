@@ -51,6 +51,7 @@ export function deriveBmCrafterRows(bundle: BmCrafterDataBundle | null, filters:
     const baseId = normalizeItemId(id);
     const recipe = recipeMap.get(baseId);
     if (!recipe) continue;
+    if (filters.nonArtefactOnly && recipe.artifactId) continue;
 
     const displayName = toDisplayName(id, recipe.name);
     if (search) {

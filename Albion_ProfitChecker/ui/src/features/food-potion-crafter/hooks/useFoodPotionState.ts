@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  DEFAULT_STATION_FEE,
-  PRODUCTION_BONUS_CITY,
-} from "../core";
+import { DEFAULT_STATION_FEE } from "../core";
 import type {
   City,
   ConsumableCategory,
@@ -13,7 +10,8 @@ import type {
 import { deriveFoodPotionRows } from "./deriveRows";
 import type { CraftingProgress } from "../specs/data";
 
-const SELL_CITY_DEFAULT: City = "Caerleon";
+// Lymhurst has the deepest market data, so default every city selector there.
+const DEFAULT_CITY: City = "Lymhurst";
 
 export function useFoodPotionState(
   recipes: ConsumableRecipe[],
@@ -23,9 +21,9 @@ export function useFoodPotionState(
   const [category, setCategoryState] = useState<ConsumableCategory>("food");
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [craftCity, setCraftCity] = useState<City>(PRODUCTION_BONUS_CITY.food);
-  const [buyCity, setBuyCity] = useState<City>(PRODUCTION_BONUS_CITY.food);
-  const [sellCity, setSellCity] = useState<City>(SELL_CITY_DEFAULT);
+  const [craftCity, setCraftCity] = useState<City>(DEFAULT_CITY);
+  const [buyCity, setBuyCity] = useState<City>(DEFAULT_CITY);
+  const [sellCity, setSellCity] = useState<City>(DEFAULT_CITY);
   const [stationKind, setStationKind] = useState<StationKind>("city");
   const [returnRatePreset, setReturnRatePreset] = useState<ReturnRatePreset>("focus");
   const [customReturnRatePct, setCustomReturnRatePct] = useState<number>(43.5);
@@ -38,7 +36,7 @@ export function useFoodPotionState(
 
   const setCategory = (next: ConsumableCategory) => {
     setCategoryState(next);
-    setCraftCity(PRODUCTION_BONUS_CITY[next]);
+    // Keep the user's chosen city (default Lymhurst); only the flat station fee differs per category.
     setStationFeePerCraft(DEFAULT_STATION_FEE[next]);
   };
 

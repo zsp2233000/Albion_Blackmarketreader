@@ -18,6 +18,7 @@ export interface BmCrafterFilters {
   returnRate: number;
   sortByDailyTop: boolean;
   showOnlyProfitable: boolean;
+  nonArtefactOnly: boolean;
   craftCity: string;
   usageFeePer100: number;
 }

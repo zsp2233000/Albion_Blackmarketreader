@@ -60,3 +60,19 @@ export function readGeneratedAt(payload: unknown): string | null {
   if (isRecord(payload) && typeof payload.generatedAt === "string") return payload.generatedAt;
   return null;
 }
+
+/**
+ * Read units-sold-per-day from a price payload's items[].sold field.
+ * Returns Map<itemId, sold>. Empty when the field is absent (older data).
+ */
+export function normalizeSoldPayload(payload: unknown): Map<string, number> {
+  const map = new Map<string, number>();
+  const list = isRecord(payload) && Array.isArray(payload.items) ? payload.items : [];
+  for (const entry of list) {
+    if (!isRecord(entry)) continue;
+    const itemId = String(entry.itemId || "").trim();
+    const sold = toFiniteNumber(entry.sold);
+    if (itemId && sold !== null && sold > 0) map.set(itemId, sold);
+  }
+  return map;
+}

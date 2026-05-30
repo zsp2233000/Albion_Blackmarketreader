@@ -38,6 +38,7 @@ describe("bm crafter parity integration", () => {
       returnRate: 0.1525,
       sortByDailyTop: false,
       showOnlyProfitable: true,
+      nonArtefactOnly: false,
       craftCity: "Caerleon",
       usageFeePer100: 0
     });
@@ -67,6 +68,7 @@ describe("bm crafter parity integration", () => {
       returnRate: 0.1525,
       sortByDailyTop: false,
       showOnlyProfitable: false,
+      nonArtefactOnly: false,
       craftCity: "Caerleon",
       usageFeePer100: 0
     });

@@ -123,13 +123,75 @@ async function fetchAllPrices(host, itemIds, cities) {
   return best;
 }
 
-function buildPricesPayload(region, itemIds, priceMap) {
+const HISTORY_BATCH_SIZE = 20;
+
+/** One history batch (daily item_count) for the given items across all cities. */
+async function fetchHistoryBatch(host, itemIds, cities) {
+  const url = `https://${host}.albion-online-data.com/api/v2/stats/history/${itemIds.map(encodeURIComponent).join(",")}.json?time-scale=24&locations=${encodeURIComponent(cities.join(","))}`;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt += 1) {
+    const response = await fetch(url, { headers: { "accept-encoding": "gzip" } });
+    if (response.ok) return response.json();
+    if (response.status === 429 && attempt < MAX_RETRIES) {
+      const retryAfter = Number(response.headers.get("retry-after") || 0);
+      await sleep(retryAfter > 0 ? retryAfter * 1000 : Math.min(8000, 1000 * (attempt + 1)));
+      continue;
+    }
+    throw new Error(`history request failed: ${response.status} ${response.statusText}`);
+  }
+  throw new Error("history request failed after retries");
+}
+
+/**
+ * Average units sold per day per item, aggregated across all cities.
+ * AODP history (time-scale 24) returns daily item_count buckets; we average the
+ * total daily volume over the days returned. Never throws — returns Map(itemId -> sold).
+ */
+async function fetchAllSold(host, itemIds, cities) {
+  const sold = new Map();
+  for (let i = 0; i < itemIds.length; i += HISTORY_BATCH_SIZE) {
+    const batch = itemIds.slice(i, i + HISTORY_BATCH_SIZE);
+    let rows;
+    try {
+      rows = await fetchHistoryBatch(host, batch, cities);
+    } catch (error) {
+      console.error("history batch failed", error instanceof Error ? error.message : error);
+      rows = [];
+    }
+    const totals = new Map(); // itemId -> { total, days:Set }
+    for (const row of Array.isArray(rows) ? rows : []) {
+      const itemId = String(row.item_id || "").trim();
+      if (!itemId || !Array.isArray(row.data)) continue;
+      if (!totals.has(itemId)) totals.set(itemId, { total: 0, days: new Set() });
+      const acc = totals.get(itemId);
+      for (const point of row.data) {
+        const count = Number(point.item_count || 0);
+        if (!Number.isFinite(count) || count <= 0) continue;
+        acc.total += count;
+        const day = String(point.timestamp || "").slice(0, 10);
+        if (day) acc.days.add(day);
+      }
+    }
+    for (const [itemId, acc] of totals) {
+      const days = Math.max(1, acc.days.size);
+      sold.set(itemId, Math.round(acc.total / days));
+    }
+    if (i + HISTORY_BATCH_SIZE < itemIds.length) await sleep(BATCH_DELAY_MS);
+  }
+  return sold;
+}
+
+function buildPricesPayload(region, itemIds, priceMap, soldMap = null) {
   const items = itemIds.map((itemId) => {
     const tierMatch = itemId.match(/^T(\d+)_/);
     const prices = Object.fromEntries(
       CITIES.map((city) => [city, Number(priceMap.get(`${itemId}::${city}`)?.price || 0)]).filter(([, value]) => value > 0)
     );
-    return { itemId, tier: tierMatch ? Number(tierMatch[1]) : 0, prices };
+    const item = { itemId, tier: tierMatch ? Number(tierMatch[1]) : 0, prices };
+    if (soldMap) {
+      const sold = Number(soldMap.get(itemId) || 0);
+      if (sold > 0) item.sold = sold;
+    }
+    return item;
   });
   return { generatedAt: new Date().toISOString(), region, cities: CITIES, count: items.length, items };
 }
@@ -157,6 +219,12 @@ async function refreshRegion(region, ids) {
   const foodPrices = await fetchAllPrices(host, ids.foodIds, CITIES);
   await sleep(BATCH_DELAY_MS);
   const potionPrices = await fetchAllPrices(host, ids.potionIds, CITIES);
+  await sleep(BATCH_DELAY_MS);
+
+  // Real units-sold-per-day for the crafted outputs (food + potions).
+  const foodSold = await fetchAllSold(host, ids.foodIds, CITIES);
+  await sleep(BATCH_DELAY_MS);
+  const potionSold = await fetchAllSold(host, ids.potionIds, CITIES);
 
   await fs.writeFile(
     path.join(publicDataDir, `consumable-ingredient-prices-${region}.json`),
@@ -164,11 +232,11 @@ async function refreshRegion(region, ids) {
   );
   await fs.writeFile(
     path.join(publicDataDir, `food-prices-${region}.json`),
-    JSON.stringify(buildPricesPayload(region, ids.foodIds, foodPrices), null, 2)
+    JSON.stringify(buildPricesPayload(region, ids.foodIds, foodPrices, foodSold), null, 2)
   );
   await fs.writeFile(
     path.join(publicDataDir, `potion-prices-${region}.json`),
-    JSON.stringify(buildPricesPayload(region, ids.potionIds, potionPrices), null, 2)
+    JSON.stringify(buildPricesPayload(region, ids.potionIds, potionPrices, potionSold), null, 2)
   );
 
   console.log(`[${region}] wrote consumable-ingredient-prices, food-prices, potion-prices.`);

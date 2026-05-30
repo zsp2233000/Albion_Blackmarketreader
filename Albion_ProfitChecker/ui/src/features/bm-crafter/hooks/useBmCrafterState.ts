@@ -10,6 +10,7 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortByDailyTop, setSortByDailyTop] = useState(false);
   const [showOnlyProfitable, setShowOnlyProfitable] = useState(true);
+  const [nonArtefactOnly, setNonArtefactOnly] = useState(false);
   const [bonusCity, setBonusCity] = useState(false);
   const [returnRatePercent, setReturnRatePercent] = useState(15.25);
   const [craftCity, setCraftCity] = useState<string>("Lymhurst");
@@ -33,10 +34,11 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
         returnRate,
         sortByDailyTop,
         showOnlyProfitable,
+        nonArtefactOnly,
         craftCity,
         usageFeePer100
       }),
-    [bundle, selectedTier, selectedEnchant, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, craftCity, usageFeePer100]
+    [bundle, selectedTier, selectedEnchant, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100]
   );
 
   useEffect(() => {
@@ -63,6 +65,7 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
     setSearchTerm("");
     setSortByDailyTop(false);
     setShowOnlyProfitable(true);
+    setNonArtefactOnly(false);
   };
 
   return {
@@ -83,6 +86,8 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
       setSortByDailyTop,
       showOnlyProfitable,
       setShowOnlyProfitable,
+      nonArtefactOnly,
+      setNonArtefactOnly,
       bonusCity,
       setBonusCity,
       setBonusCityPreset,
