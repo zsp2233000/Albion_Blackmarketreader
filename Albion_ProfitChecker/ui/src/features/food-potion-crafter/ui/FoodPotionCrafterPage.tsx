@@ -105,7 +105,10 @@ function useRegion(): [MarketRegion, (next: MarketRegion) => void] {
       service.destroy();
     };
   }, [service]);
-  return [region, (next) => service.setRegion(next)];
+  // Stable setter — otherwise effects that depend on it re-run every render
+  // and reset the region back to the profile value, breaking the toggle.
+  const update = useCallback((next: MarketRegion) => service.setRegion(next), [service]);
+  return [region, update];
 }
 
 interface AccountUser {

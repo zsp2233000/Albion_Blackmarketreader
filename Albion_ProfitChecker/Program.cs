@@ -325,6 +325,12 @@ internal static class Program
                         ));
                     }
                 }
+                catch (Exception ex)
+                {
+                    // One item's API timeout / network blip / parse error must never kill the
+                    // whole run. Log and skip; the remaining items keep processing.
+                    Console.WriteLine($"WARN {city} {v.ItemId} skipped: {ex.GetType().Name}: {ex.Message}");
+                }
                 finally
                 {
                     var done = Interlocked.Increment(ref processed);

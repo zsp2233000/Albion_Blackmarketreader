@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Net.Http;
 using System.Net;
 using System.Text.Json;
@@ -104,51 +105,64 @@ namespace AlbionProfitChecker.Services
             var url = $"{_apiBase}/history/{Uri.EscapeDataString(itemId)}.json?locations={Uri.EscapeDataString(location)}&time-scale=24";
             for (int attempt = 1; attempt <= 3; attempt++)
             {
-                using var resp = await _http.GetAsync(url);
-                if (resp.IsSuccessStatusCode)
+                try
                 {
-                    var json = await resp.Content.ReadAsStringAsync();
-                    using var doc = JsonDocument.Parse(json);
-
-                    var points = new List<HistoryPoint>();
-
-                    foreach (var series in doc.RootElement.EnumerateArray())
+                    using var resp = await _http.GetAsync(url);
+                    if (resp.IsSuccessStatusCode)
                     {
-                        if (!series.TryGetProperty("location", out var locEl)) continue;
-                        if (!string.Equals(locEl.GetString(), location, StringComparison.OrdinalIgnoreCase)) continue;
-                        if (!series.TryGetProperty("data", out var dataEl) || dataEl.ValueKind != JsonValueKind.Array) continue;
+                        var json = await resp.Content.ReadAsStringAsync();
+                        using var doc = JsonDocument.Parse(json);
 
-                        // quality beachten -> wir nehmen ALLE zusammen
-                        foreach (var row in dataEl.EnumerateArray())
+                        var points = new List<HistoryPoint>();
+
+                        foreach (var series in doc.RootElement.EnumerateArray())
                         {
-                            var tsStr = row.TryGetProperty("timestamp", out var tsEl) ? tsEl.GetString() : null;
-                            var count = row.TryGetProperty("item_count", out var cEl) && cEl.TryGetInt32(out var cVal) ? cVal : 0;
-                            var avgP = row.TryGetProperty("avg_price", out var apEl) && apEl.TryGetInt32(out var apVal) ? apVal : 0;
+                            if (!series.TryGetProperty("location", out var locEl)) continue;
+                            if (!string.Equals(locEl.GetString(), location, StringComparison.OrdinalIgnoreCase)) continue;
+                            if (!series.TryGetProperty("data", out var dataEl) || dataEl.ValueKind != JsonValueKind.Array) continue;
 
-                            if (!DateTime.TryParse(tsStr, out var ts)) continue;
-                            if (ts.ToUniversalTime() < DateTime.UtcNow.AddDays(-days)) continue;
-
-                            points.Add(new HistoryPoint
+                            // quality beachten -> wir nehmen ALLE zusammen
+                            foreach (var row in dataEl.EnumerateArray())
                             {
-                                Timestamp = ts,
-                                ItemCount = count,
-                                AvgPrice = avgP
-                            });
+                                var tsStr = row.TryGetProperty("timestamp", out var tsEl) ? tsEl.GetString() : null;
+                                var count = row.TryGetProperty("item_count", out var cEl) && cEl.TryGetInt32(out var cVal) ? cVal : 0;
+                                var avgP = row.TryGetProperty("avg_price", out var apEl) && apEl.TryGetInt32(out var apVal) ? apVal : 0;
+
+                                if (!DateTime.TryParse(tsStr, out var ts)) continue;
+                                if (ts.ToUniversalTime() < DateTime.UtcNow.AddDays(-days)) continue;
+
+                                points.Add(new HistoryPoint
+                                {
+                                    Timestamp = ts,
+                                    ItemCount = count,
+                                    AvgPrice = avgP
+                                });
+                            }
                         }
+
+                        return points;
                     }
 
-                    return points;
-                }
+                    if ((int)resp.StatusCode == 429)
+                    {
+                        if (attempt < 3)
+                            await Task.Delay(800);
+                        continue; // leise weiterprobieren
+                    }
 
-                if ((int)resp.StatusCode == 429)
-                {
-                    if (attempt < 3)
-                        await Task.Delay(800);
-                    continue; // leise weiterprobieren
-                }
-                else
-                {
                     Console.WriteLine($"WARN: History {url} -> {(int)resp.StatusCode}");
+                    return new();
+                }
+                catch (Exception ex) when (ex is OperationCanceledException or HttpRequestException or IOException or JsonException)
+                {
+                    // Timeout / network blip / malformed body: retry a couple of times, then
+                    // skip this item with empty history instead of crashing the whole pipeline.
+                    if (attempt < 3)
+                    {
+                        await Task.Delay(800);
+                        continue;
+                    }
+                    Console.WriteLine($"WARN: History {url} -> {ex.GetType().Name}: {ex.Message}");
                     return new();
                 }
             }
