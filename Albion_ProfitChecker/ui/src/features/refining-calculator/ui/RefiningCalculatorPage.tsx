@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
+import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type ReturnRatePreset, type Tier } from "../core";
 import { buildRefiningLiveSnapshot, DEFAULT_PRICE_BY_ITEM_ID, ENCHANTS, MATERIAL_BY_KEY, MATERIAL_DEFINITIONS, REFINE_VARIANTS, TIERS, isEnchantAvailable, rawItemIdFor, refinedItemIdFor } from "../data";
@@ -306,7 +307,7 @@ export function RefiningCalculatorPage() {
   const [missingRawCount, setMissingRawCount] = useState(0);
   const [manualOverrides, setManualOverrides] = useState<ManualOverrides>(() => createEmptyManualOverrides());
   const [hasLiveData, setHasLiveData] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState<string>("--:--");
+  const [lastUpdatedIso, setLastUpdatedIso] = useState<string | null>(null);
   const [visibleRowCount, setVisibleRowCount] = useState(ROW_BATCH_SIZE);
 
   useSeo({
@@ -437,17 +438,12 @@ export function RefiningCalculatorPage() {
         setLivePriceByItemId(snapshot.priceByItemId);
         setMissingRawCount(snapshot.missingRawItemIds.length);
         setHasLiveData(Object.values(snapshot.priceByItemId).some((value) => value > 0));
-        if (snapshot.generatedAt) {
-          const dt = new Date(snapshot.generatedAt);
-          if (!Number.isNaN(dt.getTime())) setLastUpdated(dt.toISOString().slice(11, 16));
-        } else {
-          setLastUpdated("--:--");
-        }
+        setLastUpdatedIso(snapshot.generatedAt ?? null);
       } catch {
         setHasLiveData(false);
         setLivePriceByItemId({ ...DEFAULT_PRICE_BY_ITEM_ID });
         setMissingRawCount(0);
-        setLastUpdated("--:--");
+        setLastUpdatedIso(null);
       }
     })();
     return () => {
@@ -799,6 +795,8 @@ export function RefiningCalculatorPage() {
     window.location.href = "/login?next=%2Frefining-calculator";
   }
 
+  const refiningUpdated = formatUpdated(lastUpdatedIso);
+
   return (
     <div className="rc-page">
       <div className={`modal-overlay ${showRegionConfirm ? "open" : ""}`} aria-hidden={showRegionConfirm ? "false" : "true"}>
@@ -893,7 +891,7 @@ export function RefiningCalculatorPage() {
             <button className="bm-pill" type="button" onClick={() => { setPendingRegion(region === "eu" ? "us" : "eu"); setShowRegionConfirm(true); }}>
               <span className="material-symbols-outlined">language</span>Region: <span>{region.toUpperCase()}</span>
             </button>
-            <div className="bm-status"><span className="pulse"></span>Last updated: <span>{lastUpdated}</span></div>
+            <div className="bm-status" title={refiningUpdated.title}><span className="pulse"></span>Last updated: <span>{refiningUpdated.time}</span>{refiningUpdated.relative ? <span className="bm-status-ago"> ({refiningUpdated.relative})</span> : null}</div>
             <div className="account-wrap">
               <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label="Account">
                 <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="avatar" />

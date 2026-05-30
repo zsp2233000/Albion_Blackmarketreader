@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createAuthService, RegionService, assetUrl } from "@shared/index";
 import type { AuthService } from "@shared/index";
+import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import "./dashboard.css";
 
@@ -571,20 +572,6 @@ function sanitizeProfitValue(value: number, dateKey: string) {
   return value;
 }
 
-function formatDashboardStamp(date: Date) {
-  const d = String(date.getDate()).padStart(2, "0");
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const y = date.getFullYear();
-  const h = String(date.getHours()).padStart(2, "0");
-  const min = String(date.getMinutes()).padStart(2, "0");
-  return `${h}:${min} ${d}.${m}.${y}`;
-}
-
-function splitStamp(stamp: string) {
-  const parts = stamp.trim().split(/\s+/);
-  return { time: parts[0] || "--:--", date: parts[1] || "--.--.----" };
-}
-
 export function DashboardPage() {
   const CARD_BATCH_SIZE = 60;
   const TOAST_HIDE_MS = 4000;
@@ -596,6 +583,7 @@ export function DashboardPage() {
 
   const [region, setRegion] = useState<Region>("us");
   const [city, setCity] = useState<City>("ALL");
+  const [dataUpdatedIso, setDataUpdatedIso] = useState<string | null>(null);
   const [tier, setTier] = useState("ALL");
   const [minProfit, setMinProfit] = useState(0);
   const [maxCost, setMaxCost] = useState<number | null>(null);
@@ -961,9 +949,25 @@ export function DashboardPage() {
     return { dates, values };
   }, [history, region, city, range]);
 
+  // Real merge-workflow timestamp for the active region (bm-crafter-{region}.json generatedAt).
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/data/bm-crafter-${region}.json`);
+        const payload = res.ok ? await res.json() : null;
+        if (cancelled) return;
+        setDataUpdatedIso(payload && typeof payload.generatedAt === "string" ? payload.generatedAt : null);
+      } catch {
+        if (!cancelled) setDataUpdatedIso(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [region]);
+
   const chart = useMemo(() => buildChartGeometry(chartSeries.values), [chartSeries.values]);
   const chartStats = useMemo(() => calcStats(chartSeries.values), [chartSeries.values]);
-  const stamp = useMemo(() => splitStamp(formatDashboardStamp(new Date())), []);
+  const stamp = useMemo(() => formatUpdated(dataUpdatedIso), [dataUpdatedIso]);
   const cityBackground = useMemo(() => cityBackgroundMap[city] || cityBackgroundMap.ALL, [city]);
 
   useEffect(() => {
@@ -1136,7 +1140,7 @@ export function DashboardPage() {
         <div className="topbar-right">
           <div className="topbar-meta">
             <div className="badge">
-              Last updated: <span className="lu-time">{stamp.time}</span> <span className="lu-date">{stamp.date}</span>
+              Last updated: <span className="lu-time">{stamp.time}</span> <span className="lu-date">{stamp.date}</span>{stamp.relative ? <span className="lu-ago"> ({stamp.relative})</span> : null}
             </div>
             <div className="pill-row">
               <span className="pill">Deals: {kpis.deals}</span>

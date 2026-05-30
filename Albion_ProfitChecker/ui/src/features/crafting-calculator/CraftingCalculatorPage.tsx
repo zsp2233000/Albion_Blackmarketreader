@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
+import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import "../bm-crafter/ui/bmCrafter.css";
 import "./craftingCalculator.css";
@@ -719,6 +720,25 @@ export function CraftingCalculatorPage() {
     })();
   }, [region]);
 
+  // Real data-refresh timestamp for the active region (from the crafting-results workflow output).
+  const [craftingUpdatedIso, setCraftingUpdatedIso] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/data/crafting-results-${region}.json`);
+        const payload = res.ok ? await res.json() : null;
+        if (cancelled) return;
+        const stamp = payload && typeof payload.generatedAt === "string" ? payload.generatedAt : null;
+        setCraftingUpdatedIso(stamp);
+      } catch {
+        if (!cancelled) setCraftingUpdatedIso(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [region]);
+  const craftingUpdated = useMemo(() => formatUpdated(craftingUpdatedIso), [craftingUpdatedIso]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -1144,9 +1164,9 @@ export function CraftingCalculatorPage() {
               <span className="material-symbols-outlined">language</span>
               Region: <span>{region.toUpperCase()}</span>
             </button>
-            <div className="bm-status">
+            <div className="bm-status" title={craftingUpdated.title}>
               <span className="pulse"></span>
-              Last updated: <span>{new Date().toISOString().slice(11, 16)}</span>
+              Last updated: <span>{craftingUpdated.time}</span>{craftingUpdated.relative ? <span className="bm-status-ago"> ({craftingUpdated.relative})</span> : null}
             </div>
             <div className="account-wrap">
               <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label="Account">

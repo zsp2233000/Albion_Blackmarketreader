@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
+import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import type { City, ConsumableCategory, ConsumableRecipe, MarketRegion, RecipeIngredient } from "../core";
 import { buildConsumablePriceSnapshot, ingredientPricesPath, loadIngredients, loadRecipes, outputPricesPath } from "../data";
@@ -130,6 +131,7 @@ export function FoodPotionCrafterPage() {
   const [manualPrices, setManualPrices] = useState<Record<string, string>>(() => readManualPrices());
   const [livePriceByItemId, setLivePriceByItemId] = useState<Record<string, number>>({});
   const [soldByItemId, setSoldByItemId] = useState<Record<string, number>>({});
+  const [liveUpdatedIso, setLiveUpdatedIso] = useState<string | null>(null);
   const [buyCity, setBuyCity] = useState<City>("Lymhurst");
   const [sellCity, setSellCity] = useState<City>("Lymhurst");
   const [mode, setMode] = useState<"scanner" | "crafter">("scanner");
@@ -325,6 +327,7 @@ export function FoodPotionCrafterPage() {
       const potionSnap = buildConsumablePriceSnapshot(ingredientPayload, potionPayload, buyCity, sellCity);
       setLivePriceByItemId({ ...foodSnap.priceByItemId, ...potionSnap.priceByItemId });
       setSoldByItemId({ ...foodSnap.soldByItemId, ...potionSnap.soldByItemId });
+      setLiveUpdatedIso(foodSnap.generatedAt ?? potionSnap.generatedAt ?? null);
     })();
     return () => {
       cancelled = true;
@@ -401,6 +404,8 @@ export function FoodPotionCrafterPage() {
     return recipe ? resolveSpecFamily(recipe.itemId, filters.category) : null;
   }, [mode, crafterSelected, selectedRow, filters.category]);
 
+  const liveUpdated = formatUpdated(liveUpdatedIso);
+
   return (
     <div className="rc-page fp-page">
       <header className="bm-header">
@@ -423,7 +428,7 @@ export function FoodPotionCrafterPage() {
             <button className="bm-pill" type="button" onClick={() => setRegion(region === "eu" ? "us" : "eu")}>
               <span className="material-symbols-outlined">language</span>Region: <span>{region.toUpperCase()}</span>
             </button>
-            <div className="bm-status"><span className="pulse"></span>Manual pricing</div>
+            <div className="bm-status" title={liveUpdated.title}><span className="pulse"></span>{liveUpdated.relative ? <>Last updated: <span>{liveUpdated.time}</span><span className="bm-status-ago"> ({liveUpdated.relative})</span></> : "Manual pricing"}</div>
             <div className="account-wrap">
               <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount((p) => !p)} aria-label="Account">
                 <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="avatar" />

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type UIEvent } from "react";
 import { Link } from "react-router-dom";
 import { assetUrl, onItemIconError } from "@shared/assets/assets";
+import { formatUpdated } from "@shared/time/lastUpdated";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../../shared/seo/useSeo";
@@ -272,13 +273,10 @@ export function BmCrafterPage() {
     setVisibleRows(INITIAL_ROWS);
   }, [rows.length, region, filters.selectedTier, filters.selectedEnchant, filters.minSold, filters.searchTerm, filters.sortByDailyTop, filters.showOnlyProfitable]);
 
-  const lastUpdated = useMemo(() => {
-    const stamp = data?.market.generatedAt ?? data?.materials.generatedAt ?? null;
-    if (!stamp) return "--:--";
-    const d = new Date(stamp);
-    if (Number.isNaN(d.getTime())) return "--:--";
-    return d.toISOString().slice(11, 16);
-  }, [data]);
+  const lastUpdated = useMemo(
+    () => formatUpdated(data?.market.generatedAt ?? data?.materials.generatedAt ?? null),
+    [data]
+  );
 
   const soldMax = 200;
   const soldRatio = Math.max(0, Math.min(1, filters.minSold / soldMax));
@@ -409,9 +407,9 @@ export function BmCrafterPage() {
               <span className="material-symbols-outlined">language</span>
               Region: <span>{region.toUpperCase()}</span>
             </button>
-            <div className="bm-status">
+            <div className="bm-status" title={lastUpdated.title}>
               <span className="pulse"></span>
-              Last updated: <span>{lastUpdated}</span>
+              Last updated: <span>{lastUpdated.time}</span>{lastUpdated.relative ? <span className="bm-status-ago"> ({lastUpdated.relative})</span> : null}
             </div>
             <div className="account-wrap">
               <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label="Account">

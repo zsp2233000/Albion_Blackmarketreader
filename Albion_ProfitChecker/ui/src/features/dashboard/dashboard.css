@@ -2894,3 +2894,8 @@ body.dashboard-body.panel-open::before {
     font-size: 16px !important;
   }
 }
+
+.lu-ago {
+  color: var(--text-muted, #8ea3b9);
+  opacity: 0.85;
+}

@@ -6,6 +6,63 @@
     <meta name="theme-color" content="#020205" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Base SEO (updated per-route by useSeo; present here so JS-less crawlers / AI bots / link previews get content) -->
+    <title>Albion Online Tool | Blackmarket Reader & Blackmarket Crafter</title>
+    <meta
+      name="description"
+      content="Free Albion Online tools: Black Market Reader dashboard, Black Market Crafter, Crafting Calculator, Refining Calculator, and Food & Potion Crafter with live prices, return rate, focus specs, and profit analysis."
+    />
+    <meta
+      name="keywords"
+      content="Albion Online tools, Albion Online crafting calculator, Albion Online refining calculator, Albion Online food crafter, Albion Online potion crafter, Albion Black Market, Blackmarket Reader, Blackmarket Crafter"
+    />
+    <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+    <link rel="canonical" href="https://blackmarketreader.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Blackmarket Reader" />
+    <meta property="og:title" content="Albion Online Tool | Blackmarket Reader & Blackmarket Crafter" />
+    <meta
+      property="og:description"
+      content="Free Albion Online tools: Black Market dashboard, crafting & refining calculators, and a Food & Potion crafter with live prices, return rate, focus specs, and profit analysis."
+    />
+    <meta property="og:url" content="https://blackmarketreader.com/" />
+    <meta property="og:image" content="https://blackmarketreader.com/picture/bm-crafter-table.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Albion Online Tool | Blackmarket Reader & Blackmarket Crafter" />
+    <meta
+      name="twitter:description"
+      content="Free Albion Online tools: Black Market dashboard, crafting & refining calculators, and a Food & Potion crafter."
+    />
+    <meta name="twitter:image" content="https://blackmarketreader.com/picture/bm-crafter-table.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Blackmarket Reader",
+        "url": "https://blackmarketreader.com/",
+        "description": "Albion Online web tools for Black Market scanning, crafting, refining, and food/potion profit calculation.",
+        "publisher": { "@type": "Organization", "name": "RomulusKings" }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Albion Online Tools",
+        "itemListElement": [
+          { "@type": "SiteNavigationElement", "position": 1, "name": "Dashboard", "url": "https://blackmarketreader.com/dashboard" },
+          { "@type": "SiteNavigationElement", "position": 2, "name": "Black Market Crafter", "url": "https://blackmarketreader.com/bm-crafter" },
+          { "@type": "SiteNavigationElement", "position": 3, "name": "Crafting Calculator", "url": "https://blackmarketreader.com/crafting-calculator" },
+          { "@type": "SiteNavigationElement", "position": 4, "name": "Refining Calculator", "url": "https://blackmarketreader.com/refining-calculator" },
+          { "@type": "SiteNavigationElement", "position": 5, "name": "Food & Potion Crafter", "url": "https://blackmarketreader.com/food-potion-crafter" }
+        ]
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,10 +73,25 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
       rel="stylesheet"
     />
-    <title>Albion Online Tool | Blackmarket Reader & Blackmarket Crafter</title>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <section style="max-width: 720px; margin: 40px auto; padding: 0 20px; font-family: system-ui, sans-serif; color: #e2e8f0">
+        <h1>Blackmarket Reader — Albion Online Tools</h1>
+        <p>
+          Free Albion Online tools by RomulusKings. JavaScript is required for the interactive tools, but here is what
+          this site offers:
+        </p>
+        <ul>
+          <li><a href="/dashboard">Dashboard</a> — live Black Market deal discovery and city price comparison</li>
+          <li><a href="/bm-crafter">Black Market Crafter</a> — crafting routes and Black Market profit</li>
+          <li><a href="/crafting-calculator">Crafting Calculator</a> — materials, artefacts, return rate, focus specs</li>
+          <li><a href="/refining-calculator">Refining Calculator</a> — city prices, focus presets, fees</li>
+          <li><a href="/food-potion-crafter">Food &amp; Potion Crafter</a> — cooking and alchemy profit with live prices and focus specs</li>
+        </ul>
+      </section>
+    </noscript>
     <script src="/env.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

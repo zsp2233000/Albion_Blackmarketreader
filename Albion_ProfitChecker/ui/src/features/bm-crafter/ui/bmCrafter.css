@@ -1611,3 +1611,8 @@ body.panel-open::before {
   .account-panel { width: 100%; right: -105%; }
   .account-panel.open { right: 0; }
 }
+
+.bm-status-ago {
+  color: var(--text-muted, #8ea3b9);
+  font-weight: 600;
+}
