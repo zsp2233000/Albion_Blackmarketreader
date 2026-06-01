@@ -5,6 +5,7 @@ import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
+import { SeoHeading } from "../../../shared/seo/SeoHeading";
 import type { City, ConsumableCategory, ConsumableRecipe, MarketRegion, RecipeIngredient } from "../core";
 import { buildConsumablePriceSnapshot, ingredientPricesPath, loadIngredients, loadRecipes, outputPricesPath } from "../data";
 import { deriveFoodPotionRows, useFoodPotionState } from "../hooks";
@@ -411,6 +412,9 @@ export function FoodPotionCrafterPage() {
 
   return (
     <div className="rc-page fp-page">
+      <SeoHeading title="Albion Online Food & Potion Crafter">
+        Calculate cooking and alchemy profit in Albion Online. Scan profitable food and potion recipes or enter your own ingredient prices — with return rate, station fees, focus, and all tiers shown per product.
+      </SeoHeading>
       <header className="bm-header">
         <div className="bm-header-row">
           <div className="bm-brand">

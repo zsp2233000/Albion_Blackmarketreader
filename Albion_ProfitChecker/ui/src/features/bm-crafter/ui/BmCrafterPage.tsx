@@ -5,6 +5,7 @@ import { formatUpdated } from "@shared/time/lastUpdated";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../../shared/seo/useSeo";
+import { SeoHeading } from "../../../shared/seo/SeoHeading";
 import {
   buildArtefactId,
   buildMaterialId,
@@ -369,6 +370,9 @@ export function BmCrafterPage() {
 
   return (
     <>
+      <SeoHeading title="Albion Online Black Market Crafter">
+        Find the most profitable items to craft and sell to the Albion Online Black Market — with material and artefact costs, return rate, station fees, focus, and daily profit potential.
+      </SeoHeading>
       <div className={`modal-overlay ${showRegionConfirm ? "open" : ""}`} aria-hidden={showRegionConfirm ? "false" : "true"}>
         <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="regionConfirmTitle">
           <h3 id="regionConfirmTitle">Switch region?</h3>

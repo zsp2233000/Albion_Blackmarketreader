@@ -5,6 +5,7 @@ import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
+import { SeoHeading } from "../../../shared/seo/SeoHeading";
 import { getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type ReturnRatePreset, type Tier } from "../core";
 import { buildRefiningLiveSnapshot, DEFAULT_PRICE_BY_ITEM_ID, ENCHANTS, MATERIAL_BY_KEY, MATERIAL_DEFINITIONS, REFINE_VARIANTS, TIERS, isEnchantAvailable, rawItemIdFor, refinedItemIdFor } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
@@ -799,6 +800,9 @@ export function RefiningCalculatorPage() {
 
   return (
     <div className="rc-page">
+      <SeoHeading title="Albion Online Refining Calculator">
+        Calculate refining profit in Albion Online for ore, wood, fiber, hide, and stone across every tier and enchantment — with city prices, return rate presets, focus specs, bonus cities, and market taxes.
+      </SeoHeading>
       <div className={`modal-overlay ${showRegionConfirm ? "open" : ""}`} aria-hidden={showRegionConfirm ? "false" : "true"}>
         <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="regionConfirmTitle">
           <h3 id="regionConfirmTitle">Switch region?</h3>

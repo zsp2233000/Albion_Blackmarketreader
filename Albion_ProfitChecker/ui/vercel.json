@@ -63,39 +63,7 @@
   ],
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/login",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/community",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/legal",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/bm-crafter",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/crafting-calculator",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/refining-calculator",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/food-potion-crafter",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],

@@ -5,6 +5,7 @@ import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
+import { SeoHeading } from "../../shared/seo/SeoHeading";
 import "../bm-crafter/ui/bmCrafter.css";
 import "./craftingCalculator.css";
 import {
@@ -1130,6 +1131,9 @@ export function CraftingCalculatorPage() {
 
   return (
     <div className="cc-page">
+      <SeoHeading title="Albion Online Crafting Calculator">
+        Plan profitable crafts in Albion Online. Enter material and artefact prices per city, set return rate and focus, and get exact craft cost, profit, ROI, and silver-per-focus for every tier and enchantment.
+      </SeoHeading>
       <div className={`modal-overlay ${showRegionConfirm ? "open" : ""}`} aria-hidden={showRegionConfirm ? "false" : "true"}>
         <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="regionConfirmTitle">
           <h3 id="regionConfirmTitle">Switch region?</h3>
