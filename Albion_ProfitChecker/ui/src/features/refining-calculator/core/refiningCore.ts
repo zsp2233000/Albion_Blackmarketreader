@@ -12,7 +12,7 @@ import type {
 type RefiningStep = (state: RefiningState) => RefiningState;
 type BonusStep = (state: RefiningState, bonuses: BonusConfig) => RefiningState;
 
-export type ReturnRatePreset = "base" | "city" | "focus";
+export type ReturnRatePreset = "base" | "city" | "focus" | "custom";
 
 const clamp = (value: number, min: number, max: number): number =>
   Math.max(min, Math.min(max, value));
@@ -55,6 +55,8 @@ export function isMaterialBonusCity(materialKey: MaterialKey, city: City, materi
 }
 
 export function computeReturnRate(input: RefiningInput): number {
+  const override = input.bonuses.returnRateOverride;
+  if (typeof override === "number" && Number.isFinite(override)) return clamp(override, 0, 0.99);
   const materialBonus = isMaterialBonusCity(input.variant.materialKey, input.bonuses.city, input.bonuses.materialBonusCity)
     ? input.bonuses.materialBonusPercent
     : 0;
@@ -84,6 +86,8 @@ export function getReturnRatePresetConfig(preset: ReturnRatePreset): {
       focusBonusPercent: 59,
     };
   }
+  // "base" and "custom" share the same non-bonus baseline; for "custom" the page
+  // supplies a returnRateOverride that takes precedence over these values.
   return {
     focusEnabled: false,
     royalBonusPercent: 18,
@@ -228,6 +232,7 @@ export interface BuildInputParams {
   readonly focusBudget?: number;
   readonly nutritionFactor?: number;
   readonly marketTaxRate?: number;
+  readonly returnRateOverride?: number | null;
 }
 
 export function createRefiningInput(params: BuildInputParams): RefiningInput {
@@ -251,6 +256,7 @@ export function createRefiningInput(params: BuildInputParams): RefiningInput {
       focusBonusPercent: Math.max(0, params.focusBonusPercent),
       focusEfficiency: Math.max(0, params.focusEfficiency ?? 0),
       focusBudget: Math.max(0, params.focusBudget ?? 10000),
+      returnRateOverride: typeof params.returnRateOverride === "number" ? params.returnRateOverride : null,
     },
   };
 }
@@ -267,6 +273,7 @@ export interface RefinerConfig {
   readonly nutritionFactor?: number;
   readonly marketTaxRate?: number;
   readonly amount?: number;
+  readonly returnRateOverride?: number | null;
 }
 
 export function makeRefiner(config: RefinerConfig) {
@@ -291,6 +298,7 @@ export function makeRefiner(config: RefinerConfig) {
         nutritionFactor: config.nutritionFactor,
         marketTaxRate: config.marketTaxRate,
         amount: config.amount,
+        returnRateOverride: config.returnRateOverride,
       }),
     );
 }

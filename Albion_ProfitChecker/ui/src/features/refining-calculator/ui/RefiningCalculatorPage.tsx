@@ -31,7 +31,9 @@ type SelectedCity = (typeof KNOWN_CITIES)[number];
 type TaxMode = "premiumSellOrder" | "nonPremiumSellOrder" | "custom";
 const MANUAL_OVERRIDE_STORAGE_KEY = "refining-manual-overrides-v1";
 const FOCUS_SPECS_STORAGE_KEY = "refining-focus-specs-v1";
-const ROW_BATCH_SIZE = 20;
+// Render all variants at once (≤175). Lazy-loading on scroll caused the scrollbar
+// to jump and the table to jitter; the row count is small enough to render fully.
+const ROW_BATCH_SIZE = 1000;
 const FOCUS_SPEC_TIERS = [4, 5, 6, 7, 8] as const;
 const TAX_PRESETS: Record<TaxMode, { label: string; totalRate: number; description: string }> = {
   premiumSellOrder: { label: "Premium Sell Order (6.5%)", totalRate: 6.5, description: "2.5% setup + 4% sales tax" },
@@ -301,6 +303,7 @@ export function RefiningCalculatorPage() {
   const [resultSearchTerm, setResultSearchTerm] = useState("");
   const [taxMode, setTaxMode] = useState<TaxMode>("premiumSellOrder");
   const [customMarketTaxRate, setCustomMarketTaxRate] = useState("6.5");
+  const [customReturnRatePercent, setCustomReturnRatePercent] = useState("50");
   const [bonusCityOverrides, setBonusCityOverrides] = useState<Record<MaterialKey, SelectedCity>>(() => createDefaultBonusCityOverrides());
   const [editorMaterial, setEditorMaterial] = useState<MaterialKey>("metal");
   const [isTopSectionExpanded, setIsTopSectionExpanded] = useState(true);
@@ -501,6 +504,9 @@ export function RefiningCalculatorPage() {
     const runAmount = parseAmount(amount, 1);
     const parsedFocusBudget = parseAmount(focusSpecs.focusBudget, 10000);
     const parsedMarketTaxRate = (taxMode === "custom" ? parseAmount(customMarketTaxRate, 6.5) : TAX_PRESETS[taxMode].totalRate) / 100;
+    const customReturnRate = returnRatePreset === "custom"
+      ? Math.max(0, Math.min(99, parseAmount(customReturnRatePercent, 0))) / 100
+      : null;
     return REFINE_VARIANTS.map((variant) => {
       const marketValue = displayedPriceByItemId[variant.itemId] || "";
       const market = parseAmount(marketValue, 0);
@@ -516,12 +522,13 @@ export function RefiningCalculatorPage() {
         focusBudget: parsedFocusBudget,
         focusEfficiency: parsedFocusEfficiency,
         marketTaxRate: parsedMarketTaxRate,
-        amount: runAmount
+        amount: runAmount,
+        returnRateOverride: customReturnRate
       });
       const result = refiner(withMarket, tierInputs, feeValue);
       return { variant: withMarket, ...result, positive: result.profit >= 0 };
     }).sort((left, right) => right.profit - left.profit);
-  }, [amount, bonusCityOverrides, customMarketTaxRate, displayedPriceByItemId, focusSpecs, returnRatePreset, selectedRefineCity, taxMode, tierInputs, usageFeePer100]);
+  }, [amount, bonusCityOverrides, customMarketTaxRate, customReturnRatePercent, displayedPriceByItemId, focusSpecs, returnRatePreset, selectedRefineCity, taxMode, tierInputs, usageFeePer100]);
 
   const selectedRow = rows.find((row) => row.variant.id === selectedRowKey) || rows[0];
   const selectedEditorRow = rows.find((row) => row.variant.materialKey === editorMaterial) || selectedRow;
@@ -740,7 +747,18 @@ export function RefiningCalculatorPage() {
             <option value="base">Royal Base</option>
             <option value="city">Auto City Bonus</option>
             <option value="focus">Auto City + Focus</option>
+            <option value="custom">Custom Rate</option>
           </select>
+          {returnRatePreset === "custom" ? (
+            <input
+              className="rc-input"
+              inputMode="decimal"
+              value={customReturnRatePercent}
+              onChange={(event) => setCustomReturnRatePercent(event.target.value)}
+              placeholder="Return rate %"
+              aria-label="Custom return rate percent"
+            />
+          ) : null}
         </div>
         <div className="filter-block">
           <p>Focus Specs</p>
@@ -772,7 +790,7 @@ export function RefiningCalculatorPage() {
         </div>
       </div>
     </div>
-  ), [amount, bonusCityOverrides, clearManualOverrides, customMarketTaxRate, displayedPriceByItemId, editorMaterial, focusSpecs, returnRatePreset, rows, selectedBuyCity, selectedEditorRow, selectedRefineCity, selectedSellCity, taxMode, updateBonusCityOverride, updateManualPrice, usageFeePer100]);
+  ), [amount, bonusCityOverrides, clearManualOverrides, customMarketTaxRate, customReturnRatePercent, displayedPriceByItemId, editorMaterial, focusSpecs, returnRatePreset, rows, selectedBuyCity, selectedEditorRow, selectedRefineCity, selectedSellCity, taxMode, updateBonusCityOverride, updateManualPrice, usageFeePer100]);
 
   async function onRegionSave(next: MarketRegion) {
     setRegion(next);

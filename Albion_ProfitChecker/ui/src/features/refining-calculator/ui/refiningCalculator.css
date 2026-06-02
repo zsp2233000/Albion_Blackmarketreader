@@ -33,11 +33,6 @@
   scrollbar-gutter: stable;
 }
 
-.rc-page .table-wrap {
-  transform: translateZ(0);
-  will-change: scroll-position;
-}
-
 .rc-page .high-density-row {
   transition: none;
 }

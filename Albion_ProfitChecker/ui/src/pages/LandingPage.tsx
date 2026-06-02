@@ -42,7 +42,7 @@ export function LandingPage() {
       },
       {
         title: "Food & Potion Crafter",
-        image: assets.bmCrafterPreview,
+        image: assets.foodPotionCrafterPreview,
         href: "/food-potion-crafter",
         ctaLabel: "Open Food & Potion Crafter"
       }
@@ -372,16 +372,16 @@ export function LandingPage() {
               <article className="feature-card">
                 <div className="feature-head">
                   <span>03</span>
-                  <h3>Coming Soon</h3>
+                  <h3>Crafting Tools</h3>
                 </div>
                 <p>
-                  Next tools are already in the pipeline. Crafting Calculator, Refining Calculator, and more premium workflows are on the
-                  way.
+                  Full profit calculators for every crafting path — gear, refining, and consumables — with return rate, focus,
+                  taxes, and live city prices.
                 </p>
                 <ul>
                   <li>Crafting Calculator</li>
                   <li>Refining Calculator</li>
-                  <li>Mystery tool drop</li>
+                  <li>Food &amp; Potion Crafter</li>
                 </ul>
               </article>
             </div>
@@ -422,7 +422,11 @@ export function LandingPage() {
             <div className="faq-list">
               <details>
                 <summary>How often is data updated?</summary>
-                <p>Data is refreshed daily between 08:00-09:00 UTC.</p>
+                <p>
+                  Market data is refreshed once per day (around 08:00–09:00 UTC). Every tool shows its own
+                  &ldquo;Last updated&rdquo; time in the top-right corner, so you can always see exactly when the data
+                  it is using was last refreshed — including how long ago that was.
+                </p>
               </details>
               <details>
                 <summary>Which regions are available?</summary>

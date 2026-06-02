@@ -675,3 +675,10 @@ tr.fp-avalonian-row td {
   height: 100%;
   object-fit: contain;
 }
+
+/* Crafter stage must fill the main's height so its inner overflow-y can scroll.
+   (bm-main uses align-items:start for the food/potion page, which otherwise
+   collapses the stage to content height and clips the bottom under overflow:hidden.) */
+.fp-page .fp-main-crafter .fp-crafter-stage {
+  height: 100%;
+}

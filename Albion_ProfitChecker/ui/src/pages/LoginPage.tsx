@@ -10,6 +10,8 @@ const ALLOWED_NEXT_PATHS = new Set([
   "/dashboard",
   "/bm-crafter",
   "/crafting-calculator",
+  "/refining-calculator",
+  "/food-potion-crafter",
   "/community",
   "/legal"
 ]);
@@ -242,8 +244,8 @@ export function LoginPage() {
           </div>
           {authMode === "login" ? (
             <>
-              <input placeholder="Email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} />
-              <input placeholder="Password" type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} />
+              <input placeholder="Email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onLogin(); } }} />
+              <input placeholder="Password" type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onLogin(); } }} />
               <div className="auth-actions">
                 <button className="cta" onClick={onLogin}>Login</button>
                 <button className="ghost btn-google" onClick={onGoogle}>
@@ -254,9 +256,9 @@ export function LoginPage() {
             </>
           ) : (
             <>
-              <input placeholder="Display Name" value={regName} onChange={(e) => setRegName(e.target.value)} />
-              <input placeholder="Email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} />
-              <input placeholder="Password" type="password" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} />
+              <input placeholder="Display Name" value={regName} onChange={(e) => setRegName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
+              <input placeholder="Email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
+              <input placeholder="Password" type="password" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
               <div className="auth-actions">
                 <button className="cta" onClick={onRegister}>Register</button>
               </div>

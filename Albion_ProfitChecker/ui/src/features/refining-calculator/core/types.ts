@@ -49,6 +49,8 @@ export interface BonusConfig {
   readonly focusBonusPercent: number;
   readonly focusEfficiency: number;
   readonly focusBudget: number;
+  /** When set (0..0.99), overrides the computed return rate (custom profile). */
+  readonly returnRateOverride?: number | null;
 }
 
 export interface RefiningInput {

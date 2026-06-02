@@ -226,6 +226,20 @@ function formatCompactOrDash(value: number): string {
   return Number(value) > 0 ? formatCompact(value) : "-";
 }
 
+/**
+ * Crafting fame = total material count × tier factor × 2^enchant.
+ * Tier factors are the per-item-value fame multipliers from the source workbook
+ * (Fame = itemValue × factor, where itemValue = sum of material quantities).
+ * Verified: 2H Bow (32 mats) → T4.0 = 32×22.5 = 720, T7.0 = 32×645 = 20640, T8.4 = 32×1395×16 = 714240.
+ */
+const CRAFT_FAME_FACTOR_BY_TIER: Record<number, number> = {
+  4: 22.5,
+  5: 90,
+  6: 270,
+  7: 645,
+  8: 1395,
+};
+
 function parseCompactNumber(value: string): number {
   const raw = String(value || "").trim().toLowerCase().replace(/,/g, "");
   if (!raw) return 0;
@@ -1642,6 +1656,20 @@ export function CraftingCalculatorPage() {
               <span>Silver per Focus</span>
               <strong className={typeof totals.silverPerFocus === "number" ? (totals.silverPerFocus >= 0 ? "profit-cell" : "loss-cell") : ""}>
                 {typeof totals.silverPerFocus === "number" ? formatNumber(totals.silverPerFocus) : "-"}
+              </strong>
+            </div>
+            <div>
+              <span>Fame / Craft</span>
+              <strong title="Crafting fame = total material count × tier factor × 2^enchant">
+                {(() => {
+                  const { tier, enchant } = parseTierEnchant(selectedRow.uid);
+                  const totalMatQty = (Array.isArray(selectedItem?.materials) ? selectedItem.materials : [])
+                    .reduce((sum, mat) => sum + (Number(mat?.qty) || 0), 0);
+                  const factor = CRAFT_FAME_FACTOR_BY_TIER[tier] ?? 0;
+                  const enchMult = [1, 2, 4, 8, 16][Math.max(0, Math.min(4, enchant))] ?? 1;
+                  const fame = Math.round(totalMatQty * factor * enchMult);
+                  return fame > 0 ? formatNumber(fame) : "-";
+                })()}
               </strong>
             </div>
           </div>

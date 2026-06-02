@@ -13,6 +13,7 @@ export const assets = {
   bmCrafterPreview: assetUrl("picture/bm-crafter-table.png"),
   craftingCalcPreview: assetUrl("picture/crafting-calc-preview.png"),
   refiningCalcPreview: assetUrl("picture/refining-calc-preview.png"),
+  foodPotionCrafterPreview: assetUrl("picture/food-potion-crafter-preview.png"),
   favicon: assetUrl("favicon.ico")
 };
 
