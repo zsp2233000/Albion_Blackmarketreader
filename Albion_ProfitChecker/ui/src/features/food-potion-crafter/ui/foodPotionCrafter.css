@@ -439,6 +439,39 @@ select.fp-control option {
   border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
+/* Enchant badges — Albion enchant colors: .1 green, .2 blue, .3 purple. */
+.fp-enchant-chip { font-size: 10px; }
+.fp-enchant-1 {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.45);
+}
+.fp-enchant-2 {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+}
+.fp-enchant-3 {
+  background: rgba(168, 85, 247, 0.18);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.5);
+}
+
+/* Return rate — emphasized (bold + teal) so it stands out in scanner & crafter. */
+.fp-return-cell {
+  font-weight: 800;
+  color: #2dd4bf;
+}
+strong.fp-return-rate {
+  font-weight: 800;
+  color: #2dd4bf;
+}
+
+/* Active enchant filter chips carry the enchant color (3 classes beat .chip.active). */
+.chip.fp-enchant-chip-active.fp-enchant-1 { background: rgba(74, 222, 128, 0.2); color: #4ade80; border-color: rgba(74, 222, 128, 0.6); }
+.chip.fp-enchant-chip-active.fp-enchant-2 { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border-color: rgba(56, 189, 248, 0.6); }
+.chip.fp-enchant-chip-active.fp-enchant-3 { background: rgba(168, 85, 247, 0.22); color: #c084fc; border-color: rgba(168, 85, 247, 0.6); }
+
 .fp-unpriced-row td { opacity: 0.55; }
 .fp-unpriced-row:hover td { opacity: 0.8; }
 

@@ -17,16 +17,36 @@ export class AuthService {
     return this.supabase;
   }
 
+  // The session (and its embedded user + user_metadata) lives in local storage and is
+  // kept fresh by the GoTrue client. Reading it is local/cheap; `getUser()` by contrast
+  // is a network round-trip to /auth/v1/user. We coalesce concurrent reads with a
+  // single-flight promise so a page mount (AuthGuard + page + specs hook firing together)
+  // resolves from ONE getSession instead of several redundant calls.
+  private sessionInFlight: ReturnType<SupabaseClient["auth"]["getSession"]> | null = null;
+
   async getSession() {
-    const { data, error } = await this.supabase.auth.getSession();
+    if (!this.sessionInFlight) {
+      this.sessionInFlight = this.supabase.auth.getSession();
+      // Clear the latch on the next microtask tick so a later mount re-reads fresh state.
+      this.sessionInFlight.finally(() => {
+        this.sessionInFlight = null;
+      });
+    }
+    const { data, error } = await this.sessionInFlight;
     if (error) throw error;
     return data.session;
   }
 
+  /** Current user straight from the cached session — no network call. */
+  async getCurrentUser() {
+    const session = await this.getSession();
+    return session?.user ?? null;
+  }
+
   async getUserProfile(): Promise<UserProfile | null> {
-    const { data, error } = await this.supabase.auth.getUser();
-    if (error) throw error;
-    const user = data.user;
+    // Derive from the local session instead of a getUser() network request; user_metadata
+    // is carried in the session and updateUser() refreshes it in place.
+    const user = await this.getCurrentUser();
     if (!user) return null;
 
     const meta = user.user_metadata || {};
@@ -44,10 +64,10 @@ export class AuthService {
   }
 
   async isAuthenticated(): Promise<boolean> {
-    const session = await this.getSession();
-    if (!session) return false;
-    const profile = await this.getUserProfile();
-    return Boolean(profile && profile.emailConfirmed);
+    // Client-side gate: the local session is authoritative enough (RLS protects data
+    // server-side). Avoids a second getUser() network call on every guarded navigation.
+    const user = await this.getCurrentUser();
+    return Boolean(user && user.email_confirmed_at);
   }
 
   async signInWithPassword(email: string, password: string): Promise<void> {

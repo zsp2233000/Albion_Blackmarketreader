@@ -87,18 +87,23 @@ export function calculateConsumable(input: ConsumableInput): ConsumableResult {
   const outputAmount = input.recipe.outputQty * amount;
 
   let grossIngredientCost = 0;
+  let returnableGrossCost = 0;
   let missingIngredientCost = false;
   for (const ingredient of input.recipe.ingredients) {
     const unitPrice = getUnitPrice(input.ingredientPrices, ingredient.itemId);
     if (unitPrice <= 0) missingIngredientCost = true;
-    grossIngredientCost += unitPrice * ingredient.qty * amount;
+    const lineCost = unitPrice * ingredient.qty * amount;
+    grossIngredientCost += lineCost;
+    // Non-returnable ingredients (e.g. Avalonian Energy quest token) are paid for but
+    // never refunded by the resource return rate.
+    if (ingredient.returnable !== false) returnableGrossCost += lineCost;
   }
 
   const returnRate =
     typeof input.returnRateOverride === "number" && Number.isFinite(input.returnRateOverride)
       ? clamp(input.returnRateOverride, 0, 0.99)
       : computeReturnRate(input.bonuses);
-  const returnedIngredientCost = grossIngredientCost * returnRate;
+  const returnedIngredientCost = returnableGrossCost * returnRate;
   const effectiveIngredientCost = grossIngredientCost - returnedIngredientCost;
 
   const stationFee = Math.max(0, input.stationFeePerCraft) * amount;

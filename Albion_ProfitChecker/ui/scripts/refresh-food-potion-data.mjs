@@ -196,15 +196,38 @@ function buildPricesPayload(region, itemIds, priceMap, soldMap = null) {
   return { generatedAt: new Date().toISOString(), region, cities: CITIES, count: items.length, items };
 }
 
+// Enchant materials, fetched as ingredients so enchanted-craft costs resolve.
+// Food .1/.2/.3 = Basic/Fancy/Special Fish Sauce; Potion .1/.2/.3 = Basic/Refined/Pure Arcane Extract.
+const FISH_SAUCE_IDS = ["T1_FISHSAUCE_LEVEL1", "T1_FISHSAUCE_LEVEL2", "T1_FISHSAUCE_LEVEL3"];
+const ARCANE_EXTRACT_IDS = ["T1_ALCHEMY_EXTRACT_LEVEL1", "T1_ALCHEMY_EXTRACT_LEVEL2", "T1_ALCHEMY_EXTRACT_LEVEL3"];
+
 async function loadItemIds() {
   const [foodDoc, potionDoc, ingredientsDoc] = await Promise.all([
     readJson("recipes-food.json"),
     readJson("recipes-potions.json"),
     readJson("consumable-ingredients.json"),
   ]);
-  const foodIds = [...new Set((foodDoc.recipes || []).map((r) => r.itemId).filter(Boolean))];
-  const potionIds = [...new Set((potionDoc.recipes || []).map((r) => r.itemId).filter(Boolean))];
-  const ingredientIds = [...new Set((ingredientsDoc.ingredients || []).map((i) => i.itemId).filter(Boolean))];
+  const foodRecipes = foodDoc.recipes || [];
+  const potionRecipes = potionDoc.recipes || [];
+  const baseFoodIds = foodRecipes.map((r) => r.itemId).filter(Boolean);
+  // Enchanted food has real Albion ids of the form T8_MEAL_STEW@1 / @2 / @3 (fish-sauce enchant).
+  const enchantedFoodIds = foodRecipes
+    .filter((r) => (r.fishSauceQty || 0) > 0)
+    .flatMap((r) => [1, 2, 3].map((e) => `${r.itemId}@${e}`));
+  const foodIds = [...new Set([...baseFoodIds, ...enchantedFoodIds])];
+  const basePotionIds = potionRecipes.map((r) => r.itemId).filter(Boolean);
+  // Enchanted potions have real Albion ids of the form T6_POTION_HEAL@1 / @2 / @3 (arcane-extract enchant).
+  const enchantedPotionIds = potionRecipes
+    .filter((r) => (r.arcaneExtractQty || 0) > 0)
+    .flatMap((r) => [1, 2, 3].map((e) => `${r.itemId}@${e}`));
+  const potionIds = [...new Set([...basePotionIds, ...enchantedPotionIds])];
+  const ingredientIds = [
+    ...new Set([
+      ...(ingredientsDoc.ingredients || []).map((i) => i.itemId).filter(Boolean),
+      ...FISH_SAUCE_IDS,
+      ...ARCANE_EXTRACT_IDS,
+    ]),
+  ];
   return { foodIds, potionIds, ingredientIds };
 }
 

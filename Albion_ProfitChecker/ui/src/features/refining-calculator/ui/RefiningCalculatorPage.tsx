@@ -387,8 +387,8 @@ export function RefiningCalculatorPage() {
         window.location.href = `/login?next=${next}`;
         return;
       }
-      const { data } = await authService.client.auth.getUser().catch(() => ({ data: { user: null } }));
-      const savedFocusSpecs = normalizeFocusSpecs(data.user?.user_metadata?.refiningFocusSpecs);
+      const currentUser = await authService.getCurrentUser().catch(() => null);
+      const savedFocusSpecs = normalizeFocusSpecs(currentUser?.user_metadata?.refiningFocusSpecs);
       const safeRegion = readStoredRegion() || profile.region || "eu";
       setUser({ id: profile.id, email: profile.email, avatar: sanitizeAvatarUrl(profile.avatar || localStorage.getItem("avatar")), region: safeRegion });
       setFocusSpecs(savedFocusSpecs);

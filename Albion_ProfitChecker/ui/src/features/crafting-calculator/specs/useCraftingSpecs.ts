@@ -57,9 +57,9 @@ export function useCraftingSpecs({ authService, enabled }: UseCraftingSpecsOptio
     let cancelled = false;
     (async () => {
       try {
-        const { data, error } = await authService.client.auth.getUser();
-        if (error || cancelled) return;
-        const meta = (data.user?.user_metadata || {}) as Record<string, unknown>;
+        const user = await authService.getCurrentUser();
+        if (!user || cancelled) return;
+        const meta = (user.user_metadata || {}) as Record<string, unknown>;
         // Try new V3 key first; fallback to legacy keys.
         const remoteRaw = meta[REMOTE_KEY] ?? meta.craftingItemNodes ?? meta.craftingItemSpecs;
         if (!remoteRaw) {

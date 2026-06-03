@@ -22,10 +22,10 @@ function normalizeIngredient(entry: unknown): RecipeIngredient | null {
     name: typeof entry.name === "string" ? entry.name : itemId,
     qty: Math.max(0, toFiniteNumber(entry.qty, 0)),
     tier: toFiniteNumber(entry.tier, 1),
+    ...(entry.rare === true ? { rare: true } : {}),
+    // Preserve the no-return flag (e.g. Avalonian Energy) so the return rate excludes it.
+    ...(entry.returnable === false ? { returnable: false } : {}),
   };
-  if (entry.rare === true) {
-    return { ...ingredient, rare: true };
-  }
   return ingredient;
 }
 
@@ -42,6 +42,11 @@ function normalizeRecipe(entry: unknown, fallbackCategory: ConsumableCategory): 
   const category: ConsumableCategory = entry.category === "potion" || entry.category === "food" ? entry.category : fallbackCategory;
 
   const baseFocus = toFiniteNumber(entry.baseFocus, 0);
+  // Enchant material requirement (fish sauce for food, arcane extract for potions).
+  // Must be preserved here or the scanner/crafter can never build the .1/.2/.3 enchant variants.
+  const fishSauceQty = Math.max(0, toFiniteNumber(entry.fishSauceQty, 0));
+  const arcaneExtractQty = Math.max(0, toFiniteNumber(entry.arcaneExtractQty, 0));
+  const enchantable = entry.enchantable === true || fishSauceQty > 0 || arcaneExtractQty > 0;
 
   return {
     itemId,
@@ -51,6 +56,9 @@ function normalizeRecipe(entry: unknown, fallbackCategory: ConsumableCategory): 
     outputQty: Math.max(1, toFiniteNumber(entry.outputQty, 1)),
     isAvalonian: entry.isAvalonian === true,
     baseFocus: baseFocus > 0 ? baseFocus : undefined,
+    fishSauceQty: fishSauceQty > 0 ? fishSauceQty : undefined,
+    arcaneExtractQty: arcaneExtractQty > 0 ? arcaneExtractQty : undefined,
+    enchantable: enchantable ? true : undefined,
     ingredients,
   };
 }

@@ -135,4 +135,25 @@ describe("calculateConsumable", () => {
     });
     expect(result.dailyPotential).toBeCloseTo(result.profitPerOutput * 50, 6);
   });
+
+  it("excludes non-returnable ingredients (e.g. Avalonian Energy) from the return rate", () => {
+    const recipe = makeRecipe({
+      ingredients: [
+        { itemId: "T5_A", name: "Ingredient A", qty: 4, tier: 5 },
+        { itemId: "QUESTITEM_TOKEN_AVALON", name: "Avalonian Energy", qty: 10, tier: 6, returnable: false },
+      ],
+    });
+    const ingredientPrices = new Map<string, number>([["T5_A", 100], ["QUESTITEM_TOKEN_AVALON", 50]]);
+    const bonuses = makeBonuses({ focusEnabled: false }); // 18+15=33% -> rr 0.2481
+    const result = calculateConsumable({
+      recipe, ingredientPrices, outputMarketPrice: 500, amount: 1,
+      stationFeePerCraft: 0, marketTaxRate: 0, demandPerDay: 0, bonuses,
+    });
+    const rate = computeReturnRateFromBonusPercent(33);
+    const returnableGross = 100 * 4; // only Ingredient A; avalon token excluded
+    const totalGross = 100 * 4 + 50 * 10;
+    expect(result.grossIngredientCost).toBe(totalGross);
+    expect(result.returnedIngredientCost).toBeCloseTo(returnableGross * rate, 6);
+    expect(result.effectiveIngredientCost).toBeCloseTo(totalGross - returnableGross * rate, 6);
+  });
 });

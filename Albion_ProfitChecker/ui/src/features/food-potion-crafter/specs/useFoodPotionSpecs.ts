@@ -47,9 +47,9 @@ export function useFoodPotionSpecs(authService: AuthService | null, enabled: boo
     let cancelled = false;
     (async () => {
       try {
-        const { data, error } = await authService.client.auth.getUser();
-        if (error || cancelled) return;
-        const meta = (data.user?.user_metadata || {}) as Record<string, unknown>;
+        const user = await authService.getCurrentUser();
+        if (!user || cancelled) return;
+        const meta = (user.user_metadata || {}) as Record<string, unknown>;
         const remoteRaw = meta[REMOTE_KEY];
         if (!remoteRaw) return;
         const next = normalizeProgress(remoteRaw);

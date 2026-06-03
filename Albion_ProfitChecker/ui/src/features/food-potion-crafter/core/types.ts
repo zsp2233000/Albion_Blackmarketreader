@@ -11,6 +11,8 @@ export interface RecipeIngredient {
   readonly tier: number;
   /** Rare alchemy "Fine/Excellent" part or Avalonian token — highlighted in UI. */
   readonly rare?: boolean;
+  /** False = not eligible for resource return (e.g. Avalonian Energy quest token). Defaults to true. */
+  readonly returnable?: boolean;
 }
 
 /** A food or potion recipe as extracted from the source workbook. */
@@ -24,6 +26,12 @@ export interface ConsumableRecipe {
   readonly isAvalonian: boolean;
   /** Base focus cost per single craft action at 0 mastery / 0 spec. */
   readonly baseFocus?: number;
+  /** Fish sauce units required to enchant this food (0 = not enchantable). */
+  readonly fishSauceQty?: number;
+  /** Arcane extract units required to enchant this potion (0 = not enchantable). */
+  readonly arcaneExtractQty?: number;
+  /** True when the consumable can be enchanted (food via fish sauce, potion via arcane extract). */
+  readonly enchantable?: boolean;
   readonly ingredients: ReadonlyArray<RecipeIngredient>;
 }
 

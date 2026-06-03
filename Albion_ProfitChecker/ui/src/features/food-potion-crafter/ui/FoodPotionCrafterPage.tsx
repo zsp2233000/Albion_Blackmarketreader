@@ -20,14 +20,82 @@ const KNOWN_CITIES: City[] = ["Caerleon", "Brecilien", "Bridgewatch", "Lymhurst"
 const PRICE_STORAGE_KEY = "food-potion-prices-v1";
 
 function iconUrl(itemId: string): string {
-  return `/itemicons/${itemId}.png`;
+  // Enchanted food shares the base item's icon (the @N variants are our synthetic ids).
+  return `/itemicons/${itemId.replace(/@\d+$/, "")}.png`;
 }
 
-/** Family key — fish sauce levels collapse into one product. */
+/** Fish sauce used to enchant food: enchant level → sauce item. Fish sauce IS subject to the return rate. */
+const FISH_SAUCE_BY_ENCHANT: Record<number, { itemId: string; name: string }> = {
+  1: { itemId: "T1_FISHSAUCE_LEVEL1", name: "Basic Fish Sauce" },
+  2: { itemId: "T1_FISHSAUCE_LEVEL2", name: "Fancy Fish Sauce" },
+  3: { itemId: "T1_FISHSAUCE_LEVEL3", name: "Special Fish Sauce" },
+};
+
+/** Arcane extract used to enchant potions: enchant level → extract item. Subject to the return rate. */
+const ARCANE_EXTRACT_BY_ENCHANT: Record<number, { itemId: string; name: string }> = {
+  1: { itemId: "T1_ALCHEMY_EXTRACT_LEVEL1", name: "Basic Arcane Extract" },
+  2: { itemId: "T1_ALCHEMY_EXTRACT_LEVEL2", name: "Refined Arcane Extract" },
+  3: { itemId: "T1_ALCHEMY_EXTRACT_LEVEL3", name: "Pure Arcane Extract" },
+};
+
+/** The enchant material catalog + the label shown for a category's enchant selector. */
+function enchantMaterial(category: ConsumableCategory): {
+  byEnchant: Record<number, { itemId: string; name: string }>;
+  label: string;
+} {
+  return category === "potion"
+    ? { byEnchant: ARCANE_EXTRACT_BY_ENCHANT, label: "arcane extract" }
+    : { byEnchant: FISH_SAUCE_BY_ENCHANT, label: "fish sauce" };
+}
+
+/** Units of enchant material this recipe needs (fish sauce for food, arcane extract for potions); 0 = not enchantable. */
+function enchantMatQty(recipe: ConsumableRecipe): number {
+  return (recipe.category === "potion" ? recipe.arcaneExtractQty : recipe.fishSauceQty) ?? 0;
+}
+
+/**
+ * Returns the recipe enchanted at the given level (1-3) by adding the enchant material
+ * (fish sauce for food, arcane extract for potions) as a returnable ingredient and giving
+ * the output a distinct @N id so its sell price is tracked separately from the .0 base.
+ */
+function withEnchant(recipe: ConsumableRecipe, enchant: number): ConsumableRecipe {
+  const qty = enchantMatQty(recipe);
+  if (enchant <= 0 || qty <= 0) return recipe;
+  const mat = enchantMaterial(recipe.category).byEnchant[enchant];
+  if (!mat) return recipe;
+  const enchantMat: RecipeIngredient = { itemId: mat.itemId, name: mat.name, qty, tier: 1, returnable: true };
+  return {
+    ...recipe,
+    itemId: `${recipe.itemId}@${enchant}`,
+    name: recipe.name, // enchant level is shown via a colored badge, not a name suffix
+    ingredients: [...recipe.ingredients, enchantMat],
+  };
+}
+
+/** Family key — fish sauce levels and enchant (@N) variants collapse into one product. */
 function familyBase(itemId: string): string {
-  const base = itemId.replace(/^T\d+_/, "");
+  const base = itemId.replace(/^T\d+_/, "").replace(/@\d+$/, "");
   if (/^FISHSAUCE/.test(base)) return "FISHSAUCE";
   return base;
+}
+
+/** Enchant level from an item id (T8_MEAL_STEW@2 → 2). */
+function enchantOf(itemId: string): 0 | 1 | 2 | 3 {
+  const m = itemId.match(/@(\d+)$/);
+  const n = m ? Number(m[1]) : 0;
+  return (n >= 1 && n <= 3 ? n : 0) as 0 | 1 | 2 | 3;
+}
+
+/** Colored enchant badge (.1 green / .2 blue / .3 purple — Albion enchant colors). */
+function EnchantBadge({ itemId }: { itemId: string }) {
+  const e = enchantOf(itemId);
+  if (e === 0) return null;
+  const mat = /_POTION/.test(itemId) ? ARCANE_EXTRACT_BY_ENCHANT[e] : FISH_SAUCE_BY_ENCHANT[e];
+  return (
+    <span className={`fp-chip fp-enchant-chip fp-enchant-${e}`} style={{ marginLeft: 6 }} title={`Enchanted with ${mat.name}`}>
+      .{e}
+    </span>
+  );
 }
 
 const FOOD_TYPE_WORDS = ["Sandwich", "Omelette", "Salad", "Roast", "Stew", "Soup", "Pie"];
@@ -140,6 +208,8 @@ export function FoodPotionCrafterPage() {
   const [sellCity, setSellCity] = useState<City>("Lymhurst");
   const [mode, setMode] = useState<"scanner" | "crafter">("scanner");
   const [selectedFamily, setSelectedFamily] = useState<string | null>(null);
+  // Scanner enchant filter: "all" or a specific level (0 = base, 1/2/3 = enchanted).
+  const [scannerEnchant, setScannerEnchant] = useState<"all" | 0 | 1 | 2 | 3>("all");
   const [showSpecsModal, setShowSpecsModal] = useState(false);
 
   // --- account ---
@@ -348,7 +418,20 @@ export function FoodPotionCrafterPage() {
     return map;
   }, [livePriceByItemId, manualPrices]);
 
-  const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useFoodPotionState(recipes, priceByItemId, specsState.progress);
+  // Scanner shows base recipes PLUS the enchant variants (.1/.2/.3) of each enchantable
+  // consumable — food (fish sauce) and potions (arcane extract).
+  const scannerRecipes = useMemo(() => {
+    const out: ConsumableRecipe[] = [];
+    for (const recipe of recipes) {
+      out.push(recipe);
+      if (enchantMatQty(recipe) > 0) {
+        for (const e of [1, 2, 3] as const) out.push(withEnchant(recipe, e));
+      }
+    }
+    return out;
+  }, [recipes]);
+
+  const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useFoodPotionState(scannerRecipes, priceByItemId, specsState.progress);
 
   const updatePrice = (itemId: string, value: string) => setManualPrices((prev) => ({ ...prev, [itemId]: value }));
 
@@ -356,8 +439,13 @@ export function FoodPotionCrafterPage() {
   const isPriced = (row: { result: { missingIngredientCost: boolean; revenue: number } }) =>
     !row.result.missingIngredientCost && row.result.revenue > 0;
 
-  const profitableCount = rows.filter((row) => isPriced(row) && row.result.profit > 0).length;
-  const visibleRows = rows;
+  // Scanner enchant filter: show all, base only (.0), or a specific enchant level (.1/.2/.3).
+  const visibleRows = useMemo(
+    () => (scannerEnchant === "all" ? rows : rows.filter((row) => enchantOf(row.recipe.itemId) === scannerEnchant)),
+    [rows, scannerEnchant]
+  );
+  // Reflects the active enchant filter so "Profitable" and "Showing" stay consistent.
+  const profitableCount = visibleRows.filter((row) => isPriced(row) && row.result.profit > 0).length;
 
   const selectedTiers = useMemo(() => {
     const tiers = new Set<number>();
@@ -389,12 +477,21 @@ export function FoodPotionCrafterPage() {
 
   const familyRows = useMemo(() => {
     if (!effectiveFamily) return [];
-    const famRecipes = recipes.filter((recipe) => recipe.category === filters.category && familyBase(recipe.itemId) === effectiveFamily);
+    // One merged list: every tier of the family PLUS its .1/.2/.3 enchant variants,
+    // sorted by profit (priced first) like the scanner — no per-enchant toggle.
+    const famRecipes: ConsumableRecipe[] = [];
+    for (const recipe of recipes) {
+      if (recipe.category !== filters.category || familyBase(recipe.itemId) !== effectiveFamily) continue;
+      famRecipes.push(recipe);
+      if (enchantMatQty(recipe) > 0) {
+        for (const e of [1, 2, 3] as const) famRecipes.push(withEnchant(recipe, e));
+      }
+    }
     return deriveFoodPotionRows(
       famRecipes,
       { ...filters, selectedTier: null, searchTerm: "", showOnlyProfitable: false },
       priceByItemId
-    ).sort((a, b) => a.recipe.tier - b.recipe.tier);
+    );
   }, [effectiveFamily, recipes, filters, priceByItemId]);
 
   const crafterSelected = useMemo(
@@ -405,7 +502,7 @@ export function FoodPotionCrafterPage() {
   // Active spec family for the modal highlight (crafter: selected recipe; scanner: top row).
   const activeSpecFamily = useMemo(() => {
     const recipe = mode === "crafter" ? crafterSelected?.recipe : selectedRow?.recipe;
-    return recipe ? resolveSpecFamily(recipe.itemId, filters.category) : null;
+    return recipe ? resolveSpecFamily(recipe.itemId.replace(/@\d+$/, ""), filters.category) : null;
   }, [mode, crafterSelected, selectedRow, filters.category]);
 
   const liveUpdated = formatUpdated(liveUpdatedIso);
@@ -584,6 +681,24 @@ export function FoodPotionCrafterPage() {
           ) : null}
           {mode === "scanner" ? (
             <div className="fp-field fp-field-wide">
+              <label>Enchant</label>
+              <div className="chip-row">
+                <button type="button" className={`chip ${scannerEnchant === "all" ? "active" : ""}`} onClick={() => setScannerEnchant("all")}>All</button>
+                {([0, 1, 2, 3] as const).map((e) => (
+                  <button
+                    key={e}
+                    type="button"
+                    className={`chip ${scannerEnchant === e ? `active ${e > 0 ? `fp-enchant-chip-active fp-enchant-${e}` : ""}` : ""}`}
+                    onClick={() => setScannerEnchant(e)}
+                  >
+                    .{e}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          {mode === "scanner" ? (
+            <div className="fp-field fp-field-wide">
               <label>Search</label>
               <div className="search-field">
                 <input type="search" value={filters.searchTerm} onChange={(e) => filters.setSearchTerm(e.target.value)} placeholder="Recipe or ingredient" />
@@ -609,11 +724,11 @@ export function FoodPotionCrafterPage() {
             <div className="fp-summary-bar">
               <div className="fp-summary-stat"><span>Profitable</span><strong className="profit">{profitableCount}</strong></div>
               <div className="fp-summary-divider" />
-              <div className="fp-summary-stat"><span>Showing</span><strong>{rows.length}</strong></div>
+              <div className="fp-summary-stat"><span>Showing</span><strong>{visibleRows.length}</strong></div>
               <div className="fp-summary-divider" />
               <div className="fp-summary-stat"><span>Category</span><strong>{filters.category === "food" ? "Food" : "Potions"}</strong></div>
               <div className="fp-summary-divider" />
-              <div className="fp-summary-stat"><span>Return</span><strong>{selectedRow ? formatPct(selectedRow.result.returnRate * 100) : "--"}</strong></div>
+              <div className="fp-summary-stat"><span>Return</span><strong className="fp-return-rate">{selectedRow ? formatPct(selectedRow.result.returnRate * 100) : "--"}</strong></div>
             </div>
             <div className="table-wrap custom-scrollbar fp-scanner-scroll">
               <table>
@@ -625,7 +740,7 @@ export function FoodPotionCrafterPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {!rows.length ? (<tr><td colSpan={9}>No recipes match — enter ingredient prices or adjust filters.</td></tr>) : null}
+                  {!visibleRows.length ? (<tr><td colSpan={9}>No recipes match — enter ingredient prices or adjust filters.</td></tr>) : null}
                   {visibleRows.map((row, index) => {
                     const priced = isPriced(row);
                     return (
@@ -642,6 +757,7 @@ export function FoodPotionCrafterPage() {
                             <div>
                               <div className="item-name">
                                 {row.recipe.name}
+                                <EnchantBadge itemId={row.recipe.itemId} />
                                 {priced ? null : <span className="fp-chip fp-missing-chip" style={{ marginLeft: 6 }}>No price</span>}
                                 {row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}
                               </div>
@@ -651,7 +767,7 @@ export function FoodPotionCrafterPage() {
                         </div>
                       </td>
                       <td className="num">{formatNumber(row.result.outputAmount)}</td>
-                      <td className="num">{formatPct(row.result.returnRate * 100)}</td>
+                      <td className="num fp-return-cell">{formatPct(row.result.returnRate * 100)}</td>
                       <td className="num">{priced ? formatNumber(row.result.totalCost) : "--"}</td>
                       <td className="num">{(() => { const p = priceByItemId.get(row.recipe.itemId) ?? 0; return p > 0 ? formatNumber(p) : "--"; })()}</td>
                       <td className={`num ${priced ? (row.result.profit >= 0 ? "profit" : "loss") : ""}`}>{priced ? `${row.result.profit >= 0 ? "+" : ""}${formatNumber(row.result.profit)}` : "--"}</td>
@@ -665,7 +781,7 @@ export function FoodPotionCrafterPage() {
               </table>
             </div>
             <div className="table-footer">
-              <p>Showing {rows.length} {filters.category === "food" ? "food" : "potion"} recipes</p>
+              <p>Showing {visibleRows.length} {filters.category === "food" ? "food" : "potion"} recipes</p>
               <p>Region {region.toUpperCase()} · profit shown only when prices are complete</p>
             </div>
           </section>
@@ -707,11 +823,11 @@ export function FoodPotionCrafterPage() {
                       <td>
                         <div className="item"><div className="item-info">
                           <div className="fp-item-icon"><img src={iconUrl(row.recipe.itemId)} alt="" loading="lazy" onError={onItemIconError} /></div>
-                          <div className="item-name">{row.recipe.name}{row.result.missingIngredientCost ? " *" : ""}{row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}</div>
+                          <div className="item-name">{row.recipe.name}<EnchantBadge itemId={row.recipe.itemId} />{row.result.missingIngredientCost ? " *" : ""}{row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}</div>
                         </div></div>
                       </td>
                       <td className="num">{formatNumber(row.result.outputAmount)}</td>
-                      <td className="num">{formatPct(row.result.returnRate * 100)}</td>
+                      <td className="num fp-return-cell">{formatPct(row.result.returnRate * 100)}</td>
                       <td className="num">{formatNumber(row.result.grossIngredientCost)}</td>
                       <td className="num muted">{formatNumber(row.result.stationFee)}</td>
                       <td className={`num ${row.result.profit >= 0 ? "profit" : "loss"}`}>{row.result.profit >= 0 ? "+" : ""}{formatNumber(row.result.profit)}</td>
@@ -728,7 +844,7 @@ export function FoodPotionCrafterPage() {
                 <div className="fp-workbench-title">
                   <span className="material-symbols-outlined">calculate</span>
                   <div>
-                    <h3>{crafterSelected.recipe.name} · Calculator</h3>
+                    <h3>{crafterSelected.recipe.name}<EnchantBadge itemId={crafterSelected.recipe.itemId} /> · Calculator</h3>
                     <p>Edit ingredient + sell prices — profit updates live</p>
                   </div>
                 </div>
@@ -803,7 +919,7 @@ export function FoodPotionCrafterPage() {
                       <div><span>Market Tax</span><strong>{formatNumber(crafterSelected.result.marketTax)}</strong></div>
                       <div><span>Total Cost</span><strong>{formatNumber(crafterSelected.result.totalCost)}</strong></div>
                       <div><span>Net Revenue</span><strong>{formatNumber(crafterSelected.result.netRevenue)}</strong></div>
-                      <div><span>Return Rate</span><strong>{formatPct(crafterSelected.result.returnRate * 100)}</strong></div>
+                      <div><span>Return Rate</span><strong className="fp-return-rate">{formatPct(crafterSelected.result.returnRate * 100)}</strong></div>
                       <div><span>Focus Cost</span><strong>{crafterSelected.result.focusCost > 0 ? formatNumber(crafterSelected.result.focusCost) : "--"}</strong></div>
                       <div><span>Silver / Focus</span><strong className={(crafterSelected.result.silverPerFocus ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{crafterSelected.result.silverPerFocus === null ? "--" : formatNumber(crafterSelected.result.silverPerFocus)}</strong></div>
                       <div><span>Profit / Item</span><strong className={crafterSelected.result.profitPerOutput >= 0 ? "profit-cell" : "loss-cell"}>{formatNumber(crafterSelected.result.profitPerOutput)}</strong></div>

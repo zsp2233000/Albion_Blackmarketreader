@@ -23,7 +23,8 @@
           "tier": 1
         }
       ],
-      "baseFocus": 4.0
+      "baseFocus": 4,
+      "enchantable": false
     },
     {
       "itemId": "T1_MEAL_SOUP",
@@ -40,7 +41,9 @@
           "tier": 1
         }
       ],
-      "baseFocus": 56.0
+      "baseFocus": 56,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T1_FISHSAUCE_LEVEL2",
@@ -63,7 +66,8 @@
           "tier": 1
         }
       ],
-      "baseFocus": 12.0
+      "baseFocus": 12,
+      "enchantable": false
     },
     {
       "itemId": "T1_MEAL_SOUP_FISH",
@@ -86,7 +90,9 @@
           "tier": 1
         }
       ],
-      "baseFocus": 56.0
+      "baseFocus": 56,
+      "fishSauceQty": 3,
+      "enchantable": true
     },
     {
       "itemId": "T1_MEAL_GRILLEDFISH",
@@ -103,7 +109,8 @@
           "tier": 1
         }
       ],
-      "baseFocus": 4.0
+      "baseFocus": 4,
+      "enchantable": false
     },
     {
       "itemId": "T1_MEAL_SEAWEEDSALAD",
@@ -120,7 +127,8 @@
           "tier": 1
         }
       ],
-      "baseFocus": 4.0
+      "baseFocus": 4,
+      "enchantable": false
     },
     {
       "itemId": "T1_FISHSAUCE_LEVEL3",
@@ -143,7 +151,8 @@
           "tier": 1
         }
       ],
-      "baseFocus": 20.0
+      "baseFocus": 20,
+      "enchantable": false
     },
     {
       "itemId": "T2_MEAL_SALAD",
@@ -166,7 +175,9 @@
           "tier": 1
         }
       ],
-      "baseFocus": 56.0
+      "baseFocus": 56,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T2_MEAL_SALAD_FISH",
@@ -195,7 +206,9 @@
           "tier": 2
         }
       ],
-      "baseFocus": 77.0
+      "baseFocus": 77,
+      "fishSauceQty": 3,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_OMELETTE_AVALON",
@@ -227,10 +240,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 10,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 51.6
+      "baseFocus": 51.6,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_OMELETTE",
@@ -259,7 +275,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 51.6
+      "baseFocus": 51.6,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_PIE",
@@ -288,7 +306,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 60.0
+      "baseFocus": 60,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T3_FLOUR",
@@ -305,7 +325,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_OMELETTE_FISH",
@@ -334,7 +356,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 81.0
+      "baseFocus": 81,
+      "fishSauceQty": 3,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_SOUP_FISH",
@@ -369,7 +393,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 168.0
+      "baseFocus": 168,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAT",
@@ -386,7 +412,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_ROAST",
@@ -415,7 +443,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 58.0
+      "baseFocus": 58,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_ROAST_FISH",
@@ -444,7 +474,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 77.0
+      "baseFocus": 77,
+      "fishSauceQty": 3,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_PIE_FISH",
@@ -473,7 +505,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 81.0
+      "baseFocus": 81,
+      "fishSauceQty": 3,
+      "enchantable": true
     },
     {
       "itemId": "T3_MEAL_SOUP",
@@ -490,7 +524,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 168.0
+      "baseFocus": 168,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T4_MEAL_SANDWICH_AVALON",
@@ -522,10 +558,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 10,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 55.0
+      "baseFocus": 55,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T4_MEAL_STEW_AVALON",
@@ -557,10 +596,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 10,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 61.3
+      "baseFocus": 61.3,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T4_BREAD",
@@ -577,7 +619,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T4_MEAL_SANDWICH",
@@ -606,7 +650,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 55.0
+      "baseFocus": 55,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T4_MEAL_STEW",
@@ -635,7 +681,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 61.3
+      "baseFocus": 61.3,
+      "fishSauceQty": 10,
+      "enchantable": true
     },
     {
       "itemId": "T4_BUTTER",
@@ -652,7 +700,8 @@
           "tier": 4
         }
       ],
-      "baseFocus": 12.7
+      "baseFocus": 12.7,
+      "enchantable": false
     },
     {
       "itemId": "T4_MEAL_STEW_FISH",
@@ -681,7 +730,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 75.0
+      "baseFocus": 75,
+      "fishSauceQty": 3,
+      "enchantable": true
     },
     {
       "itemId": "T4_MEAL_SALAD_FISH",
@@ -716,7 +767,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 231.0
+      "baseFocus": 231,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T4_MEAT",
@@ -733,7 +786,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T4_MEAL_SANDWICH_FISH",
@@ -762,7 +817,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 81.0
+      "baseFocus": 81,
+      "fishSauceQty": 3,
+      "enchantable": true
     },
     {
       "itemId": "T4_MEAL_SALAD",
@@ -785,7 +842,9 @@
           "tier": 3
         }
       ],
-      "baseFocus": 168.0
+      "baseFocus": 168,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_OMELETTE_AVALON",
@@ -817,10 +876,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 30,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 154.7
+      "baseFocus": 154.7,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_SOUP_FISH",
@@ -855,7 +917,9 @@
           "tier": 5
         }
       ],
-      "baseFocus": 504.0
+      "baseFocus": 504,
+      "fishSauceQty": 27,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_SOUP",
@@ -872,7 +936,9 @@
           "tier": 5
         }
       ],
-      "baseFocus": 504.0
+      "baseFocus": 504,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_OMELETTE_FISH",
@@ -907,7 +973,9 @@
           "tier": 5
         }
       ],
-      "baseFocus": 243.0
+      "baseFocus": 243,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_OMELETTE",
@@ -936,7 +1004,9 @@
           "tier": 5
         }
       ],
-      "baseFocus": 154.7
+      "baseFocus": 154.7,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_PIE",
@@ -971,7 +1041,9 @@
           "tier": 4
         }
       ],
-      "baseFocus": 180.0
+      "baseFocus": 180,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_PIE_FISH",
@@ -1006,7 +1078,9 @@
           "tier": 5
         }
       ],
-      "baseFocus": 243.0
+      "baseFocus": 243,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAT",
@@ -1023,7 +1097,9 @@
           "tier": 5
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "fishSauceQty": 27,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_ROAST",
@@ -1052,7 +1128,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 176.0
+      "baseFocus": 176,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T5_MEAL_ROAST_FISH",
@@ -1087,7 +1165,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 225.0
+      "baseFocus": 225,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAL_SANDWICH_AVALON",
@@ -1119,10 +1199,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 30,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 165.0
+      "baseFocus": 165,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAL_STEW_AVALON",
@@ -1154,10 +1237,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 30,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 184.0
+      "baseFocus": 184,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAL_SALAD_FISH",
@@ -1192,7 +1278,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 693.0
+      "baseFocus": 693,
+      "fishSauceQty": 27,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAL_SANDWICH",
@@ -1221,7 +1309,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 165.0
+      "baseFocus": 165,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAL_STEW",
@@ -1250,7 +1340,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 184.0
+      "baseFocus": 184,
+      "fishSauceQty": 30,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAL_SALAD",
@@ -1273,7 +1365,9 @@
           "tier": 5
         }
       ],
-      "baseFocus": 504.0
+      "baseFocus": 504,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAT",
@@ -1290,7 +1384,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "fishSauceQty": 27,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAL_STEW_FISH",
@@ -1325,7 +1421,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 225.0
+      "baseFocus": 225,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T6_MEAL_SANDWICH_FISH",
@@ -1360,7 +1458,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 231.0
+      "baseFocus": 231,
+      "fishSauceQty": 9,
+      "enchantable": true
     },
     {
       "itemId": "T6_BUTTER",
@@ -1377,7 +1477,8 @@
           "tier": 6
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "enchantable": false
     },
     {
       "itemId": "T7_MEAL_OMELETTE_AVALON",
@@ -1409,10 +1510,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 90,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 464.0
+      "baseFocus": 464,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T7_MEAL_OMELETTE_FISH",
@@ -1447,7 +1551,9 @@
           "tier": 7
         }
       ],
-      "baseFocus": 729.0
+      "baseFocus": 729,
+      "fishSauceQty": 27,
+      "enchantable": true
     },
     {
       "itemId": "T7_MEAL_PIE_FISH",
@@ -1482,7 +1588,9 @@
           "tier": 7
         }
       ],
-      "baseFocus": 729.0
+      "baseFocus": 729,
+      "fishSauceQty": 27,
+      "enchantable": true
     },
     {
       "itemId": "T7_MEAL_OMELETTE",
@@ -1511,7 +1619,9 @@
           "tier": 5
         }
       ],
-      "baseFocus": 464.0
+      "baseFocus": 464,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T7_MEAL_PIE",
@@ -1546,7 +1656,9 @@
           "tier": 6
         }
       ],
-      "baseFocus": 540.0
+      "baseFocus": 540,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T7_MEAT",
@@ -1563,7 +1675,9 @@
           "tier": 7
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T7_MEAL_ROAST",
@@ -1592,7 +1706,9 @@
           "tier": 8
         }
       ],
-      "baseFocus": 528.0
+      "baseFocus": 528,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T7_MEAL_ROAST_FISH",
@@ -1627,7 +1743,9 @@
           "tier": 8
         }
       ],
-      "baseFocus": 652.0
+      "baseFocus": 652,
+      "fishSauceQty": 27,
+      "enchantable": true
     },
     {
       "itemId": "T8_MEAL_SANDWICH_AVALON",
@@ -1659,10 +1777,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 90,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 495.0
+      "baseFocus": 495,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T8_MEAL_STEW_AVALON",
@@ -1694,10 +1815,13 @@
           "itemId": "QUESTITEM_TOKEN_AVALON",
           "name": "Avalonian Energy",
           "qty": 90,
-          "tier": 6
+          "tier": 6,
+          "returnable": false
         }
       ],
-      "baseFocus": 551.0
+      "baseFocus": 551,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T8_MEAL_SANDWICH",
@@ -1726,7 +1850,9 @@
           "tier": 8
         }
       ],
-      "baseFocus": 495.0
+      "baseFocus": 495,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T8_MEAL_STEW",
@@ -1755,7 +1881,9 @@
           "tier": 8
         }
       ],
-      "baseFocus": 551.0
+      "baseFocus": 551,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T8_BUTTER",
@@ -1772,7 +1900,8 @@
           "tier": 8
         }
       ],
-      "baseFocus": 114.0
+      "baseFocus": 114,
+      "enchantable": false
     },
     {
       "itemId": "T8_MEAL_STEW_FISH",
@@ -1807,7 +1936,9 @@
           "tier": 8
         }
       ],
-      "baseFocus": 675.0
+      "baseFocus": 675,
+      "fishSauceQty": 27,
+      "enchantable": true
     },
     {
       "itemId": "T8_MEAT",
@@ -1824,7 +1955,9 @@
           "tier": 8
         }
       ],
-      "baseFocus": 38.0
+      "baseFocus": 38,
+      "fishSauceQty": 90,
+      "enchantable": true
     },
     {
       "itemId": "T8_MEAL_SANDWICH_FISH",
@@ -1859,7 +1992,9 @@
           "tier": 8
         }
       ],
-      "baseFocus": 672.0
+      "baseFocus": 672,
+      "fishSauceQty": 27,
+      "enchantable": true
     }
   ]
 }
