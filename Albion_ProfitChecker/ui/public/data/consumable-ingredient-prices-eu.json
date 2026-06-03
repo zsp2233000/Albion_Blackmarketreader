@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T09:29:27.862Z",
+  "generatedAt": "2026-06-03T08:55:17.386Z",
   "region": "eu",
   "cities": [
     "Lymhurst",
@@ -106,7 +106,7 @@
         "Lymhurst": 2682,
         "Fort Sterling": 2593,
         "Thetford": 2732,
-        "Bridgewatch": 2546
+        "Bridgewatch": 2832
       }
     },
     {
@@ -117,7 +117,7 @@
         "Martlock": 2669,
         "Fort Sterling": 2876,
         "Thetford": 2586,
-        "Bridgewatch": 2577,
+        "Bridgewatch": 2783,
         "Caerleon": 2685,
         "Brecilien": 2867
       }
@@ -128,6 +128,7 @@
       "prices": {
         "Lymhurst": 102,
         "Martlock": 77,
+        "Fort Sterling": 93,
         "Thetford": 67,
         "Bridgewatch": 112,
         "Caerleon": 208,
@@ -142,7 +143,7 @@
         "Martlock": 2754,
         "Fort Sterling": 2636,
         "Thetford": 2633,
-        "Bridgewatch": 2614,
+        "Bridgewatch": 2724,
         "Caerleon": 2731
       }
     },
@@ -152,6 +153,7 @@
       "prices": {
         "Lymhurst": 513,
         "Martlock": 788,
+        "Fort Sterling": 430,
         "Bridgewatch": 497
       }
     },
@@ -283,6 +285,7 @@
       "tier": 4,
       "prices": {
         "Lymhurst": 626,
+        "Martlock": 421,
         "Fort Sterling": 481,
         "Bridgewatch": 461,
         "Caerleon": 311,
@@ -342,6 +345,7 @@
       "tier": 4,
       "prices": {
         "Lymhurst": 517,
+        "Fort Sterling": 417,
         "Bridgewatch": 495,
         "Caerleon": 411
       }
@@ -400,7 +404,7 @@
         "Martlock": 5466,
         "Fort Sterling": 5711,
         "Thetford": 5233,
-        "Bridgewatch": 5657
+        "Bridgewatch": 5676
       }
     },
     {
@@ -528,7 +532,7 @@
         "Martlock": 5465,
         "Fort Sterling": 5585,
         "Thetford": 5165,
-        "Bridgewatch": 5165
+        "Bridgewatch": 5396
       }
     },
     {
@@ -536,6 +540,7 @@
       "tier": 5,
       "prices": {
         "Lymhurst": 511,
+        "Fort Sterling": 489,
         "Thetford": 505,
         "Bridgewatch": 519
       }
@@ -572,14 +577,14 @@
         "Thetford": 2535,
         "Bridgewatch": 2517,
         "Caerleon": 2737,
-        "Brecilien": 2276
+        "Brecilien": 2355
       }
     },
     {
       "itemId": "T6_FOXGLOVE",
       "tier": 6,
       "prices": {
-        "Lymhurst": 597,
+        "Lymhurst": 538,
         "Martlock": 540,
         "Fort Sterling": 566,
         "Thetford": 522,
@@ -619,6 +624,7 @@
       "prices": {
         "Lymhurst": 531,
         "Martlock": 465,
+        "Fort Sterling": 472,
         "Thetford": 525,
         "Bridgewatch": 514,
         "Caerleon": 563,
@@ -671,7 +677,7 @@
         "Martlock": 9939,
         "Fort Sterling": 9172,
         "Thetford": 8465,
-        "Bridgewatch": 8930,
+        "Bridgewatch": 8905,
         "Caerleon": 12954
       }
     },
@@ -709,7 +715,7 @@
         "Martlock": 128865,
         "Fort Sterling": 127000,
         "Thetford": 128991,
-        "Bridgewatch": 127907,
+        "Bridgewatch": 127909,
         "Caerleon": 158976,
         "Brecilien": 139884
       }
@@ -870,7 +876,7 @@
         "Martlock": 510,
         "Fort Sterling": 537,
         "Thetford": 508,
-        "Bridgewatch": 519,
+        "Bridgewatch": 526,
         "Caerleon": 478,
         "Brecilien": 569
       }
@@ -967,72 +973,12 @@
       "tier": 8,
       "prices": {
         "Lymhurst": 523,
-        "Martlock": 510,
+        "Martlock": 509,
         "Fort Sterling": 568,
         "Thetford": 561,
         "Bridgewatch": 559,
         "Caerleon": 499,
         "Brecilien": 583
-      }
-    },
-    {
-      "itemId": "T1_FISHSAUCE_LEVEL1",
-      "tier": 1,
-      "prices": {
-        "Lymhurst": 4825,
-        "Fort Sterling": 5178,
-        "Thetford": 4554,
-        "Bridgewatch": 4959,
-        "Brecilien": 5098
-      }
-    },
-    {
-      "itemId": "T1_FISHSAUCE_LEVEL2",
-      "tier": 1,
-      "prices": {
-        "Lymhurst": 15248,
-        "Fort Sterling": 13346,
-        "Thetford": 13800,
-        "Bridgewatch": 14996
-      }
-    },
-    {
-      "itemId": "T1_FISHSAUCE_LEVEL3",
-      "tier": 1,
-      "prices": {
-        "Lymhurst": 44797,
-        "Fort Sterling": 43000,
-        "Thetford": 41900,
-        "Bridgewatch": 42689
-      }
-    },
-    {
-      "itemId": "T1_ALCHEMY_EXTRACT_LEVEL1",
-      "tier": 1,
-      "prices": {
-        "Martlock": 2276,
-        "Thetford": 2990,
-        "Bridgewatch": 2691,
-        "Brecilien": 3193
-      }
-    },
-    {
-      "itemId": "T1_ALCHEMY_EXTRACT_LEVEL2",
-      "tier": 1,
-      "prices": {
-        "Thetford": 8999,
-        "Bridgewatch": 7999,
-        "Brecilien": 7490
-      }
-    },
-    {
-      "itemId": "T1_ALCHEMY_EXTRACT_LEVEL3",
-      "tier": 1,
-      "prices": {
-        "Lymhurst": 20998,
-        "Martlock": 23988,
-        "Bridgewatch": 44000,
-        "Brecilien": 22000
       }
     }
   ]
