@@ -1,18 +1,18 @@
 # Changelog
 
-Was ist neu auf [blackmarketreader.com](https://blackmarketreader.com).
+What's new on [blackmarketreader.com](https://blackmarketreader.com).
 
-Schreibe Updates als Stichpunkte unter `## Unreleased`. Bei jedem Push nach `main`
-werden **neu hinzugefügte** Stichpunkte automatisch im Discord-Updates-Channel gepostet.
-Halte sie kurz und für Spieler verständlich (nicht technisch). Emojis am Anfang sind okay.
+Add updates as bullet points under `## Unreleased`. On every push to `main`, the
+**newly added** bullets are posted automatically to the Discord updates channel.
+Keep them short and player-friendly (not technical), and without emoji.
 
 ## Unreleased
 
-- Neuer Crafting Calculator: berechne Materialkosten, Rückgaberate, Fokus und Gewinn für jedes Item
-- Neuer Refining Calculator für die Veredelung von Rohstoffen (noch in Entwicklung, Feedback willkommen)
-- Neuer Food & Potion Crafter im Test: Profit für Tränke und Gerichte inkl. Buffs und Rezepte
+- New Crafting Calculator: work out material cost, return rate, focus and profit for any item
+- New Refining Calculator for refining raw resources (still in development, feedback welcome)
+- New Food & Potion Crafter in testing: profit for potions and meals, including buffs and recipes
 
-<!-- Neue Stichpunkte hier drunter als "- ..." Zeilen, ohne Emoji. Beispiele
-     (eingerückt, damit sie nicht versehentlich gepostet werden):
-       Crafting-Rechner zeigt jetzt Fame pro Item
-       Region-Umschalter (EU/US) im Food-Rechner gefixt -->
+<!-- Add new bullets below as "- ..." lines, without emoji. Examples
+     (indented so they are not posted by accident):
+       Crafting Calculator now shows fame per item
+       Fixed the region toggle (EU/US) in the Food crafter -->
