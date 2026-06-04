@@ -65,8 +65,8 @@ jobs:
           PAYLOAD="$(jq -n --arg desc "$NOTES" '{
             username: "Blackmarket Reader",
             embeds: [ {
-              title: "🚀 Neues Update ist live!",
-              description: ($desc + "\n\n**[→ Jetzt ansehen auf blackmarketreader.com](https://blackmarketreader.com)**"),
+              title: "🚀 New update is live!",
+              description: ($desc + "\n\n**[→ Check it out on blackmarketreader.com](https://blackmarketreader.com)**"),
               url: "https://blackmarketreader.com",
               color: 16766720
             } ]
