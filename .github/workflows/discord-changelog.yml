@@ -1,0 +1,75 @@
+name: Discord Changelog
+
+# Posts new CHANGELOG entries to a Discord updates channel whenever real code is
+# pushed to main. The `paths` filter means data-refresh bot commits (which never
+# touch CHANGELOG.md) do not trigger this workflow at all.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'CHANGELOG.md'
+
+permissions:
+  contents: read
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    env:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so we can diff the push range
+
+      - name: Extract newly added changelog entries
+        id: notes
+        run: |
+          set -euo pipefail
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+
+          # First push / new branch: `before` is all zeroes and not a real commit.
+          if ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            BEFORE="$(git rev-parse "${AFTER}~1" 2>/dev/null || echo '')"
+          fi
+
+          if [ -z "$BEFORE" ]; then
+            # No parent to diff against: take every bullet currently in the file.
+            ADDED="$(git show "${AFTER}:CHANGELOG.md" 2>/dev/null | grep -E '^- ' || true)"
+          else
+            # Only the bullet lines ADDED in this push (lines starting with "+- ").
+            ADDED="$(git diff "${BEFORE}" "${AFTER}" -- CHANGELOG.md \
+              | grep -E '^\+- ' | sed 's/^+//' || true)"
+          fi
+
+          if [ -z "$ADDED" ]; then
+            echo "has_notes=false" >> "$GITHUB_OUTPUT"
+            echo "No new changelog bullets in this push; nothing to announce."
+            exit 0
+          fi
+
+          echo "has_notes=true" >> "$GITHUB_OUTPUT"
+          {
+            echo 'notes<<__EOF__'
+            echo "$ADDED"
+            echo '__EOF__'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post to Discord
+        if: steps.notes.outputs.has_notes == 'true' && env.DISCORD_WEBHOOK_URL != ''
+        env:
+          NOTES: ${{ steps.notes.outputs.notes }}
+        run: |
+          set -euo pipefail
+          PAYLOAD="$(jq -n --arg desc "$NOTES" '{
+            username: "Blackmarket Reader",
+            embeds: [ {
+              title: "🚀 Neues Update ist live!",
+              description: ($desc + "\n\n**[→ Jetzt ansehen auf blackmarketreader.com](https://blackmarketreader.com)**"),
+              url: "https://blackmarketreader.com",
+              color: 16766720
+            } ]
+          }')"
+          curl -sf -X POST -H "Content-Type: application/json" \
+            -d "$PAYLOAD" "$DISCORD_WEBHOOK_URL"
