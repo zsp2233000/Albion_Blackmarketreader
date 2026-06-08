@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   calculateConsumable,
+  computeConsumableStationFee,
   computeReturnRate,
   computeReturnRateFromBonusPercent,
   getReturnRatePresetConfig,
@@ -80,7 +81,8 @@ describe("calculateConsumable", () => {
       ingredientPrices,
       outputMarketPrice: 500,
       amount: 2,
-      stationFeePerCraft: 300,
+      itemValue: 800,
+      usageFee: 100,
       marketTaxRate: 0.065,
       demandPerDay: 0,
       bonuses,
@@ -94,7 +96,7 @@ describe("calculateConsumable", () => {
     expect(result.returnedIngredientCost).toBeCloseTo(gross * rate, 6);
     expect(result.effectiveIngredientCost).toBeCloseTo(gross - gross * rate, 6);
 
-    expect(result.stationFee).toBe(600); // 300 * 2
+    expect(result.stationFee).toBe(computeConsumableStationFee(800, 100) * result.outputAmount);
     expect(result.outputAmount).toBe(20); // 10 * 2
 
     const revenue = 500 * 20; // 10000
@@ -114,7 +116,8 @@ describe("calculateConsumable", () => {
       ingredientPrices: new Map<string, number>([["T5_A", 100]]),
       outputMarketPrice: 500,
       amount: 1,
-      stationFeePerCraft: 300,
+      itemValue: 800,
+      usageFee: 100,
       marketTaxRate: 0.065,
       demandPerDay: 0,
       bonuses: makeBonuses(),
@@ -128,7 +131,8 @@ describe("calculateConsumable", () => {
       ingredientPrices: new Map<string, number>([["T5_A", 10], ["T5_B", 10]]),
       outputMarketPrice: 500,
       amount: 1,
-      stationFeePerCraft: 100,
+      itemValue: 0,
+      usageFee: 0,
       marketTaxRate: 0.065,
       demandPerDay: 50,
       bonuses: makeBonuses(),
@@ -147,7 +151,7 @@ describe("calculateConsumable", () => {
     const bonuses = makeBonuses({ focusEnabled: false }); // 18+15=33% -> rr 0.2481
     const result = calculateConsumable({
       recipe, ingredientPrices, outputMarketPrice: 500, amount: 1,
-      stationFeePerCraft: 0, marketTaxRate: 0, demandPerDay: 0, bonuses,
+      itemValue: 0, usageFee: 0, marketTaxRate: 0, demandPerDay: 0, bonuses,
     });
     const rate = computeReturnRateFromBonusPercent(33);
     const returnableGross = 100 * 4; // only Ingredient A; avalon token excluded
@@ -155,5 +159,22 @@ describe("calculateConsumable", () => {
     expect(result.grossIngredientCost).toBe(totalGross);
     expect(result.returnedIngredientCost).toBeCloseTo(returnableGross * rate, 6);
     expect(result.effectiveIngredientCost).toBeCloseTo(totalGross - returnableGross * rate, 6);
+  });
+});
+
+describe("computeConsumableStationFee", () => {
+  // Workbook formula: usageFee × (itemValue × 0.1125) / 100, rounded up.
+  it("matches the workbook (T8 Meal Stew: itemValue 576, usageFee 300 -> 195)", () => {
+    expect(computeConsumableStationFee(576, 300)).toBe(195);
+  });
+
+  it("scales linearly with item value and usage fee", () => {
+    expect(computeConsumableStationFee(1000, 100)).toBe(Math.ceil(1000 * 0.1125)); // 113
+    expect(computeConsumableStationFee(1000, 200)).toBe(Math.ceil(1000 * 0.1125 * 2)); // 225
+  });
+
+  it("is zero when item value or usage fee is zero", () => {
+    expect(computeConsumableStationFee(0, 300)).toBe(0);
+    expect(computeConsumableStationFee(576, 0)).toBe(0);
   });
 });

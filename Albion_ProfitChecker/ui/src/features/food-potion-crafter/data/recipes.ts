@@ -42,6 +42,10 @@ function normalizeRecipe(entry: unknown, fallbackCategory: ConsumableCategory): 
   const category: ConsumableCategory = entry.category === "potion" || entry.category === "food" ? entry.category : fallbackCategory;
 
   const baseFocus = toFiniteNumber(entry.baseFocus, 0);
+  const itemValue = toFiniteNumber(entry.itemValue, 0);
+  const focus = Array.isArray(entry.focus)
+    ? entry.focus.map((value) => Math.max(0, toFiniteNumber(value, 0)))
+    : undefined;
   // Enchant material requirement (fish sauce for food, arcane extract for potions).
   // Must be preserved here or the scanner/crafter can never build the .1/.2/.3 enchant variants.
   const fishSauceQty = Math.max(0, toFiniteNumber(entry.fishSauceQty, 0));
@@ -56,6 +60,8 @@ function normalizeRecipe(entry: unknown, fallbackCategory: ConsumableCategory): 
     outputQty: Math.max(1, toFiniteNumber(entry.outputQty, 1)),
     isAvalonian: entry.isAvalonian === true,
     baseFocus: baseFocus > 0 ? baseFocus : undefined,
+    itemValue: itemValue > 0 ? itemValue : undefined,
+    focus: focus && focus.length ? focus : undefined,
     fishSauceQty: fishSauceQty > 0 ? fishSauceQty : undefined,
     arcaneExtractQty: arcaneExtractQty > 0 ? arcaneExtractQty : undefined,
     enchantable: enchantable ? true : undefined,

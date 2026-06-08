@@ -67,12 +67,18 @@ export function deriveFoodPotionRows(
       ? computeFocusEfficiency(filters.specProgress, filters.category, resolveSpecFamily(recipe.itemId, filters.category))
       : 0;
 
+    // Station fee is driven by item value; focus is per enchant level (both from ao-bin-dumps).
+    const enchant = Number((recipe.itemId.match(/@(\d+)/) || [])[1] || 0);
+    const focusPerCraft = recipe.focus?.[enchant] ?? recipe.baseFocus ?? 0;
+
     const result = calculateConsumable({
       recipe,
       ingredientPrices,
       outputMarketPrice,
       amount: filters.amount,
-      stationFeePerCraft: filters.stationFeePerCraft,
+      itemValue: recipe.itemValue ?? 0,
+      usageFee: filters.usageFee,
+      focusPerCraft,
       marketTaxRate: filters.marketTaxRate,
       demandPerDay: filters.demandPerDay,
       bonuses,
@@ -97,6 +103,6 @@ export function deriveFoodPotionRows(
     const bP = !b.result.missingIngredientCost && b.result.revenue > 0;
     if (aP !== bP) return aP ? -1 : 1;
     if (!aP) return a.recipe.tier - b.recipe.tier || a.recipe.name.localeCompare(b.recipe.name);
-    return b.result.profit - a.result.profit;
+    return b.result.profitPerOutput - a.result.profitPerOutput;
   });
 }

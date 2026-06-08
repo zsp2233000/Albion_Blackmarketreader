@@ -25,7 +25,7 @@ export interface FoodPotionFilters {
   returnRatePreset: ReturnRatePreset;
   customReturnRatePct: number;
   amount: number;
-  stationFeePerCraft: number;
+  usageFee: number;
   marketTaxRate: number;
   demandPerDay: number;
   showOnlyProfitable: boolean;

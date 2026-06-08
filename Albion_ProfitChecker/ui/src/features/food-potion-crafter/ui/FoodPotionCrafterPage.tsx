@@ -629,8 +629,8 @@ export function FoodPotionCrafterPage() {
             <input className="fp-control" inputMode="numeric" value={filters.amount} onChange={(e) => filters.setAmount(Math.max(1, Number(e.target.value) || 1))} />
           </div>
           <div className="fp-field">
-            <label>Station Fee / Craft</label>
-            <input className="fp-control" inputMode="numeric" value={filters.stationFeePerCraft} onChange={(e) => filters.setStationFeePerCraft(Math.max(0, Number(e.target.value) || 0))} />
+            <label>Usage Fee</label>
+            <input className="fp-control" inputMode="numeric" value={filters.usageFee} onChange={(e) => filters.setUsageFee(Math.max(0, Number(e.target.value) || 0))} />
           </div>
           <div className="fp-field">
             <label>Craft City</label>
@@ -736,7 +736,7 @@ export function FoodPotionCrafterPage() {
                   <tr>
                     <th>Recipe</th><th className="num">Output</th><th className="num">Return</th>
                     <th className="num">Craft Cost</th><th className="num">Sell Price</th>
-                    <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Sold / Day</th>
+                    <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Sold / Day (all cities)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -768,9 +768,9 @@ export function FoodPotionCrafterPage() {
                       </td>
                       <td className="num">{formatNumber(row.result.outputAmount)}</td>
                       <td className="num fp-return-cell">{formatPct(row.result.returnRate * 100)}</td>
-                      <td className="num">{priced ? formatNumber(row.result.totalCost) : "--"}</td>
+                      <td className="num">{priced ? formatNumber(row.result.totalCost / row.result.outputAmount) : "--"}</td>
                       <td className="num">{(() => { const p = priceByItemId.get(row.recipe.itemId) ?? 0; return p > 0 ? formatNumber(p) : "--"; })()}</td>
-                      <td className={`num ${priced ? (row.result.profit >= 0 ? "profit" : "loss") : ""}`}>{priced ? `${row.result.profit >= 0 ? "+" : ""}${formatNumber(row.result.profit)}` : "--"}</td>
+                      <td className={`num ${priced ? (row.result.profitPerOutput >= 0 ? "profit" : "loss") : ""}`}>{priced ? `${row.result.profitPerOutput >= 0 ? "+" : ""}${formatNumber(row.result.profitPerOutput)}` : "--"}</td>
                       <td className={`num ${priced ? (row.result.profit >= 0 ? "profit" : "loss") : ""}`}>{priced ? formatPct(row.result.profitPercent) : "--"}</td>
                       <td className={`num ${priced && (row.result.silverPerFocus ?? 0) >= 0 ? "profit" : priced ? "loss" : ""}`}>{priced && row.result.silverPerFocus !== null ? formatNumber(row.result.silverPerFocus) : "--"}</td>
                       <td className="num">{(() => { const s = soldByItemId[row.recipe.itemId] ?? 0; return s > 0 ? formatNumber(s) : "--"; })()}</td>
@@ -796,8 +796,8 @@ export function FoodPotionCrafterPage() {
                 </select>
               </div>
               <span className="fp-batch-badge">
-                Figures shown for <strong>{filters.amount}</strong> craft{filters.amount === 1 ? "" : "s"}
-                {crafterSelected ? <> · <strong>{crafterSelected.recipe.outputQty * filters.amount}</strong> items produced</> : null}
+                Table values <strong>per single item</strong>
+                {crafterSelected ? <> · breakdown below for <strong>{filters.amount}</strong> craft{filters.amount === 1 ? "" : "s"} ({crafterSelected.recipe.outputQty * filters.amount} items)</> : null}
               </span>
             </div>
 
@@ -807,12 +807,12 @@ export function FoodPotionCrafterPage() {
                   <tr>
                     <th>Tier</th><th>Recipe</th>
                     <th className="num">Output ({filters.amount}×)</th><th className="num">Return</th>
-                    <th className="num">Ingredient Cost</th><th className="num">Station Fee</th>
-                    <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th>
+                    <th className="num">Ingredient Cost</th><th className="num">Station Fee</th><th className="num">Sell Price</th>
+                    <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Sold / Day (all cities)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {familyRows.length === 0 ? (<tr><td colSpan={9}>No tiers for this product.</td></tr>) : null}
+                  {familyRows.length === 0 ? (<tr><td colSpan={11}>No tiers for this product.</td></tr>) : null}
                   {familyRows.map((row) => (
                     <tr
                       key={row.rowKey}
@@ -828,11 +828,13 @@ export function FoodPotionCrafterPage() {
                       </td>
                       <td className="num">{formatNumber(row.result.outputAmount)}</td>
                       <td className="num fp-return-cell">{formatPct(row.result.returnRate * 100)}</td>
-                      <td className="num">{formatNumber(row.result.grossIngredientCost)}</td>
-                      <td className="num muted">{formatNumber(row.result.stationFee)}</td>
-                      <td className={`num ${row.result.profit >= 0 ? "profit" : "loss"}`}>{row.result.profit >= 0 ? "+" : ""}{formatNumber(row.result.profit)}</td>
+                      <td className="num">{formatNumber(row.result.grossIngredientCost / row.result.outputAmount)}</td>
+                      <td className="num muted">{formatNumber(row.result.stationFee / row.result.outputAmount)}</td>
+                      <td className="num">{(() => { const p = priceByItemId.get(row.recipe.itemId) ?? 0; return p > 0 ? formatNumber(p) : "--"; })()}</td>
+                      <td className={`num ${row.result.profitPerOutput >= 0 ? "profit" : "loss"}`}>{row.result.profitPerOutput >= 0 ? "+" : ""}{formatNumber(row.result.profitPerOutput)}</td>
                       <td className={`num ${row.result.profit >= 0 ? "profit" : "loss"}`}>{formatPct(row.result.profitPercent)}</td>
                       <td className={`num ${(row.result.silverPerFocus ?? 0) >= 0 ? "profit" : "loss"}`}>{row.result.silverPerFocus === null ? "--" : formatNumber(row.result.silverPerFocus)}</td>
+                      <td className="num">{(() => { const s = soldByItemId[row.recipe.itemId] ?? 0; return s > 0 ? formatNumber(s) : "--"; })()}</td>
                     </tr>
                   ))}
                 </tbody>

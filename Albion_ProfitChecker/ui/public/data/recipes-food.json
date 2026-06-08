@@ -24,7 +24,11 @@
         }
       ],
       "baseFocus": 4,
-      "enchantable": false
+      "enchantable": false,
+      "itemValue": 16,
+      "focus": [
+        0
+      ]
     },
     {
       "itemId": "T1_MEAL_SOUP",
@@ -43,7 +47,14 @@
       ],
       "baseFocus": 56,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 64,
+      "focus": [
+        56,
+        78,
+        123,
+        256
+      ]
     },
     {
       "itemId": "T1_FISHSAUCE_LEVEL2",
@@ -67,7 +78,11 @@
         }
       ],
       "baseFocus": 12,
-      "enchantable": false
+      "enchantable": false,
+      "itemValue": 48,
+      "focus": [
+        0
+      ]
     },
     {
       "itemId": "T1_MEAL_SOUP_FISH",
@@ -92,7 +107,14 @@
       ],
       "baseFocus": 56,
       "fishSauceQty": 3,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 90,
+      "focus": [
+        77,
+        144,
+        278,
+        678
+      ]
     },
     {
       "itemId": "T1_MEAL_GRILLEDFISH",
@@ -110,7 +132,11 @@
         }
       ],
       "baseFocus": 4,
-      "enchantable": false
+      "enchantable": false,
+      "itemValue": 10,
+      "focus": [
+        15
+      ]
     },
     {
       "itemId": "T1_MEAL_SEAWEEDSALAD",
@@ -128,7 +154,11 @@
         }
       ],
       "baseFocus": 4,
-      "enchantable": false
+      "enchantable": false,
+      "itemValue": 10,
+      "focus": [
+        4
+      ]
     },
     {
       "itemId": "T1_FISHSAUCE_LEVEL3",
@@ -152,7 +182,11 @@
         }
       ],
       "baseFocus": 20,
-      "enchantable": false
+      "enchantable": false,
+      "itemValue": 144,
+      "focus": [
+        0
+      ]
     },
     {
       "itemId": "T2_MEAL_SALAD",
@@ -177,7 +211,14 @@
       ],
       "baseFocus": 56,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 64,
+      "focus": [
+        56,
+        78,
+        123,
+        256
+      ]
     },
     {
       "itemId": "T2_MEAL_SALAD_FISH",
@@ -208,7 +249,14 @@
       ],
       "baseFocus": 77,
       "fishSauceQty": 3,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 90,
+      "focus": [
+        77,
+        144,
+        278,
+        678
+      ]
     },
     {
       "itemId": "T3_MEAL_OMELETTE_AVALON",
@@ -246,7 +294,14 @@
       ],
       "baseFocus": 51.6,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 56,
+      "focus": [
+        52,
+        74,
+        118,
+        252
+      ]
     },
     {
       "itemId": "T3_MEAL_OMELETTE",
@@ -277,7 +332,14 @@
       ],
       "baseFocus": 51.6,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 56,
+      "focus": [
+        52,
+        74,
+        118,
+        252
+      ]
     },
     {
       "itemId": "T3_MEAL_PIE",
@@ -308,7 +370,14 @@
       ],
       "baseFocus": 60,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 56,
+      "focus": [
+        53,
+        75,
+        120,
+        253
+      ]
     },
     {
       "itemId": "T3_FLOUR",
@@ -327,7 +396,11 @@
       ],
       "baseFocus": 38,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T3_MEAL_OMELETTE_FISH",
@@ -358,7 +431,14 @@
       ],
       "baseFocus": 81,
       "fishSauceQty": 3,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 90,
+      "focus": [
+        77,
+        144,
+        278,
+        678
+      ]
     },
     {
       "itemId": "T3_MEAL_SOUP_FISH",
@@ -395,7 +475,14 @@
       ],
       "baseFocus": 168,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 260,
+      "focus": [
+        231,
+        432,
+        832,
+        2033
+      ]
     },
     {
       "itemId": "T3_MEAT",
@@ -414,7 +501,11 @@
       ],
       "baseFocus": 38,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T3_MEAL_ROAST",
@@ -445,7 +536,14 @@
       ],
       "baseFocus": 58,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 64,
+      "focus": [
+        58,
+        81,
+        125,
+        259
+      ]
     },
     {
       "itemId": "T3_MEAL_ROAST_FISH",
@@ -476,7 +574,14 @@
       ],
       "baseFocus": 77,
       "fishSauceQty": 3,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 90,
+      "focus": [
+        77,
+        144,
+        278,
+        678
+      ]
     },
     {
       "itemId": "T3_MEAL_PIE_FISH",
@@ -507,7 +612,14 @@
       ],
       "baseFocus": 81,
       "fishSauceQty": 3,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 90,
+      "focus": [
+        81,
+        147,
+        281,
+        681
+      ]
     },
     {
       "itemId": "T3_MEAL_SOUP",
@@ -526,7 +638,14 @@
       ],
       "baseFocus": 168,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 192,
+      "focus": [
+        168,
+        235,
+        368,
+        769
+      ]
     },
     {
       "itemId": "T4_MEAL_SANDWICH_AVALON",
@@ -564,7 +683,14 @@
       ],
       "baseFocus": 55,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 56,
+      "focus": [
+        55,
+        77,
+        122,
+        255
+      ]
     },
     {
       "itemId": "T4_MEAL_STEW_AVALON",
@@ -602,7 +728,14 @@
       ],
       "baseFocus": 61.3,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 64,
+      "focus": [
+        58,
+        81,
+        125,
+        259
+      ]
     },
     {
       "itemId": "T4_BREAD",
@@ -621,7 +754,11 @@
       ],
       "baseFocus": 38,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 40,
+      "focus": [
+        42
+      ]
     },
     {
       "itemId": "T4_MEAL_SANDWICH",
@@ -652,7 +789,14 @@
       ],
       "baseFocus": 55,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 56,
+      "focus": [
+        55,
+        77,
+        122,
+        255
+      ]
     },
     {
       "itemId": "T4_MEAL_STEW",
@@ -683,7 +827,14 @@
       ],
       "baseFocus": 61.3,
       "fishSauceQty": 10,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 64,
+      "focus": [
+        61,
+        84,
+        128,
+        262
+      ]
     },
     {
       "itemId": "T4_BUTTER",
@@ -701,7 +852,11 @@
         }
       ],
       "baseFocus": 12.7,
-      "enchantable": false
+      "enchantable": false,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T4_MEAL_STEW_FISH",
@@ -732,7 +887,14 @@
       ],
       "baseFocus": 75,
       "fishSauceQty": 3,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 90,
+      "focus": [
+        77,
+        144,
+        278,
+        678
+      ]
     },
     {
       "itemId": "T4_MEAL_SALAD_FISH",
@@ -769,7 +931,14 @@
       ],
       "baseFocus": 231,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 260,
+      "focus": [
+        231,
+        432,
+        832,
+        2033
+      ]
     },
     {
       "itemId": "T4_MEAT",
@@ -788,7 +957,11 @@
       ],
       "baseFocus": 38,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T4_MEAL_SANDWICH_FISH",
@@ -819,7 +992,14 @@
       ],
       "baseFocus": 81,
       "fishSauceQty": 3,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 90,
+      "focus": [
+        81,
+        147,
+        281,
+        681
+      ]
     },
     {
       "itemId": "T4_MEAL_SALAD",
@@ -844,7 +1024,14 @@
       ],
       "baseFocus": 168,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 192,
+      "focus": [
+        168,
+        235,
+        368,
+        769
+      ]
     },
     {
       "itemId": "T5_MEAL_OMELETTE_AVALON",
@@ -882,7 +1069,14 @@
       ],
       "baseFocus": 154.7,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 168,
+      "focus": [
+        155,
+        222,
+        355,
+        755
+      ]
     },
     {
       "itemId": "T5_MEAL_SOUP_FISH",
@@ -919,7 +1113,14 @@
       ],
       "baseFocus": 504,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 750,
+      "focus": [
+        672,
+        1272,
+        2473,
+        6076
+      ]
     },
     {
       "itemId": "T5_MEAL_SOUP",
@@ -938,7 +1139,14 @@
       ],
       "baseFocus": 504,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 576,
+      "focus": [
+        504,
+        704,
+        1105,
+        2306
+      ]
     },
     {
       "itemId": "T5_MEAL_OMELETTE_FISH",
@@ -975,7 +1183,14 @@
       ],
       "baseFocus": 243,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 260,
+      "focus": [
+        225,
+        425,
+        825,
+        2026
+      ]
     },
     {
       "itemId": "T5_MEAL_OMELETTE",
@@ -1006,7 +1221,14 @@
       ],
       "baseFocus": 154.7,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 168,
+      "focus": [
+        155,
+        222,
+        355,
+        755
+      ]
     },
     {
       "itemId": "T5_MEAL_PIE",
@@ -1043,7 +1265,14 @@
       ],
       "baseFocus": 180,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 192,
+      "focus": [
+        180,
+        246,
+        380,
+        780
+      ]
     },
     {
       "itemId": "T5_MEAL_PIE_FISH",
@@ -1080,7 +1309,14 @@
       ],
       "baseFocus": 243,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 260,
+      "focus": [
+        225,
+        425,
+        825,
+        2026
+      ]
     },
     {
       "itemId": "T5_MEAT",
@@ -1099,7 +1335,11 @@
       ],
       "baseFocus": 38,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T5_MEAL_ROAST",
@@ -1130,7 +1370,14 @@
       ],
       "baseFocus": 176,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 192,
+      "focus": [
+        176,
+        243,
+        376,
+        777
+      ]
     },
     {
       "itemId": "T5_MEAL_ROAST_FISH",
@@ -1167,7 +1414,14 @@
       ],
       "baseFocus": 225,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 260,
+      "focus": [
+        225,
+        425,
+        825,
+        2026
+      ]
     },
     {
       "itemId": "T6_MEAL_SANDWICH_AVALON",
@@ -1205,7 +1459,14 @@
       ],
       "baseFocus": 165,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 168,
+      "focus": [
+        165,
+        231,
+        365,
+        765
+      ]
     },
     {
       "itemId": "T6_MEAL_STEW_AVALON",
@@ -1243,7 +1504,14 @@
       ],
       "baseFocus": 184,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 192,
+      "focus": [
+        176,
+        243,
+        376,
+        777
+      ]
     },
     {
       "itemId": "T6_MEAL_SALAD_FISH",
@@ -1280,7 +1548,14 @@
       ],
       "baseFocus": 693,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 750,
+      "focus": [
+        672,
+        1272,
+        2473,
+        6076
+      ]
     },
     {
       "itemId": "T6_MEAL_SANDWICH",
@@ -1311,7 +1586,14 @@
       ],
       "baseFocus": 165,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 168,
+      "focus": [
+        165,
+        231,
+        365,
+        765
+      ]
     },
     {
       "itemId": "T6_MEAL_STEW",
@@ -1342,7 +1624,14 @@
       ],
       "baseFocus": 184,
       "fishSauceQty": 30,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 192,
+      "focus": [
+        184,
+        251,
+        384,
+        785
+      ]
     },
     {
       "itemId": "T6_MEAL_SALAD",
@@ -1367,7 +1656,14 @@
       ],
       "baseFocus": 504,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 576,
+      "focus": [
+        504,
+        704,
+        1105,
+        2306
+      ]
     },
     {
       "itemId": "T6_MEAT",
@@ -1386,7 +1682,11 @@
       ],
       "baseFocus": 38,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T6_MEAL_STEW_FISH",
@@ -1423,7 +1723,14 @@
       ],
       "baseFocus": 225,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 260,
+      "focus": [
+        225,
+        425,
+        825,
+        2026
+      ]
     },
     {
       "itemId": "T6_MEAL_SANDWICH_FISH",
@@ -1460,7 +1767,14 @@
       ],
       "baseFocus": 231,
       "fishSauceQty": 9,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 260,
+      "focus": [
+        231,
+        432,
+        832,
+        2033
+      ]
     },
     {
       "itemId": "T6_BUTTER",
@@ -1478,7 +1792,11 @@
         }
       ],
       "baseFocus": 38,
-      "enchantable": false
+      "enchantable": false,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T7_MEAL_OMELETTE_AVALON",
@@ -1516,7 +1834,14 @@
       ],
       "baseFocus": 464,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 504,
+      "focus": [
+        464,
+        665,
+        1065,
+        2266
+      ]
     },
     {
       "itemId": "T7_MEAL_OMELETTE_FISH",
@@ -1553,7 +1878,14 @@
       ],
       "baseFocus": 729,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 750,
+      "focus": [
+        672,
+        1272,
+        2473,
+        6076
+      ]
     },
     {
       "itemId": "T7_MEAL_PIE_FISH",
@@ -1590,7 +1922,14 @@
       ],
       "baseFocus": 729,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 750,
+      "focus": [
+        672,
+        1272,
+        2473,
+        6076
+      ]
     },
     {
       "itemId": "T7_MEAL_OMELETTE",
@@ -1621,7 +1960,14 @@
       ],
       "baseFocus": 464,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 504,
+      "focus": [
+        464,
+        665,
+        1065,
+        2266
+      ]
     },
     {
       "itemId": "T7_MEAL_PIE",
@@ -1658,7 +2004,14 @@
       ],
       "baseFocus": 540,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 576,
+      "focus": [
+        540,
+        739,
+        1140,
+        2341
+      ]
     },
     {
       "itemId": "T7_MEAT",
@@ -1677,7 +2030,11 @@
       ],
       "baseFocus": 38,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T7_MEAL_ROAST",
@@ -1708,7 +2065,14 @@
       ],
       "baseFocus": 528,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 576,
+      "focus": [
+        528,
+        728,
+        1128,
+        2329
+      ]
     },
     {
       "itemId": "T7_MEAL_ROAST_FISH",
@@ -1745,7 +2109,14 @@
       ],
       "baseFocus": 652,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 750,
+      "focus": [
+        652,
+        1253,
+        2454,
+        6056
+      ]
     },
     {
       "itemId": "T8_MEAL_SANDWICH_AVALON",
@@ -1783,7 +2154,14 @@
       ],
       "baseFocus": 495,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 504,
+      "focus": [
+        494,
+        694,
+        1094,
+        2295
+      ]
     },
     {
       "itemId": "T8_MEAL_STEW_AVALON",
@@ -1821,7 +2199,14 @@
       ],
       "baseFocus": 551,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 576,
+      "focus": [
+        528,
+        728,
+        1128,
+        2329
+      ]
     },
     {
       "itemId": "T8_MEAL_SANDWICH",
@@ -1852,7 +2237,14 @@
       ],
       "baseFocus": 495,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 504,
+      "focus": [
+        494,
+        694,
+        1094,
+        2295
+      ]
     },
     {
       "itemId": "T8_MEAL_STEW",
@@ -1883,7 +2275,14 @@
       ],
       "baseFocus": 551,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 576,
+      "focus": [
+        551,
+        752,
+        1152,
+        2353
+      ]
     },
     {
       "itemId": "T8_BUTTER",
@@ -1901,7 +2300,11 @@
         }
       ],
       "baseFocus": 114,
-      "enchantable": false
+      "enchantable": false,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T8_MEAL_STEW_FISH",
@@ -1938,7 +2341,14 @@
       ],
       "baseFocus": 675,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 750,
+      "focus": [
+        652,
+        1253,
+        2454,
+        6056
+      ]
     },
     {
       "itemId": "T8_MEAT",
@@ -1957,7 +2367,11 @@
       ],
       "baseFocus": 38,
       "fishSauceQty": 90,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 40,
+      "focus": [
+        38
+      ]
     },
     {
       "itemId": "T8_MEAL_SANDWICH_FISH",
@@ -1994,7 +2408,14 @@
       ],
       "baseFocus": 672,
       "fishSauceQty": 27,
-      "enchantable": true
+      "enchantable": true,
+      "itemValue": 750,
+      "focus": [
+        672,
+        1272,
+        2473,
+        6076
+      ]
     }
   ]
 }

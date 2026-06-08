@@ -17,11 +17,24 @@ export const ROYAL_BONUS_PERCENT = 18;
 export const CITY_BONUS_PERCENT = 15;
 export const FOCUS_BONUS_PERCENT = 59;
 
-/** Default flat station fee per craft action, by category (matches source workbook). */
-export const DEFAULT_STATION_FEE: Record<ConsumableCategory, number> = {
+/** Default station usage fee (silver per 1000), by category (matches source workbook). */
+export const DEFAULT_USAGE_FEE: Record<ConsumableCategory, number> = {
   food: 300,
   potion: 500,
 };
+
+/**
+ * Station fee for ONE craft action, matching the in-game / workbook formula:
+ *   fee = usageFee × (itemValue × 0.1125) / 100, rounded up.
+ * itemValue is the output's item value (Σ ingredient item values / amount crafted, from
+ * ao-bin-dumps); itemValue × 0.1125 is the nutrition consumed per craft.
+ */
+const STATION_FEE_NUTRITION_FACTOR = 0.1125;
+
+export function computeConsumableStationFee(itemValue: number, usageFee: number): number {
+  const fee = (Math.max(0, usageFee) * (Math.max(0, itemValue) * STATION_FEE_NUTRITION_FACTOR)) / 100;
+  return Math.ceil(fee);
+}
 
 /** City that grants the Local Production specialty bonus per category. */
 export const PRODUCTION_BONUS_CITY: Record<ConsumableCategory, BonusConfig["productionBonusCity"]> = {
@@ -106,7 +119,9 @@ export function calculateConsumable(input: ConsumableInput): ConsumableResult {
   const returnedIngredientCost = returnableGrossCost * returnRate;
   const effectiveIngredientCost = grossIngredientCost - returnedIngredientCost;
 
-  const stationFee = Math.max(0, input.stationFeePerCraft) * amount;
+  // The station fee is charged per produced item (itemValue is per-item), so it scales
+  // with the total number of items crafted, not the number of craft actions.
+  const stationFee = computeConsumableStationFee(input.itemValue, input.usageFee) * outputAmount;
 
   const revenue = Math.max(0, input.outputMarketPrice) * outputAmount;
   const marketTax = revenue * clamp(input.marketTaxRate, 0, 1);
@@ -119,7 +134,7 @@ export function calculateConsumable(input: ConsumableInput): ConsumableResult {
   const dailyPotential = input.demandPerDay > 0 ? profitPerOutput * input.demandPerDay : null;
 
   // Focus: base focus per craft reduced by spec/mastery efficiency (0.5 per 10k eff), times amount.
-  const baseFocus = Math.max(0, input.recipe.baseFocus ?? 0);
+  const baseFocus = Math.max(0, input.focusPerCraft ?? input.recipe.baseFocus ?? 0);
   const efficiency = Math.max(0, input.focusEfficiency ?? 0);
   const focusCost = baseFocus > 0 ? baseFocus * Math.pow(0.5, efficiency / 10000) * amount : 0;
   const silverPerFocus = focusCost > 0 ? profit / focusCost : null;

@@ -11,6 +11,7 @@ Keep them short and player-friendly (not technical), and without emoji.
 - New Crafting Calculator: work out material cost, return rate, focus and profit for any item.
 - New Refining Calculator for refining raw resources (still in development, feedback welcome.)
 - New Food & Potion Crafter in testing: profit for potions and meals, including buffs and recipes!
+- Food & Potion Crafter: more accurate numbers - fixed station fees and focus cost, profit now shown per single item, plus sell price and daily sales columns.
 
 <!-- Add new bullets below as "- ..." lines, without emoji. Examples
      (indented so they are not posted by accident):

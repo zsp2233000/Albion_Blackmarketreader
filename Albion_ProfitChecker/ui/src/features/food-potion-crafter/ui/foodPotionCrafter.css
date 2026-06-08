@@ -478,6 +478,18 @@ strong.fp-return-rate {
 .fp-clickable-row { cursor: pointer; }
 .fp-clickable-row:hover td { background: rgba(45, 212, 191, 0.06); }
 
+/* Selected row: full teal frame so it's clear which item's data is shown below. */
+.fp-tier-wrap tr.selected-row td,
+.fp-clickable-row.selected-row td {
+  background: rgba(45, 212, 191, 0.12);
+  border-top: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+}
+.fp-tier-wrap tr.selected-row td:first-child,
+.fp-clickable-row.selected-row td:first-child { border-left: 2px solid var(--primary); }
+.fp-tier-wrap tr.selected-row td:last-child,
+.fp-clickable-row.selected-row td:last-child { border-right: 2px solid var(--primary); }
+
 /* --- Summary bar --- */
 .fp-summary-bar {
   display: flex;

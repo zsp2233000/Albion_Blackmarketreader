@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { DEFAULT_STATION_FEE } from "../core";
+import { DEFAULT_USAGE_FEE } from "../core";
 import type {
   City,
   ConsumableCategory,
@@ -28,7 +28,7 @@ export function useFoodPotionState(
   const [returnRatePreset, setReturnRatePreset] = useState<ReturnRatePreset>("focus");
   const [customReturnRatePct, setCustomReturnRatePct] = useState<number>(43.5);
   const [amount, setAmount] = useState(1);
-  const [stationFeePerCraft, setStationFeePerCraft] = useState<number>(DEFAULT_STATION_FEE.food);
+  const [usageFee, setUsageFee] = useState<number>(DEFAULT_USAGE_FEE.food);
   const [marketTaxRate, setMarketTaxRate] = useState(0.065);
   const [demandPerDay, setDemandPerDay] = useState(0);
   const [showOnlyProfitable, setShowOnlyProfitable] = useState(false);
@@ -36,8 +36,8 @@ export function useFoodPotionState(
 
   const setCategory = (next: ConsumableCategory) => {
     setCategoryState(next);
-    // Keep the user's chosen city (default Lymhurst); only the flat station fee differs per category.
-    setStationFeePerCraft(DEFAULT_STATION_FEE[next]);
+    // Keep the user's chosen city (default Lymhurst); only the default usage fee differs per category.
+    setUsageFee(DEFAULT_USAGE_FEE[next]);
   };
 
   const toggleTier = (tier: number) => setSelectedTier((prev) => (prev === tier ? null : tier));
@@ -57,7 +57,7 @@ export function useFoodPotionState(
           returnRatePreset,
           customReturnRatePct,
           amount,
-          stationFeePerCraft,
+          usageFee,
           marketTaxRate,
           demandPerDay,
           showOnlyProfitable,
@@ -78,7 +78,7 @@ export function useFoodPotionState(
       returnRatePreset,
       customReturnRatePct,
       amount,
-      stationFeePerCraft,
+      usageFee,
       marketTaxRate,
       demandPerDay,
       showOnlyProfitable,
@@ -127,8 +127,8 @@ export function useFoodPotionState(
       setCustomReturnRatePct,
       amount,
       setAmount,
-      stationFeePerCraft,
-      setStationFeePerCraft,
+      usageFee,
+      setUsageFee,
       marketTaxRate,
       setMarketTaxRate,
       demandPerDay,
