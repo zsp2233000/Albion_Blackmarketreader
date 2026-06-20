@@ -200,61 +200,86 @@ namespace AlbionProfitChecker.Services
             if (ids.Count == 0) return result;
 
             var url = $"{_apiBase}/prices/{string.Join(",", ids)}.json?locations={Uri.EscapeDataString(location)}";
-            using var resp = await _http.GetAsync(url);
-            if (!resp.IsSuccessStatusCode)
+            for (int attempt = 1; attempt <= 3; attempt++)
             {
-                Console.WriteLine($"WARN: Prices {url} -> {(int)resp.StatusCode}");
-                return result;
+                try
+                {
+                    using var resp = await _http.GetAsync(url);
+                    if (!resp.IsSuccessStatusCode)
+                    {
+                        if ((int)resp.StatusCode == 429 && attempt < 3)
+                        {
+                            await Task.Delay(800);
+                            continue;
+                        }
+                        Console.WriteLine($"WARN: Prices {url} -> {(int)resp.StatusCode}");
+                        return result;
+                    }
+
+                    var json = await resp.Content.ReadAsStringAsync();
+                    using var doc = JsonDocument.Parse(json);
+                    DateTime? ageLimit = maxPriceAgeDays.HasValue ? DateTime.UtcNow.AddDays(-maxPriceAgeDays.Value) : null;
+
+                    foreach (var el in doc.RootElement.EnumerateArray())
+                    {
+                        var id = el.TryGetProperty("item_id", out var idEl) ? idEl.GetString() : null;
+                        var city = el.TryGetProperty("city", out var cityEl) ? cityEl.GetString() : null;
+
+                        if (string.IsNullOrWhiteSpace(id) || !string.Equals(city, location, StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        int price = 0;
+                        if (el.TryGetProperty("sell_price_min", out var p))
+                        {
+                            if (p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var n)) price = n;
+                            else if (p.ValueKind == JsonValueKind.String && int.TryParse(p.GetString(), out n)) price = n;
+                        }
+
+                        DateTime? priceDate = null;
+                        if (el.TryGetProperty("sell_price_min_date", out var dEl))
+                        {
+                            var ds = dEl.GetString();
+                            if (DateTime.TryParse(ds, out var dt)) priceDate = dt.ToUniversalTime();
+                        }
+
+                        if (price <= 0) continue;
+
+                        bool isFresh = priceDate.HasValue && ageLimit.HasValue && priceDate.Value >= ageLimit.Value;
+
+                        if (isFresh)
+                        {
+                            if (!fresh.TryGetValue(id, out var existing) || priceDate.Value > existing.DateUtc)
+                                fresh[id] = (price, priceDate.Value);
+                        }
+                        else
+                        {
+                            if (!fallback.TryGetValue(id, out var existing) || (priceDate ?? DateTime.MinValue) > existing.DateUtc.GetValueOrDefault(DateTime.MinValue))
+                                fallback[id] = (price, priceDate);
+                        }
+                    }
+
+                    foreach (var kvp in fresh)
+                        result[kvp.Key] = (kvp.Value.Price, kvp.Value.DateUtc);
+
+                    foreach (var kvp in fallback)
+                        if (!result.ContainsKey(kvp.Key))
+                            result[kvp.Key] = (kvp.Value.Price, kvp.Value.DateUtc);
+
+                    return result;
+                }
+                catch (Exception ex) when (ex is OperationCanceledException or HttpRequestException or IOException or JsonException)
+                {
+                    // Timeout / network blip / malformed body: retry a couple of times, then skip
+                    // this batch (its items stay unpriced) instead of crashing the whole pipeline.
+                    if (attempt < 3)
+                    {
+                        await Task.Delay(800);
+                        continue;
+                    }
+                    Console.WriteLine($"WARN: Prices {url} -> {ex.GetType().Name}: {ex.Message}");
+                    return result;
+                }
             }
-
-            var json = await resp.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(json);
-            DateTime? ageLimit = maxPriceAgeDays.HasValue ? DateTime.UtcNow.AddDays(-maxPriceAgeDays.Value) : null;
-
-            foreach (var el in doc.RootElement.EnumerateArray())
-            {
-                var id = el.TryGetProperty("item_id", out var idEl) ? idEl.GetString() : null;
-                var city = el.TryGetProperty("city", out var cityEl) ? cityEl.GetString() : null;
-
-                if (string.IsNullOrWhiteSpace(id) || !string.Equals(city, location, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                int price = 0;
-                if (el.TryGetProperty("sell_price_min", out var p))
-                {
-                    if (p.ValueKind == JsonValueKind.Number && p.TryGetInt32(out var n)) price = n;
-                    else if (p.ValueKind == JsonValueKind.String && int.TryParse(p.GetString(), out n)) price = n;
-                }
-
-                DateTime? priceDate = null;
-                if (el.TryGetProperty("sell_price_min_date", out var dEl))
-                {
-                    var ds = dEl.GetString();
-                    if (DateTime.TryParse(ds, out var dt)) priceDate = dt.ToUniversalTime();
-                }
-
-                if (price <= 0) continue;
-
-                bool isFresh = priceDate.HasValue && ageLimit.HasValue && priceDate.Value >= ageLimit.Value;
-
-                if (isFresh)
-                {
-                    if (!fresh.TryGetValue(id, out var existing) || priceDate.Value > existing.DateUtc)
-                        fresh[id] = (price, priceDate.Value);
-                }
-                else
-                {
-                    if (!fallback.TryGetValue(id, out var existing) || (priceDate ?? DateTime.MinValue) > existing.DateUtc.GetValueOrDefault(DateTime.MinValue))
-                        fallback[id] = (price, priceDate);
-                }
-            }
-
-            foreach (var kvp in fresh)
-                result[kvp.Key] = (kvp.Value.Price, kvp.Value.DateUtc);
-
-            foreach (var kvp in fallback)
-                if (!result.ContainsKey(kvp.Key))
-                    result[kvp.Key] = (kvp.Value.Price, kvp.Value.DateUtc);
 
             return result;
         }
