@@ -697,6 +697,19 @@ tbody td {
   color: var(--text-secondary);
 }
 
+/* Suspect price (BM >= 10x craft cost): grey the row out, keep it visible, with a yellow note. */
+.bm-suspect-row td { opacity: 0.5; }
+.bm-suspect-row:hover td { opacity: 0.8; }
+.bm-suspect-note {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fbbf24;
+  text-align: center;
+  margin: 2px 0;
+  text-transform: none;
+}
+
 .item-tier-pill {
   font-size: 10px;
   text-transform: uppercase;

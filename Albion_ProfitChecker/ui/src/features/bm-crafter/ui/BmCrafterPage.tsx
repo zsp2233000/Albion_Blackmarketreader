@@ -672,10 +672,11 @@ export function BmCrafterPage() {
                   const tier = parseTier(row.item.id);
                   const enchant = parseEnchant(row.item.id);
                   const baseId = normalizeItemId(row.item.id);
+                  const suspect = typeof row.item.bm === "number" && row.economics.craftCost > 0 && row.item.bm >= 10 * row.economics.craftCost;
                   return (
                     <tr
                       key={row.rowKey}
-                      className={`high-density-row ${idx % 2 === 1 ? "alt" : ""}`}
+                      className={`high-density-row ${idx % 2 === 1 ? "alt" : ""} ${suspect ? "bm-suspect-row" : ""}`}
                       onClick={() => setSelectedRowKey(row.rowKey)}
                     >
                       <td>
@@ -692,6 +693,7 @@ export function BmCrafterPage() {
                             </div>
                             <div>
                               <div className="item-name">{row.displayName}</div>
+                              {suspect ? <div className="bm-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
                               <div className="item-meta">{baseId}</div>
                             </div>
                           </div>

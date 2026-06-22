@@ -1289,9 +1289,11 @@ export function CraftingCalculatorPage() {
                     });
                     const rowProfit = rowEconomics.profit;
                     const rowGain = rowEconomics.roi;
+                    const rowMatTotal = values.mat1 + values.mat2 + values.artefact;
+                    const rowSuspect = rowMatTotal > 0 && values.market >= 10 * rowMatTotal;
                     return (
-                      <tr key={row.key} className={`sub-row ${section.fogClass} ${selected ? "selected" : ""}`} onClick={() => setSelectedRowKey(row.key)}>
-                        <td>{row.uid}</td>
+                      <tr key={row.key} className={`sub-row ${section.fogClass} ${selected ? "selected" : ""} ${rowSuspect ? "cc-suspect-row" : ""}`} onClick={() => setSelectedRowKey(row.key)}>
+                        <td>{row.uid}{rowSuspect ? <span className="cc-suspect-overlay">This profit looks unrealistic — market price probably not real</span> : null}</td>
                         <td
                           className="mono-num editable-cell"
                           contentEditable

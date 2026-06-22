@@ -1376,6 +1376,20 @@ body.dashboard-body.panel-open::before {
 .card.border-enchant-3 { border-color: rgba(192, 132, 252, 0.5); box-shadow: 0 0 0 1px rgba(192,132,252,0.35); }
 .card.border-enchant-4 { border-color: rgba(252, 211, 77, 0.5); box-shadow: 0 0 0 1px rgba(252,211,77,0.35); }
 .card.card-box { position: relative; }
+
+/* Suspect Black Market price (BM >= 20x the buy price): grey the card out but keep it
+   visible, with a yellow note so it clearly reads as "probably not real data". */
+.card-suspect { opacity: 0.5; }
+.card-suspect:hover { opacity: 0.85; }
+.card-suspect-note {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fbbf24;
+  text-align: center;
+  margin: 2px 0 6px;
+}
+
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 .auth {
