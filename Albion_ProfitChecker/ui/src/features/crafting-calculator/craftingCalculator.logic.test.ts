@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildMaterialItemId,
+  calculateCraftingUsageFee,
   calculateEconomics,
   getBonusCityForItem,
   normalizeResultPriceEntry,
@@ -8,6 +9,22 @@ import {
   resolveBlackMarketPrice,
   resolveResultPrice
 } from "./craftingCalculator.logic";
+
+describe("crafting station usage fee (matches workbook CEILING)", () => {
+  it("computes itemValue × 0.1125 × usageFee/100, rounded up", () => {
+    // 256 × 0.1125 × 1000/100 = 288 exactly
+    expect(calculateCraftingUsageFee(256, 1000)).toBe(288);
+    // 255 × 0.1125 × 1000/100 = 286.875 -> ceil 287
+    expect(calculateCraftingUsageFee(255, 1000)).toBe(287);
+    // 720 × 0.1125 × 700/100 = 567 exactly
+    expect(calculateCraftingUsageFee(720, 700)).toBe(567);
+  });
+
+  it("is zero when item value or station fee is zero", () => {
+    expect(calculateCraftingUsageFee(0, 1000)).toBe(0);
+    expect(calculateCraftingUsageFee(256, 0)).toBe(0);
+  });
+});
 
 describe("crafting calculator city and id helpers", () => {
   it("maps special categories to the expected bonus city", () => {

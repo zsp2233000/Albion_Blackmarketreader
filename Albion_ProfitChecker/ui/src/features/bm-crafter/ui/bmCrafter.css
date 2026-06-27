@@ -691,6 +691,17 @@ tbody td {
   font-size: 12px;
 }
 
+/* Whole row links into the Crafting Calculator. */
+.bm-clickable-row { cursor: pointer; }
+.bm-open-calc-icon {
+  margin-left: 5px;
+  font-size: 10px;
+  color: var(--primary, #2dd4bf);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.bm-clickable-row:hover .bm-open-calc-icon { opacity: 1; }
+
 .item-meta {
   font-size: 9px;
   text-transform: uppercase;

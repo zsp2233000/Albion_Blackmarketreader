@@ -15,6 +15,7 @@ Keep them short and player-friendly (not technical), and without emoji.
 - Refining Calculator: new Stacking mode - find when it is cheaper to refine the lower-tier materials yourself instead of buying them, with a step-by-step path you can open for each item.
 - Refining Calculator: filter results between Standard and Stacking, or show both side by side.
 - Unrealistic profits from bad market data are now greyed out with a warning across all tools, so fake deals do not mislead you.
+- Click any item in the Black Market Crafter to jump straight into the Crafting Calculator, with Black Market sell prices and your craft city already filled in.
 
 <!-- Add new bullets below as "- ..." lines, without emoji. Examples
      (indented so they are not posted by accident):
