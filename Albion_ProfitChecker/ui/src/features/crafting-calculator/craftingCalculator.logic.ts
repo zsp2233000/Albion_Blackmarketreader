@@ -59,7 +59,8 @@ export function productionBonusToReturnRate(productionBonusPercent: number): num
 export function calculateCraftingUsageFee(itemValue: number, stationFee: number): number {
   const safeItemValue = Math.max(0, Number(itemValue) || 0);
   const safeStationFee = Math.max(0, Number(stationFee) || 0);
-  return ((safeItemValue * CRAFTING_FEE_FACTOR) * safeStationFee) / 100;
+  // Matches the source workbook: CEILING(usageFee × (itemValue × 0.1125) / 100, 1).
+  return Math.ceil(((safeItemValue * CRAFTING_FEE_FACTOR) * safeStationFee) / 100);
 }
 
 export function getBonusCityForItem(item: CraftingItemLike | null): string | null {

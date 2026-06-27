@@ -439,6 +439,19 @@ select.fp-control option {
   border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
+/* Suspect price (sell >= 10x craft cost): grey the whole row out but keep it visible,
+   with a yellow note next to the recipe explaining why the numbers look off. */
+.fp-suspect-row td { opacity: 0.5; }
+.fp-suspect-row:hover td { opacity: 0.8; }
+.fp-suspect-note {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fbbf24;
+  margin-top: 3px;
+  text-align: center;
+}
+
 /* Enchant badges — Albion enchant colors: .1 green, .2 blue, .3 purple. */
 .fp-enchant-chip { font-size: 10px; }
 .fp-enchant-1 {

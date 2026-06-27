@@ -790,6 +790,27 @@ body.crafting-calculator-body {
   background: rgba(255, 255, 255, 0.16);
 }
 
+/* Suspect price (sell >= 10x material cost): grey the numbers, keep them visible, and
+   overlay a yellow note across the row so it clearly reads as "probably not real data". */
+.cc-suspect-row td { opacity: 0.5; }
+.cc-suspect-row td:first-child { position: static; opacity: 1; }
+.cc-suspect-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  pointer-events: none;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fbbf24;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
+}
+
 .sub-row.fog-t4 td:first-child::before {
   background: #3b82f6;
 }

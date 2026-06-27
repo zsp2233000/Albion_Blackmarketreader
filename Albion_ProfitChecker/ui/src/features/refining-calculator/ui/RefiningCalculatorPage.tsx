@@ -6,7 +6,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type ReturnRatePreset, type Tier } from "../core";
+import { createStackingContext, getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type RefineVariant, type ReturnRatePreset, type StackedRefining, type Tier } from "../core";
 import { buildRefiningLiveSnapshot, DEFAULT_PRICE_BY_ITEM_ID, ENCHANTS, MATERIAL_BY_KEY, MATERIAL_DEFINITIONS, REFINE_VARIANTS, TIERS, isEnchantAvailable, rawItemIdFor, refinedItemIdFor } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
 import "./refiningCalculator.css";
@@ -62,6 +62,29 @@ function materialDisplayName(materialKey: MaterialKey): string {
   if (materialKey === "fiber") return "Fiber";
   if (materialKey === "hide") return "Hide";
   return "Stone";
+}
+
+/** Item tier label with enchant, e.g. "T8.4" (enchant 0 stays plain "T8"). */
+function tierEnchLabel(tier: number, enchant: number): string {
+  return enchant > 0 ? `T${tier}.${enchant}` : `T${tier}`;
+}
+
+/** Compact stacking flow nodes for the result row: buy base -> refine up -> target. */
+function stackFlowNodes(variant: RefineVariant, selfTiers: ReadonlyArray<number>): { tier: number; enchant: number; kind: "buy" | "refine" | "target" }[] {
+  const tiers = [...selfTiers].sort((a, b) => a - b);
+  if (!tiers.length) return [];
+  const start = tiers[0];
+  const nodes: { tier: number; enchant: number; kind: "buy" | "refine" | "target" }[] = [];
+  const baseTier = start - 1;
+  if (baseTier >= 2) {
+    const baseEnchant = isEnchantAvailable(baseTier as Tier, variant.enchant) ? variant.enchant : 0;
+    nodes.push({ tier: baseTier, enchant: baseEnchant, kind: "buy" });
+  }
+  for (let t = start; t <= variant.tier; t += 1) {
+    const e = isEnchantAvailable(t as Tier, variant.enchant) ? variant.enchant : 0;
+    nodes.push({ tier: t, enchant: e, kind: t === variant.tier ? "target" : "refine" });
+  }
+  return nodes;
 }
 
 function createEmptyManualOverrides(): ManualOverrides {
@@ -289,7 +312,9 @@ export function RefiningCalculatorPage() {
   const [showRegionConfirm, setShowRegionConfirm] = useState(false);
   const [pendingRegion, setPendingRegion] = useState<MarketRegion | null>(null);
   const [accountActionMsg, setAccountActionMsg] = useState("");
-  const [selectedRowKey, setSelectedRowKey] = useState(REFINE_VARIANTS[0].id);
+  const [selectedRowKey, setSelectedRowKey] = useState(`${REFINE_VARIANTS[0].id}:standard`);
+  const [logicFilter, setLogicFilter] = useState<"all" | "standard" | "stacking">("all");
+  const [stackModalKey, setStackModalKey] = useState<string | null>(null);
   const [returnRatePreset, setReturnRatePreset] = useState<ReturnRatePreset>("focus");
   const [usageFeePer100, setUsageFeePer100] = useState("400");
   const [selectedBuyCity, setSelectedBuyCity] = useState<SelectedCity>(() => getCurrentCity());
@@ -498,7 +523,11 @@ export function RefiningCalculatorPage() {
     [displayedPriceByItemId]
   );
 
-  const rows = useMemo(() => {
+  const variantByItemId = useMemo(() => new Map<string, RefineVariant>(REFINE_VARIANTS.map((v) => [v.itemId, v])), []);
+
+  // Configured refiner + stacking context (rebuilt only when calc inputs change), shared by
+  // the rows table and the selected-row path display.
+  const refineEngine = useMemo(() => {
     const profile = getReturnRatePresetConfig(returnRatePreset);
     const feeValue = parseAmount(usageFeePer100, 400);
     const runAmount = parseAmount(amount, 1);
@@ -507,12 +536,8 @@ export function RefiningCalculatorPage() {
     const customReturnRate = returnRatePreset === "custom"
       ? Math.max(0, Math.min(99, parseAmount(customReturnRatePercent, 0))) / 100
       : null;
-    return REFINE_VARIANTS.map((variant) => {
-      const marketValue = displayedPriceByItemId[variant.itemId] || "";
-      const market = parseAmount(marketValue, 0);
-      const withMarket = { ...variant, market };
-      const parsedFocusEfficiency = computeFocusEfficiencyForVariant(variant, focusSpecs);
-      const refiner = makeRefiner({
+    const refineAny = (variant: RefineVariant, ti: ReadonlyArray<RefineTierInput>) =>
+      makeRefiner({
         city: selectedRefineCity,
         materialBonusCity: bonusCityOverrides[variant.materialKey] || MATERIAL_BY_KEY[variant.materialKey].bonusCity,
         royalBonusPercent: profile.royalBonusPercent,
@@ -520,22 +545,38 @@ export function RefiningCalculatorPage() {
         focusEnabled: profile.focusEnabled,
         focusBonusPercent: profile.focusBonusPercent,
         focusBudget: parsedFocusBudget,
-        focusEfficiency: parsedFocusEfficiency,
+        focusEfficiency: computeFocusEfficiencyForVariant(variant, focusSpecs),
         marketTaxRate: parsedMarketTaxRate,
         amount: runAmount,
         returnRateOverride: customReturnRate
-      });
-      const result = refiner(withMarket, tierInputs, feeValue);
-      return { variant: withMarket, ...result, positive: result.profit >= 0 };
-    }).sort((left, right) => right.profit - left.profit);
-  }, [amount, bonusCityOverrides, customMarketTaxRate, customReturnRatePercent, displayedPriceByItemId, focusSpecs, returnRatePreset, selectedRefineCity, taxMode, tierInputs, usageFeePer100]);
+      })(variant, ti, feeValue);
+    return { refineAny, ctx: createStackingContext(variantByItemId, tierInputs, refineAny) };
+  }, [amount, bonusCityOverrides, customMarketTaxRate, customReturnRatePercent, focusSpecs, returnRatePreset, selectedRefineCity, taxMode, tierInputs, usageFeePer100, variantByItemId]);
 
-  const selectedRow = rows.find((row) => row.variant.id === selectedRowKey) || rows[0];
+  const rows = useMemo(() => {
+    return REFINE_VARIANTS.flatMap((variant) => {
+      const market = parseAmount(displayedPriceByItemId[variant.itemId] || "", 0);
+      const withMarket = { ...variant, market };
+      const std = refineEngine.refineAny(withMarket, tierInputs);
+      const st = refineEngine.ctx.stackFor(withMarket);
+      return [
+        { rowKey: `${variant.id}:standard`, logic: "standard" as const, variant: withMarket, ...std, positive: std.profit >= 0, stack: null as StackedRefining | null },
+        { rowKey: `${variant.id}:stacking`, logic: "stacking" as const, variant: withMarket, ...st.result, positive: st.result.profit >= 0, stack: st as StackedRefining | null }
+      ];
+    }).sort((left, right) => right.profit - left.profit);
+  }, [displayedPriceByItemId, refineEngine, tierInputs]);
+
+  const selectedRow = rows.find((row) => row.rowKey === selectedRowKey) || rows[0];
   const selectedEditorRow = rows.find((row) => row.variant.materialKey === editorMaterial) || selectedRow;
+  const selectedPath = useMemo(
+    () => (selectedRow && selectedRow.logic === "stacking" ? refineEngine.ctx.pathFor(selectedRow.variant) : null),
+    [refineEngine, selectedRow]
+  );
   const filteredRows = useMemo(() => {
     const search = resultSearchTerm.trim().toLowerCase();
-    if (!search) return rows;
     return rows.filter((row) => {
+      if (logicFilter !== "all" && row.logic !== logicFilter) return false;
+      if (!search) return true;
       const ingredientText = row.variant.ingredients
         .map((ingredient) => formatIngredientName({ ...ingredient, variant: row.variant }))
         .join(" ");
@@ -547,7 +588,7 @@ export function RefiningCalculatorPage() {
         ingredientText,
       ].some((value) => value.toLowerCase().includes(search));
     });
-  }, [resultSearchTerm, rows]);
+  }, [resultSearchTerm, rows, logicFilter]);
   const visibleRows = filteredRows.slice(0, visibleRowCount);
   const profitableCount = filteredRows.filter((row) => row.positive).length;
   const hasDisplayData = hasLiveData || hasManualOverrideValues(manualOverrides);
@@ -555,7 +596,7 @@ export function RefiningCalculatorPage() {
 
   useEffect(() => {
     if (!rows.length) return;
-    if (!rows.some((row) => row.variant.id === selectedRowKey)) setSelectedRowKey(rows[0].variant.id);
+    if (!rows.some((row) => row.rowKey === selectedRowKey)) setSelectedRowKey(rows[0].rowKey);
   }, [rows, selectedRowKey]);
 
   useEffect(() => {
@@ -997,16 +1038,34 @@ export function RefiningCalculatorPage() {
               <span className="material-symbols-outlined">search</span>
               <input type="search" value={resultSearchTerm} onChange={(event) => setResultSearchTerm(event.target.value)} placeholder="Search results" />
             </label>
+            <div className="rc-logic-seg" role="group" aria-label="Refining logic filter">
+              {(["all", "standard", "stacking"] as const).map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  className={logicFilter === opt ? "active" : ""}
+                  onClick={() => setLogicFilter(opt)}
+                >
+                  {opt === "all" ? "All" : opt === "standard" ? "Standard" : "Stacking"}
+                </button>
+              ))}
+            </div>
             <span>{profitableCount} profitable | Showing {filteredRows.length}</span>
           </div>
+          <p className="rc-logic-hint">
+            <span className="rc-logic-hint-tag standard">Standard</span> buys the lower-tier refined material at market.
+            <span className="rc-logic-hint-tag stacking">Stacking</span> refines it yourself, tier by tier, whenever that is cheaper — the <strong>⚡ tiers</strong> are the ones worth self-refining. Keep <strong>All</strong> to compare both rows per item, or filter to one.
+          </p>
           <div className="table-wrap custom-scrollbar" onScroll={onResultsScroll}>
             <table>
               <thead><tr><th>Variant</th><th className="num">Return</th><th className="num">Gross Cost</th><th className="num">Return Save</th><th className="num">Fee</th><th className="num">Tax</th><th className="num">Net Cost</th><th className="num">Net Revenue</th><th className="num">Focus</th><th className="num">Profit/Focus</th><th className="num">Profit</th><th className="num">Profit %</th></tr></thead>
               <tbody>
                 {!hasDisplayData || !filteredRows.length ? (<tr><td colSpan={12}>{resultSearchTerm ? "No matching refining rows." : "No refining data available for the selected region/city."}</td></tr>) : null}
-                {visibleRows.map((row, index) => (
-                  <tr key={row.variant.id} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.variant.id ? "selected-row" : ""}`} onClick={() => setSelectedRowKey(row.variant.id)}>
-                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={formatVariantName(row.variant)} onError={onRefiningIconError} /></div><div><div className="item-name">{formatVariantName(row.variant)}{row.missingInputCost ? " *" : ""}</div><div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant })}`).join(" + ")}</div></div></div></div></td>
+                {visibleRows.map((row, index) => {
+                  const suspect = row.grossMaterialCost > 0 && row.netRevenue >= 10 * row.grossMaterialCost;
+                  return (
+                  <tr key={row.rowKey} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${suspect ? "rc-suspect-row" : ""} ${row.logic === "stacking" ? "rc-stack-row" : ""}`} onClick={() => { setSelectedRowKey(row.rowKey); if (row.logic === "stacking" && row.stack && row.stack.selfRefinedTiers.length > 0) setStackModalKey(row.rowKey); }}>
+                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={formatVariantName(row.variant)} onError={onRefiningIconError} /></div><div><div className="item-name">{formatVariantName(row.variant)}{row.missingInputCost ? " *" : ""}<span className={`rc-logic-chip rc-logic-${row.logic}`}>{row.logic === "stacking" ? "Stacking" : "Standard"}</span></div>{suspect ? <div className="rc-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}{row.logic === "stacking" && row.stack && row.stack.selfRefinedTiers.length > 0 ? (<div className="rc-stack-flow">{stackFlowNodes(row.variant, row.stack.selfRefinedTiers).map((n, i) => (<span key={i} className={`rc-flow-node rc-flow-${n.kind}`}>{n.kind === "buy" ? "Buy " : ""}{tierEnchLabel(n.tier, n.enchant)}</span>))}</div>) : null}<div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant })}`).join(" + ")}</div></div></div></div></td>
                     <td className="num">{formatPct(row.returnRate * 100)}</td>
                     <td className="num">{formatNumber(row.grossMaterialCost)}</td>
                     <td className="num profit">-{formatNumber(row.returnedMaterialCost)}</td>
@@ -1019,7 +1078,8 @@ export function RefiningCalculatorPage() {
                     <td className={`num ${row.positive ? "profit" : "loss"}`}>{row.positive ? "+" : ""}{formatNumber(row.profit)}</td>
                     <td className={`num ${row.positive ? "profit" : "loss"}`}>{formatPct(row.profitPercent)}</td>
                   </tr>
-                ))}
+                  );
+                })}
                 {visibleRowCount < filteredRows.length ? (
                   <tr className="rc-load-more-row">
                     <td colSpan={12}>Scroll for more rows</td>
@@ -1054,10 +1114,65 @@ export function RefiningCalculatorPage() {
               <div><span>Focus Cost</span><strong>{formatNumber(selectedRow?.focusCost || 0)}</strong></div>
               <div><span>Runs By Focus</span><strong>{selectedRow?.focusCost ? formatNumber(selectedRow.maxRunsByFocus) : "--"}</strong></div>
               <div><span>Bonus City</span><strong>{selectedRow ? bonusCityOverrides[selectedRow.variant.materialKey] || MATERIAL_BY_KEY[selectedRow.variant.materialKey].bonusCity : "--"}</strong></div>
+              <div><span>Logic</span><strong className={selectedRow?.logic === "stacking" ? "rc-logic-stacking-text" : ""}>{selectedRow?.logic === "stacking" ? "Stacking" : "Standard"}</strong></div>
             </div>
+            {selectedRow?.logic === "stacking" && selectedRow.stack && selectedRow.stack.selfRefinedTiers.length > 0 ? (
+              <button type="button" className="rc-show-path-btn" onClick={() => setStackModalKey(selectedRow.rowKey)}>
+                View step-by-step refining path →
+              </button>
+            ) : null}
           </div>
         </aside>
       </main>
+
+      {stackModalKey && selectedRow && selectedRow.logic === "stacking" && selectedPath ? (
+        <div className="rc-modal-overlay" onClick={() => setStackModalKey(null)}>
+          <div className="rc-modal" onClick={(event) => event.stopPropagation()}>
+            <button className="rc-modal-close" onClick={() => setStackModalKey(null)} aria-label="Close">×</button>
+            <div className="rc-modal-head">
+              <div className="rc-modal-icon"><img src={selectedRow.variant.icon} alt="" onError={onRefiningIconError} /></div>
+              <div>
+                <h3>{formatVariantName(selectedRow.variant)}</h3>
+                <p>Stacking — refine it yourself, step by step</p>
+              </div>
+            </div>
+            <p className="rc-modal-intro">Buy the cheapest starting material, then refine one tier at a time up to your target. The number on the right is the <strong>net cost</strong> to make one refined item at that tier — it already includes that tier's raw material, the refined material from the step below, the refining fee and the return-rate savings.</p>
+            <ol className="rc-modal-steps">
+              {selectedPath.baseRefinedItemId && selectedPath.baseRefinedTier !== null ? (
+                <li className="rc-modal-step buy">
+                  <span className="rc-step-badge">Buy</span>
+                  <div className="rc-step-body">
+                    <strong>Buy {tierEnchLabel(selectedPath.baseRefinedTier, selectedPath.baseRefinedEnchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].refinedLabel}</strong>
+                    <p className="rc-step-sub">Cheapest starting point — bought ready-made from the market.</p>
+                  </div>
+                  <div className="rc-step-cost"><span className="rc-step-cost-val">{formatNumber(Math.round(selectedPath.baseRefinedUnitCost))}</span><span className="rc-step-cost-lbl">buy price</span></div>
+                </li>
+              ) : null}
+              {selectedPath.steps.map((step) => (
+                <li key={step.tier} className={`rc-modal-step ${step.isTarget ? "target" : "refine"}`}>
+                  <span className="rc-step-badge">{step.isTarget ? "✓" : "↑"}</span>
+                  <div className="rc-step-body">
+                    <strong>Make {tierEnchLabel(step.tier, step.enchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].refinedLabel}{step.isTarget ? " — your target" : ""}</strong>
+                    <ul className="rc-step-inputs">
+                      <li>{step.rawQty}× {tierEnchLabel(step.tier, step.enchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].rawLabel} <span>(raw — buy)</span> · {formatNumber(step.rawUnitPrice)} each</li>
+                      {step.refinedInputItemId ? (
+                        <li>{step.refinedInputQty}× {tierEnchLabel(step.refinedInputTier, step.refinedInputEnchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].refinedLabel} <span>(from the step above)</span> · {formatNumber(Math.round(step.refinedInputUnitCost))} each</li>
+                      ) : null}
+                      <li className="rc-step-fee">+ refining fee, − return-rate savings</li>
+                    </ul>
+                  </div>
+                  <div className="rc-step-cost"><span className="rc-step-cost-val">{formatNumber(Math.round(step.outputUnitCost))}</span><span className="rc-step-cost-lbl">net cost</span></div>
+                </li>
+              ))}
+            </ol>
+            <div className="rc-modal-footer">
+              <div><span>Net cost / item</span><strong>{formatNumber(Math.round(selectedPath.steps.length ? selectedPath.steps[selectedPath.steps.length - 1].outputUnitCost : 0))}</strong></div>
+              <div><span>Market price</span><strong>{formatNumber(selectedRow.variant.market)}</strong></div>
+              <div><span>Profit margin</span><strong className={selectedRow.profitPercent >= 0 ? "profit" : "loss"}>{formatPct(selectedRow.profitPercent)}</strong></div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

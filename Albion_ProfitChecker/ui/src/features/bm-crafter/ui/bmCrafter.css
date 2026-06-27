@@ -691,10 +691,34 @@ tbody td {
   font-size: 12px;
 }
 
+/* Whole row links into the Crafting Calculator. */
+.bm-clickable-row { cursor: pointer; }
+.bm-open-calc-icon {
+  margin-left: 5px;
+  font-size: 10px;
+  color: var(--primary, #2dd4bf);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.bm-clickable-row:hover .bm-open-calc-icon { opacity: 1; }
+
 .item-meta {
   font-size: 9px;
   text-transform: uppercase;
   color: var(--text-secondary);
+}
+
+/* Suspect price (BM >= 10x craft cost): grey the row out, keep it visible, with a yellow note. */
+.bm-suspect-row td { opacity: 0.5; }
+.bm-suspect-row:hover td { opacity: 0.8; }
+.bm-suspect-note {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fbbf24;
+  text-align: center;
+  margin: 2px 0;
+  text-transform: none;
 }
 
 .item-tier-pill {

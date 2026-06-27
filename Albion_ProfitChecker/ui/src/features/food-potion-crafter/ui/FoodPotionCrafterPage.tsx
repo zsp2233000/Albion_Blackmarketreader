@@ -135,6 +135,15 @@ function parsePrice(raw: string): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
+/**
+ * Suspect price outlier: the sell price is >= 10x the craft cost, so the implied profit
+ * is almost certainly a bad market-data spike. The row is greyed out but still shown.
+ */
+const SUSPECT_PRICE_FACTOR = 10;
+function isSuspectPrice(result: { revenue: number; totalCost: number }): boolean {
+  return result.totalCost > 0 && result.revenue >= SUSPECT_PRICE_FACTOR * result.totalCost;
+}
+
 function readManualPrices(): Record<string, string> {
   try {
     const stored = localStorage.getItem(PRICE_STORAGE_KEY);
@@ -743,11 +752,12 @@ export function FoodPotionCrafterPage() {
                   {!visibleRows.length ? (<tr><td colSpan={9}>No recipes match — enter ingredient prices or adjust filters.</td></tr>) : null}
                   {visibleRows.map((row, index) => {
                     const priced = isPriced(row);
+                    const suspect = isSuspectPrice(row.result);
                     return (
                     <tr
                       key={row.rowKey}
-                      className={`high-density-row fp-clickable-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${row.recipe.isAvalonian ? "fp-avalonian-row" : ""} ${priced ? "" : "fp-unpriced-row"}`}
-                      title="Open in crafter"
+                      className={`high-density-row fp-clickable-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${row.recipe.isAvalonian ? "fp-avalonian-row" : ""} ${priced ? "" : "fp-unpriced-row"} ${suspect ? "fp-suspect-row" : ""}`}
+                      title={suspect ? "Sell price is 10x+ the craft cost - likely bad market data" : "Open in crafter"}
                       onClick={() => { setSelectedFamily(familyBase(row.recipe.itemId)); setSelectedRowKey(row.rowKey); setMode("crafter"); }}
                     >
                       <td>
@@ -761,6 +771,7 @@ export function FoodPotionCrafterPage() {
                                 {priced ? null : <span className="fp-chip fp-missing-chip" style={{ marginLeft: 6 }}>No price</span>}
                                 {row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}
                               </div>
+                              {suspect ? <div className="fp-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
                               <div className="item-meta">T{row.recipe.tier} · {row.recipe.ingredients.length} ingredients</div>
                             </div>
                           </div>
@@ -816,14 +827,18 @@ export function FoodPotionCrafterPage() {
                   {familyRows.map((row) => (
                     <tr
                       key={row.rowKey}
-                      className={`high-density-row ${crafterSelected?.rowKey === row.rowKey ? "selected-row" : ""} ${row.recipe.isAvalonian ? "fp-avalonian-row" : ""}`}
+                      className={`high-density-row ${crafterSelected?.rowKey === row.rowKey ? "selected-row" : ""} ${row.recipe.isAvalonian ? "fp-avalonian-row" : ""} ${isSuspectPrice(row.result) ? "fp-suspect-row" : ""}`}
+                      title={isSuspectPrice(row.result) ? "Sell price 10x+ craft cost - likely bad market data" : undefined}
                       onClick={() => setSelectedRowKey(row.rowKey)}
                     >
                       <td><span className="badge-chip">T{row.recipe.tier}</span></td>
                       <td>
                         <div className="item"><div className="item-info">
                           <div className="fp-item-icon"><img src={iconUrl(row.recipe.itemId)} alt="" loading="lazy" onError={onItemIconError} /></div>
-                          <div className="item-name">{row.recipe.name}<EnchantBadge itemId={row.recipe.itemId} />{row.result.missingIngredientCost ? " *" : ""}{row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}</div>
+                          <div>
+                            <div className="item-name">{row.recipe.name}<EnchantBadge itemId={row.recipe.itemId} />{row.result.missingIngredientCost ? " *" : ""}{row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}</div>
+                            {isSuspectPrice(row.result) ? <div className="fp-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
+                          </div>
                         </div></div>
                       </td>
                       <td className="num">{formatNumber(row.result.outputAmount)}</td>

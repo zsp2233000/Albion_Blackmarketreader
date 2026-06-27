@@ -1392,8 +1392,9 @@ export function DashboardPage() {
         ) : null}
         <section className="grid" id="cards">
           {visibleCards.map((item, index) => (
-            <article key={`${item.city}-${item.id}-${item.lym}-${item.bm}-${item.sold}-${item.profit}-${index}`} className={`card card-box ${getEnchantLevel(item.id) > 0 ? `border-enchant-${getEnchantLevel(item.id)}` : ""}`.trim()}>
+            <article key={`${item.city}-${item.id}-${item.lym}-${item.bm}-${item.sold}-${item.profit}-${index}`} className={`card card-box ${item.lym > 0 && item.bm >= 20 * item.lym ? "card-suspect" : ""} ${getEnchantLevel(item.id) > 0 ? `border-enchant-${getEnchantLevel(item.id)}` : ""}`.trim()}>
               <h3 className="title">{displayName(item.id)}</h3>
+              {item.lym > 0 && item.bm >= 20 * item.lym ? <div className="card-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
               <div className="row"><span>ID</span><span className="val">{item.id}</span></div>
               <div className="row"><span>{item.city}</span><span className="val">{Number(item.lym || 0).toLocaleString("de-DE")}</span></div>
               <div className="row"><span>Black Market</span><span className="val">{Number(item.bm || 0).toLocaleString("de-DE")}</span></div>

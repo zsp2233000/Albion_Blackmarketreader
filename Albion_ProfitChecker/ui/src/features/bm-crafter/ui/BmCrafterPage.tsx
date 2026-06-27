@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type UIEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
@@ -102,6 +102,24 @@ export function BmCrafterPage() {
   const [region, setRegion] = useRegion();
   const { data, loading, error } = useBmCrafterData(region);
   const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useBmCrafterState(data);
+  const navigate = useNavigate();
+
+  // Open the clicked item in the Crafting Calculator, pre-set to sell to the Black Market
+  // and craft in the city selected here.
+  const openInCraftingCalculator = useCallback((itemId: string) => {
+    const tier = parseTier(itemId);
+    const enchant = parseEnchant(itemId);
+    const base = normalizeItemId(itemId);
+    const params = new URLSearchParams({
+      item: base,
+      tier: String(tier ?? 4),
+      enchant: String(enchant),
+      sell: "bm",
+      craftCity: filters.craftCity
+    });
+    navigate(`/crafting-calculator?${params.toString()}`);
+  }, [navigate, filters.craftCity]);
+
   const [authService, setAuthService] = useState<AuthService | null>(null);
   const [user, setUser] = useState<UserState | null>(null);
   const [showAccount, setShowAccount] = useState(false);
@@ -672,11 +690,13 @@ export function BmCrafterPage() {
                   const tier = parseTier(row.item.id);
                   const enchant = parseEnchant(row.item.id);
                   const baseId = normalizeItemId(row.item.id);
+                  const suspect = typeof row.item.bm === "number" && row.economics.craftCost > 0 && row.item.bm >= 10 * row.economics.craftCost;
                   return (
                     <tr
                       key={row.rowKey}
-                      className={`high-density-row ${idx % 2 === 1 ? "alt" : ""}`}
-                      onClick={() => setSelectedRowKey(row.rowKey)}
+                      className={`high-density-row bm-clickable-row ${idx % 2 === 1 ? "alt" : ""} ${suspect ? "bm-suspect-row" : ""}`}
+                      title="Open in Crafting Calculator (sell to Black Market)"
+                      onClick={() => { setSelectedRowKey(row.rowKey); openInCraftingCalculator(row.item.id); }}
                     >
                       <td>
                         <div className="item">
@@ -691,7 +711,8 @@ export function BmCrafterPage() {
                               />
                             </div>
                             <div>
-                              <div className="item-name">{row.displayName}</div>
+                              <div className="item-name">{row.displayName}<span className="bm-open-calc-icon" aria-hidden="true">↗</span></div>
+                              {suspect ? <div className="bm-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
                               <div className="item-meta">{baseId}</div>
                             </div>
                           </div>

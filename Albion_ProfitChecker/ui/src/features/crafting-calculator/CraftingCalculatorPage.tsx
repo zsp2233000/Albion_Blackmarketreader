@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
@@ -18,7 +18,6 @@ import {
   normalizeResultPriceEntry,
   productionBonusToReturnRate,
   resolveArtefactPriceByCity,
-  resolveBlackMarketPrice,
   resolvePriceByCity,
   resolveResultPrice
 } from "./craftingCalculator.logic";
@@ -449,10 +448,14 @@ export function CraftingCalculatorPage() {
   const [selectedRowKey, setSelectedRowKey] = useState("t8-4");
   const [selectedItem, setSelectedItem] = useState<CraftingItem | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchParams] = useSearchParams();
   const [materialState, setMaterialState] = useState<MaterialDraft[]>([]);
   const [materialPriceMap, setMaterialPriceMap] = useState<Map<string, Record<string, number>>>(new Map());
   const [artefactPriceMap, setArtefactPriceMap] = useState<Map<string, Record<string, number>>>(new Map());
   const [resultsItems, setResultsItems] = useState<ResultItem[]>([]);
+  // Black Market sell prices keyed by full item id (T{tier}_{base}@{enchant}), from the same
+  // dataset the Dashboard and BM Crafter use — crafting-results.json has no Black Market prices.
+  const [bmSellByItemId, setBmSellByItemId] = useState<Map<string, number>>(new Map());
   const [rowEdits, setRowEdits] = useState<Record<string, RowEdit>>(() => {
     const entries: Array<[string, RowEdit]> = TABLE_SECTIONS
       .flatMap((section) => section.rows)
@@ -684,13 +687,27 @@ export function CraftingCalculatorPage() {
           (Array.isArray(category.items) ? category.items : []).map((item) => ({ ...item, categoryKey: category.key || "" }))
         );
         setAllItems(items);
-        const defaultItem = items.find((item: CraftingItem) => item.id === "2H_BOW") || items[0] || null;
+        const deepItemId = searchParams.get("item");
+        const deepItem = deepItemId ? items.find((item: CraftingItem) => item.id === deepItemId) : null;
+        const defaultItem = deepItem || items.find((item: CraftingItem) => item.id === "2H_BOW") || items[0] || null;
         setSelectedItem(defaultItem);
         setSearchTerm("");
       } catch {
         setAllItems([]);
       }
     })();
+    // searchParams is read once on mount (deep-link from the BM Crafter); intentionally not a dep.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Deep-link from the BM Crafter: pre-fill sell city, craft city and tier/enchant row.
+  useEffect(() => {
+    if (searchParams.get("sell") === "bm") setSellCity("Black Market");
+    const cc = searchParams.get("craftCity");
+    if (cc && (CITY_FILTER_OPTIONS as readonly string[]).includes(cc)) setCraftCity(cc);
+    const tier = searchParams.get("tier");
+    if (tier) setSelectedRowKey(`t${tier}-${searchParams.get("enchant") ?? "0"}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -733,6 +750,31 @@ export function CraftingCalculatorPage() {
         setResultsItems([]);
       }
     })();
+  }, [region]);
+
+  // Black Market sell prices (same source as Dashboard / BM Crafter). Items are
+  // [itemId, bmPrice, soldPerDay] tuples keyed by full item id.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/data/bm-crafter-${region}.json`);
+        const payload = res.ok ? await res.json() : null;
+        if (cancelled) return;
+        const items = Array.isArray(payload?.items) ? payload.items : [];
+        const map = new Map<string, number>();
+        for (const entry of items) {
+          if (!Array.isArray(entry)) continue;
+          const id = String(entry[0] || "").trim();
+          const price = Number(entry[1]) || 0;
+          if (id && price > 0) map.set(id, price);
+        }
+        setBmSellByItemId(map);
+      } catch {
+        if (!cancelled) setBmSellByItemId(new Map());
+      }
+    })();
+    return () => { cancelled = true; };
   }, [region]);
 
   // Real data-refresh timestamp for the active region (from the crafting-results workflow output).
@@ -897,13 +939,14 @@ export function CraftingCalculatorPage() {
         const { tier, enchant } = parseTierEnchant(row.uid);
         const targetItemId = buildCraftedItemId(selectedItem.id, tier, enchant);
         const matches = resultsItems.filter((entry) => String(entry.id || entry.itemId || "").trim() === targetItemId);
-        const resolvedMarket = matches.length
-          ? (() => {
-            if (isBlackMarketSell) return resolveBlackMarketPrice(matches);
-            const exactCityPrice = resolveResultPrice(matches, effectiveSellCity);
-            return exactCityPrice > 0 ? exactCityPrice : resolveResultPrice(matches, "ALL");
-          })()
-          : 0;
+        const resolvedMarket = isBlackMarketSell
+          ? (bmSellByItemId.get(targetItemId) ?? 0)
+          : matches.length
+            ? (() => {
+              const exactCityPrice = resolveResultPrice(matches, effectiveSellCity);
+              return exactCityPrice > 0 ? exactCityPrice : resolveResultPrice(matches, "ALL");
+            })()
+            : 0;
 
         const soldValue = matches
           .map((entry) => Number(entry.sold || 0))
@@ -922,7 +965,7 @@ export function CraftingCalculatorPage() {
       });
       return next;
     });
-  }, [selectedItem, resultsItems, effectiveSellCity, isBlackMarketSell]);
+  }, [selectedItem, resultsItems, effectiveSellCity, isBlackMarketSell, bmSellByItemId]);
 
   useEffect(() => {
     if (!selectedItem) return;
@@ -1289,9 +1332,11 @@ export function CraftingCalculatorPage() {
                     });
                     const rowProfit = rowEconomics.profit;
                     const rowGain = rowEconomics.roi;
+                    const rowMatTotal = values.mat1 + values.mat2 + values.artefact;
+                    const rowSuspect = rowMatTotal > 0 && values.market >= 10 * rowMatTotal;
                     return (
-                      <tr key={row.key} className={`sub-row ${section.fogClass} ${selected ? "selected" : ""}`} onClick={() => setSelectedRowKey(row.key)}>
-                        <td>{row.uid}</td>
+                      <tr key={row.key} className={`sub-row ${section.fogClass} ${selected ? "selected" : ""} ${rowSuspect ? "cc-suspect-row" : ""}`} onClick={() => setSelectedRowKey(row.key)}>
+                        <td>{row.uid}{rowSuspect ? <span className="cc-suspect-overlay">This profit looks unrealistic — market price probably not real</span> : null}</td>
                         <td
                           className="mono-num editable-cell"
                           contentEditable
