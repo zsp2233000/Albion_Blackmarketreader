@@ -4,6 +4,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
+// Intermediate cooking/alchemy goods that the source data flags as enchantable
+// (fishSauceQty/arcaneExtractQty > 0) but which have NO enchant variants in-game.
+// Force them non-enchantable so no bogus .1/.2/.3 rows or focus values are produced.
+const NON_ENCHANTABLE_BASES = new Set(["FLOUR", "MEAT", "BREAD", "ALCOHOL"]);
+
+function recipeBaseKey(itemId: string): string {
+  return itemId.replace(/^T\d+_/, "").replace(/@\d+$/, "").toUpperCase();
+}
+
 function toFiniteNumber(value: unknown, fallback: number): number {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string" && value.trim() !== "") {
@@ -48,9 +57,10 @@ function normalizeRecipe(entry: unknown, fallbackCategory: ConsumableCategory): 
     : undefined;
   // Enchant material requirement (fish sauce for food, arcane extract for potions).
   // Must be preserved here or the scanner/crafter can never build the .1/.2/.3 enchant variants.
-  const fishSauceQty = Math.max(0, toFiniteNumber(entry.fishSauceQty, 0));
-  const arcaneExtractQty = Math.max(0, toFiniteNumber(entry.arcaneExtractQty, 0));
-  const enchantable = entry.enchantable === true || fishSauceQty > 0 || arcaneExtractQty > 0;
+  const forcedNonEnchant = NON_ENCHANTABLE_BASES.has(recipeBaseKey(itemId));
+  const fishSauceQty = forcedNonEnchant ? 0 : Math.max(0, toFiniteNumber(entry.fishSauceQty, 0));
+  const arcaneExtractQty = forcedNonEnchant ? 0 : Math.max(0, toFiniteNumber(entry.arcaneExtractQty, 0));
+  const enchantable = !forcedNonEnchant && (entry.enchantable === true || fishSauceQty > 0 || arcaneExtractQty > 0);
 
   return {
     itemId,

@@ -4,8 +4,8 @@ import type { BmCrafterDataBundle } from "../data";
 import { deriveBmCrafterRows } from "./deriveRows";
 
 export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
-  const [selectedTier, setSelectedTier] = useState<number | null>(null);
-  const [selectedEnchant, setSelectedEnchant] = useState<number | null>(null);
+  const [selectedTiers, setSelectedTiers] = useState<number[]>([]);
+  const [selectedEnchants, setSelectedEnchants] = useState<number[]>([]);
   const [minSold, setMinSold] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortByDailyTop, setSortByDailyTop] = useState(false);
@@ -27,8 +27,8 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
   const rows = useMemo(
     () =>
       deriveBmCrafterRows(bundle, {
-        selectedTier,
-        selectedEnchant,
+        selectedTiers,
+        selectedEnchants,
         minSold,
         searchTerm,
         returnRate,
@@ -38,7 +38,7 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
         craftCity,
         usageFeePer100
       }),
-    [bundle, selectedTier, selectedEnchant, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100]
+    [bundle, selectedTiers, selectedEnchants, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100]
   );
 
   useEffect(() => {
@@ -55,12 +55,14 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
     [rows, selectedRowKey]
   );
 
-  const toggleTier = (tier: number) => setSelectedTier((prev) => (prev === tier ? null : tier));
-  const toggleEnchant = (enchant: number) => setSelectedEnchant((prev) => (prev === enchant ? null : enchant));
+  const toggleTier = (tier: number) =>
+    setSelectedTiers((prev) => (prev.includes(tier) ? prev.filter((t) => t !== tier) : [...prev, tier]));
+  const toggleEnchant = (enchant: number) =>
+    setSelectedEnchants((prev) => (prev.includes(enchant) ? prev.filter((e) => e !== enchant) : [...prev, enchant]));
 
   const resetFilters = () => {
-    setSelectedTier(null);
-    setSelectedEnchant(null);
+    setSelectedTiers([]);
+    setSelectedEnchants([]);
     setMinSold(0);
     setSearchTerm("");
     setSortByDailyTop(false);
@@ -74,10 +76,10 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
     selectedRowKey,
     setSelectedRowKey,
     filters: {
-      selectedTier,
-      setSelectedTier,
-      selectedEnchant,
-      setSelectedEnchant,
+      selectedTiers,
+      setSelectedTiers,
+      selectedEnchants,
+      setSelectedEnchants,
       minSold,
       setMinSold,
       searchTerm,

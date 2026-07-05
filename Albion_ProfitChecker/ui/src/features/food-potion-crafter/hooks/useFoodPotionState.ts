@@ -135,6 +135,9 @@ export function useFoodPotionState(
       setDemandPerDay,
       showOnlyProfitable,
       setShowOnlyProfitable,
+      // Exposed so the crafter tab's familyRows (which spreads `filters`) applies spec-based
+      // focus efficiency too — without this, focus cost ignores specs in the crafter view.
+      specProgress,
     },
   };
 }

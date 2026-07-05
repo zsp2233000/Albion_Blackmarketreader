@@ -31,8 +31,8 @@ describe("bm crafter parity integration", () => {
   it("derives stable profitable rows from real US dataset", () => {
     const bundle = buildRealBundle("us");
     const rows = deriveBmCrafterRows(bundle, {
-      selectedTier: null,
-      selectedEnchant: null,
+      selectedTiers: [],
+      selectedEnchants: [],
       minSold: 0,
       searchTerm: "",
       returnRate: 0.1525,
@@ -61,8 +61,8 @@ describe("bm crafter parity integration", () => {
   it("matches legacy formula for a sampled row with fully available pricing", () => {
     const bundle = buildRealBundle("eu");
     const rows = deriveBmCrafterRows(bundle, {
-      selectedTier: null,
-      selectedEnchant: null,
+      selectedTiers: [],
+      selectedEnchants: [],
       minSold: 0,
       searchTerm: "",
       returnRate: 0.1525,

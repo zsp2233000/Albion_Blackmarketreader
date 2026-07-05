@@ -65,8 +65,8 @@ describe("deriveBmCrafterRows", () => {
     bundle.recipes.byItemId.set("MAIN_AXE", bundle.recipes.items[1]);
 
     const rows = deriveBmCrafterRows(bundle, {
-      selectedTier: null,
-      selectedEnchant: null,
+      selectedTiers: [],
+      selectedEnchants: [],
       minSold: 0,
       searchTerm: "",
       returnRate: 0.1525,
@@ -88,8 +88,8 @@ describe("deriveBmCrafterRows", () => {
     bundle.recipes.byItemId.set("MAIN_AXE", bundle.recipes.items[1]);
 
     const rows = deriveBmCrafterRows(bundle, {
-      selectedTier: 5,
-      selectedEnchant: 1,
+      selectedTiers: [5],
+      selectedEnchants: [1],
       minSold: 0,
       searchTerm: "broad",
       returnRate: 0.1525,
@@ -102,5 +102,34 @@ describe("deriveBmCrafterRows", () => {
 
     expect(rows).toHaveLength(1);
     expect(rows[0].item.id).toBe("T5_MAIN_SWORD@1");
+  });
+
+  it("allows selecting multiple tiers and multiple enchants at once", () => {
+    const bundle = buildBundle();
+    bundle.recipes.byItemId.set("MAIN_SWORD", bundle.recipes.items[0]);
+    bundle.recipes.byItemId.set("MAIN_AXE", bundle.recipes.items[1]);
+
+    const base = {
+      minSold: 0,
+      searchTerm: "",
+      returnRate: 0.1525,
+      sortByDailyTop: false,
+      showOnlyProfitable: true,
+      nonArtefactOnly: false,
+      craftCity: "Caerleon",
+      usageFeePer100: 0
+    };
+
+    // Only T4 items (both enchants allowed) -> the two T4 rows, not the T5 one.
+    const t4 = deriveBmCrafterRows(bundle, { ...base, selectedTiers: [4], selectedEnchants: [] });
+    expect(t4.map((r) => r.item.id).sort()).toEqual(["T4_MAIN_AXE", "T4_MAIN_SWORD"]);
+
+    // T4 + T5 selected together -> all three rows.
+    const t45 = deriveBmCrafterRows(bundle, { ...base, selectedTiers: [4, 5], selectedEnchants: [] });
+    expect(t45).toHaveLength(3);
+
+    // Enchant .0 and .1 selected together -> still all three (covers both enchant levels).
+    const e01 = deriveBmCrafterRows(bundle, { ...base, selectedTiers: [], selectedEnchants: [0, 1] });
+    expect(e01).toHaveLength(3);
   });
 });

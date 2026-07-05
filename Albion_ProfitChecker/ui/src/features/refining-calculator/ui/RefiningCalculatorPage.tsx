@@ -1064,7 +1064,7 @@ export function RefiningCalculatorPage() {
                 {visibleRows.map((row, index) => {
                   const suspect = row.grossMaterialCost > 0 && row.netRevenue >= 10 * row.grossMaterialCost;
                   return (
-                  <tr key={row.rowKey} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${suspect ? "rc-suspect-row" : ""} ${row.logic === "stacking" ? "rc-stack-row" : ""}`} onClick={() => { setSelectedRowKey(row.rowKey); if (row.logic === "stacking" && row.stack && row.stack.selfRefinedTiers.length > 0) setStackModalKey(row.rowKey); }}>
+                  <tr key={row.rowKey} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${suspect ? "rc-suspect-row" : ""} ${row.logic === "stacking" ? "rc-stack-row" : ""}`} onClick={() => { setSelectedRowKey(row.rowKey); if (row.logic === "stacking") setStackModalKey(row.rowKey); }}>
                     <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={formatVariantName(row.variant)} onError={onRefiningIconError} /></div><div><div className="item-name">{formatVariantName(row.variant)}{row.missingInputCost ? " *" : ""}<span className={`rc-logic-chip rc-logic-${row.logic}`}>{row.logic === "stacking" ? "Stacking" : "Standard"}</span></div>{suspect ? <div className="rc-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}{row.logic === "stacking" && row.stack && row.stack.selfRefinedTiers.length > 0 ? (<div className="rc-stack-flow">{stackFlowNodes(row.variant, row.stack.selfRefinedTiers).map((n, i) => (<span key={i} className={`rc-flow-node rc-flow-${n.kind}`}>{n.kind === "buy" ? "Buy " : ""}{tierEnchLabel(n.tier, n.enchant)}</span>))}</div>) : null}<div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant })}`).join(" + ")}</div></div></div></div></td>
                     <td className="num">{formatPct(row.returnRate * 100)}</td>
                     <td className="num">{formatNumber(row.grossMaterialCost)}</td>
@@ -1116,7 +1116,7 @@ export function RefiningCalculatorPage() {
               <div><span>Bonus City</span><strong>{selectedRow ? bonusCityOverrides[selectedRow.variant.materialKey] || MATERIAL_BY_KEY[selectedRow.variant.materialKey].bonusCity : "--"}</strong></div>
               <div><span>Logic</span><strong className={selectedRow?.logic === "stacking" ? "rc-logic-stacking-text" : ""}>{selectedRow?.logic === "stacking" ? "Stacking" : "Standard"}</strong></div>
             </div>
-            {selectedRow?.logic === "stacking" && selectedRow.stack && selectedRow.stack.selfRefinedTiers.length > 0 ? (
+            {selectedRow?.logic === "stacking" ? (
               <button type="button" className="rc-show-path-btn" onClick={() => setStackModalKey(selectedRow.rowKey)}>
                 View step-by-step refining path →
               </button>

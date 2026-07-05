@@ -290,7 +290,7 @@ export function BmCrafterPage() {
 
   useEffect(() => {
     setVisibleRows(INITIAL_ROWS);
-  }, [rows.length, region, filters.selectedTier, filters.selectedEnchant, filters.minSold, filters.searchTerm, filters.sortByDailyTop, filters.showOnlyProfitable]);
+  }, [rows.length, region, filters.selectedTiers, filters.selectedEnchants, filters.minSold, filters.searchTerm, filters.sortByDailyTop, filters.showOnlyProfitable]);
 
   const lastUpdated = useMemo(
     () => formatUpdated(data?.market.generatedAt ?? data?.materials.generatedAt ?? null),
@@ -512,7 +512,7 @@ export function BmCrafterPage() {
             {[4, 5, 6, 7, 8].map((tier) => (
               <button
                 key={tier}
-                className={`chip ${filters.selectedTier === tier ? "active" : ""}`}
+                className={`chip ${filters.selectedTiers.includes(tier) ? "active" : ""}`}
                 type="button"
                 onClick={() => filters.toggleTier(tier)}
               >
@@ -528,7 +528,7 @@ export function BmCrafterPage() {
             {[0, 1, 2, 3].map((enchant) => (
               <button
                 key={enchant}
-                className={`chip ${filters.selectedEnchant === enchant ? "active" : ""}`}
+                className={`chip ${filters.selectedEnchants.includes(enchant) ? "active" : ""}`}
                 type="button"
                 onClick={() => filters.toggleEnchant(enchant)}
               >

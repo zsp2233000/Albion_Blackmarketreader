@@ -16,6 +16,10 @@ Keep them short and player-friendly (not technical), and without emoji.
 - Refining Calculator: filter results between Standard and Stacking, or show both side by side.
 - Unrealistic profits from bad market data are now greyed out with a warning across all tools, so fake deals do not mislead you.
 - Click any item in the Black Market Crafter to jump straight into the Crafting Calculator, with Black Market sell prices and your craft city already filled in.
+- Black Market Crafter: filter by several tiers and enchant levels at once instead of just one of each.
+- Food & Potion Crafter: your Cook and Alchemist spec levels now correctly lower the focus cost in the crafter view.
+- Food & Potion Crafter: intermediate goods (Flour, Meat, Bread, Alcohol) no longer show enchant variants they cannot actually have in game.
+- Refining Calculator: the step-by-step Stacking path now opens for every item, including with the royal-city return rate.
 
 <!-- Add new bullets below as "- ..." lines, without emoji. Examples
      (indented so they are not posted by accident):

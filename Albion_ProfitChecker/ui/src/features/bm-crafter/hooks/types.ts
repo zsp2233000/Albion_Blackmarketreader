@@ -11,8 +11,9 @@ export interface BmCrafterRow {
 }
 
 export interface BmCrafterFilters {
-  selectedTier: number | null;
-  selectedEnchant: number | null;
+  // Empty array = no restriction (show all tiers / all enchants). Multiple values allowed.
+  selectedTiers: number[];
+  selectedEnchants: number[];
   minSold: number;
   searchTerm: string;
   returnRate: number;

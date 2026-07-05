@@ -72,6 +72,32 @@ describe("loadRecipes field preservation", () => {
     expect(recipe.enchantable).toBe(true);
   });
 
+  it("forces intermediate goods (Flour/Meat/Bread/Alcohol) non-enchantable despite source flags", async () => {
+    mockFetchOnce({
+      recipes: [
+        { itemId: "T3_MEAT", name: "Meat", tier: 3, category: "food", outputQty: 18, fishSauceQty: 9, enchantable: true, ingredients: [{ itemId: "T3_A", name: "A", qty: 1, tier: 3 }] },
+        { itemId: "T4_BREAD", name: "Bread", tier: 4, category: "food", outputQty: 1, fishSauceQty: 10, enchantable: true, ingredients: [{ itemId: "T3_FLOUR", name: "Flour", qty: 1, tier: 3 }] },
+        { itemId: "T3_FLOUR", name: "Flour", tier: 3, category: "food", outputQty: 1, fishSauceQty: 10, enchantable: true, ingredients: [{ itemId: "T3_WHEAT", name: "Wheat", qty: 1, tier: 3 }] },
+      ],
+    });
+    const recipes = await loadRecipes("food");
+    for (const recipe of recipes) {
+      expect(recipe.enchantable).toBeUndefined();
+      expect(recipe.fishSauceQty).toBeUndefined();
+    }
+  });
+
+  it("forces Alcohol (potion) non-enchantable despite arcane-extract flag", async () => {
+    mockFetchOnce({
+      recipes: [
+        { itemId: "T6_ALCOHOL", name: "Alcohol", tier: 6, category: "potion", outputQty: 1, arcaneExtractQty: 45, enchantable: true, ingredients: [{ itemId: "T6_A", name: "A", qty: 1, tier: 6 }] },
+      ],
+    });
+    const [recipe] = await loadRecipes("potion");
+    expect(recipe.enchantable).toBeUndefined();
+    expect(recipe.arcaneExtractQty).toBeUndefined();
+  });
+
   it("preserves the non-returnable flag (Avalonian Energy) on ingredients", async () => {
     mockFetchOnce({
       recipes: [

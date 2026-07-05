@@ -42,8 +42,8 @@ export function deriveBmCrafterRows(bundle: BmCrafterDataBundle | null, filters:
     const tier = parseTier(id);
     const enchant = parseEnchant(id);
 
-    if (filters.selectedTier !== null && tier !== filters.selectedTier) continue;
-    if (filters.selectedEnchant !== null && enchant !== filters.selectedEnchant) continue;
+    if (filters.selectedTiers.length > 0 && (tier === null || !filters.selectedTiers.includes(tier))) continue;
+    if (filters.selectedEnchants.length > 0 && !filters.selectedEnchants.includes(enchant)) continue;
 
     const sold = Number(item.sold || 0);
     if (sold < filters.minSold) continue;
