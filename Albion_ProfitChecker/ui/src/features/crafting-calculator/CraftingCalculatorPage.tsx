@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
@@ -6,6 +6,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import { SeoHeading } from "../../shared/seo/SeoHeading";
+import { JournalControls, professionForItem, resolveJournalProfit, useJournals, useSessionState } from "../../shared";
 import "../bm-crafter/ui/bmCrafter.css";
 import "./craftingCalculator.css";
 import {
@@ -445,7 +446,7 @@ export function CraftingCalculatorPage() {
   });
 
   const [allItems, setAllItems] = useState<CraftingItem[]>([]);
-  const [selectedRowKey, setSelectedRowKey] = useState("t8-4");
+  const [selectedRowKey, setSelectedRowKey] = useSessionState("cc:selectedRowKey", "t8-4");
   const [selectedItem, setSelectedItem] = useState<CraftingItem | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchParams] = useSearchParams();
@@ -472,17 +473,17 @@ export function CraftingCalculatorPage() {
       ]);
     return Object.fromEntries(entries);
   });
-  const [usePremium, setUsePremium] = useState(true);
-  const [useFocus, setUseFocus] = useState(false);
-  const [dailyBonusPercent, setDailyBonusPercent] = useState<0 | 10 | 20>(0);
+  const [usePremium, setUsePremium] = useSessionState("cc:usePremium", true);
+  const [useFocus, setUseFocus] = useSessionState("cc:useFocus", false);
+  const [dailyBonusPercent, setDailyBonusPercent] = useSessionState<0 | 10 | 20>("cc:dailyBonusPercent", 0);
   const [sellCity, setSellCity] = useState<string>(() => {
     const stored = localStorage.getItem("sellCity");
     return stored === "Black Market" ? "Black Market" : getStoredCity(["sellCity"], "Lymhurst");
   });
   const [itemValue, setItemValue] = useState(256);
-  const [stationFee, setStationFee] = useState(1000);
-  const [setupFeePercent, setSetupFeePercent] = useState(2.5);
-  const [transactionTaxPercent, setTransactionTaxPercent] = useState(4);
+  const [stationFee, setStationFee] = useSessionState("cc:stationFee", 1000);
+  const [setupFeePercent, setSetupFeePercent] = useSessionState("cc:setupFeePercent", 2.5);
+  const [transactionTaxPercent, setTransactionTaxPercent] = useSessionState("cc:transactionTaxPercent", 4);
 
   const allTableRows = useMemo(() => TABLE_SECTIONS.flatMap((section) => section.rows), []);
   const selectedRow = useMemo(
@@ -995,6 +996,33 @@ export function CraftingCalculatorPage() {
     });
   }, [selectedItem, artefactPriceMap, craftCity]);
 
+  const journals = useJournals(region);
+  const totalResourceCount = useMemo(
+    () => (Array.isArray(selectedItem?.materials) ? selectedItem.materials : []).reduce((sum, mat) => sum + (Number(mat?.qty) || 0), 0),
+    [selectedItem]
+  );
+  // Per-craft journal ("book") profit for the selected item at a given tier, or 0 when off.
+  const getJournalProfit = useCallback(
+    (tier: number) => {
+      if (!journals.enabled) return 0;
+      const jr = resolveJournalProfit(
+        {
+          categoryKey: selectedItem?.categoryKey,
+          itemId: selectedItem?.id ?? "",
+          tier,
+          artifactId: selectedItem?.artifactId,
+          totalResourceCount,
+          city: craftCity
+        },
+        journals.enabled,
+        journals.owned,
+        journals.data
+      );
+      return jr?.journalProfit ?? 0;
+    },
+    [journals.enabled, journals.owned, journals.data, selectedItem, totalResourceCount, craftCity]
+  );
+
   const totals = useMemo(() => {
     const requiredMaterials = Array.isArray(selectedItem?.materials) ? selectedItem.materials : [];
     const requiresMat1 = (Number(requiredMaterials[0]?.qty) || 0) > 0;
@@ -1024,13 +1052,26 @@ export function CraftingCalculatorPage() {
       return (calculation.profit / selectedBaseFocus) * ratio;
     })();
 
+    // Fold journal profit into the headline profit/ROI (silver-per-focus stays on the base
+    // craft profit, since journal profit is a separate revenue stream, not a focus efficiency).
+    const journalProfit = getJournalProfit(parseTierEnchant(selectedRow.uid).tier);
+    const profitWithJournal = typeof calculation.profit === "number" ? calculation.profit + journalProfit : calculation.profit;
+    const roiWithJournal =
+      typeof calculation.totalCost === "number" && calculation.totalCost > 0 && typeof profitWithJournal === "number"
+        ? (profitWithJournal / calculation.totalCost) * 100
+        : calculation.roi;
+
     return {
       ...calculation,
+      profit: profitWithJournal,
+      roi: roiWithJournal,
+      journalProfit,
       returnRatePercent,
       silverPerFocus
     };
   }, [
     selectedItem,
+    selectedRow,
     selectedRowValues.mat1,
     selectedRowValues.mat2,
     selectedRowValues.artefact,
@@ -1042,7 +1083,8 @@ export function CraftingCalculatorPage() {
     transactionTaxPercent,
     selectedRowValues.market,
     selectedFocusCost,
-    selectedBaseFocus
+    selectedBaseFocus,
+    getJournalProfit
   ]);
   const roiBarWidth = useMemo(
     () => `${Math.max(0, Math.min(100, Math.abs(typeof totals.roi === "number" ? totals.roi : 0)))}%`,
@@ -1330,8 +1372,11 @@ export function CraftingCalculatorPage() {
                       setupFeePercent: effectiveSetupFeePercent,
                       transactionTaxPercent
                     });
-                    const rowProfit = rowEconomics.profit;
-                    const rowGain = rowEconomics.roi;
+                    const rowJournalProfit = getJournalProfit(rowTier);
+                    const rowProfit = typeof rowEconomics.profit === "number" ? rowEconomics.profit + rowJournalProfit : rowEconomics.profit;
+                    const rowGain = typeof rowEconomics.totalCost === "number" && rowEconomics.totalCost > 0 && typeof rowProfit === "number"
+                      ? (rowProfit / rowEconomics.totalCost) * 100
+                      : rowEconomics.roi;
                     const rowMatTotal = values.mat1 + values.mat2 + values.artefact;
                     const rowSuspect = rowMatTotal > 0 && values.market >= 10 * rowMatTotal;
                     return (
@@ -1608,6 +1653,19 @@ export function CraftingCalculatorPage() {
               </div>
             </div>
 
+            <div>
+              <div className="cc-caption">Journals</div>
+              <JournalControls
+                enabled={journals.enabled}
+                owned={journals.owned}
+                onToggleEnabled={journals.setEnabled}
+                onToggleOwned={journals.toggleOwned}
+                data={journals.data}
+                city={craftCity}
+                onlyProfession={selectedItem ? professionForItem(selectedItem.categoryKey, selectedItem.id) : null}
+              />
+            </div>
+
             <div className="cc-grid-2">
               <div>
                 <div className="cc-caption">Market Setup Fee %</div>
@@ -1681,6 +1739,9 @@ export function CraftingCalculatorPage() {
                 : null
             )}</strong></div>
             <div><span>Total Cost</span><strong>{formatMaybeNumber(totals.totalCost)}</strong></div>
+            {typeof totals.journalProfit === "number" && totals.journalProfit > 0 ? (
+              <div><span>Journal Profit</span><strong className="profit-cell">+{formatNumber(totals.journalProfit)}</strong></div>
+            ) : null}
             <div>
               <span>Profit</span>
               <strong className={typeof totals.profit === "number" ? (totals.profit >= 0 ? "profit-cell" : "loss-cell") : ""}>

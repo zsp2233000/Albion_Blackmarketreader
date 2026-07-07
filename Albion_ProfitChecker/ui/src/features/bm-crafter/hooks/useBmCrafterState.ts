@@ -1,20 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSessionState } from "../../../shared";
+import type { JournalData, OwnedJournals } from "../../../shared";
 import { returnRatePercentToDecimal } from "../domain";
 import type { BmCrafterDataBundle } from "../data";
 import { deriveBmCrafterRows } from "./deriveRows";
 
-export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
-  const [selectedTiers, setSelectedTiers] = useState<number[]>([]);
-  const [selectedEnchants, setSelectedEnchants] = useState<number[]>([]);
-  const [minSold, setMinSold] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortByDailyTop, setSortByDailyTop] = useState(false);
-  const [showOnlyProfitable, setShowOnlyProfitable] = useState(true);
-  const [nonArtefactOnly, setNonArtefactOnly] = useState(false);
-  const [bonusCity, setBonusCity] = useState(false);
-  const [returnRatePercent, setReturnRatePercent] = useState(15.25);
-  const [craftCity, setCraftCity] = useState<string>("Lymhurst");
-  const [usageFeePer100, setUsageFeePer100] = useState<number>(1500);
+interface JournalConfig {
+  enabled: boolean;
+  owned: OwnedJournals;
+  data: JournalData | null;
+}
+
+// Filter settings persist for the browser session so navigating to an item's breakdown and
+// back does not wipe the applied tiers/enchants/city/return-rate etc.
+export function useBmCrafterState(bundle: BmCrafterDataBundle | null, journal?: JournalConfig) {
+  const [selectedTiers, setSelectedTiers] = useSessionState<number[]>("bm-crafter:selectedTiers", []);
+  const [selectedEnchants, setSelectedEnchants] = useSessionState<number[]>("bm-crafter:selectedEnchants", []);
+  const [minSold, setMinSold] = useSessionState("bm-crafter:minSold", 0);
+  const [searchTerm, setSearchTerm] = useSessionState("bm-crafter:searchTerm", "");
+  const [sortByDailyTop, setSortByDailyTop] = useSessionState("bm-crafter:sortByDailyTop", false);
+  const [showOnlyProfitable, setShowOnlyProfitable] = useSessionState("bm-crafter:showOnlyProfitable", true);
+  const [nonArtefactOnly, setNonArtefactOnly] = useSessionState("bm-crafter:nonArtefactOnly", false);
+  const [bonusCity, setBonusCity] = useSessionState("bm-crafter:bonusCity", false);
+  const [returnRatePercent, setReturnRatePercent] = useSessionState("bm-crafter:returnRatePercent", 15.25);
+  const [craftCity, setCraftCity] = useSessionState<string>("bm-crafter:craftCity", "Lymhurst");
+  const [usageFeePer100, setUsageFeePer100] = useSessionState<number>("bm-crafter:usageFeePer100", 1500);
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null);
 
   const setBonusCityPreset = (enabled: boolean) => {
@@ -36,9 +46,10 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null) {
         showOnlyProfitable,
         nonArtefactOnly,
         craftCity,
-        usageFeePer100
+        usageFeePer100,
+        journal
       }),
-    [bundle, selectedTiers, selectedEnchants, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100]
+    [bundle, selectedTiers, selectedEnchants, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100, journal]
   );
 
   useEffect(() => {

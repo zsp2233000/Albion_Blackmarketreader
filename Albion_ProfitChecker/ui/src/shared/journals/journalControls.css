@@ -1,0 +1,253 @@
+.jrnl-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.jrnl-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+}
+
+.jrnl-toggle input {
+  cursor: pointer;
+  accent-color: #d4af37;
+}
+
+.jrnl-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.85);
+  background: rgba(212, 175, 55, 0.9);
+  color: #23201a;
+  cursor: pointer;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.jrnl-edit-btn svg {
+  display: block;
+}
+
+.jrnl-edit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.jrnl-edit-btn:not(:disabled):hover {
+  background: #d4af37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+}
+
+.jrnl-explain {
+  margin: 4px 0 12px;
+}
+
+.jrnl-explain > summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #d4af37;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  margin: 0 -8px;
+  border-radius: 6px;
+  transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.jrnl-explain > summary:hover {
+  background: rgba(212, 175, 55, 0.14);
+  color: #f0cb53;
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.35);
+}
+
+.jrnl-explain > summary::-webkit-details-marker {
+  display: none;
+}
+
+.jrnl-explain > summary::before {
+  content: "▸";
+  font-size: 11px;
+  transition: transform 0.12s ease;
+}
+
+.jrnl-explain[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.jrnl-explain .jrnl-note {
+  margin-top: 8px;
+}
+
+.jrnl-formula {
+  margin: 0 0 4px;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.55;
+  opacity: 0.8;
+}
+
+.jrnl-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483000;
+  padding: 16px;
+}
+
+.jrnl-modal {
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #1c1e24;
+  color: #e8e6e0;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 12px;
+  padding: 22px 24px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: light) {
+  .jrnl-modal {
+    background: #fbfaf6;
+    color: #23201a;
+  }
+}
+
+.jrnl-modal h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+  color: #d4af37;
+}
+
+.jrnl-modal p {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.jrnl-modal ul {
+  margin: 0 0 10px;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.jrnl-note {
+  opacity: 0.8;
+  font-size: 12.5px;
+}
+
+.jrnl-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.jrnl-modal-close:hover {
+  opacity: 1;
+}
+
+.jrnl-prof-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.jrnl-prof-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jrnl-prof-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.jrnl-prof-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.jrnl-prof-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.jrnl-prof-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.jrnl-prof-sub {
+  font-size: 11.5px;
+  opacity: 0.6;
+}
+
+.jrnl-price-table {
+  width: 100%;
+  /* Override the app's global `table { min-width: 600px }` (imported bmCrafter.css) which would
+     otherwise force this modal table wide and push the Full/Profit columns off-screen. */
+  min-width: 0;
+  border-collapse: collapse;
+  margin: 6px 0 2px 0;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  table-layout: auto;
+}
+
+.jrnl-price-table th,
+.jrnl-price-table td {
+  text-align: right;
+  padding: 2px 6px;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.18);
+}
+
+.jrnl-price-table th:first-child,
+.jrnl-price-table td:first-child {
+  text-align: left;
+}
+
+.jrnl-price-table th {
+  font-weight: 600;
+  opacity: 0.65;
+}
+
+.jrnl-price-table .jrnl-pos {
+  color: #4caf7d;
+  font-weight: 600;
+}

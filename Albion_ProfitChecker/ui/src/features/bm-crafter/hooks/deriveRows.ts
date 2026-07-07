@@ -6,6 +6,7 @@ import {
   parseEnchant,
   parseTier
 } from "../domain";
+import { resolveJournalProfit } from "../../../shared";
 import type { BmCrafterDataBundle } from "../data";
 import type { BmCrafterFilters, BmCrafterRow } from "./types";
 
@@ -71,17 +72,44 @@ export function deriveBmCrafterRows(bundle: BmCrafterDataBundle | null, filters:
     });
 
     if (!economics) continue;
-    if (filters.showOnlyProfitable && economics.profit < 0) continue;
-    if (!Number.isFinite(economics.profitPct) || (economics.profitPct as number) < MIN_PROFIT_PCT) continue;
+
+    // Fold crafting-journal profit into the economics BEFORE the profit gates, so journals can
+    // genuinely rescue an otherwise sub-threshold craft.
+    let economicsOut = economics;
+    let journalProfit = 0;
+    let journalProfession: BmCrafterRow["journalProfession"] = null;
+    if (filters.journal?.enabled && tier !== null) {
+      const totalResourceCount = recipe.materials.reduce((sum, mat) => sum + Number(mat.qty || 0), 0);
+      const jr = resolveJournalProfit(
+        { categoryKey: recipe.categoryKey, itemId: id, tier, artifactId: recipe.artifactId, totalResourceCount, city: filters.craftCity },
+        true,
+        filters.journal.owned,
+        filters.journal.data
+      );
+      if (jr && jr.journalProfit !== 0) {
+        journalProfit = jr.journalProfit;
+        journalProfession = jr.profession;
+        const adjProfit = economics.profit + journalProfit;
+        const adjPct = economics.craftCost > 0 ? (adjProfit / economics.craftCost) * 100 : economics.profitPct;
+        const adjDaily = Number.isFinite(item.sold) ? adjProfit * Number(item.sold) : economics.dailyPotential;
+        const adjPerFocus = economics.focusCost && economics.focusCost > 0 ? adjProfit / economics.focusCost : economics.profitPerFocus;
+        economicsOut = { ...economics, profit: adjProfit, profitPct: adjPct, dailyPotential: adjDaily, profitPerFocus: adjPerFocus };
+      }
+    }
+
+    if (filters.showOnlyProfitable && economicsOut.profit < 0) continue;
+    if (!Number.isFinite(economicsOut.profitPct) || (economicsOut.profitPct as number) < MIN_PROFIT_PCT) continue;
 
     rows.push({
       rowKey: `${item.id}#${rowCounter}`,
       item,
       recipe,
-      economics,
+      economics: economicsOut,
       tier,
       enchant,
-      displayName
+      displayName,
+      journalProfit,
+      journalProfession
     });
     rowCounter += 1;
   }

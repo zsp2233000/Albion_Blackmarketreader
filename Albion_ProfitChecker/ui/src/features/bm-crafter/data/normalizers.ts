@@ -164,10 +164,12 @@ export function normalizeRecipesPayload(payload: unknown): BmCrafterRecipesData 
 
   for (const category of categories) {
     if (!isRecord(category)) continue;
+    const categoryKey = typeof category.key === "string" ? category.key : typeof category.name === "string" ? category.name : undefined;
     const list = Array.isArray(category.items) ? category.items : [];
     for (const entry of list) {
       const recipe = normalizeRecipeItem(entry);
       if (!recipe) continue;
+      if (categoryKey) recipe.categoryKey = categoryKey;
       items.push(recipe);
       if (!byItemId.has(recipe.itemId)) {
         byItemId.set(recipe.itemId, recipe);

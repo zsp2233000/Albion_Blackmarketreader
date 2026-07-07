@@ -17,6 +17,8 @@ export interface BmRecipe {
   materials: MaterialRequirement[];
   artifactId?: string | null;
   artifact?: string;
+  /** Crafting category key (swords, bows, armor-chest, …) — used for journal profession mapping. */
+  categoryKey?: string;
 }
 
 export interface MaterialCostResult {

@@ -1,4 +1,5 @@
 import type { BmMarketItem, BmRecipe, ItemEconomics } from "../domain";
+import type { JournalData, JournalProfession, OwnedJournals } from "../../../shared";
 
 export interface BmCrafterRow {
   rowKey: string;
@@ -8,6 +9,9 @@ export interface BmCrafterRow {
   tier: number | null;
   enchant: number;
   displayName: string;
+  /** Per-craft journal profit already folded into economics.profit (0 when journals are off). */
+  journalProfit?: number;
+  journalProfession?: JournalProfession | null;
 }
 
 export interface BmCrafterFilters {
@@ -22,4 +26,10 @@ export interface BmCrafterFilters {
   nonArtefactOnly: boolean;
   craftCity: string;
   usageFeePer100: number;
+  /** When enabled, crafting-journal profit is folded into each row's profit before filtering. */
+  journal?: {
+    enabled: boolean;
+    owned: OwnedJournals;
+    data: JournalData | null;
+  };
 }

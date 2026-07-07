@@ -12,5 +12,11 @@ export * from "./assets/assets";
 export * from "./icons/icons";
 export * from "./icons/Icon";
 
+export * from "./hooks/useSessionState";
+
+export * from "./journals/journals";
+export * from "./journals/useJournals";
+export * from "./journals/JournalControls";
+
 export * from "./ui";
 

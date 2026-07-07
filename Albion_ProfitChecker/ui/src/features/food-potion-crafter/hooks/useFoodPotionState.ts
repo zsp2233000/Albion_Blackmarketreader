@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSessionState } from "../../../shared";
 import { DEFAULT_USAGE_FEE } from "../core";
 import type {
   City,
@@ -18,20 +19,20 @@ export function useFoodPotionState(
   priceByItemId: Map<string, number>,
   specProgress?: CraftingProgress
 ) {
-  const [category, setCategoryState] = useState<ConsumableCategory>("food");
-  const [selectedTier, setSelectedTier] = useState<number | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [craftCity, setCraftCity] = useState<City>(DEFAULT_CITY);
-  const [buyCity, setBuyCity] = useState<City>(DEFAULT_CITY);
-  const [sellCity, setSellCity] = useState<City>(DEFAULT_CITY);
-  const [stationKind, setStationKind] = useState<StationKind>("city");
-  const [returnRatePreset, setReturnRatePreset] = useState<ReturnRatePreset>("focus");
-  const [customReturnRatePct, setCustomReturnRatePct] = useState<number>(43.5);
-  const [amount, setAmount] = useState(1);
-  const [usageFee, setUsageFee] = useState<number>(DEFAULT_USAGE_FEE.food);
-  const [marketTaxRate, setMarketTaxRate] = useState(0.065);
-  const [demandPerDay, setDemandPerDay] = useState(0);
-  const [showOnlyProfitable, setShowOnlyProfitable] = useState(false);
+  const [category, setCategoryState] = useSessionState<ConsumableCategory>("fp:category", "food");
+  const [selectedTier, setSelectedTier] = useSessionState<number | null>("fp:selectedTier", null);
+  const [searchTerm, setSearchTerm] = useSessionState("fp:searchTerm", "");
+  const [craftCity, setCraftCity] = useSessionState<City>("fp:craftCity", DEFAULT_CITY);
+  const [buyCity, setBuyCity] = useSessionState<City>("fp:buyCity", DEFAULT_CITY);
+  const [sellCity, setSellCity] = useSessionState<City>("fp:sellCity", DEFAULT_CITY);
+  const [stationKind, setStationKind] = useSessionState<StationKind>("fp:stationKind", "city");
+  const [returnRatePreset, setReturnRatePreset] = useSessionState<ReturnRatePreset>("fp:returnRatePreset", "focus");
+  const [customReturnRatePct, setCustomReturnRatePct] = useSessionState<number>("fp:customReturnRatePct", 43.5);
+  const [amount, setAmount] = useSessionState("fp:amount", 1);
+  const [usageFee, setUsageFee] = useSessionState<number>("fp:usageFee", DEFAULT_USAGE_FEE.food);
+  const [marketTaxRate, setMarketTaxRate] = useSessionState("fp:marketTaxRate", 0.065);
+  const [demandPerDay, setDemandPerDay] = useSessionState("fp:demandPerDay", 0);
+  const [showOnlyProfitable, setShowOnlyProfitable] = useSessionState("fp:showOnlyProfitable", false);
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null);
 
   const setCategory = (next: ConsumableCategory) => {

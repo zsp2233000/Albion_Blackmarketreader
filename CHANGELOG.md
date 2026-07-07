@@ -20,6 +20,8 @@ Keep them short and player-friendly (not technical), and without emoji.
 - Food & Potion Crafter: your Cook and Alchemist spec levels now correctly lower the focus cost in the crafter view.
 - Food & Potion Crafter: intermediate goods (Flour, Meat, Bread, Alcohol) no longer show enchant variants they cannot actually have in game.
 - Refining Calculator: the step-by-step Stacking path now opens for every item, including with the royal-city return rate.
+- Your filters and settings now stay put across all tools when you navigate away and come back, instead of resetting (kept for the browser session).
+- New Journal profit option in the Black Market Crafter and Crafting Calculator: counts the crafting fame each craft puts into its artisan journal (Blacksmith, Fletcher, Imbuer or Tinker) and adds the profit from selling the full journal. Turn it on to include it, and open the journal editor to see live empty/full/profit prices per tier for your craft city.
 
 <!-- Add new bullets below as "- ..." lines, without emoji. Examples
      (indented so they are not posted by accident):

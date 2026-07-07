@@ -6,6 +6,7 @@ import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
+import { JournalControls, useJournals } from "../../../shared";
 import {
   buildArtefactId,
   buildMaterialId,
@@ -101,7 +102,18 @@ export function BmCrafterPage() {
 
   const [region, setRegion] = useRegion();
   const { data, loading, error } = useBmCrafterData(region);
-  const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useBmCrafterState(data);
+  const journals = useJournals(region);
+  // BM Crafter lists every item type, so all four journals always apply — ownership is not a
+  // per-profession choice here (unlike the single-item Crafting Calculator).
+  const journalConfig = useMemo(
+    () => ({
+      enabled: journals.enabled,
+      owned: { warrior: true, hunter: true, mage: true, toolmaker: true } as const,
+      data: journals.data
+    }),
+    [journals.enabled, journals.data]
+  );
+  const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useBmCrafterState(data, journalConfig);
   const navigate = useNavigate();
 
   // Open the clicked item in the Crafting Calculator, pre-set to sell to the Black Market
@@ -591,6 +603,22 @@ export function BmCrafterPage() {
 
         <div className="filter-block">
           <div className="filter-head">
+            <p>Journal Profit</p>
+            <span className="filter-value">{journals.enabled ? "On" : "Off"}</span>
+          </div>
+          <JournalControls
+            enabled={journals.enabled}
+            owned={journals.owned}
+            onToggleEnabled={journals.setEnabled}
+            onToggleOwned={journals.toggleOwned}
+            data={journals.data}
+            city={filters.craftCity}
+            showOwnership={false}
+          />
+        </div>
+
+        <div className="filter-block">
+          <div className="filter-head">
             <p>Return Rate</p>
             <span className="filter-value">{filters.returnRatePercent.toFixed(2)}%</span>
           </div>
@@ -771,6 +799,9 @@ export function BmCrafterPage() {
               <div><span>Sold / Day</span><strong className="primary">{selectedRow ? formatNumber(selectedRow.item.sold) : "--"}</strong></div>
               <div><span>Craft Cost</span><strong>{selectedRow ? formatNumber(selectedRow.economics.craftCost) : "--"}</strong></div>
               <div><span>Station Fee</span><strong>{selectedRow ? formatNumber(selectedRow.economics.stationFee) : "--"}</strong></div>
+              {selectedRow && (selectedRow.journalProfit ?? 0) > 0 ? (
+                <div><span>Journal Profit</span><strong className="profit">+{formatNumber(selectedRow.journalProfit)}</strong></div>
+              ) : null}
               <div><span>Net Profit / U</span><strong className={selectedRow && selectedRow.economics.profit < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.profit) : "--"}</strong></div>
               <div><span>Profit %</span><strong className={selectedRow && (selectedRow.economics.profitPct ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatPct(selectedRow.economics.profitPct) : "--"}</strong></div>
               <div><span>Daily Potential</span><strong className={selectedRow && (selectedRow.economics.dailyPotential ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.dailyPotential) : "--"}</strong></div>
