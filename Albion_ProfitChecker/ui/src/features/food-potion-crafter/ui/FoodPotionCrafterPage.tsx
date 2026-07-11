@@ -811,8 +811,8 @@ export function FoodPotionCrafterPage() {
                 </select>
               </div>
               <span className="fp-batch-badge">
-                Table values <strong>per single item</strong>
-                {crafterSelected ? <> · breakdown below for <strong>{filters.amount}</strong> craft{filters.amount === 1 ? "" : "s"} ({crafterSelected.recipe.outputQty * filters.amount} items)</> : null}
+                Table <strong>per item</strong> · calculator per <strong>craft</strong>
+                {crafterSelected ? <> · 1 craft → <strong>{crafterSelected.recipe.outputQty}</strong> item{crafterSelected.recipe.outputQty === 1 ? "" : "s"}</> : null}
               </span>
             </div>
 
@@ -821,14 +821,14 @@ export function FoodPotionCrafterPage() {
                 <thead>
                   <tr>
                     <th>Tier</th><th>Recipe</th>
-                    <th className="num">Output ({filters.amount}×)</th><th className="num">Return</th>
+                    <th className="num">Yield / craft</th><th className="num">Return</th>
                     <th className="num">Ingredient Cost</th><th className="num">Station Fee</th><th className="num">Sell Price</th>
                     <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Sold / Day (all cities)</th>
                   </tr>
                 </thead>
                 <tbody>
                   {familyRows.length === 0 ? (<tr><td colSpan={11}>No tiers for this product.</td></tr>) : null}
-                  {familyRows.map((row) => (
+                  {familyRows.map((row) => { const rowPriced = isPriced(row); return (
                     <tr
                       key={row.rowKey}
                       className={`high-density-row ${crafterSelected?.rowKey === row.rowKey ? "selected-row" : ""} ${row.recipe.isAvalonian ? "fp-avalonian-row" : ""} ${isSuspectPrice(row.result) ? "fp-suspect-row" : ""}`}
@@ -845,22 +845,33 @@ export function FoodPotionCrafterPage() {
                           </div>
                         </div></div>
                       </td>
-                      <td className="num">{formatNumber(row.result.outputAmount)}</td>
+                      <td className="num">{formatNumber(row.recipe.outputQty)}</td>
                       <td className="num fp-return-cell">{formatPct(row.result.returnRate * 100)}</td>
-                      <td className="num">{formatNumber(row.result.grossIngredientCost / row.result.outputAmount)}</td>
+                      <td className="num">{rowPriced ? formatNumber(row.result.grossIngredientCost / row.result.outputAmount) : "--"}</td>
                       <td className="num muted">{formatNumber(row.result.stationFee / row.result.outputAmount)}</td>
                       <td className="num">{(() => { const p = priceByItemId.get(row.recipe.itemId) ?? 0; return p > 0 ? formatNumber(p) : "--"; })()}</td>
-                      <td className={`num ${row.result.profitPerOutput >= 0 ? "profit" : "loss"}`}>{row.result.profitPerOutput >= 0 ? "+" : ""}{formatNumber(row.result.profitPerOutput)}</td>
-                      <td className={`num ${row.result.profit >= 0 ? "profit" : "loss"}`}>{formatPct(row.result.profitPercent)}</td>
-                      <td className={`num ${(row.result.silverPerFocus ?? 0) >= 0 ? "profit" : "loss"}`}>{row.result.silverPerFocus === null ? "--" : formatNumber(row.result.silverPerFocus)}</td>
+                      <td className={`num ${rowPriced ? (row.result.profitPerOutput >= 0 ? "profit" : "loss") : ""}`}>{rowPriced ? `${row.result.profitPerOutput >= 0 ? "+" : ""}${formatNumber(row.result.profitPerOutput)}` : "--"}</td>
+                      <td className={`num ${rowPriced ? (row.result.profit >= 0 ? "profit" : "loss") : ""}`}>{rowPriced ? formatPct(row.result.profitPercent) : "--"}</td>
+                      <td className={`num ${rowPriced && (row.result.silverPerFocus ?? 0) >= 0 ? "profit" : rowPriced ? "loss" : ""}`}>{rowPriced && row.result.silverPerFocus !== null ? formatNumber(row.result.silverPerFocus) : "--"}</td>
                       <td className="num">{(() => { const s = soldByItemId[row.recipe.itemId] ?? 0; return s > 0 ? formatNumber(s) : "--"; })()}</td>
                     </tr>
-                  ))}
+                  ); })}
                 </tbody>
               </table>
             </div>
 
-            {crafterSelected ? (
+            {crafterSelected ? (() => {
+              // The calculator shows ONE real craft: the actual whole ingredient amounts you must buy
+              // (a craft is indivisible — e.g. 16 Carrots → 10 Carrot Soups), plus its cost/profit.
+              // Per-item figures are shown alongside for comparing recipes. Profit only once every
+              // ingredient AND a sell price are known.
+              const oq = crafterSelected.recipe.outputQty || 1; // items produced by one craft
+              const crafts = Math.max(1, Math.floor(filters.amount)); // craft actions in result totals
+              const items = crafterSelected.result.outputAmount || 1; // = oq * crafts
+              const perCraft = (v: number) => v / crafts; // normalise result totals to one craft
+              const perItem = (v: number) => v / items; // normalise to one finished item
+              const cPriced = isPriced(crafterSelected);
+              return (
               <div className="fp-workbench-inline">
                 <div className="fp-workbench-title">
                   <span className="material-symbols-outlined">calculate</span>
@@ -883,14 +894,15 @@ export function FoodPotionCrafterPage() {
                       </div>
                     </div>
                     <div className="material-head">
-                      <span className="cc-caption">Ingredients · edit unit prices</span>
-                      <span className="material-total">Total: {formatNumber(crafterSelected.result.grossIngredientCost)}</span>
+                      <span className="cc-caption">Ingredients · 1 craft → {oq} item{oq === 1 ? "" : "s"} · edit unit prices</span>
+                      <span className="material-total">Total / craft: {formatNumber(perCraft(crafterSelected.result.grossIngredientCost))}</span>
                     </div>
                     <div className="fp-ingredient-list">
                       {crafterSelected.recipe.ingredients.map((ingredient) => {
                         const isToken = /QUESTITEM_TOKEN_AVALON/.test(ingredient.itemId);
                         const unit = priceByItemId.get(ingredient.itemId) ?? 0;
-                        const total = unit * ingredient.qty * filters.amount;
+                        // Whole recipe amount for one craft — what you actually buy to craft it.
+                        const total = unit * ingredient.qty;
                         const livePlaceholder = livePriceByItemId[ingredient.itemId];
                         const meta = ingredientMeta.get(ingredient.itemId);
                         const rare = ingredient.rare || meta?.rare;
@@ -921,35 +933,37 @@ export function FoodPotionCrafterPage() {
 
                   <div className="bento-card span-4 fp-summary-card">
                     <div className="fp-summary-card-head">
-                      <span className="cc-caption">Profit Summary</span>
-                      <span className={`fp-summary-pill ${crafterSelected.result.profit >= 0 ? "profit" : "loss"}`}>
-                        {crafterSelected.result.profit >= 0 ? "Profit" : "Loss"}
+                      <span className="cc-caption">Profit Summary · 1 craft ({oq} item{oq === 1 ? "" : "s"})</span>
+                      <span className={`fp-summary-pill ${!cPriced ? "" : crafterSelected.result.profit >= 0 ? "profit" : "loss"}`}>
+                        {!cPriced ? "Incomplete" : crafterSelected.result.profit >= 0 ? "Profit" : "Loss"}
                       </span>
                     </div>
                     <div className="fp-summary-hero">
                       <span className="fp-summary-hero-label">Profit / Craft</span>
-                      <strong className={crafterSelected.result.profit >= 0 ? "profit-cell" : "loss-cell"}>
-                        {crafterSelected.result.profit >= 0 ? "+" : ""}{formatNumber(crafterSelected.result.profit)}
+                      <strong className={!cPriced ? "" : crafterSelected.result.profit >= 0 ? "profit-cell" : "loss-cell"}>
+                        {cPriced ? `${crafterSelected.result.profit >= 0 ? "+" : ""}${formatNumber(perCraft(crafterSelected.result.profit))}` : "--"}
                       </strong>
-                      <span className="fp-summary-hero-sub">ROI {formatPct(crafterSelected.result.profitPercent)}</span>
+                      <span className="fp-summary-hero-sub">{cPriced ? `ROI ${formatPct(crafterSelected.result.profitPercent)} · ${crafterSelected.result.profitPerOutput >= 0 ? "+" : ""}${formatNumber(crafterSelected.result.profitPerOutput)} / item` : "prices incomplete"}</span>
                     </div>
                     <div className="fp-summary-grid">
-                      <div><span>Ingredient Cost</span><strong>{formatNumber(crafterSelected.result.grossIngredientCost)}</strong></div>
-                      <div><span>Return Saved</span><strong className="profit-cell">−{formatNumber(crafterSelected.result.returnedIngredientCost)}</strong></div>
-                      <div><span>Station Fee</span><strong>{formatNumber(crafterSelected.result.stationFee)}</strong></div>
-                      <div><span>Market Tax</span><strong>{formatNumber(crafterSelected.result.marketTax)}</strong></div>
-                      <div><span>Total Cost</span><strong>{formatNumber(crafterSelected.result.totalCost)}</strong></div>
-                      <div><span>Net Revenue</span><strong>{formatNumber(crafterSelected.result.netRevenue)}</strong></div>
+                      <div><span>Ingredient Cost</span><strong>{formatNumber(perCraft(crafterSelected.result.grossIngredientCost))}</strong></div>
+                      <div><span>Return Saved</span><strong className="profit-cell">−{formatNumber(perCraft(crafterSelected.result.returnedIngredientCost))}</strong></div>
+                      <div><span>Station Fee</span><strong>{formatNumber(perCraft(crafterSelected.result.stationFee))}</strong></div>
+                      <div><span>Market Tax</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.marketTax)) : "--"}</strong></div>
+                      <div><span>Total Cost</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.totalCost)) : "--"}</strong></div>
+                      <div><span>Net Revenue</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.netRevenue)) : "--"}</strong></div>
                       <div><span>Return Rate</span><strong className="fp-return-rate">{formatPct(crafterSelected.result.returnRate * 100)}</strong></div>
-                      <div><span>Focus Cost</span><strong>{crafterSelected.result.focusCost > 0 ? formatNumber(crafterSelected.result.focusCost) : "--"}</strong></div>
-                      <div><span>Silver / Focus</span><strong className={(crafterSelected.result.silverPerFocus ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{crafterSelected.result.silverPerFocus === null ? "--" : formatNumber(crafterSelected.result.silverPerFocus)}</strong></div>
-                      <div><span>Profit / Item</span><strong className={crafterSelected.result.profitPerOutput >= 0 ? "profit-cell" : "loss-cell"}>{formatNumber(crafterSelected.result.profitPerOutput)}</strong></div>
+                      <div><span>Focus Cost</span><strong>{crafterSelected.result.focusCost > 0 ? formatNumber(perCraft(crafterSelected.result.focusCost)) : "--"}</strong></div>
+                      <div><span>Silver / Focus</span><strong className={!cPriced ? "" : (crafterSelected.result.silverPerFocus ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{cPriced && crafterSelected.result.silverPerFocus !== null ? formatNumber(crafterSelected.result.silverPerFocus) : "--"}</strong></div>
+                      <div><span>Cost / Item</span><strong>{cPriced ? formatNumber(perItem(crafterSelected.result.totalCost)) : "--"}</strong></div>
+                      <div><span>Profit / Item</span><strong className={!cPriced ? "" : crafterSelected.result.profitPerOutput >= 0 ? "profit-cell" : "loss-cell"}>{cPriced ? formatNumber(crafterSelected.result.profitPerOutput) : "--"}</strong></div>
                       <div><span>Sold / Day</span><strong>{(soldByItemId[crafterSelected.recipe.itemId] ?? 0) > 0 ? formatNumber(soldByItemId[crafterSelected.recipe.itemId]) : "--"}</strong></div>
                     </div>
                   </div>
                 </div>
               </div>
-            ) : null}
+              );
+            })() : null}
           </section>
         )}
       </main>
