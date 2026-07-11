@@ -1,30 +1,58 @@
-Blackmarket Reader
+# Blackmarket Reader
+
+> Free market-analytics and crafting-profit tools + data for the MMO Albion Online. All numbers are
+> in-game silver. Data is refreshed roughly daily from the public Albion Online Data Project and
+> served as static JSON — no API key or authentication is needed to read it.
 
 Website: https://blackmarketreader.com
-Description: Albion Online web tools for Black Market scanning, crafting, refining, and food/potion profit calculation.
 
-Primary pages:
-- https://blackmarketreader.com/
-- https://blackmarketreader.com/dashboard
-- https://blackmarketreader.com/bm-crafter
-- https://blackmarketreader.com/crafting-calculator
-- https://blackmarketreader.com/refining-calculator
-- https://blackmarketreader.com/food-potion-crafter
+## Primary pages
 
-Tools:
-- Blackmarket Reader Dashboard: live Albion Online Black Market deal discovery and city comparison
-- Black Market Crafter: Albion Online crafting route and Black Market profit tool
-- Crafting Calculator: Albion Online crafting calculator with material, artefact, return-rate, focus specialization, and market-value logic
-- Refining Calculator: Albion Online refining calculator with city prices, focus presets, and fee handling
-- Food & Potion Crafter: Albion Online cooking and alchemy profit calculator with ingredient prices, return rate, station fees, focus specializations, and units-sold-per-day
+- https://blackmarketreader.com/ (landing)
+- https://blackmarketreader.com/dashboard — live Black Market deal discovery + city comparison
+- https://blackmarketreader.com/bm-crafter — crafting route + Black Market profit
+- https://blackmarketreader.com/crafting-calculator — material, artefact, return-rate, focus + market-value logic
+- https://blackmarketreader.com/refining-calculator — city prices, focus presets, fee handling, Stacking mode
+- https://blackmarketreader.com/food-potion-crafter — cooking + alchemy profit, ingredient prices, focus specs
 
-Topic keywords:
-- Albion Online tools
-- Albion Online crafting calculator
-- Albion Online refining calculator
-- Albion Online food crafter
-- Albion Online potion crafter
-- Albion Online cooking calculator
-- Albion Online alchemy calculator
-- Albion Online Black Market
-- Albion Black Market crafter
+## Data (static JSON, CORS-enabled, GET only)
+
+Every dataset exists per region — replace `{region}` with `eu` or `us`. A value of 0 or a missing
+key means "no recent market listing".
+
+### Black Market
+- https://blackmarketreader.com/data/bm-crafter-{region}.json — `{ generatedAt, region, items: [[itemId, blackMarketSellPrice, soldPerDay], ...] }`. One row per tradable item id (e.g. `T5_2H_BOW@1`).
+- https://blackmarketreader.com/avg-profit-history.json — daily average-profit time series.
+
+### Crafting
+- https://blackmarketreader.com/data/crafting-results-{region}.json — `{ items: [{ itemId, baseId, tier, enchant, prices: { Lymhurst, Bridgewatch, Martlock, "Fort Sterling", Thetford, Caerleon, Brecilien } }] }`. Per-city sell prices for finished items, all tiers/enchants.
+- https://blackmarketreader.com/items-categorized-crafting.json — `{ categories: [{ key, items: [{ id, name, materials: [{ itemId, qty }], artifactId }] }] }`. Recipe inputs + artefact per item. `key` = crafting category (swords, bows, armor-chest, ...).
+- https://blackmarketreader.com/data/materials-{region}.json and /data/materials-cities-{region}.json — refined materials (metal bar, planks, cloth, leather, stone block).
+- https://blackmarketreader.com/data/raw-materials-cities-{region}.json — raw materials per city (ore, wood, fibre, hide, rock).
+- https://blackmarketreader.com/data/artefacts-{region}.json — `{ items: [{ itemId, city, price }] }` per artefact per city.
+
+### Journals (books that soak up crafting fame)
+- https://blackmarketreader.com/data/journals-{region}.json — `{ professions: [...], journals: { warrior|hunter|mage|toolmaker: { 4..8: { empty: { city: price }, full: { city: price } } } } }`. Empty (buy) + full (sell) prices per profession, tier, city.
+
+### Food & Potions
+- https://blackmarketreader.com/data/recipes-food.json and /data/recipes-potions.json — `{ recipes: [{ itemId, name, tier, category, outputQty, ingredients: [{ itemId, qty }], baseFocus, itemValue, focus: [...], enchantable }] }`.
+- https://blackmarketreader.com/data/consumable-ingredients.json plus prices: /data/food-prices-{region}.json, /data/potion-prices-{region}.json, /data/consumable-ingredient-prices-{region}.json.
+
+## Profit formulas (compute from the data above)
+
+- Resource return rate from a bonus %: `returnRate = 1 - 1 / (1 + bonus/100)`. Bonuses: royal city 18, local production +15 (food/potion) or +40 (refining), focus +59.
+- Station usage fee: `ceil(itemValue * 0.1125 * stationFee / 100)`.
+- Sales tax: premium 6.5% (keep 0.935), non-premium 10.5% (keep 0.895).
+- Craft profit ≈ `sellPrice*(1 - tax) - (materialCost*(1 - returnRate) + artefactCost + usageFee)`.
+- Journal profit per craft: `fame = totalResourceCount * famePerResource[tier] * artefactFactor`; famePerResource {T4:22.5, T5:45, T6:90, T7:180, T8:360}; journal capacity {T4:3600, T5:7200, T6:14400, T7:28380, T8:58590}; `journalsFilled = fame / capacity`; `profitPerJournal = fullSell*0.935 - emptyBuy`; add `journalsFilled * max(0, profitPerJournal)`.
+
+## Topic keywords
+
+Albion Online tools, crafting calculator, refining calculator, food crafter, potion crafter,
+cooking calculator, alchemy calculator, Black Market, Black Market crafter, journal profit.
+
+## Notes
+
+- Not affiliated with Albion Online / Sandbox Interactive. Data originates from the public Albion Online Data Project.
+- Please cache and avoid hammering; data changes at most once per day.
+- Contact: blackmarketreader@gmail.com

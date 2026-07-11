@@ -6,7 +6,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { useSessionState } from "../../../shared";
+import { MobileNavBurger, ResponsiveFilters, useSessionState } from "../../../shared";
 import { createStackingContext, getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type RefineVariant, type ReturnRatePreset, type StackedRefining, type Tier } from "../core";
 import { buildRefiningLiveSnapshot, DEFAULT_PRICE_BY_ITEM_ID, ENCHANTS, MATERIAL_BY_KEY, MATERIAL_DEFINITIONS, REFINE_VARIANTS, TIERS, isEnchantAvailable, rawItemIdFor, refinedItemIdFor } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
@@ -936,6 +936,7 @@ export function RefiningCalculatorPage() {
       {focusSpecsStatus ? <div className="rc-toast">{focusSpecsStatus}</div> : null}
 
       <header className="bm-header">
+        <MobileNavBurger accent="#2dd4bf" />
         <div className="bm-header-row">
           <div className="bm-brand">
             <div className="bm-brand-home">
@@ -1007,7 +1008,9 @@ export function RefiningCalculatorPage() {
             <span className="rc-arrow-glyph">v</span>
           </button>
         </div>
-        {isTopSectionExpanded ? priceControls : null}
+        <ResponsiveFilters accent="#2dd4bf">
+          {isTopSectionExpanded ? priceControls : null}
+        </ResponsiveFilters>
       </section>
 
       <main className="bm-main rc-main">

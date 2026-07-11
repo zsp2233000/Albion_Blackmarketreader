@@ -6,6 +6,7 @@ import {
   getBonusCityForItem,
   normalizeResultPriceEntry,
   productionBonusToReturnRate,
+  resolveArtefactPriceByCity,
   resolveBlackMarketPrice,
   resolveResultPrice
 } from "./craftingCalculator.logic";
@@ -104,6 +105,20 @@ describe("crafting calculator pricing helpers", () => {
       bm: 12569,
       sold: 206.8
     });
+  });
+});
+
+describe("resolveArtefactPriceByCity", () => {
+  it("prefers the chosen city, then ALL, then the cheapest listing anywhere", () => {
+    // exact city wins
+    expect(resolveArtefactPriceByCity({ Caerleon: 5000, Martlock: 4000 }, "Caerleon")).toBe(5000);
+    // city missing -> ALL
+    expect(resolveArtefactPriceByCity({ ALL: 4200, Martlock: 4500 }, "Caerleon")).toBe(4200);
+    // city + ALL missing -> cheapest anywhere (matches BM Crafter, never drops to 0)
+    expect(resolveArtefactPriceByCity({ Martlock: 4500, Thetford: 3900 }, "Caerleon")).toBe(3900);
+    // nothing listed
+    expect(resolveArtefactPriceByCity({}, "Caerleon")).toBe(0);
+    expect(resolveArtefactPriceByCity(undefined, "Caerleon")).toBe(0);
   });
 });
 

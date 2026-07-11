@@ -1090,3 +1090,28 @@
     text-align: left;
   }
 }
+
+/* Phone: refining controls move into the filter bottom-sheet; drop the collapsible top panel box. */
+@media (max-width: 640px) {
+  .rc-top-panel {
+    display: contents;
+  }
+  .rc-top-panel-header {
+    display: none;
+  }
+}
+.resp-filters-sheet-body .rc-filters-shell,
+.resp-filters-sheet-body .rc-filters {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+/* Wide material-price grid scrolls horizontally inside the sheet instead of overflowing. */
+.resp-filters-sheet-body .rc-price-editor {
+  overflow-x: auto;
+}
+.resp-filters-sheet-body .rc-tab-nav {
+  flex-wrap: wrap;
+}

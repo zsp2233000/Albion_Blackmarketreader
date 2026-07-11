@@ -1,0 +1,122 @@
+/* Always fully styled; visibility is toggled per breakpoint below so the same look applies
+   whether shown on phone (≤640, all tools) or portrait tablet (641–768, crafting-tools header). */
+.mnav-burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 10px;
+  left: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--tool-accent, #d4af37) 30%, transparent);
+  background: color-mix(in srgb, var(--tool-accent, #d4af37) 15%, rgba(16, 18, 23, 0.92));
+  color: color-mix(in srgb, var(--tool-accent, #d4af37) 85%, #e8e6e0);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  z-index: 1500;
+}
+
+.mnav-burger:active {
+  transform: scale(0.94);
+}
+
+/* Phone: burger on every tool. */
+@media (max-width: 640px) {
+  .mnav-burger {
+    display: flex;
+  }
+}
+
+/* Portrait tablet: only the crafting-tools header (its inline switcher doesn't fit); the
+   dashboard header already fits at this width, so its burger stays hidden. */
+@media (min-width: 641px) and (max-width: 768px) {
+  .bm-header .mnav-burger {
+    display: flex;
+  }
+}
+
+.mnav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 2100;
+  display: flex;
+}
+
+.mnav-drawer {
+  width: min(84vw, 320px);
+  height: 100%;
+  color: #e8e6e0;
+  /* Match the account panel's premium look. */
+  background:
+    radial-gradient(circle at 20% 20%, rgba(92, 240, 200, 0.12), transparent 45%),
+    radial-gradient(circle at 80% 30%, rgba(125, 211, 255, 0.12), transparent 50%),
+    linear-gradient(180deg, #0f1624, #0a0f18);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 24px 0 60px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+  animation: mnav-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes mnav-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.mnav-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 12px;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: #f1f5f9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 4px;
+}
+
+.mnav-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0 4px;
+}
+
+/* Tool entries as rounded cards, styled like the account panel's items. One consistent accent
+   (mint, matching the account panel) — no per-tool rainbow. */
+.mnav-item {
+  display: block;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 14px;
+  background: rgba(5, 8, 12, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #dbe4ef;
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.mnav-item:hover,
+.mnav-item:active {
+  transform: translateY(-1px);
+  border-color: rgba(92, 240, 200, 0.5);
+  box-shadow: 0 6px 16px rgba(92, 240, 200, 0.18);
+}
+
+.mnav-item.active {
+  color: #5cf0c8;
+  background: rgba(92, 240, 200, 0.14);
+  border-color: rgba(92, 240, 200, 0.55);
+  box-shadow: 0 0 18px rgba(92, 240, 200, 0.2);
+}

@@ -1653,3 +1653,130 @@ body.panel-open::before {
   white-space: nowrap;
   border: 0;
 }
+
+/* ---- Shared phone + tablet-portrait header (placed last so it wins over base .account-wrap
+   rules). Extends to 768px because the inline tool-switcher strip (~850px) does not fit a
+   portrait tablet either — the burger replaces it up to that width. ---- */
+@media (max-width: 768px) {
+  /* The tool switcher scrolls only if every flex ancestor can shrink below content (min-width:0). */
+  .bm-header {
+    overflow: hidden;
+  }
+  /* Region/status nudged right so they don't sit under the fixed burger. */
+  .bm-header .bm-meta {
+    padding-left: 46px;
+  }
+  .bm-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    min-width: 0;
+  }
+  .bm-brand {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    min-width: 0;
+  }
+  /* Title sits centered between the fixed burger (left) and account (right). */
+  .bm-brand-home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 0 44px;
+  }
+  /* Drop the small logo on phones so the title itself is truly centered. */
+  .bm-brand-home .bm-logo {
+    display: none;
+  }
+  .bm-brand-home h1 {
+    text-align: center;
+  }
+  .bm-brand h1 {
+    font-size: 15px;
+    line-height: 1.15;
+  }
+  /* Tool switching moves into the top-left burger menu on phones; hide the inline strip. */
+  .bm-nav.bm-nav-switch {
+    display: none;
+  }
+  /* Region + last-updated side by side to save vertical space. */
+  .bm-meta {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+    padding-right: 0;
+  }
+  .bm-meta .bm-pill {
+    flex: 0 0 auto;
+  }
+  .bm-meta .bm-status {
+    min-width: 0;
+    font-size: 9px;
+    padding: 5px 10px;
+  }
+  /* Account button pinned top-right, out of the header flow. Scoped to .bm-header so it beats
+     the base .account-wrap rules from other tool stylesheets loaded later in the cascade. */
+  .bm-header .account-wrap {
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 1500;
+    margin: 0;
+  }
+  .bm-header .account-btn {
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* BM Crafter filters inside the mobile bottom-sheet: strip the sticky bar styling + stack. */
+.resp-filters-sheet-body .bm-filters {
+  position: static;
+  top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.resp-filters-sheet-body .bm-filters .chip-row,
+.resp-filters-sheet-body .bm-filters .chip-toggle {
+  flex-wrap: wrap;
+}
+
+/* Phone: nudge region/status right so they don't sit directly under the burger. */
+@media (max-width: 640px) {
+  .bm-header .bm-meta {
+    padding-left: 46px;
+  }
+  /* Account slide-in panel: scale contents down (they were desktop-sized). */
+  .account-panel {
+    width: min(86vw, 340px);
+    padding: 18px 16px;
+    gap: 16px;
+  }
+  .account-panel .avatar-ring {
+    width: 52px;
+    height: 52px;
+  }
+  .account-panel .btn {
+    padding: 11px;
+    font-size: 10px;
+  }
+  .account-panel .avatar-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  .account-panel .avatar-grid img {
+    width: 38px;
+    height: 38px;
+  }
+}

@@ -6,7 +6,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import { SeoHeading } from "../../shared/seo/SeoHeading";
-import { JournalControls, professionForItem, resolveJournalProfit, useJournals, useSessionState } from "../../shared";
+import { JournalControls, MobileNavBurger, professionForItem, resolveJournalProfit, useJournals, useSessionState } from "../../shared";
 import "../bm-crafter/ui/bmCrafter.css";
 import "./craftingCalculator.css";
 import {
@@ -32,6 +32,10 @@ import {
 import { useCraftingSpecs } from "./specs/useCraftingSpecs";
 
 type MarketRegion = "eu" | "us";
+
+// The Crafting Calculator shows one item, whose single journal always applies — no per-profession
+// opt-out (unlike nothing; matches the BM Crafter which also counts all). Ownership is always on.
+const ALL_JOURNALS_OWNED = { warrior: true, hunter: true, mage: true, toolmaker: true } as const;
 
 type UserState = {
   id: string;
@@ -701,8 +705,10 @@ export function CraftingCalculatorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Deep-link from the BM Crafter: pre-fill sell city, craft city and tier/enchant row.
+  // Deep-link from the BM Crafter: pre-fill region, sell city, craft city and tier/enchant row.
   useEffect(() => {
+    const rg = searchParams.get("region");
+    if (rg === "eu" || rg === "us") setRegion(rg); // match the region whose BM prices were shown
     if (searchParams.get("sell") === "bm") setSellCity("Black Market");
     const cc = searchParams.get("craftCity");
     if (cc && (CITY_FILTER_OPTIONS as readonly string[]).includes(cc)) setCraftCity(cc);
@@ -932,7 +938,11 @@ export function CraftingCalculatorPage() {
   }, [selectedItem, materialPriceMap, craftCity]);
 
   useEffect(() => {
-    if (!selectedItem || !resultsItems.length) return;
+    // Black Market prices come from bmSellByItemId, not resultsItems, so don't block on the latter
+    // being loaded when selling to the Black Market (that left BM sell prices at 0 until/if the
+    // city-price dataset finished loading).
+    if (!selectedItem) return;
+    if (!isBlackMarketSell && !resultsItems.length) return;
 
     setRowEdits((prev) => {
       const next = { ...prev };
@@ -1015,12 +1025,14 @@ export function CraftingCalculatorPage() {
           city: craftCity
         },
         journals.enabled,
-        journals.owned,
+        // The single item's own journal always applies here (no per-profession opt-out in the
+        // Crafting Calculator), so ownership is always true — the on/off toggle alone gates it.
+        ALL_JOURNALS_OWNED,
         journals.data
       );
       return jr?.journalProfit ?? 0;
     },
-    [journals.enabled, journals.owned, journals.data, selectedItem, totalResourceCount, craftCity]
+    [journals.enabled, journals.data, selectedItem, totalResourceCount, craftCity]
   );
 
   const totals = useMemo(() => {
@@ -1245,6 +1257,7 @@ export function CraftingCalculatorPage() {
       </div>
 
       <header className="bm-header">
+        <MobileNavBurger accent="#5cf0c8" />
         <div className="bm-header-row">
           <div className="bm-brand">
             <div className="bm-brand-home">
@@ -1663,6 +1676,7 @@ export function CraftingCalculatorPage() {
                 data={journals.data}
                 city={craftCity}
                 onlyProfession={selectedItem ? professionForItem(selectedItem.categoryKey, selectedItem.id) : null}
+                showOwnership={false}
               />
             </div>
 

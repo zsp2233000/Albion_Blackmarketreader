@@ -231,13 +231,21 @@ export function resolvePriceByCity(prices: Record<string, number> | undefined, c
 
 export function resolveArtefactPriceByCity(prices: Record<string, number> | undefined, city: string): number {
   if (!prices) return 0;
+  const cheapestAnywhere = () => {
+    const values = [...KNOWN_CITIES, "ALL"].map((name) => Number(prices[name] || 0)).filter((value) => value > 0);
+    return values.length ? Math.min(...values) : 0;
+  };
   if (city !== "ALL") {
     const strict = Number(prices[city] || 0);
     if (strict > 0) return strict;
-    return Number(prices.ALL || 0);
+    const all = Number(prices.ALL || 0);
+    if (all > 0) return all;
+    // Artefacts are often not listed in every city (e.g. Caerleon). Fall back to the cheapest
+    // listing anywhere so the craft cost matches the BM Crafter (which uses a global price)
+    // instead of dropping the artefact price to 0.
+    return cheapestAnywhere();
   }
-  const values = [...KNOWN_CITIES, "ALL"].map((name) => Number(prices[name] || 0)).filter((value) => value > 0);
-  return values.length ? Math.min(...values) : 0;
+  return cheapestAnywhere();
 }
 
 export function resolveResultPrice(entries: ResultPriceEntry[], city: string): number {

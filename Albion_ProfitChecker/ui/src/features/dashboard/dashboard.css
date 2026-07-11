@@ -2913,3 +2913,164 @@ body.dashboard-body.panel-open::before {
   color: var(--text-muted, #8ea3b9);
   opacity: 0.85;
 }
+
+/* Phone: declutter the dashboard + center the title between the fixed burger and account. */
+@media (max-width: 640px) {
+  .topbar-logo {
+    display: none;
+  }
+  .topbar-brand {
+    flex: 1;
+    justify-content: center;
+    padding: 0 44px;
+  }
+  .topbar-title {
+    text-align: center;
+  }
+  /* Remove the marketing hero, extra KPI tiles, chart and crafting-tools promo to save space. */
+  .dash-hero {
+    display: none;
+  }
+  .kpi-row {
+    grid-template-columns: 1fr;
+  }
+  .kpi-row .kpi-card:nth-child(n + 2) {
+    display: none;
+  }
+  .chart-panel,
+  .premium-panel {
+    display: none;
+  }
+  .chart-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dashboard filters inside the mobile bottom-sheet: strip panel chrome + stack controls. */
+.resp-filters-sheet-body .filters-wrap {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.resp-filters-sheet-body .filters-bar,
+.resp-filters-sheet-body .filters-right {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  width: 100%;
+}
+.resp-filters-sheet-body .tier-filters {
+  flex-wrap: wrap;
+}
+
+/* Phone: content sat under the fixed topbar after the hero was hidden — restore clearance,
+   force full-width deal cards, and scale the account panel down. */
+@media (max-width: 640px) {
+  .dash-main {
+    padding-top: 68px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .account-panel {
+    width: min(88vw, 340px);
+    right: -100%;
+    padding: 18px 16px;
+    gap: 16px;
+  }
+  .account-panel.open {
+    right: 0;
+  }
+  .account-panel .avatar-ring {
+    width: 52px;
+    height: 52px;
+  }
+  .account-panel .btn {
+    padding: 11px;
+    font-size: 10px;
+  }
+  .account-panel .avatar-grid img {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* Phone overrides: align the KPI/city tiles full-width like the deal cards, and shrink the
+   account panel (esp. the avatar picker, whose base rule forces width:100% per cell). */
+@media (max-width: 640px) {
+  .kpi-row {
+    grid-template-columns: 1fr !important;
+  }
+  .kpi-card {
+    width: 100%;
+  }
+  .side-stack,
+  .side-stack .side-card,
+  .city-panel {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  .account-panel .avatar-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 8px !important;
+  }
+  .account-panel h2,
+  .account-panel h4 {
+    font-size: 15px;
+  }
+  .account-panel .account-name {
+    font-size: 14px;
+  }
+  .account-panel .account-email {
+    font-size: 12px;
+  }
+}
+
+/* Phone: force the KPI + city/side tiles to true full-width (bypass every grid-track / max-width
+   override so they line up with the deal cards). Placed last to win the cascade. */
+@media (max-width: 640px) {
+  .kpi-row {
+    display: block !important;
+    overflow-x: visible !important;
+  }
+  /* Higher specificity beats the many single-class !important width rules. */
+  .kpi-row .kpi-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 12px !important;
+  }
+  /* Keep only Live Signals; the other three tiles stay hidden. */
+  .kpi-row .kpi-card:nth-child(n + 2) {
+    display: none !important;
+  }
+  .chart-layout {
+    display: block !important;
+  }
+  .side-stack,
+  .side-stack .side-card,
+  .city-panel {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+/* Root cause of the "everything shifted left": body is a centered flex row, so its flex child
+   sized to content (~231px) instead of filling. Drop the flex centering on phones + force the
+   dashboard containers full width. */
+@media (max-width: 640px) {
+  body.dashboard-body {
+    display: block !important;
+  }
+  body.dashboard-body > * {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .dashboard,
+  .dashboard .page {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

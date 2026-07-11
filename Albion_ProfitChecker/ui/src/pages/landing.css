@@ -1618,3 +1618,12 @@ body {
     letter-spacing: 0.1em;
   }
 }
+
+/* Portrait tablet: der JS-getriebene 3D-Tilt des Showcase-Mockups (inline transform, per
+   getBoundingClientRect ~17px über den Rand) bleibt erhalten — nur seine Section clippt den
+   Überstand weg. ≤640 und ≥769 unberührt. */
+@media (min-width: 641px) and (max-width: 768px) {
+  #platform-overview {
+    overflow-x: hidden;
+  }
+}

@@ -270,6 +270,64 @@ body.food-potion-crafter-body {
   .fp-summary-grid { grid-template-columns: 1fr; }
 }
 
+/* Portrait tablet: the 4-tab bar's 150px minimum (≈600px+padding) overflows a narrow tablet.
+   flex:0 0 auto sized it to max-content, so it also has to be allowed to shrink to the row.
+   ≤640 uses the 2-col layout. */
+@media (min-width: 641px) and (max-width: 768px) {
+  .fp-category-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+/* ---- Phone (≤640px) ---- */
+@media (max-width: 640px) {
+  /* 4-tab bar was a fixed 4×150px grid (min 600px) that forced horizontal overflow. */
+  .fp-category-tabs {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .fp-category-tab {
+    font-size: 11px;
+    padding: 8px 6px;
+    min-width: 0;
+  }
+  .fp-category-tab .material-symbols-outlined {
+    font-size: 15px;
+  }
+  .fp-category-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .fp-specs-trigger {
+    width: 100%;
+    justify-content: center;
+  }
+  /* Filters live in the bottom-sheet on phones: stack them full-width, no stray margins. */
+  .resp-filters-sheet-body .fp-controls {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+  .resp-filters-sheet-body .fp-filter-grid {
+    grid-template-columns: 1fr;
+    padding: 0;
+    gap: 14px;
+  }
+  .resp-filters-sheet-body .fp-field-wide {
+    grid-column: auto;
+  }
+  /* Scanner list: let the table scroll inside its own box, never the page. */
+  .fp-page .fp-main {
+    overflow: hidden;
+  }
+}
+
 .fp-recipe-picker {
   display: flex;
   flex-direction: column;

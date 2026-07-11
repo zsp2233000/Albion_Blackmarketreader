@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createAuthService, RegionService, assetUrl } from "@shared/index";
+import { createAuthService, RegionService, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState } from "@shared/index";
 import type { AuthService } from "@shared/index";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
@@ -582,19 +582,19 @@ export function DashboardPage() {
   const [user, setUser] = useState<UserState | null>(null);
 
   const [region, setRegion] = useState<Region>("us");
-  const [city, setCity] = useState<City>("ALL");
+  const [city, setCity] = useSessionState<City>("dash:city", "ALL");
   const [dataUpdatedIso, setDataUpdatedIso] = useState<string | null>(null);
-  const [tier, setTier] = useState("ALL");
-  const [minProfit, setMinProfit] = useState(0);
-  const [maxCost, setMaxCost] = useState<number | null>(null);
-  const [minProfitDraft, setMinProfitDraft] = useState("0");
-  const [maxCostDraft, setMaxCostDraft] = useState("");
-  const [sortBySilver, setSortBySilver] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [tier, setTier] = useSessionState("dash:tier", "ALL");
+  const [minProfit, setMinProfit] = useSessionState("dash:minProfit", 0);
+  const [maxCost, setMaxCost] = useSessionState<number | null>("dash:maxCost", null);
+  const [minProfitDraft, setMinProfitDraft] = useSessionState("dash:minProfitDraft", "0");
+  const [maxCostDraft, setMaxCostDraft] = useSessionState("dash:maxCostDraft", "");
+  const [sortBySilver, setSortBySilver] = useSessionState("dash:sortBySilver", false);
+  const [searchTerm, setSearchTerm] = useSessionState("dash:searchTerm", "");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ResultItem[]>([]);
   const [history, setHistory] = useState<Record<string, unknown> | null>(null);
-  const [range, setRange] = useState<Range>("1W");
+  const [range, setRange] = useSessionState<Range>("dash:range", "1W");
   const [showRegionModal, setShowRegionModal] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
@@ -1120,6 +1120,7 @@ export function DashboardPage() {
       </aside>
 
       <header className={`topbar ${topbarHidden ? "topbar-hidden" : ""}`}>
+        <MobileNavBurger accent="#5cf0c8" />
         <a className="topbar-brand" href="/">
           <img src={assetUrl("picture/testo ohne background.png")} alt="Logo" className="topbar-logo" />
           <span className="topbar-title">RomulusKings Market Reader</span>
@@ -1352,6 +1353,7 @@ export function DashboardPage() {
         <div className="chart-divider" />
 
         <section className="cards-section">
+          <ResponsiveFilters accent="#5cf0c8">
           <div className="filters-wrap">
             <div className="filters-intro">
               <span className="filters-kicker">Signal Filters</span>
@@ -1382,6 +1384,7 @@ export function DashboardPage() {
               </div>
             </div>
           </div>
+          </ResponsiveFilters>
         </section>
 
         {loading ? <div className="loading">Loading data...</div> : null}

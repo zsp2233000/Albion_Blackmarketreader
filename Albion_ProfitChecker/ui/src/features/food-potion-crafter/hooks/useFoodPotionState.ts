@@ -23,8 +23,11 @@ export function useFoodPotionState(
   const [selectedTier, setSelectedTier] = useSessionState<number | null>("fp:selectedTier", null);
   const [searchTerm, setSearchTerm] = useSessionState("fp:searchTerm", "");
   const [craftCity, setCraftCity] = useSessionState<City>("fp:craftCity", DEFAULT_CITY);
-  const [buyCity, setBuyCity] = useSessionState<City>("fp:buyCity", DEFAULT_CITY);
-  const [sellCity, setSellCity] = useSessionState<City>("fp:sellCity", DEFAULT_CITY);
+  // buyCity/sellCity are fixed at the default here: the page owns the real selectors, and
+  // deriveFoodPotionRows resolves prices from the pre-built priceByItemId (not from these), so
+  // they only satisfy the FoodPotionFilters shape and never change.
+  const buyCity: City = DEFAULT_CITY;
+  const sellCity: City = DEFAULT_CITY;
   const [stationKind, setStationKind] = useSessionState<StationKind>("fp:stationKind", "city");
   const [returnRatePreset, setReturnRatePreset] = useSessionState<ReturnRatePreset>("fp:returnRatePreset", "focus");
   const [customReturnRatePct, setCustomReturnRatePct] = useSessionState<number>("fp:customReturnRatePct", 43.5);
@@ -117,9 +120,7 @@ export function useFoodPotionState(
       craftCity,
       setCraftCity,
       buyCity,
-      setBuyCity,
       sellCity,
-      setSellCity,
       stationKind,
       setStationKind,
       returnRatePreset,

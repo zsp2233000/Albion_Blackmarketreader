@@ -6,6 +6,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
+import { MobileNavBurger, ResponsiveFilters, useSessionState } from "../../../shared";
 import type { City, ConsumableCategory, ConsumableRecipe, MarketRegion, RecipeIngredient } from "../core";
 import { buildConsumablePriceSnapshot, ingredientPricesPath, loadIngredients, loadRecipes, outputPricesPath } from "../data";
 import { deriveFoodPotionRows, useFoodPotionState } from "../hooks";
@@ -213,12 +214,12 @@ export function FoodPotionCrafterPage() {
   const [livePriceByItemId, setLivePriceByItemId] = useState<Record<string, number>>({});
   const [soldByItemId, setSoldByItemId] = useState<Record<string, number>>({});
   const [liveUpdatedIso, setLiveUpdatedIso] = useState<string | null>(null);
-  const [buyCity, setBuyCity] = useState<City>("Lymhurst");
-  const [sellCity, setSellCity] = useState<City>("Lymhurst");
-  const [mode, setMode] = useState<"scanner" | "crafter">("scanner");
-  const [selectedFamily, setSelectedFamily] = useState<string | null>(null);
+  const [buyCity, setBuyCity] = useSessionState<City>("fp:buyCity", "Lymhurst");
+  const [sellCity, setSellCity] = useSessionState<City>("fp:sellCity", "Lymhurst");
+  const [mode, setMode] = useSessionState<"scanner" | "crafter">("fp:mode", "scanner");
+  const [selectedFamily, setSelectedFamily] = useSessionState<string | null>("fp:selectedFamily", null);
   // Scanner enchant filter: "all" or a specific level (0 = base, 1/2/3 = enchanted).
-  const [scannerEnchant, setScannerEnchant] = useState<"all" | 0 | 1 | 2 | 3>("all");
+  const [scannerEnchant, setScannerEnchant] = useSessionState<"all" | 0 | 1 | 2 | 3>("fp:scannerEnchant", "all");
   const [showSpecsModal, setShowSpecsModal] = useState(false);
 
   // --- account ---
@@ -522,6 +523,7 @@ export function FoodPotionCrafterPage() {
         Calculate cooking and alchemy profit in Albion Online. Scan profitable food and potion recipes or enter your own ingredient prices — with return rate, station fees, focus, and all tiers shown per product.
       </SeoHeading>
       <header className="bm-header">
+        <MobileNavBurger accent="#4ade80" />
         <div className="bm-header-row">
           <div className="bm-brand">
             <div className="bm-brand-home">
@@ -631,6 +633,7 @@ export function FoodPotionCrafterPage() {
         </button>
       </div>
 
+      <ResponsiveFilters title="Filters" accent="#4ade80">
       <section className="fp-controls fp-controls-static">
         <div className="fp-filter-grid">
           <div className="fp-field">
@@ -726,6 +729,7 @@ export function FoodPotionCrafterPage() {
           ) : null}
         </div>
       </section>
+      </ResponsiveFilters>
 
       <main className={`bm-main rc-main fp-main fp-main-${mode}`}>
         {mode === "scanner" ? (

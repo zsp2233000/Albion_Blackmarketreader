@@ -6,7 +6,7 @@ import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { JournalControls, useJournals } from "../../../shared";
+import { JournalControls, MobileNavBurger, ResponsiveFilters, useJournals } from "../../../shared";
 import {
   buildArtefactId,
   buildMaterialId,
@@ -127,10 +127,12 @@ export function BmCrafterPage() {
       tier: String(tier ?? 4),
       enchant: String(enchant),
       sell: "bm",
-      craftCity: filters.craftCity
+      craftCity: filters.craftCity,
+      // Carry the region so the Crafting Calculator loads the same Black Market prices we showed.
+      region
     });
     navigate(`/crafting-calculator?${params.toString()}`);
-  }, [navigate, filters.craftCity]);
+  }, [navigate, filters.craftCity, region]);
 
   const [authService, setAuthService] = useState<AuthService | null>(null);
   const [user, setUser] = useState<UserState | null>(null);
@@ -419,6 +421,7 @@ export function BmCrafterPage() {
       </div>
 
       <header className="bm-header">
+        <MobileNavBurger accent="#2dd4bf" />
         <div className="bm-header-row">
           <div className="bm-brand">
             <div className="bm-brand-home">
@@ -517,6 +520,7 @@ export function BmCrafterPage() {
         </div>
       </div>
 
+      <ResponsiveFilters accent="#2dd4bf">
       <section className="bm-filters">
         <div className="filter-block">
           <p>Item Tiers</p>
@@ -692,6 +696,7 @@ export function BmCrafterPage() {
           </div>
         </div>
       </section>
+      </ResponsiveFilters>
 
       <main className="bm-main">
         <section className="bm-table">
@@ -723,8 +728,9 @@ export function BmCrafterPage() {
                     <tr
                       key={row.rowKey}
                       className={`high-density-row bm-clickable-row ${idx % 2 === 1 ? "alt" : ""} ${suspect ? "bm-suspect-row" : ""}`}
-                      title="Open in Crafting Calculator (sell to Black Market)"
+                      title="Click: open in Crafting Calculator · Right-click: show craft details here"
                       onClick={() => { setSelectedRowKey(row.rowKey); openInCraftingCalculator(row.item.id); }}
+                      onContextMenu={(e) => { e.preventDefault(); setSelectedRowKey(row.rowKey); }}
                     >
                       <td>
                         <div className="item">
