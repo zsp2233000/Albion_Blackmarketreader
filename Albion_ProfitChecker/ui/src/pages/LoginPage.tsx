@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { assetUrl, createAuthService } from "@shared/index";
+import { assetUrl, createAuthService, enterGuest, exitGuest } from "@shared/index";
 import type { AuthService } from "@shared/index";
 import "./login.css";
 
@@ -110,6 +110,7 @@ export function LoginPage() {
         setCheckingSession(false);
         return;
       }
+      exitGuest(); // a real (incl. OAuth) session supersedes any guest flag
       navigateToInternalPath(nextPath);
     })();
     return () => {
@@ -122,6 +123,7 @@ export function LoginPage() {
     setAuthError("");
     try {
       await authService.signInWithPassword(authEmail.trim(), authPassword.trim());
+      exitGuest(); // a real session supersedes any guest flag
 
       let sessionReady = false;
       for (let i = 0; i < 34; i += 1) {
@@ -227,6 +229,11 @@ export function LoginPage() {
     });
   }
 
+  function onGuest() {
+    enterGuest();
+    navigateToInternalPath(nextPath);
+  }
+
   return (
     <div className="login-page">
       <div className="login-bg" />
@@ -251,6 +258,10 @@ export function LoginPage() {
                 <button className="ghost btn-google" onClick={onGoogle}>
                   <img src={assetUrl("picture/Googleicon.png")} alt="Google Login" />
                 </button>
+              </div>
+              <div className="auth-guest-row">
+                <button type="button" className="auth-guest-link" onClick={onGuest}>Continue as guest</button>
+                <span className="auth-guest-note">Test without an account · settings stay on this device only</span>
               </div>
               <p className="auth-hint">Please confirm your email before logging in.</p>
             </>

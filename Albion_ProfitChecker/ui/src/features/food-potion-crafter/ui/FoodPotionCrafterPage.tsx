@@ -2,11 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { assetUrl, onItemIconError } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
+import { isGuest, buildGuestProfile, exitGuest } from "@shared/auth/guestMode";
 import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { MobileNavBurger, ResponsiveFilters, useSessionState } from "../../../shared";
+import { MobileNavBurger, ResponsiveFilters, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
 import type { City, ConsumableCategory, ConsumableRecipe, MarketRegion, RecipeIngredient } from "../core";
 import { buildConsumablePriceSnapshot, ingredientPricesPath, loadIngredients, loadRecipes, outputPricesPath } from "../data";
 import { deriveFoodPotionRows, useFoodPotionState } from "../hooks";
@@ -268,10 +269,23 @@ export function FoodPotionCrafterPage() {
       const session = await authService.getSession().catch(() => null);
       if (cancelled) return;
       if (!session) {
+        if (isGuest()) {
+          const guest = buildGuestProfile();
+          const guestRegion = guest.region === "eu" || guest.region === "us" ? (guest.region as MarketRegion) : null;
+          setUser({
+            id: guest.id,
+            email: guest.email,
+            avatar: sanitizeAvatarUrl(guest.avatar || localStorage.getItem("avatar")),
+            region: guestRegion,
+          });
+          if (guestRegion) setRegion(guestRegion);
+          return;
+        }
         const next = encodeURIComponent(window.location.pathname || "/food-potion-crafter");
         window.location.href = `/login?next=${next}`;
         return;
       }
+      exitGuest(); // real session supersedes any stale guest flag (prevents guest UI while logged in)
       const profile = await authService.getUserProfile().catch(() => null);
       if (cancelled || !profile) return;
       if (!profile.emailConfirmed) {
@@ -375,6 +389,10 @@ export function FoodPotionCrafterPage() {
   }, [authService, user]);
 
   const onLogout = useCallback(async () => {
+    if (isGuest()) {
+      exitGuestToLogin();
+      return;
+    }
     if (authService) await authService.signOut().catch(() => undefined);
     setUser(null);
     setShowAccount(false);
@@ -561,12 +579,18 @@ export function FoodPotionCrafterPage() {
               <span className="status-dot" aria-hidden="true"></span>
             </div>
             <div className="user-info">
-              <span className="email">{user.email || "-"}</span>
-              <span className="status">Logged in</span>
-              <div className="badge-row">
-                <span className="badge-chip">Active</span>
-                <span className="badge-chip muted">Secure</span>
-              </div>
+              {isGuest() ? (
+                <GuestSignInLink />
+              ) : (
+                <>
+                  <span className="email">{user.email || "-"}</span>
+                  <span className="status">Logged in</span>
+                  <div className="badge-row">
+                    <span className="badge-chip">Active</span>
+                    <span className="badge-chip muted">Secure</span>
+                  </div>
+                </>
+              )}
             </div>
             <button className="close-btn" aria-label="Close" onClick={() => setShowAccount(false)}>X</button>
           </div>
@@ -589,8 +613,10 @@ export function FoodPotionCrafterPage() {
           </div>
 
           <div className="account-actions">
-            <button className="btn primary" onClick={onResetPassword}>{accountActionMsg === "Email sent" ? "Email sent" : "Change password"}</button>
-            <button className="btn danger" onClick={onLogout}>Logout</button>
+            {!isGuest() && (
+              <button className="btn primary" onClick={onResetPassword}>{accountActionMsg === "Email sent" ? "Email sent" : "Change password"}</button>
+            )}
+            <button className="btn danger" onClick={onLogout}>{isGuest() ? "Exit guest mode" : "Logout"}</button>
           </div>
 
           <div className="account-help">
@@ -974,6 +1000,7 @@ export function FoodPotionCrafterPage() {
         progress={specsState.progress}
         activeFamily={activeSpecFamily}
         pendingSync={specsState.pendingSync}
+        readOnly={isGuest()}
         onMastery={specsState.setMastery}
         onSpec={specsState.setSpec}
         onReset={specsState.resetCategory}

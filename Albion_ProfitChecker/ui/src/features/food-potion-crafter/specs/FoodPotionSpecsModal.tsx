@@ -17,6 +17,7 @@ interface Props {
   progress: CraftingProgress;
   activeFamily: string | null;
   pendingSync?: boolean;
+  readOnly?: boolean;
   onMastery: (category: ConsumableCategory, level: number) => void;
   onSpec: (category: ConsumableCategory, familyKey: string, level: number) => void;
   onReset: (category: ConsumableCategory) => void;
@@ -49,7 +50,7 @@ function SliderLine({ level, label, accent, onChange }: { level: number; label: 
   );
 }
 
-export function FoodPotionSpecsModal({ open, category, progress, activeFamily, pendingSync = false, onMastery, onSpec, onReset, onClose }: Props) {
+export function FoodPotionSpecsModal({ open, category, progress, activeFamily, pendingSync = false, readOnly = false, onMastery, onSpec, onReset, onClose }: Props) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -68,6 +69,23 @@ export function FoodPotionSpecsModal({ open, category, progress, activeFamily, p
   return (
     <div className="fps-overlay" onClick={onClose}>
       <div className="fps-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        {readOnly ? (
+          <div className="fps-readonly-note">
+            Guest mode · specs are read-only.{" "}
+            <a
+              href="/login"
+              className="guest-signin-anchor"
+              onClick={(e) => {
+                e.preventDefault();
+                const next = encodeURIComponent(window.location.pathname || "/food-potion-crafter");
+                window.location.href = `/login?next=${next}`;
+              }}
+            >
+              Sign in
+            </a>{" "}
+            to edit.
+          </div>
+        ) : null}
         <header className="fps-header">
           <div>
             <h3>{stationLabel} Specializations</h3>
@@ -85,7 +103,7 @@ export function FoodPotionSpecsModal({ open, category, progress, activeFamily, p
           <div><span>Active Family</span><strong>{activeFamily ? families.find((f) => f.key === activeFamily)?.label ?? "—" : "—"}</strong></div>
         </div>
 
-        <div className="fps-body">
+        <div className={`fps-body ${readOnly ? "readonly" : ""}`}>
           <div className="fps-mastery">
             <SliderLine level={cat.mastery} label={`${stationLabel} Mastery`} accent={false} onChange={(n) => onMastery(category, n)} />
           </div>
@@ -103,7 +121,7 @@ export function FoodPotionSpecsModal({ open, category, progress, activeFamily, p
         </div>
 
         <footer className="fps-footer">
-          <button type="button" className="fps-btn ghost" onClick={() => onReset(category)}>Reset {stationLabel}</button>
+          <button type="button" className="fps-btn ghost" onClick={() => onReset(category)} disabled={readOnly}>Reset {stationLabel}</button>
           <button type="button" className="fps-btn primary" onClick={onClose}>Done</button>
         </footer>
       </div>

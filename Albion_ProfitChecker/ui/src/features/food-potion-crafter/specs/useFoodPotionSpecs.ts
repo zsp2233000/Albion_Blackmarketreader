@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AuthService } from "@shared/auth/authService";
+import { isGuest } from "@shared/auth/guestMode";
 import type { ConsumableCategory } from "../core";
 import { clampSpecLevel, normalizeProgress } from "./data";
 import type { CraftingProgress } from "./data";
@@ -103,6 +104,7 @@ export function useFoodPotionSpecs(authService: AuthService | null, enabled: boo
 
   const scheduleSave = useCallback(
     (next: CraftingProgress) => {
+      if (isGuest()) return; // guests don't persist specs (read-only); UI is disabled too
       writeToStorage(next);
       channelRef.current?.postMessage({ type: "progress", value: next });
       if (!authService) return;

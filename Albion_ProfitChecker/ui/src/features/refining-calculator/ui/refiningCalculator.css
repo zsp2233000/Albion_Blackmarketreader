@@ -644,6 +644,30 @@
   text-align: left;
 }
 
+.rc-focus-readonly-note {
+  text-align: center;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(253, 224, 71, 0.12);
+  border: 1px solid rgba(253, 224, 71, 0.3);
+  color: #f2e4ad;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.rc-focus-readonly-note .guest-signin-anchor {
+  color: #2dd4bf;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.rc-focus-table-wrap.readonly {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 .rc-focus-table-wrap {
   margin: 18px 0 18px;
   overflow-x: auto;

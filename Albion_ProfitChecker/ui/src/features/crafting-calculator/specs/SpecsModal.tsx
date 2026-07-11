@@ -27,6 +27,7 @@ interface SpecsModalProps {
   items: ReadonlyArray<ItemRef>;
   highlightedSpecKey?: string | null;
   pendingSync?: boolean;
+  readOnly?: boolean;
   onChange: (specKey: string, level: number) => void;
   onMasteryChange: (groupKey: string, level: number) => void;
   onReset: () => void;
@@ -53,6 +54,7 @@ export function SpecsModal({
   items,
   highlightedSpecKey,
   pendingSync = false,
+  readOnly = false,
   onChange,
   onMasteryChange,
   onReset,
@@ -138,6 +140,23 @@ export function SpecsModal({
   return (
     <div className={`modal-overlay specs-overlay ${open ? "open" : ""}`} aria-hidden={open ? "false" : "true"} onClick={onClose}>
       <div className="specs-modal" role="dialog" aria-modal="true" aria-labelledby="specsTitle" onClick={(event) => event.stopPropagation()}>
+        {readOnly ? (
+          <div className="specs-readonly-note">
+            Guest mode · specs are read-only.{" "}
+            <a
+              href="/login"
+              className="guest-signin-anchor"
+              onClick={(e) => {
+                e.preventDefault();
+                const next = encodeURIComponent(window.location.pathname || "/crafting-calculator");
+                window.location.href = `/login?next=${next}`;
+              }}
+            >
+              Sign in
+            </a>{" "}
+            to edit.
+          </div>
+        ) : null}
         <header className="specs-header">
           <div>
             <h3 id="specsTitle">Crafting Specializations</h3>
@@ -195,7 +214,7 @@ export function SpecsModal({
           />
         </div>
 
-        <div className="specs-body">
+        <div className={`specs-body ${readOnly ? "readonly" : ""}`}>
           {filteredGroups.length === 0 ? (
             <div className="specs-empty">No items match.</div>
           ) : (
@@ -242,7 +261,7 @@ export function SpecsModal({
         </div>
 
         <footer className="specs-footer">
-          <button type="button" className="modal-btn ghost" onClick={onReset}>Reset all</button>
+          <button type="button" className="modal-btn ghost" onClick={onReset} disabled={readOnly}>Reset all</button>
           <button type="button" className="modal-btn primary" onClick={onClose}>Done</button>
         </footer>
       </div>

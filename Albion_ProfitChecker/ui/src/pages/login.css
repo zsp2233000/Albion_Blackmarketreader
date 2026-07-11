@@ -210,3 +210,33 @@ body.login-body {
       url("/picture/planeten-768.jpg");
   }
 }
+
+/* Guest entry: a plain hyperlink, not a button. */
+.login-page .auth-guest-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.login-page .auth-guest-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #7dd3ff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.login-page .auth-guest-link:hover {
+  color: #a7e3ff;
+}
+
+.login-page .auth-guest-note {
+  font-size: 11px;
+  color: #7c8698;
+  text-align: center;
+}

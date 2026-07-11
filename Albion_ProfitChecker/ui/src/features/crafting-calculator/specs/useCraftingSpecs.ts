@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AuthService } from "@shared/auth/authService";
+import { isGuest } from "@shared/auth/guestMode";
 import type { CraftingProgress } from "./types";
 import { clampSpecLevel, normalizeProgress } from "./data";
 
@@ -134,6 +135,7 @@ export function useCraftingSpecs({ authService, enabled }: UseCraftingSpecsOptio
 
   const scheduleSave = useCallback(
     (next: CraftingProgress) => {
+      if (isGuest()) return; // guests don't persist specs (read-only); UI is disabled too
       writeToStorage(next);
       channelRef.current?.postMessage({ type: "progress", value: next });
       if (!authService) return;

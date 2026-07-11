@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createAuthService, RegionService, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState } from "@shared/index";
+import { createAuthService, RegionService, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState, isGuest, buildGuestProfile, exitGuest, GuestSignInLink, exitGuestToLogin } from "@shared/index";
 import type { AuthService } from "@shared/index";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
@@ -724,10 +724,27 @@ export function DashboardPage() {
     (async () => {
       const session = await authService.getSession().catch(() => null);
       if (!session) {
+        if (isGuest()) {
+          const guest = buildGuestProfile();
+          const storedRegion = readStoredRegion();
+          const guestRegion = (storedRegion || guest.region || "us") as Region;
+          setUser({
+            id: guest.id,
+            email: guest.email,
+            avatar: sanitizeAvatarUrl(guest.avatar || localStorage.getItem("avatar")),
+            region: guestRegion
+          });
+          if (!guest.region && !storedRegion) {
+            setShowRegionModal(true);
+          }
+          regionService?.setRegion(guestRegion, { broadcast: false });
+          return;
+        }
         const next = encodeURIComponent(window.location.pathname || "/dashboard");
         window.location.href = `/login?next=${next}`;
         return;
       }
+      exitGuest(); // real session supersedes any stale guest flag (prevents guest UI while logged in)
       const profile = await authService.getUserProfile().catch(() => {
         const user = session.user;
         if (!user) return null;
@@ -993,6 +1010,10 @@ export function DashboardPage() {
   }
 
   async function onLogout() {
+    if (isGuest()) {
+      exitGuestToLogin();
+      return;
+    }
     if (!authService) return;
     await authService.signOut().catch(() => undefined);
     setUser(null);
@@ -1168,12 +1189,18 @@ export function DashboardPage() {
               <span className="status-dot" aria-hidden="true"></span>
             </div>
             <div className="user-info">
-              <span className="email">{user.email || "-"}</span>
-              <span className="status">Logged in</span>
-              <div className="badge-row">
-                <span className="badge-chip">Active</span>
-                <span className="badge-chip muted">Secure</span>
-              </div>
+              {isGuest() ? (
+                <GuestSignInLink />
+              ) : (
+                <>
+                  <span className="email">{user.email || "-"}</span>
+                  <span className="status">Logged in</span>
+                  <div className="badge-row">
+                    <span className="badge-chip">Active</span>
+                    <span className="badge-chip muted">Secure</span>
+                  </div>
+                </>
+              )}
             </div>
             <button className="close-btn" aria-label="Close" onClick={() => setShowAccount(false)}>X</button>
           </div>
@@ -1202,10 +1229,12 @@ export function DashboardPage() {
           </div>
 
           <div className="account-actions">
-            <button className="btn primary" onClick={onResetPassword}>
-              {accountActionMsg === "Email sent" ? "Email sent" : "Change password"}
-            </button>
-            <button className="btn danger" onClick={onLogout}>Logout</button>
+            {!isGuest() && (
+              <button className="btn primary" onClick={onResetPassword}>
+                {accountActionMsg === "Email sent" ? "Email sent" : "Change password"}
+              </button>
+            )}
+            <button className="btn danger" onClick={onLogout}>{isGuest() ? "Exit guest mode" : "Logout"}</button>
           </div>
 
           <div className="account-help">

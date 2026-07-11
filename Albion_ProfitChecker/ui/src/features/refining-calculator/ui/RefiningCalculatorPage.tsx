@@ -2,11 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
+import { isGuest, buildGuestProfile, exitGuest } from "@shared/auth/guestMode";
 import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { MobileNavBurger, ResponsiveFilters, useSessionState } from "../../../shared";
+import { MobileNavBurger, ResponsiveFilters, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
 import { createStackingContext, getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type RefineVariant, type ReturnRatePreset, type StackedRefining, type Tier } from "../core";
 import { buildRefiningLiveSnapshot, DEFAULT_PRICE_BY_ITEM_ID, ENCHANTS, MATERIAL_BY_KEY, MATERIAL_DEFINITIONS, REFINE_VARIANTS, TIERS, isEnchantAvailable, rawItemIdFor, refinedItemIdFor } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
@@ -401,10 +402,21 @@ export function RefiningCalculatorPage() {
       const session = await authService.getSession().catch(() => null);
       if (cancelled) return;
       if (!session) {
+        if (isGuest()) {
+          const guest = buildGuestProfile();
+          const guestRegion = readStoredRegion() || guest.region || "eu";
+          setUser({ id: guest.id, email: guest.email, avatar: sanitizeAvatarUrl(guest.avatar || localStorage.getItem("avatar")), region: guestRegion });
+          const guestSpecs = normalizeFocusSpecs(undefined);
+          setFocusSpecs(guestSpecs);
+          if (!showFocusSpecsRef.current) setFocusSpecsDraft(guestSpecs);
+          setRegion(guestRegion);
+          return;
+        }
         const next = encodeURIComponent(window.location.pathname || "/refining-calculator");
         window.location.href = `/login?next=${next}`;
         return;
       }
+      exitGuest(); // real session supersedes any stale guest flag (prevents guest UI while logged in)
       const profile = await authService.getUserProfile().catch(() => null);
       if (cancelled) return;
       if (!profile?.emailConfirmed) {
@@ -660,6 +672,7 @@ export function RefiningCalculatorPage() {
   }, []);
 
   const saveFocusSpecs = useCallback(async () => {
+    if (isGuest()) return; // guests can't persist specs (read-only)
     const validationError = getFocusSpecValidationError(focusSpecsDraft);
     if (validationError) {
       setFocusSpecsStatus(validationError);
@@ -849,6 +862,10 @@ export function RefiningCalculatorPage() {
   }
 
   async function onLogout() {
+    if (isGuest()) {
+      exitGuestToLogin();
+      return;
+    }
     if (!authService) return;
     await authService.signOut().catch(() => undefined);
     setUser(null);
@@ -876,9 +893,26 @@ export function RefiningCalculatorPage() {
       {showFocusSpecs ? (
         <div className="modal-overlay open" aria-hidden="false" onClick={() => setShowFocusSpecs(false)}>
           <div className="modal-card rc-focus-modal" role="dialog" aria-modal="true" aria-labelledby="focusSpecsTitle" onClick={(event) => event.stopPropagation()}>
+            {isGuest() ? (
+              <div className="rc-focus-readonly-note">
+                Guest mode · specs are read-only.{" "}
+                <a
+                  href="/login"
+                  className="guest-signin-anchor"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const next = encodeURIComponent(window.location.pathname || "/refining-calculator");
+                    window.location.href = `/login?next=${next}`;
+                  }}
+                >
+                  Sign in
+                </a>{" "}
+                to edit.
+              </div>
+            ) : null}
             <h3 id="focusSpecsTitle">Focus Specs</h3>
             <p>Enter your refining specs here. The result table automatically uses the matching material and tier for each row.</p>
-            <div className="rc-focus-table-wrap">
+            <div className={`rc-focus-table-wrap ${isGuest() ? "readonly" : ""}`}>
               <table className="rc-focus-table">
                 <thead>
                   <tr>
@@ -928,7 +962,7 @@ export function RefiningCalculatorPage() {
             {focusSpecsValidationError ? <p className="rc-focus-error">{focusSpecsValidationError}</p> : null}
             <div className="modal-actions">
               <button type="button" className="modal-btn ghost" onClick={() => setShowFocusSpecs(false)}>Cancel</button>
-              <button type="button" className="modal-btn primary" disabled={Boolean(focusSpecsValidationError)} onClick={() => void saveFocusSpecs()}>Save</button>
+              <button type="button" className="modal-btn primary" disabled={Boolean(focusSpecsValidationError) || isGuest()} onClick={() => void saveFocusSpecs()}>Save</button>
             </div>
           </div>
         </div>
@@ -969,7 +1003,7 @@ export function RefiningCalculatorPage() {
       <div ref={accountPanelRef} className={`account-panel ${showAccount ? "open" : ""}`} onClick={(event) => event.stopPropagation()}>
         <div className="account-header">
           <div className="avatar-ring"><img className="avatar-big" src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="Avatar" /><span className="status-dot" aria-hidden="true"></span></div>
-          <div className="user-info"><span className="email">{user?.email || "Guest"}</span><span className="status">{user ? "Logged in" : "No session"}</span></div>
+          <div className="user-info">{isGuest() ? <GuestSignInLink /> : <><span className="email">{user?.email || "Guest"}</span><span className="status">{user ? "Logged in" : "No session"}</span></>}</div>
           <button className="close-btn" aria-label="Close" onClick={() => setShowAccount(false)}>X</button>
         </div>
         <div className="panel-section">
@@ -981,7 +1015,9 @@ export function RefiningCalculatorPage() {
           <select className="city-select" value={region} onChange={(event) => void onRegionSave(event.target.value === "us" ? "us" : "eu")}><option value="us">America</option><option value="eu">Europe</option></select>
         </div>
         <div className="account-actions">
-          {user ? (
+          {isGuest() ? (
+            <button className="btn danger" onClick={() => void onLogout()}>Exit guest mode</button>
+          ) : user ? (
             <>
               <button className="btn primary" onClick={() => void onResetPassword()}>{accountActionMsg === "Email sent" ? "Email sent" : "Change password"}</button>
               <button className="btn danger" onClick={() => void onLogout()}>Logout</button>

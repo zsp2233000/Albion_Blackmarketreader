@@ -219,6 +219,30 @@
   padding: 14px 22px 12px;
 }
 
+/* Guest read-only: block spec edits but keep station/category browsing usable. */
+.specs-body.readonly {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.specs-readonly-note {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 11px 16px;
+  background: rgba(253, 224, 71, 0.12);
+  border-bottom: 1px solid rgba(253, 224, 71, 0.3);
+  color: #f2e4ad;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.specs-readonly-note .guest-signin-anchor {
+  color: #5cf0c8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
 .specs-footer {
   flex-shrink: 0;
   padding: 12px 22px;

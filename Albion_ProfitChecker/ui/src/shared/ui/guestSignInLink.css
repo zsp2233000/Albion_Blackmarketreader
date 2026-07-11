@@ -1,0 +1,17 @@
+.guest-signin-note {
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #9aa3b5;
+}
+
+.guest-signin-anchor {
+  color: #5cf0c8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.guest-signin-anchor:hover {
+  color: #7dd3ff;
+}
