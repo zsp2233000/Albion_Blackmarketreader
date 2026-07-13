@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T06:32:44.328Z",
+  "generatedAt": "2026-07-13T06:52:17.313Z",
   "region": "us",
   "cities": [
     "Lymhurst",
@@ -16,523 +16,577 @@
       "itemId": "T2_POTION_ENERGY",
       "tier": 2,
       "prices": {
-        "Lymhurst": 196,
-        "Martlock": 310,
+        "Lymhurst": 198,
+        "Martlock": 308,
         "Fort Sterling": 627,
-        "Thetford": 200,
-        "Bridgewatch": 186,
-        "Brecilien": 223
+        "Thetford": 167,
+        "Bridgewatch": 180,
+        "Caerleon": 200,
+        "Brecilien": 210
       },
-      "sold": 8867
+      "sold": 8892
     },
     {
       "itemId": "T2_POTION_HEAL",
       "tier": 2,
       "prices": {
-        "Lymhurst": 165,
-        "Martlock": 133,
-        "Fort Sterling": 131,
-        "Thetford": 102,
+        "Lymhurst": 196,
+        "Martlock": 166,
+        "Fort Sterling": 146,
+        "Thetford": 68,
+        "Bridgewatch": 249,
+        "Caerleon": 151,
         "Brecilien": 148
       },
-      "sold": 12596
+      "sold": 11887
     },
     {
       "itemId": "T3_POTION_ACID",
       "tier": 3,
       "prices": {
-        "Lymhurst": 5480,
-        "Fort Sterling": 5944,
-        "Thetford": 4994,
-        "Bridgewatch": 8500,
-        "Brecilien": 5393
+        "Lymhurst": 5473,
+        "Martlock": 5951,
+        "Fort Sterling": 5932,
+        "Bridgewatch": 5777,
+        "Caerleon": 7598,
+        "Brecilien": 5383
       },
-      "sold": 4711
+      "sold": 4691
     },
     {
       "itemId": "T3_POTION_MOB_RESET",
       "tier": 3,
       "prices": {
-        "Lymhurst": 7748,
-        "Martlock": 7834,
-        "Fort Sterling": 7500,
-        "Thetford": 7549,
-        "Bridgewatch": 9000,
-        "Caerleon": 8599,
-        "Brecilien": 5918
+        "Lymhurst": 7673,
+        "Martlock": 7814,
+        "Fort Sterling": 7197,
+        "Thetford": 7494,
+        "Bridgewatch": 7078,
+        "Caerleon": 8589,
+        "Brecilien": 5875
       },
-      "sold": 10012
+      "sold": 10953
     },
     {
       "itemId": "T3_POTION_CLEANSE2",
       "tier": 3,
       "prices": {
         "Lymhurst": 1092,
-        "Martlock": 1260,
-        "Fort Sterling": 1250,
-        "Thetford": 1580,
-        "Brecilien": 1954
+        "Fort Sterling": 1231,
+        "Thetford": 1584,
+        "Brecilien": 1661
       },
-      "sold": 683
+      "sold": 662
     },
     {
       "itemId": "T3_POTION_REVIVE",
       "tier": 3,
       "prices": {
-        "Lymhurst": 416,
-        "Martlock": 305,
-        "Fort Sterling": 322,
-        "Thetford": 494,
-        "Bridgewatch": 598,
-        "Caerleon": 235,
-        "Brecilien": 292
+        "Lymhurst": 461,
+        "Martlock": 299,
+        "Fort Sterling": 498,
+        "Thetford": 495,
+        "Bridgewatch": 478,
+        "Caerleon": 238,
+        "Brecilien": 315
       },
-      "sold": 32190
+      "sold": 31918
     },
     {
       "itemId": "T3_POTION_STONESKIN",
       "tier": 3,
       "prices": {
-        "Lymhurst": 524,
-        "Martlock": 486,
-        "Thetford": 506,
-        "Caerleon": 237,
-        "Brecilien": 280
+        "Lymhurst": 512,
+        "Martlock": 430,
+        "Fort Sterling": 442,
+        "Thetford": 492,
+        "Bridgewatch": 717,
+        "Caerleon": 229,
+        "Brecilien": 276
       },
-      "sold": 7359
+      "sold": 8650
     },
     {
       "itemId": "T3_POTION_SLOWFIELD",
       "tier": 3,
       "prices": {
-        "Lymhurst": 513,
-        "Martlock": 417,
-        "Thetford": 379,
+        "Lymhurst": 335,
+        "Fort Sterling": 420,
+        "Thetford": 367,
         "Bridgewatch": 267,
-        "Brecilien": 2189
+        "Caerleon": 269
       },
-      "sold": 9442
+      "sold": 8175
     },
     {
       "itemId": "T4_POTION_ENERGY",
       "tier": 4,
       "prices": {
-        "Lymhurst": 2109,
-        "Martlock": 2316,
-        "Fort Sterling": 2360,
-        "Thetford": 2010,
-        "Bridgewatch": 3100,
-        "Caerleon": 3709
+        "Lymhurst": 2101,
+        "Martlock": 2441,
+        "Fort Sterling": 2368,
+        "Thetford": 2384,
+        "Bridgewatch": 1939,
+        "Caerleon": 3712,
+        "Brecilien": 1980
       },
-      "sold": 15774
+      "sold": 15276
     },
     {
       "itemId": "T4_POTION_HEAL",
       "tier": 4,
       "prices": {
-        "Martlock": 1777,
-        "Bridgewatch": 1648,
-        "Caerleon": 1590
+        "Lymhurst": 1390,
+        "Martlock": 1789,
+        "Bridgewatch": 1680,
+        "Caerleon": 1548,
+        "Brecilien": 1563
       },
-      "sold": 12046
+      "sold": 11692
     },
     {
       "itemId": "T4_POTION_BERSERK",
       "tier": 4,
       "prices": {
-        "Lymhurst": 1770,
-        "Martlock": 2441,
-        "Fort Sterling": 1356,
-        "Thetford": 2999,
-        "Bridgewatch": 3635,
-        "Brecilien": 2186
+        "Martlock": 2432,
+        "Fort Sterling": 1357,
+        "Caerleon": 2792,
+        "Brecilien": 2185
       },
-      "sold": 1492
+      "sold": 1444
     },
     {
       "itemId": "T4_POTION_GATHER",
       "tier": 4,
       "prices": {
-        "Martlock": 3987,
-        "Thetford": 8949,
-        "Brecilien": 2491
+        "Lymhurst": 3798,
+        "Martlock": 3955,
+        "Fort Sterling": 2336,
+        "Thetford": 5475,
+        "Bridgewatch": 3969,
+        "Caerleon": 4000,
+        "Brecilien": 3267
       },
-      "sold": 4952
+      "sold": 5546
     },
     {
       "itemId": "T4_POTION_LAVA",
       "tier": 4,
       "prices": {
-        "Lymhurst": 3752,
-        "Fort Sterling": 3797,
-        "Thetford": 3438,
-        "Caerleon": 4230,
-        "Brecilien": 3336
+        "Lymhurst": 3863,
+        "Martlock": 3600,
+        "Fort Sterling": 3822,
+        "Thetford": 3386,
+        "Bridgewatch": 3611,
+        "Caerleon": 179989,
+        "Brecilien": 3320
       },
-      "sold": 5127
+      "sold": 6822
     },
     {
       "itemId": "T4_POTION_COOLDOWN",
       "tier": 4,
       "prices": {
-        "Lymhurst": 6000,
-        "Martlock": 613,
-        "Fort Sterling": 629,
-        "Thetford": 654,
-        "Bridgewatch": 2222,
-        "Caerleon": 521,
-        "Brecilien": 524
+        "Lymhurst": 699,
+        "Martlock": 649,
+        "Fort Sterling": 645,
+        "Thetford": 660,
+        "Bridgewatch": 963,
+        "Caerleon": 503,
+        "Brecilien": 513
       },
-      "sold": 114963
+      "sold": 117860
     },
     {
       "itemId": "T4_POTION_TORNADO",
       "tier": 4,
       "prices": {
-        "Lymhurst": 2005,
-        "Martlock": 1973,
-        "Fort Sterling": 1973,
-        "Bridgewatch": 1983,
-        "Caerleon": 4216,
-        "Brecilien": 1496
+        "Lymhurst": 2048,
+        "Fort Sterling": 1988,
+        "Bridgewatch": 1994,
+        "Caerleon": 3978,
+        "Brecilien": 1900
       },
-      "sold": 6690
+      "sold": 6213
     },
     {
       "itemId": "T5_POTION_ACID",
       "tier": 5,
       "prices": {
-        "Lymhurst": 10598,
-        "Caerleon": 24999,
-        "Brecilien": 9895
+        "Lymhurst": 10581,
+        "Martlock": 12499,
+        "Fort Sterling": 7593,
+        "Thetford": 7700,
+        "Bridgewatch": 11790,
+        "Caerleon": 24494,
+        "Brecilien": 9894
       },
-      "sold": 3097
+      "sold": 3207
     },
     {
       "itemId": "T5_POTION_MOB_RESET",
       "tier": 5,
       "prices": {
-        "Lymhurst": 13991,
-        "Martlock": 16497,
-        "Fort Sterling": 12998,
-        "Caerleon": 16500,
-        "Brecilien": 12792
+        "Lymhurst": 13980,
+        "Martlock": 16296,
+        "Fort Sterling": 13982,
+        "Thetford": 13100,
+        "Bridgewatch": 14281,
+        "Caerleon": 16461,
+        "Brecilien": 13968
       },
-      "sold": 5763
+      "sold": 6496
     },
     {
       "itemId": "T5_POTION_CLEANSE2",
       "tier": 5,
       "prices": {
-        "Martlock": 2996,
-        "Fort Sterling": 5989,
-        "Caerleon": 3999,
-        "Brecilien": 9716
+        "Lymhurst": 8584,
+        "Martlock": 2775,
+        "Fort Sterling": 5984,
+        "Thetford": 5666,
+        "Bridgewatch": 4192,
+        "Caerleon": 11368,
+        "Brecilien": 9386
       },
-      "sold": 1940
+      "sold": 2323
     },
     {
       "itemId": "T5_POTION_REVIVE",
       "tier": 5,
       "prices": {
-        "Lymhurst": 3207,
-        "Martlock": 3298,
-        "Fort Sterling": 3324,
-        "Bridgewatch": 2721,
-        "Caerleon": 2997,
-        "Brecilien": 2900
+        "Lymhurst": 3193,
+        "Martlock": 3139,
+        "Thetford": 3490,
+        "Bridgewatch": 2930,
+        "Caerleon": 3610,
+        "Brecilien": 2893
       },
-      "sold": 45414
+      "sold": 45506
     },
     {
       "itemId": "T5_POTION_STONESKIN",
       "tier": 5,
       "prices": {
-        "Lymhurst": 3690,
-        "Thetford": 3016,
-        "Caerleon": 3722,
-        "Brecilien": 3405
+        "Lymhurst": 3678,
+        "Martlock": 3690,
+        "Fort Sterling": 3959,
+        "Thetford": 3009,
+        "Bridgewatch": 2890,
+        "Caerleon": 3707,
+        "Brecilien": 2672
       },
-      "sold": 10459
+      "sold": 11123
     },
     {
       "itemId": "T5_POTION_SLOWFIELD",
       "tier": 5,
       "prices": {
-        "Lymhurst": 3109,
-        "Caerleon": 3884,
-        "Brecilien": 2890
+        "Lymhurst": 3000,
+        "Fort Sterling": 2940,
+        "Caerleon": 3823,
+        "Brecilien": 2860
       },
-      "sold": 4442
+      "sold": 4395
     },
     {
       "itemId": "T6_POTION_BERSERK",
       "tier": 6,
       "prices": {
-        "Lymhurst": 2999,
-        "Martlock": 4651,
-        "Fort Sterling": 2386,
-        "Thetford": 3100,
-        "Bridgewatch": 4525,
-        "Brecilien": 4364
+        "Lymhurst": 2986,
+        "Martlock": 4491,
+        "Fort Sterling": 2499,
+        "Caerleon": 6696,
+        "Brecilien": 4360
       },
-      "sold": 1090
+      "sold": 1045
     },
     {
       "itemId": "T6_POTION_GATHER",
       "tier": 6,
       "prices": {
-        "Lymhurst": 7447,
-        "Martlock": 8272,
-        "Caerleon": 8896
+        "Lymhurst": 7645,
+        "Martlock": 8261,
+        "Fort Sterling": 8281,
+        "Thetford": 15099,
+        "Bridgewatch": 7997,
+        "Caerleon": 27761,
+        "Brecilien": 7710
       },
-      "sold": 11206
+      "sold": 12510
     },
     {
       "itemId": "T6_POTION_LAVA",
       "tier": 6,
       "prices": {
+        "Lymhurst": 8366,
+        "Martlock": 8976,
         "Fort Sterling": 8489,
-        "Caerleon": 12997
+        "Thetford": 9232,
+        "Bridgewatch": 15709,
+        "Caerleon": 12987,
+        "Brecilien": 7630
       },
-      "sold": 4721
+      "sold": 6030
     },
     {
       "itemId": "T6_POTION_ENERGY",
       "tier": 6,
       "prices": {
-        "Martlock": 5294,
-        "Fort Sterling": 7069,
-        "Caerleon": 6975
+        "Lymhurst": 6923,
+        "Martlock": 6995,
+        "Fort Sterling": 6991,
+        "Caerleon": 6978,
+        "Brecilien": 4050
       },
-      "sold": 7686
+      "sold": 7985
     },
     {
       "itemId": "T6_POTION_HEAL",
       "tier": 6,
       "prices": {
-        "Lymhurst": 10000,
-        "Martlock": 8350,
-        "Fort Sterling": 7691,
-        "Thetford": 7880,
-        "Bridgewatch": 7907,
+        "Lymhurst": 7942,
+        "Martlock": 8366,
+        "Fort Sterling": 7710,
+        "Bridgewatch": 7889,
         "Caerleon": 8099,
-        "Brecilien": 8433
+        "Brecilien": 8807
       },
-      "sold": 32952
+      "sold": 33239
     },
     {
       "itemId": "T6_POTION_COOLDOWN",
       "tier": 6,
       "prices": {
-        "Lymhurst": 10000,
-        "Martlock": 4577,
-        "Fort Sterling": 4385,
-        "Thetford": 4615,
-        "Caerleon": 3862,
-        "Brecilien": 4462
+        "Lymhurst": 4538,
+        "Fort Sterling": 4400,
+        "Thetford": 4575,
+        "Bridgewatch": 4705,
+        "Caerleon": 4120,
+        "Brecilien": 4576
       },
-      "sold": 24157
+      "sold": 22829
     },
     {
       "itemId": "T6_ALCOHOL",
       "tier": 6,
       "prices": {
-        "Lymhurst": 299,
-        "Martlock": 409,
+        "Lymhurst": 445,
         "Fort Sterling": 344,
-        "Thetford": 305,
-        "Caerleon": 561
+        "Thetford": 300,
+        "Bridgewatch": 415,
+        "Caerleon": 483,
+        "Brecilien": 398
       },
-      "sold": 37255
+      "sold": 36082
     },
     {
       "itemId": "T6_POTION_TORNADO",
       "tier": 6,
       "prices": {
-        "Lymhurst": 5968,
-        "Fort Sterling": 6866,
-        "Thetford": 5290,
-        "Caerleon": 8733,
-        "Brecilien": 7295
+        "Lymhurst": 5937,
+        "Martlock": 6443,
+        "Fort Sterling": 6859,
+        "Thetford": 5270,
+        "Bridgewatch": 6270,
+        "Caerleon": 8731,
+        "Brecilien": 7272
       },
-      "sold": 5022
+      "sold": 5582
     },
     {
       "itemId": "T7_ALCOHOL",
       "tier": 7,
       "prices": {
-        "Lymhurst": 461,
-        "Martlock": 434,
-        "Fort Sterling": 389,
-        "Thetford": 368,
-        "Bridgewatch": 319,
-        "Caerleon": 490,
-        "Brecilien": 354
+        "Lymhurst": 465,
+        "Fort Sterling": 384,
+        "Thetford": 369,
+        "Bridgewatch": 336,
+        "Caerleon": 489,
+        "Brecilien": 340
       },
-      "sold": 48245
+      "sold": 47576
     },
     {
       "itemId": "T7_POTION_ACID",
       "tier": 7,
-      "prices": {},
-      "sold": 980
+      "prices": {
+        "Lymhurst": 27921,
+        "Martlock": 31106,
+        "Fort Sterling": 32035,
+        "Thetford": 30259,
+        "Bridgewatch": 29119,
+        "Caerleon": 49994,
+        "Brecilien": 29909
+      },
+      "sold": 1172
     },
     {
       "itemId": "T7_POTION_MOB_RESET",
       "tier": 7,
       "prices": {
-        "Caerleon": 41000
+        "Lymhurst": 39800,
+        "Martlock": 43946,
+        "Fort Sterling": 38999,
+        "Thetford": 26964,
+        "Bridgewatch": 47794,
+        "Caerleon": 36973,
+        "Brecilien": 28914
       },
-      "sold": 521
+      "sold": 647
     },
     {
       "itemId": "T7_POTION_CLEANSE2",
       "tier": 7,
       "prices": {
-        "Lymhurst": 39995,
-        "Fort Sterling": 31353,
-        "Caerleon": 39550
+        "Lymhurst": 36569,
+        "Martlock": 28328,
+        "Fort Sterling": 31354,
+        "Thetford": 20946,
+        "Bridgewatch": 20975,
+        "Caerleon": 25546,
+        "Brecilien": 20000
       },
-      "sold": 1153
+      "sold": 1360
     },
     {
       "itemId": "T7_POTION_REVIVE",
       "tier": 7,
       "prices": {
-        "Lymhurst": 10281,
-        "Martlock": 10231,
+        "Lymhurst": 10235,
+        "Martlock": 10288,
         "Fort Sterling": 10300,
-        "Thetford": 10434,
-        "Bridgewatch": 10996,
-        "Caerleon": 17763,
-        "Brecilien": 10545
+        "Thetford": 10365,
+        "Bridgewatch": 11052,
+        "Caerleon": 15991,
+        "Brecilien": 10522
       },
-      "sold": 102242
+      "sold": 101505
     },
     {
       "itemId": "T7_POTION_STONESKIN",
       "tier": 7,
       "prices": {
-        "Lymhurst": 12997,
-        "Martlock": 12996,
-        "Fort Sterling": 13371,
-        "Thetford": 12736,
-        "Caerleon": 15954,
-        "Brecilien": 13400
+        "Lymhurst": 13823,
+        "Martlock": 13909,
+        "Thetford": 12705,
+        "Bridgewatch": 13538,
+        "Caerleon": 18500,
+        "Brecilien": 13298
       },
-      "sold": 17713
+      "sold": 19118
     },
     {
       "itemId": "T7_POTION_SLOWFIELD",
       "tier": 7,
       "prices": {
-        "Lymhurst": 11977,
-        "Fort Sterling": 12367,
-        "Thetford": 10852,
-        "Caerleon": 15164,
-        "Brecilien": 13320
+        "Lymhurst": 12731,
+        "Fort Sterling": 12369,
+        "Thetford": 10780,
+        "Caerleon": 15163
       },
-      "sold": 2478
+      "sold": 2455
     },
     {
       "itemId": "T8_POTION_CLEANSE",
       "tier": 8,
       "prices": {
-        "Lymhurst": 12400,
-        "Martlock": 12590,
-        "Fort Sterling": 12290,
-        "Thetford": 12868,
-        "Bridgewatch": 12779,
-        "Caerleon": 9987,
-        "Brecilien": 12487
+        "Lymhurst": 12673,
+        "Martlock": 12394,
+        "Fort Sterling": 12233,
+        "Thetford": 914350,
+        "Bridgewatch": 12812,
+        "Caerleon": 11946,
+        "Brecilien": 12592
       },
-      "sold": 46239
+      "sold": 45978
     },
     {
       "itemId": "T8_POTION_BERSERK",
       "tier": 8,
       "prices": {
-        "Lymhurst": 17505,
-        "Martlock": 14365,
+        "Lymhurst": 17377,
+        "Martlock": 14380,
         "Fort Sterling": 9118,
-        "Caerleon": 15670,
-        "Brecilien": 21732
+        "Caerleon": 15598,
+        "Brecilien": 20000
       },
-      "sold": 531
+      "sold": 506
     },
     {
       "itemId": "T8_POTION_GATHER",
       "tier": 8,
       "prices": {
-        "Martlock": 23592,
-        "Caerleon": 31111,
-        "Brecilien": 23828
+        "Lymhurst": 26387,
+        "Martlock": 23598,
+        "Fort Sterling": 23000,
+        "Thetford": 26475,
+        "Bridgewatch": 25000,
+        "Caerleon": 22110,
+        "Brecilien": 23695
       },
-      "sold": 6288
+      "sold": 6680
     },
     {
       "itemId": "T8_POTION_LAVA",
       "tier": 8,
       "prices": {
-        "Fort Sterling": 28587,
-        "Thetford": 28508,
-        "Bridgewatch": 29100,
-        "Caerleon": 34597
+        "Lymhurst": 94872,
+        "Martlock": 28985,
+        "Fort Sterling": 28673,
+        "Thetford": 28461,
+        "Bridgewatch": 29190,
+        "Caerleon": 34599,
+        "Brecilien": 38889
       },
-      "sold": 5333
+      "sold": 6059
     },
     {
       "itemId": "T8_POTION_COOLDOWN",
       "tier": 8,
       "prices": {
-        "Lymhurst": 25000,
-        "Martlock": 12921,
-        "Fort Sterling": 12697,
-        "Thetford": 12748,
-        "Bridgewatch": 12895,
-        "Caerleon": 11957,
-        "Brecilien": 12121
+        "Lymhurst": 12649,
+        "Martlock": 12908,
+        "Fort Sterling": 12901,
+        "Caerleon": 11980,
+        "Brecilien": 12145
       },
-      "sold": 36838
+      "sold": 35705
     },
     {
       "itemId": "T8_POTION_TORNADO",
       "tier": 8,
       "prices": {
+        "Lymhurst": 16995,
         "Fort Sterling": 14000,
-        "Thetford": 12991,
-        "Caerleon": 36994,
-        "Brecilien": 22955
+        "Caerleon": 28564,
+        "Brecilien": 22933
       },
-      "sold": 1282
+      "sold": 1255
     },
     {
       "itemId": "T8_ALCOHOL",
       "tier": 8,
       "prices": {
-        "Lymhurst": 331,
-        "Martlock": 436,
-        "Thetford": 441,
-        "Caerleon": 486,
-        "Brecilien": 316
+        "Lymhurst": 338,
+        "Martlock": 410,
+        "Fort Sterling": 425,
+        "Bridgewatch": 300,
+        "Caerleon": 482,
+        "Brecilien": 421
       },
-      "sold": 47318
+      "sold": 46517
     },
     {
       "itemId": "T2_POTION_ENERGY@1",
       "tier": 2,
-      "prices": {
-        "Fort Sterling": 6999
-      },
+      "prices": {},
       "sold": 9
     },
     {
       "itemId": "T2_POTION_ENERGY@2",
       "tier": 2,
-      "prices": {
-        "Fort Sterling": 12999
-      },
+      "prices": {},
       "sold": 2
     },
     {
@@ -545,7 +599,8 @@
       "itemId": "T2_POTION_HEAL@1",
       "tier": 2,
       "prices": {
-        "Brecilien": 2218
+        "Martlock": 8499,
+        "Brecilien": 2212
       },
       "sold": 17
     },
@@ -553,79 +608,83 @@
       "itemId": "T2_POTION_HEAL@2",
       "tier": 2,
       "prices": {
-        "Fort Sterling": 12999,
-        "Brecilien": 7384
+        "Martlock": 5000
       },
-      "sold": 9
+      "sold": 10
     },
     {
       "itemId": "T2_POTION_HEAL@3",
       "tier": 2,
-      "prices": {},
-      "sold": 6
+      "prices": {
+        "Thetford": 20778,
+        "Brecilien": 21999
+      },
+      "sold": 2
     },
     {
       "itemId": "T3_POTION_ACID@1",
       "tier": 3,
       "prices": {
-        "Martlock": 11973,
-        "Bridgewatch": 12975
+        "Martlock": 11972,
+        "Fort Sterling": 5999,
+        "Bridgewatch": 12974
       },
-      "sold": 66
+      "sold": 64
     },
     {
       "itemId": "T3_POTION_ACID@2",
       "tier": 3,
       "prices": {
-        "Bridgewatch": 15988
+        "Lymhurst": 12000,
+        "Martlock": 15000,
+        "Thetford": 15001,
+        "Bridgewatch": 15978,
+        "Brecilien": 14990
       },
-      "sold": 18
+      "sold": 26
     },
     {
       "itemId": "T3_POTION_ACID@3",
       "tier": 3,
       "prices": {},
-      "sold": 3
+      "sold": 4
     },
     {
       "itemId": "T3_POTION_MOB_RESET@1",
       "tier": 3,
       "prices": {
-        "Lymhurst": 9572,
-        "Martlock": 9089,
-        "Fort Sterling": 8997,
-        "Thetford": 9253,
-        "Caerleon": 13873,
-        "Brecilien": 8368
+        "Lymhurst": 9583,
+        "Thetford": 9622,
+        "Brecilien": 8359
       },
-      "sold": 18874
+      "sold": 19074
     },
     {
       "itemId": "T3_POTION_MOB_RESET@2",
       "tier": 3,
       "prices": {
-        "Lymhurst": 11897,
-        "Fort Sterling": 11469,
-        "Bridgewatch": 15000,
-        "Caerleon": 14954
+        "Lymhurst": 11876,
+        "Martlock": 11438,
+        "Fort Sterling": 11462,
+        "Thetford": 11533,
+        "Bridgewatch": 11870,
+        "Brecilien": 11447
       },
-      "sold": 19706
+      "sold": 22202
     },
     {
       "itemId": "T3_POTION_MOB_RESET@3",
       "tier": 3,
-      "prices": {},
-      "sold": 17
+      "prices": {
+        "Brecilien": 79976
+      },
+      "sold": 18
     },
     {
       "itemId": "T3_POTION_CLEANSE2@1",
       "tier": 3,
       "prices": {
-        "Lymhurst": 5619,
-        "Martlock": 5530,
-        "Fort Sterling": 7986,
-        "Thetford": 19996,
-        "Caerleon": 9977
+        "Fort Sterling": 7989
       },
       "sold": 11
     },
@@ -640,28 +699,28 @@
     {
       "itemId": "T3_POTION_CLEANSE2@3",
       "tier": 3,
-      "prices": {},
-      "sold": 5
+      "prices": {
+        "Thetford": 11990
+      },
+      "sold": 6
     },
     {
       "itemId": "T3_POTION_REVIVE@1",
       "tier": 3,
       "prices": {
-        "Lymhurst": 6380,
-        "Martlock": 8982,
-        "Fort Sterling": 7993,
-        "Thetford": 5485,
-        "Bridgewatch": 7636,
-        "Caerleon": 9995
+        "Lymhurst": 6379,
+        "Fort Sterling": 7987,
+        "Brecilien": 4450
       },
-      "sold": 36
+      "sold": 31
     },
     {
       "itemId": "T3_POTION_REVIVE@2",
       "tier": 3,
       "prices": {
+        "Lymhurst": 11499,
         "Thetford": 49995,
-        "Caerleon": 14500
+        "Brecilien": 14984
       },
       "sold": 17
     },
@@ -669,15 +728,16 @@
       "itemId": "T3_POTION_REVIVE@3",
       "tier": 3,
       "prices": {},
-      "sold": 3
+      "sold": 2
     },
     {
       "itemId": "T3_POTION_STONESKIN@1",
       "tier": 3,
       "prices": {
-        "Fort Sterling": 6948,
-        "Thetford": 11998,
-        "Caerleon": 5900
+        "Lymhurst": 5000,
+        "Fort Sterling": 6941,
+        "Caerleon": 5900,
+        "Brecilien": 5982
       },
       "sold": 14
     },
@@ -685,10 +745,9 @@
       "itemId": "T3_POTION_STONESKIN@2",
       "tier": 3,
       "prices": {
-        "Fort Sterling": 12998,
-        "Thetford": 20000
+        "Lymhurst": 11498
       },
-      "sold": 7
+      "sold": 6
     },
     {
       "itemId": "T3_POTION_STONESKIN@3",
@@ -700,17 +759,18 @@
       "itemId": "T3_POTION_SLOWFIELD@1",
       "tier": 3,
       "prices": {
-        "Lymhurst": 4488,
-        "Martlock": 4390,
-        "Brecilien": 2855
+        "Thetford": 10999,
+        "Brecilien": 2858
       },
-      "sold": 47
+      "sold": 48
     },
     {
       "itemId": "T3_POTION_SLOWFIELD@2",
       "tier": 3,
-      "prices": {},
-      "sold": 11
+      "prices": {
+        "Fort Sterling": 15551
+      },
+      "sold": 10
     },
     {
       "itemId": "T3_POTION_SLOWFIELD@3",
@@ -720,17 +780,13 @@
     {
       "itemId": "T4_POTION_ENERGY@1",
       "tier": 4,
-      "prices": {
-        "Martlock": 11887,
-        "Caerleon": 11499
-      },
+      "prices": {},
       "sold": 16
     },
     {
       "itemId": "T4_POTION_ENERGY@2",
       "tier": 4,
-      "prices": {},
-      "sold": 15
+      "prices": {}
     },
     {
       "itemId": "T4_POTION_ENERGY@3",
@@ -743,15 +799,17 @@
       "tier": 4,
       "prices": {
         "Lymhurst": 19991,
-        "Caerleon": 2999
+        "Brecilien": 14332
       },
       "sold": 54
     },
     {
       "itemId": "T4_POTION_HEAL@2",
       "tier": 4,
-      "prices": {},
-      "sold": 7
+      "prices": {
+        "Brecilien": 223988
+      },
+      "sold": 8
     },
     {
       "itemId": "T4_POTION_HEAL@3",
@@ -761,41 +819,56 @@
     {
       "itemId": "T4_POTION_BERSERK@1",
       "tier": 4,
-      "prices": {},
+      "prices": {
+        "Brecilien": 7996
+      },
       "sold": 7
     },
     {
       "itemId": "T4_POTION_BERSERK@2",
       "tier": 4,
-      "prices": {},
-      "sold": 5
+      "prices": {
+        "Lymhurst": 26999
+      },
+      "sold": 8
     },
     {
       "itemId": "T4_POTION_BERSERK@3",
       "tier": 4,
-      "prices": {}
+      "prices": {
+        "Bridgewatch": 23000
+      }
     },
     {
       "itemId": "T4_POTION_GATHER@1",
       "tier": 4,
       "prices": {
-        "Lymhurst": 8800,
-        "Thetford": 8990,
+        "Lymhurst": 8797,
+        "Martlock": 7496,
+        "Fort Sterling": 6293,
+        "Thetford": 8969,
         "Bridgewatch": 11077
       },
-      "sold": 28
+      "sold": 27
     },
     {
       "itemId": "T4_POTION_GATHER@2",
       "tier": 4,
-      "prices": {},
+      "prices": {
+        "Lymhurst": 20999,
+        "Martlock": 17992,
+        "Fort Sterling": 11999,
+        "Thetford": 20968,
+        "Brecilien": 13446
+      },
       "sold": 12
     },
     {
       "itemId": "T4_POTION_GATHER@3",
       "tier": 4,
       "prices": {
-        "Lymhurst": 25000
+        "Martlock": 29983,
+        "Fort Sterling": 49973
       },
       "sold": 5
     },
@@ -803,13 +876,16 @@
       "itemId": "T4_POTION_LAVA@1",
       "tier": 4,
       "prices": {},
-      "sold": 32
+      "sold": 27
     },
     {
       "itemId": "T4_POTION_LAVA@2",
       "tier": 4,
-      "prices": {},
-      "sold": 8
+      "prices": {
+        "Lymhurst": 28995,
+        "Brecilien": 74998
+      },
+      "sold": 7
     },
     {
       "itemId": "T4_POTION_LAVA@3",
@@ -820,29 +896,29 @@
       "itemId": "T4_POTION_COOLDOWN@1",
       "tier": 4,
       "prices": {
-        "Lymhurst": 3074,
-        "Bridgewatch": 3390,
-        "Caerleon": 3797
+        "Bridgewatch": 3399,
+        "Caerleon": 3599,
+        "Brecilien": 3311
       },
-      "sold": 619
+      "sold": 491
     },
     {
       "itemId": "T4_POTION_COOLDOWN@2",
       "tier": 4,
       "prices": {
-        "Lymhurst": 19995,
-        "Caerleon": 28741
+        "Lymhurst": 19300,
+        "Brecilien": 17270
       },
-      "sold": 50
+      "sold": 44
     },
     {
       "itemId": "T4_POTION_COOLDOWN@3",
       "tier": 4,
       "prices": {
-        "Lymhurst": 31492,
-        "Caerleon": 25462
+        "Fort Sterling": 20000,
+        "Caerleon": 25461
       },
-      "sold": 12
+      "sold": 11
     },
     {
       "itemId": "T4_POTION_TORNADO@1",
@@ -850,14 +926,12 @@
       "prices": {
         "Fort Sterling": 7982
       },
-      "sold": 16
+      "sold": 15
     },
     {
       "itemId": "T4_POTION_TORNADO@2",
       "tier": 4,
-      "prices": {
-        "Thetford": 31435
-      },
+      "prices": {},
       "sold": 5
     },
     {
@@ -869,13 +943,13 @@
       "itemId": "T5_POTION_ACID@1",
       "tier": 5,
       "prices": {},
-      "sold": 52
+      "sold": 46
     },
     {
       "itemId": "T5_POTION_ACID@2",
       "tier": 5,
       "prices": {},
-      "sold": 11
+      "sold": 12
     },
     {
       "itemId": "T5_POTION_ACID@3",
@@ -886,41 +960,33 @@
     {
       "itemId": "T5_POTION_MOB_RESET@1",
       "tier": 5,
-      "prices": {
-        "Lymhurst": 21988,
-        "Caerleon": 42989,
-        "Brecilien": 26684
-      },
-      "sold": 333
+      "prices": {},
+      "sold": 330
     },
     {
       "itemId": "T5_POTION_MOB_RESET@2",
       "tier": 5,
-      "prices": {
-        "Lymhurst": 70000
-      },
-      "sold": 20
+      "prices": {},
+      "sold": 19
     },
     {
       "itemId": "T5_POTION_MOB_RESET@3",
       "tier": 5,
-      "prices": {
-        "Lymhurst": 100000
-      },
+      "prices": {},
       "sold": 3
     },
     {
       "itemId": "T5_POTION_CLEANSE2@1",
       "tier": 5,
-      "prices": {},
+      "prices": {
+        "Lymhurst": 25916
+      },
       "sold": 4
     },
     {
       "itemId": "T5_POTION_CLEANSE2@2",
       "tier": 5,
-      "prices": {
-        "Caerleon": 29999
-      },
+      "prices": {},
       "sold": 5
     },
     {
@@ -932,25 +998,27 @@
       "itemId": "T5_POTION_REVIVE@1",
       "tier": 5,
       "prices": {
-        "Lymhurst": 16464,
-        "Bridgewatch": 20426,
-        "Caerleon": 21958
+        "Lymhurst": 16000,
+        "Brecilien": 13276
       },
-      "sold": 64
+      "sold": 59
     },
     {
       "itemId": "T5_POTION_REVIVE@2",
       "tier": 5,
       "prices": {
-        "Thetford": 37777,
-        "Caerleon": 29996
+        "Lymhurst": 34998,
+        "Thetford": 37775,
+        "Brecilien": 34987
       },
-      "sold": 21
+      "sold": 20
     },
     {
       "itemId": "T5_POTION_REVIVE@3",
       "tier": 5,
-      "prices": {},
+      "prices": {
+        "Caerleon": 59999
+      },
       "sold": 5
     },
     {
@@ -958,14 +1026,18 @@
       "tier": 5,
       "prices": {
         "Lymhurst": 9817,
-        "Caerleon": 9486
+        "Martlock": 12349,
+        "Caerleon": 9484
       },
-      "sold": 124
+      "sold": 119
     },
     {
       "itemId": "T5_POTION_STONESKIN@2",
       "tier": 5,
-      "prices": {},
+      "prices": {
+        "Martlock": 37996,
+        "Brecilien": 28370
+      },
       "sold": 5
     },
     {
@@ -977,7 +1049,7 @@
       "itemId": "T5_POTION_SLOWFIELD@1",
       "tier": 5,
       "prices": {
-        "Caerleon": 9980
+        "Thetford": 11000
       },
       "sold": 14
     },
@@ -996,13 +1068,12 @@
       "itemId": "T6_POTION_BERSERK@1",
       "tier": 6,
       "prices": {},
-      "sold": 6
+      "sold": 5
     },
     {
       "itemId": "T6_POTION_BERSERK@2",
       "tier": 6,
-      "prices": {},
-      "sold": 5
+      "prices": {}
     },
     {
       "itemId": "T6_POTION_BERSERK@3",
@@ -1012,38 +1083,47 @@
     {
       "itemId": "T6_POTION_GATHER@1",
       "tier": 6,
-      "prices": {},
-      "sold": 66
+      "prices": {
+        "Fort Sterling": 26990,
+        "Thetford": 20989
+      },
+      "sold": 62
     },
     {
       "itemId": "T6_POTION_GATHER@2",
       "tier": 6,
-      "prices": {},
-      "sold": 6
+      "prices": {
+        "Fort Sterling": 49954,
+        "Thetford": 39991
+      },
+      "sold": 5
     },
     {
       "itemId": "T6_POTION_GATHER@3",
       "tier": 6,
-      "prices": {},
-      "sold": 9
+      "prices": {
+        "Martlock": 79997,
+        "Thetford": 59976
+      },
+      "sold": 8
     },
     {
       "itemId": "T6_POTION_LAVA@1",
       "tier": 6,
       "prices": {
-        "Fort Sterling": 17496,
+        "Lymhurst": 74988,
+        "Caerleon": 34996,
         "Brecilien": 16792
       },
-      "sold": 166
+      "sold": 147
     },
     {
       "itemId": "T6_POTION_LAVA@2",
       "tier": 6,
       "prices": {
-        "Fort Sterling": 26995,
-        "Caerleon": 49997
+        "Caerleon": 39998
       },
-      "sold": 68
+      "sold": 54
     },
     {
       "itemId": "T6_POTION_LAVA@3",
@@ -1051,78 +1131,82 @@
       "prices": {
         "Caerleon": 40000
       },
-      "sold": 4
+      "sold": 3
     },
     {
       "itemId": "T6_POTION_ENERGY@1",
       "tier": 6,
       "prices": {
-        "Martlock": 43976
+        "Caerleon": 49976
       },
-      "sold": 59
+      "sold": 57
     },
     {
       "itemId": "T6_POTION_ENERGY@2",
       "tier": 6,
-      "prices": {},
-      "sold": 16
+      "prices": {
+        "Lymhurst": 59983,
+        "Fort Sterling": 64965
+      },
+      "sold": 14
     },
     {
       "itemId": "T6_POTION_ENERGY@3",
       "tier": 6,
       "prices": {},
-      "sold": 5
+      "sold": 6
     },
     {
       "itemId": "T6_POTION_HEAL@1",
       "tier": 6,
       "prices": {
-        "Lymhurst": 38863,
-        "Martlock": 38774,
-        "Fort Sterling": 36865,
-        "Thetford": 38987,
-        "Bridgewatch": 36784,
-        "Brecilien": 35254
+        "Lymhurst": 38284,
+        "Martlock": 49995,
+        "Caerleon": 42497,
+        "Brecilien": 35156
       },
-      "sold": 5964
+      "sold": 5842
     },
     {
       "itemId": "T6_POTION_HEAL@2",
       "tier": 6,
       "prices": {
-        "Lymhurst": 79973,
-        "Martlock": 78485,
-        "Brecilien": 66978
+        "Lymhurst": 78995,
+        "Martlock": 76577,
+        "Fort Sterling": 89984,
+        "Bridgewatch": 80000,
+        "Caerleon": 90000
       },
-      "sold": 2262
+      "sold": 2184
     },
     {
       "itemId": "T6_POTION_HEAL@3",
       "tier": 6,
       "prices": {
-        "Martlock": 170000,
-        "Bridgewatch": 169999,
+        "Lymhurst": 169965,
+        "Martlock": 174999,
         "Caerleon": 145000,
-        "Brecilien": 169957
+        "Brecilien": 169929
       },
-      "sold": 295
+      "sold": 299
     },
     {
       "itemId": "T6_POTION_COOLDOWN@1",
       "tier": 6,
       "prices": {
-        "Lymhurst": 15825
+        "Bridgewatch": 15377,
+        "Caerleon": 23999,
+        "Brecilien": 18898
       },
-      "sold": 122
+      "sold": 120
     },
     {
       "itemId": "T6_POTION_COOLDOWN@2",
       "tier": 6,
       "prices": {
-        "Martlock": 56999,
-        "Brecilien": 43994
+        "Martlock": 56996
       },
-      "sold": 11
+      "sold": 10
     },
     {
       "itemId": "T6_POTION_COOLDOWN@3",
@@ -1134,13 +1218,13 @@
       "itemId": "T6_POTION_TORNADO@1",
       "tier": 6,
       "prices": {},
-      "sold": 5
+      "sold": 6
     },
     {
       "itemId": "T6_POTION_TORNADO@2",
       "tier": 6,
       "prices": {},
-      "sold": 6
+      "sold": 11
     },
     {
       "itemId": "T6_POTION_TORNADO@3",
@@ -1151,7 +1235,9 @@
       "itemId": "T7_POTION_ACID@1",
       "tier": 7,
       "prices": {
-        "Caerleon": 52000
+        "Martlock": 41793,
+        "Caerleon": 52000,
+        "Brecilien": 45575
       },
       "sold": 85
     },
@@ -1159,17 +1245,19 @@
       "itemId": "T7_POTION_ACID@2",
       "tier": 7,
       "prices": {
-        "Bridgewatch": 81106,
-        "Caerleon": 500000,
-        "Brecilien": 76846
+        "Lymhurst": 63897,
+        "Caerleon": 500000
       },
-      "sold": 51
+      "sold": 44
     },
     {
       "itemId": "T7_POTION_ACID@3",
       "tier": 7,
-      "prices": {},
-      "sold": 56
+      "prices": {
+        "Bridgewatch": 158887,
+        "Caerleon": 153997
+      },
+      "sold": 55
     },
     {
       "itemId": "T7_POTION_MOB_RESET@1",
@@ -1177,15 +1265,12 @@
       "prices": {
         "Caerleon": 74997
       },
-      "sold": 6
+      "sold": 5
     },
     {
       "itemId": "T7_POTION_MOB_RESET@2",
       "tier": 7,
-      "prices": {
-        "Lymhurst": 2000000
-      },
-      "sold": 3
+      "prices": {}
     },
     {
       "itemId": "T7_POTION_MOB_RESET@3",
@@ -1196,19 +1281,26 @@
     {
       "itemId": "T7_POTION_CLEANSE2@1",
       "tier": 7,
-      "prices": {},
-      "sold": 3
+      "prices": {
+        "Lymhurst": 199971,
+        "Caerleon": 92435
+      },
+      "sold": 4
     },
     {
       "itemId": "T7_POTION_CLEANSE2@2",
       "tier": 7,
-      "prices": {},
+      "prices": {
+        "Lymhurst": 149998,
+        "Martlock": 250000
+      },
       "sold": 4
     },
     {
       "itemId": "T7_POTION_CLEANSE2@3",
       "tier": 7,
       "prices": {
+        "Lymhurst": 229999,
         "Caerleon": 150000
       },
       "sold": 3
@@ -1217,81 +1309,84 @@
       "itemId": "T7_POTION_REVIVE@1",
       "tier": 7,
       "prices": {
-        "Martlock": 34977,
-        "Bridgewatch": 47996,
-        "Caerleon": 27420,
-        "Brecilien": 27626141
+        "Lymhurst": 27135,
+        "Thetford": 25852,
+        "Bridgewatch": 47993,
+        "Caerleon": 27430,
+        "Brecilien": 34846
       },
-      "sold": 3339
+      "sold": 3320
     },
     {
       "itemId": "T7_POTION_REVIVE@2",
       "tier": 7,
       "prices": {
-        "Lymhurst": 59994,
-        "Martlock": 68931,
-        "Fort Sterling": 79943,
-        "Thetford": 61460,
-        "Bridgewatch": 69479,
-        "Caerleon": 76663,
-        "Brecilien": 59993
+        "Lymhurst": 69980,
+        "Martlock": 64578,
+        "Thetford": 61429,
+        "Caerleon": 76662,
+        "Brecilien": 59988
       },
-      "sold": 348
+      "sold": 376
     },
     {
       "itemId": "T7_POTION_REVIVE@3",
       "tier": 7,
       "prices": {
-        "Lymhurst": 149979,
-        "Thetford": 144970,
-        "Bridgewatch": 148980,
+        "Lymhurst": 149960,
+        "Fort Sterling": 152968,
+        "Bridgewatch": 145000,
         "Caerleon": 129994
       },
-      "sold": 38
+      "sold": 36
     },
     {
       "itemId": "T7_POTION_STONESKIN@1",
       "tier": 7,
       "prices": {
-        "Lymhurst": 37843,
-        "Martlock": 33458,
-        "Thetford": 31265,
-        "Caerleon": 47000
+        "Lymhurst": 37844,
+        "Martlock": 33464,
+        "Thetford": 31268,
+        "Bridgewatch": 49953,
+        "Caerleon": 43496,
+        "Brecilien": 36707
       },
-      "sold": 1161
+      "sold": 1225
     },
     {
       "itemId": "T7_POTION_STONESKIN@2",
       "tier": 7,
       "prices": {
-        "Lymhurst": 62630,
-        "Caerleon": 81963,
-        "Brecilien": 68484
+        "Lymhurst": 62656,
+        "Caerleon": 86999,
+        "Brecilien": 68485
       },
-      "sold": 147
+      "sold": 142
     },
     {
       "itemId": "T7_POTION_STONESKIN@3",
       "tier": 7,
       "prices": {
+        "Lymhurst": 177770,
         "Caerleon": 500000
       },
-      "sold": 16
+      "sold": 14
     },
     {
       "itemId": "T7_POTION_SLOWFIELD@1",
       "tier": 7,
       "prices": {
-        "Brecilien": 64998
+        "Lymhurst": 48995,
+        "Fort Sterling": 49000,
+        "Thetford": 73000,
+        "Caerleon": 69999
       },
       "sold": 9
     },
     {
       "itemId": "T7_POTION_SLOWFIELD@2",
       "tier": 7,
-      "prices": {
-        "Brecilien": 129886
-      },
+      "prices": {},
       "sold": 1
     },
     {
@@ -1304,20 +1399,17 @@
       "itemId": "T8_POTION_CLEANSE@1",
       "tier": 8,
       "prices": {
-        "Lymhurst": 44786,
-        "Fort Sterling": 44557,
-        "Bridgewatch": 51952,
-        "Caerleon": 49991,
-        "Brecilien": 30991
+        "Lymhurst": 44782,
+        "Caerleon": 49991
       },
-      "sold": 58
+      "sold": 56
     },
     {
       "itemId": "T8_POTION_CLEANSE@2",
       "tier": 8,
       "prices": {
-        "Caerleon": 134998,
-        "Brecilien": 118439
+        "Lymhurst": 99951,
+        "Caerleon": 134996
       },
       "sold": 2
     },
@@ -1325,6 +1417,7 @@
       "itemId": "T8_POTION_CLEANSE@3",
       "tier": 8,
       "prices": {
+        "Lymhurst": 249999,
         "Caerleon": 248991
       },
       "sold": 2
@@ -1333,24 +1426,27 @@
       "itemId": "T8_POTION_BERSERK@1",
       "tier": 8,
       "prices": {
-        "Martlock": 80000,
-        "Caerleon": 84718
+        "Caerleon": 84720
       },
-      "sold": 10
+      "sold": 9
     },
     {
       "itemId": "T8_POTION_BERSERK@2",
       "tier": 8,
-      "prices": {},
-      "sold": 4
+      "prices": {
+        "Lymhurst": 147989
+      },
+      "sold": 3
     },
     {
       "itemId": "T8_POTION_BERSERK@3",
       "tier": 8,
       "prices": {
-        "Lymhurst": 139998,
-        "Martlock": 2297351,
-        "Caerleon": 182996
+        "Lymhurst": 188996,
+        "Martlock": 229734,
+        "Bridgewatch": 159309,
+        "Caerleon": 182996,
+        "Brecilien": 170000
       },
       "sold": 21
     },
@@ -1358,24 +1454,26 @@
       "itemId": "T8_POTION_GATHER@1",
       "tier": 8,
       "prices": {
+        "Lymhurst": 37983,
+        "Thetford": 40613,
         "Caerleon": 44999
       },
-      "sold": 275
+      "sold": 277
     },
     {
       "itemId": "T8_POTION_GATHER@2",
       "tier": 8,
       "prices": {
-        "Caerleon": 178895,
-        "Brecilien": 69993
+        "Lymhurst": 72807,
+        "Caerleon": 178895
       },
-      "sold": 74
+      "sold": 67
     },
     {
       "itemId": "T8_POTION_GATHER@3",
       "tier": 8,
       "prices": {
-        "Lymhurst": 176993,
+        "Lymhurst": 190000,
         "Caerleon": 199974
       },
       "sold": 173
@@ -1384,16 +1482,18 @@
       "itemId": "T8_POTION_LAVA@1",
       "tier": 8,
       "prices": {
-        "Bridgewatch": 39998,
-        "Caerleon": 59999
+        "Lymhurst": 59999,
+        "Fort Sterling": 50941,
+        "Caerleon": 55999,
+        "Brecilien": 59886
       },
-      "sold": 230
+      "sold": 226
     },
     {
       "itemId": "T8_POTION_LAVA@2",
       "tier": 8,
       "prices": {
-        "Bridgewatch": 71494,
+        "Lymhurst": 86992,
         "Caerleon": 89994
       },
       "sold": 140
@@ -1402,46 +1502,54 @@
       "itemId": "T8_POTION_LAVA@3",
       "tier": 8,
       "prices": {
-        "Lymhurst": 165996,
-        "Bridgewatch": 199994
+        "Lymhurst": 165997,
+        "Caerleon": 170000
       },
-      "sold": 13
+      "sold": 16
     },
     {
       "itemId": "T8_POTION_COOLDOWN@1",
       "tier": 8,
       "prices": {
-        "Fort Sterling": 34006,
-        "Thetford": 35010,
-        "Bridgewatch": 32751,
-        "Caerleon": 42981,
-        "Brecilien": 36450
+        "Lymhurst": 34880,
+        "Martlock": 33974,
+        "Fort Sterling": 29932,
+        "Thetford": 35007,
+        "Bridgewatch": 32725,
+        "Caerleon": 43000,
+        "Brecilien": 36682
       },
-      "sold": 1611
+      "sold": 1903
     },
     {
       "itemId": "T8_POTION_COOLDOWN@2",
       "tier": 8,
       "prices": {
-        "Martlock": 63999,
-        "Caerleon": 153937,
-        "Brecilien": 69912
+        "Lymhurst": 61997,
+        "Martlock": 64798,
+        "Fort Sterling": 69973,
+        "Thetford": 59994,
+        "Bridgewatch": 60579,
+        "Caerleon": 153939,
+        "Brecilien": 69942
       },
-      "sold": 278
+      "sold": 437
     },
     {
       "itemId": "T8_POTION_COOLDOWN@3",
       "tier": 8,
       "prices": {
+        "Lymhurst": 203000,
         "Caerleon": 199991
       },
-      "sold": 55
+      "sold": 48
     },
     {
       "itemId": "T8_POTION_TORNADO@1",
       "tier": 8,
       "prices": {
-        "Caerleon": 39988
+        "Fort Sterling": 25000,
+        "Caerleon": 39990
       },
       "sold": 6
     },
