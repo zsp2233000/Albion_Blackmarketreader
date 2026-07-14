@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { assetUrl, onItemIconError } from "../assets/assets";
 import { JOURNAL_PROFESSIONS, type JournalProfession } from "./journals";
 import { journalPriceTable, type JournalData, type OwnedJournals } from "./useJournals";
+import { useI18n } from "../i18n/I18nProvider";
 import "./journalControls.css";
 
 const PROFESSION_ORDER: JournalProfession[] = ["warrior", "hunter", "mage", "toolmaker"];
@@ -47,6 +48,7 @@ interface JournalControlsProps {
  */
 export function JournalControls({ enabled, owned, onToggleEnabled, onToggleOwned, data, city, onlyProfession, showOwnership = true }: JournalControlsProps) {
   const [showSettings, setShowSettings] = useState(false);
+  const { t } = useI18n();
 
   // Single-item views pass onlyProfession to show just that item's journal. `undefined` = show all.
   const shownProfessions =
@@ -55,12 +57,12 @@ export function JournalControls({ enabled, owned, onToggleEnabled, onToggleOwned
   const settingsModal = (
     <div className="jrnl-overlay" onClick={() => setShowSettings(false)}>
       <div className="jrnl-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="jrnl-modal-close" aria-label="Close" onClick={() => setShowSettings(false)}>
+        <button className="jrnl-modal-close" aria-label={t("common.close")} onClick={() => setShowSettings(false)}>
           ×
         </button>
-        <h3>{showOwnership ? "Which journals do you fill?" : "Journal prices"}</h3>
+        <h3>{showOwnership ? t("journal.whichFill") : t("journal.prices")}</h3>
         <details className="jrnl-explain">
-          <summary>How journal profit works</summary>
+          <summary>{t("journal.howItWorks")}</summary>
           <p className="jrnl-note">
             Crafting gear earns fame; slotting an empty journal soaks it up and, once full, it sells for
             more than the empty cost — that extra silver is added to each craft. {showOwnership
@@ -77,7 +79,7 @@ export function JournalControls({ enabled, owned, onToggleEnabled, onToggleOwned
           </ul>
         </details>
         {shownProfessions.length === 0 ? (
-          <p className="jrnl-note">This item does not fill any crafting journal.</p>
+          <p className="jrnl-note">{t("journal.noJournal")}</p>
         ) : null}
         <ul className="jrnl-prof-list">
           {shownProfessions.map((profession) => {
@@ -112,7 +114,7 @@ export function JournalControls({ enabled, owned, onToggleEnabled, onToggleOwned
                 {(showOwnership ? owned[profession] : true) && hasPrices ? (
                   <table className="jrnl-price-table">
                     <thead>
-                      <tr><th>Tier</th><th>Empty</th><th>Full</th><th>Profit</th></tr>
+                      <tr><th>{t("journal.tier")}</th><th>{t("journal.empty")}</th><th>{t("journal.full")}</th><th>{t("common.profit")}</th></tr>
                     </thead>
                     <tbody>
                       {rows.map((r) => (
@@ -138,21 +140,21 @@ export function JournalControls({ enabled, owned, onToggleEnabled, onToggleOwned
     <div className="jrnl-control">
       <label className="jrnl-toggle">
         <input type="checkbox" checked={enabled} onChange={(e) => onToggleEnabled(e.target.checked)} />
-        <span>Journal profit</span>
+        <span>{t("journal.profit")}</span>
       </label>
       <button
         type="button"
         className="jrnl-edit-btn"
         disabled={!enabled}
-        aria-label="Edit journals and view prices"
-        title="Edit journals and view prices"
+        aria-label={t("journal.editPrices")}
+        title={t("journal.editPrices")}
         onClick={() => setShowSettings(true)}
       >
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M12 20h9" />
           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
         </svg>
-        <span>Journals</span>
+        <span>{t("journal.journals")}</span>
       </button>
 
       {showSettings ? createPortal(settingsModal, document.body) : null}

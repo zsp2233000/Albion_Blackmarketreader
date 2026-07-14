@@ -7,7 +7,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import { SeoHeading } from "../../shared/seo/SeoHeading";
-import { JournalControls, MobileNavBurger, professionForItem, resolveJournalProfit, useJournals, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../shared";
+import { JournalControls, MobileNavBurger, getItemDisplayName, professionForItem, resolveJournalProfit, useI18n, useJournals, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../shared";
 import "../bm-crafter/ui/bmCrafter.css";
 import "./craftingCalculator.css";
 import {
@@ -274,11 +274,12 @@ function normalizeSearchText(value: string): string {
     .trim();
 }
 
-function scoreSearchItem(item: CraftingItem, query: string): number {
+function scoreSearchItem(item: CraftingItem, query: string, locale: "en" | "zh-TW" = "en"): number {
   const q = normalizeSearchText(query);
   if (!q) return 0;
 
-  const name = normalizeSearchText(item.name);
+  const localizedName = getItemDisplayName(`T4_${item.id}`, locale, item.name).replace(/^\d+\.\d+\s+/, "");
+  const name = normalizeSearchText(`${item.name} ${localizedName}`);
   const id = normalizeSearchText(item.id);
   const combined = `${name} ${id}`.trim();
   const tokens = q.split(" ").filter(Boolean);
@@ -406,6 +407,7 @@ function useRegion(): [MarketRegion, (next: MarketRegion) => void] {
 
 export function CraftingCalculatorPage() {
   const [region, setRegion] = useRegion();
+  const { locale, t } = useI18n();
   const [craftCity, setCraftCity] = useState<string>(() => getStoredCity(["craftCity", "selectedCity", "city", "cityFilter", "currentCity"]));
   const [authService, setAuthService] = useState<AuthService | null>(null);
   const [user, setUser] = useState<UserState | null>(null);
@@ -1130,33 +1132,39 @@ export function CraftingCalculatorPage() {
       const total = idx === 0 ? selectedRowValues.mat1 : selectedRowValues.mat2;
       const unitPrice = qty > 0 && total > 0 ? total / qty : 0;
       const enchantLabel = enchant > 0 ? `.${enchant}` : "";
-      entries.push({ name: `T${tier}${enchantLabel} ${baseName.replace(/_/g, " ")}`, qty, unitPrice, total });
+      const materialId = buildCraftedItemId(baseName, tier, enchant);
+      entries.push({
+        name: getItemDisplayName(materialId, locale, `T${tier}${enchantLabel} ${baseName.replace(/_/g, " ")}`),
+        qty,
+        unitPrice,
+        total
+      });
     });
     return entries;
-  }, [selectedItem, selectedRow.uid, selectedRowValues.mat1, selectedRowValues.mat2]);
+  }, [locale, selectedItem, selectedRow.uid, selectedRowValues.mat1, selectedRowValues.mat2]);
 
   const artefactBreakdown = useMemo(() => {
     if (!selectedItem) return null;
     const artifactId = String(selectedItem.artifactId || "").trim();
     if (!artifactId) return null;
     const total = selectedRowValues.artefact;
-    return { name: artifactId, qty: 1, total };
-  }, [selectedItem, selectedRowValues.artefact]);
+    return { name: getItemDisplayName(artifactId, locale, artifactId), qty: 1, total };
+  }, [locale, selectedItem, selectedRowValues.artefact]);
 
   const searchResults = useMemo(() => {
     const q = normalizeSearchText(searchTerm);
     if (q.length < 2) return [];
     return allItems
-      .map((item) => ({ item, score: scoreSearchItem(item, q) }))
+      .map((item) => ({ item, score: scoreSearchItem(item, q, locale) }))
       .filter((entry) => entry.score > 0)
       .sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name))
       .slice(0, 20)
       .map((entry) => entry.item);
-  }, [allItems, searchTerm]);
+  }, [allItems, searchTerm, locale]);
 
   const searchSuggestions = useMemo(
-    () => searchResults.map((item) => item.name),
-    [searchResults]
+    () => searchResults.map((item) => getItemDisplayName(`T4_${item.id}`, locale, item.name).replace(/^\d+\.\d+\s+/, "")),
+    [searchResults, locale]
   );
 
   function findItemBySearchInput(raw: string): CraftingItem | null {
@@ -1172,14 +1180,14 @@ export function CraftingCalculatorPage() {
     const normalized = normalizeSearchText(text);
     return (
       allItems.find((item) => normalizeSearchText(item.id) === normalized) ||
-      allItems.find((item) => normalizeSearchText(item.name) === normalized) ||
+      allItems.find((item) => normalizeSearchText(getItemDisplayName(`T4_${item.id}`, locale, item.name).replace(/^\d+\.\d+\s+/, "")) === normalized) ||
       null
     );
   }
 
   function onSelectSearchItem(item: CraftingItem) {
     setSelectedItem(item);
-    setSearchTerm(item.name);
+    setSearchTerm(getItemDisplayName(`T4_${item.id}`, locale, item.name).replace(/^\d+\.\d+\s+/, ""));
   }
 
   async function onRegionSave(next: MarketRegion) {
@@ -1265,11 +1273,11 @@ export function CraftingCalculatorPage() {
       </SeoHeading>
       <div className={`modal-overlay ${showRegionConfirm ? "open" : ""}`} aria-hidden={showRegionConfirm ? "false" : "true"}>
         <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="regionConfirmTitle">
-          <h3 id="regionConfirmTitle">Switch region?</h3>
-          <p>Do you really want to switch the region?</p>
+          <h3 id="regionConfirmTitle">{t("message.switchRegion")}</h3>
+          <p>{t("message.confirmRegion")}</p>
           <div className="modal-actions">
-            <button type="button" className="modal-btn ghost" onClick={() => { setShowRegionConfirm(false); setPendingRegion(null); }}>Cancel</button>
-            <button type="button" className="modal-btn primary" onClick={confirmRegionSwitch}>Switch</button>
+            <button type="button" className="modal-btn ghost" onClick={() => { setShowRegionConfirm(false); setPendingRegion(null); }}>{t("common.cancel")}</button>
+            <button type="button" className="modal-btn primary" onClick={confirmRegionSwitch}>{t("common.switch")}</button>
           </div>
         </div>
       </div>
@@ -1285,26 +1293,26 @@ export function CraftingCalculatorPage() {
               <h1>RomulusKings Crafting Tools</h1>
             </div>
             <div className="bm-nav bm-nav-switch">
-              <Link className="nav-tab" to="/">Home</Link>
-              <Link className="nav-tab" to="/dashboard">Dashboard</Link>
-              <Link className="nav-tab" to="/bm-crafter">Blackmarket Crafter</Link>
-              <span className="nav-tab active">Crafting Calculator</span>
-              <Link className="nav-tab" to="/refining-calculator">Refining Calculator</Link>
-              <Link className="nav-tab" to="/food-potion-crafter">Food &amp; Potion Crafter</Link>
+              <Link className="nav-tab" to="/">{t("nav.home")}</Link>
+              <Link className="nav-tab" to="/dashboard">{t("nav.dashboard")}</Link>
+              <Link className="nav-tab" to="/bm-crafter">{t("nav.bmCrafter")}</Link>
+              <span className="nav-tab active">{t("nav.craftingCalculator")}</span>
+              <Link className="nav-tab" to="/refining-calculator">{t("nav.refiningCalculator")}</Link>
+              <Link className="nav-tab" to="/food-potion-crafter">{t("nav.foodPotionCrafter")}</Link>
             </div>
           </div>
           <div className="bm-meta">
             <button className="bm-pill" type="button" onClick={() => { setPendingRegion(region === "eu" ? "us" : "eu"); setShowRegionConfirm(true); }}>
               <span className="material-symbols-outlined">language</span>
-              Region: <span>{region.toUpperCase()}</span>
+              {t("common.region")}: <span>{region.toUpperCase()}</span>
             </button>
             <div className="bm-status" title={craftingUpdated.title}>
               <span className="pulse"></span>
-              Last updated: <span>{craftingUpdated.time}</span>{craftingUpdated.relative ? <span className="bm-status-ago"> ({craftingUpdated.relative})</span> : null}
+              {t("common.lastUpdated")}: <span>{craftingUpdated.time}</span>{craftingUpdated.relative ? <span className="bm-status-ago"> ({craftingUpdated.relative})</span> : null}
             </div>
             <div className="account-wrap">
-              <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label="Account">
-                <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="avatar" />
+              <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label={t("common.account")}>
+                <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt={t("common.avatar")} />
               </button>
             </div>
           </div>
@@ -1323,19 +1331,19 @@ export function CraftingCalculatorPage() {
             ) : (
               <>
                 <span className="email">{user.email || "-"}</span>
-                <span className="status">Logged in</span>
+                <span className="status">{t("auth.loggedIn")}</span>
                 <div className="badge-row">
-                  <span className="badge-chip">Active</span>
-                  <span className="badge-chip muted">Secure</span>
+                  <span className="badge-chip">{t("auth.active")}</span>
+                  <span className="badge-chip muted">{t("auth.secure")}</span>
                 </div>
               </>
             )}
           </div>
-          <button className="close-btn" aria-label="Close" onClick={() => setShowAccount(false)}>X</button>
+          <button className="close-btn" aria-label={t("common.close")} onClick={() => setShowAccount(false)}>X</button>
         </div>
 
         <div className="panel-section">
-          <h4>Select profile avatar</h4>
+          <h4>{t("auth.selectAvatar")}</h4>
           <div className="avatar-grid">
             {allowedAvatars.filter((src) => !src.includes("accountsymbol")).map((src) => (
               <img key={src} src={assetUrl(src.replace(/^\//, ""))} alt="" onClick={() => onAvatarChange(src)} />
@@ -1344,23 +1352,23 @@ export function CraftingCalculatorPage() {
         </div>
 
         <div className="panel-section">
-          <h4>Data region</h4>
+          <h4>{t("auth.dataRegion")}</h4>
           <select className="city-select" value={region} onChange={(e) => onRegionSave(e.target.value === "us" ? "us" : "eu")}>
-            <option value="us">America</option>
-            <option value="eu">Europe</option>
+            <option value="us">{t("panel.america")}</option>
+            <option value="eu">{t("panel.europe")}</option>
           </select>
         </div>
 
         <div className="account-actions">
           {!isGuest() && (
-            <button className="btn primary" onClick={onResetPassword}>{accountActionMsg === "Email sent" ? "Email sent" : "Change password"}</button>
+            <button className="btn primary" onClick={onResetPassword}>{accountActionMsg === "Email sent" ? t("auth.emailSent") : t("auth.changePassword")}</button>
           )}
-          <button className="btn danger" onClick={onLogout}>{isGuest() ? "Exit guest mode" : "Logout"}</button>
+          <button className="btn danger" onClick={onLogout}>{isGuest() ? t("auth.exitGuest") : t("auth.logout")}</button>
         </div>
 
         <div className="account-help">
-          <span>Need help?</span>
-          <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener noreferrer">Join Discord</a>
+          <span>{t("auth.needHelp")}</span>
+          <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener noreferrer">{t("auth.joinDiscord")}</a>
           <a href="mailto:blackmarketreader@gmail.com">blackmarketreader@gmail.com</a>
         </div>
       </div>
@@ -1519,8 +1527,8 @@ export function CraftingCalculatorPage() {
             <div className="bento-card span-8">
               <div className="focus-layout">
                 <div className="focus-main">
-                  <span className="cc-caption">Selection Focus</span>
-                  <h2 id="selectedItemTitle">{selectedItem?.name || `Selected ${selectedRow.uid}`}</h2>
+                  <span className="cc-caption">{t("common.selectionFocus")}</span>
+                  <h2 id="selectedItemTitle">{selectedItem ? getItemDisplayName(buildCraftedItemId(selectedItem.id, parseTierEnchant(selectedRow.uid).tier, parseTierEnchant(selectedRow.uid).enchant), locale, selectedItem.name) : `Selected ${selectedRow.uid}`}</h2>
                   <div className="badge-row">
                     <span className="badge-chip">{selectedRow.uid}</span>
                     <span className="badge-chip muted">
@@ -1530,13 +1538,13 @@ export function CraftingCalculatorPage() {
                 </div>
                 <div className="focus-stats">
                   <div className="focus-stat">
-                    <span className="cc-caption">Return Rate</span>
+                    <span className="cc-caption">{t("common.returnRate")}</span>
                     <strong className="profit-cell">
                       {totals.returnRatePercent.toFixed(2)}%
                     </strong>
                   </div>
                   <div className="focus-stat">
-                    <span className="cc-caption">Bonus City</span>
+                    <span className="cc-caption">{t("common.bonusCity")}</span>
                     <strong>{bonusCity ? (isBonusCityActive ? `${bonusCity} active` : bonusCity) : "None"}</strong>
                   </div>
                 </div>
@@ -1557,15 +1565,15 @@ export function CraftingCalculatorPage() {
             className="specs-trigger specs-trigger-standalone"
             onClick={() => setShowSpecsModal(true)}
           >
-            <span>Manage Specs</span>
+            <span>{t("common.edit")} {t("common.mastery")}</span>
             {specsState.pendingSync ? <span className="specs-trigger-badge">Saving…</span> : null}
           </button>
 
           <div className="bento-card">
-            <div className="cc-caption">Item Search</div>
+            <div className="cc-caption">{t("common.itemSearch")}</div>
             <div className="cc-grid-2 compact-grid">
               <div>
-                <div className="cc-caption">Craft City</div>
+                <div className="cc-caption">{t("common.craftCity")}</div>
                 <select
                   className="detail-input"
                   value={craftCity}
@@ -1577,7 +1585,7 @@ export function CraftingCalculatorPage() {
                 </select>
               </div>
               <div>
-                <div className="cc-caption">Sell City</div>
+                <div className="cc-caption">{t("common.sellCity")}</div>
                 <select
                   className="detail-input"
                   value={sellCity}
@@ -1736,9 +1744,9 @@ export function CraftingCalculatorPage() {
           </div>
 
           <div className="bento-card materials-card">
-            <div className="cc-caption">Materials Required</div>
+            <div className="cc-caption">{t("common.materialsRequired")}</div>
             {materialBreakdown.length === 0 && !artefactBreakdown ? (
-              <div className="materials-empty">Select an item to see required materials.</div>
+              <div className="materials-empty">{t("common.selectItemToSeeMaterials")}</div>
             ) : (
               <ul className="materials-list">
                 {materialBreakdown.map((mat) => (
@@ -1760,7 +1768,7 @@ export function CraftingCalculatorPage() {
                       <span className="materials-name">{artefactBreakdown.name}</span>
                     </div>
                     <div className="materials-row-meta">
-                      <span className="materials-unit">artefact</span>
+                        <span className="materials-unit">{t("common.artefact")}</span>
                       <span className="materials-total">{artefactBreakdown.total > 0 ? formatNumber(Math.round(artefactBreakdown.total)) : "-"}</span>
                     </div>
                   </li>

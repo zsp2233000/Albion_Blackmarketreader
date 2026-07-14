@@ -1,4 +1,5 @@
 import { exitGuest } from "../auth/guestMode";
+import { useI18n } from "../i18n/I18nProvider";
 import "./guestSignInLink.css";
 
 /** Sends the visitor to the login page, preserving where they were so they return after login. */
@@ -9,9 +10,11 @@ function goToLogin() {
 
 /** Signed-out-style note shown in the account panel while in guest mode. Hyperlink, not a button. */
 export function GuestSignInLink() {
+  const { t } = useI18n();
+
   return (
     <span className="guest-signin-note">
-      Guest mode ·{" "}
+      {t("auth.guestMode")} ·{" "}
       <a
         href="/login"
         className="guest-signin-anchor"
@@ -20,9 +23,9 @@ export function GuestSignInLink() {
           goToLogin();
         }}
       >
-        Sign in
+        {t("auth.signIn")}
       </a>{" "}
-      to save your settings
+      {t("auth.saveSettings")}
     </span>
   );
 }

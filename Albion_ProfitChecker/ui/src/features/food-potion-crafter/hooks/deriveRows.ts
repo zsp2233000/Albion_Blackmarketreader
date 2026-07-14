@@ -5,6 +5,8 @@ import {
 } from "../core";
 import type { BonusConfig, ConsumableRecipe, PriceMap } from "../core";
 import { computeFocusEfficiency, resolveSpecFamily } from "../specs/data";
+import { getItemSearchNames } from "../../../shared";
+import type { Locale } from "../../../shared";
 import type { FoodPotionFilters, FoodPotionRow } from "./types";
 
 function toSearchKey(value: string): string {
@@ -22,10 +24,9 @@ function buildIngredientPrices(recipe: ConsumableRecipe, priceByItemId: Map<stri
   return prices;
 }
 
-function matchesSearch(recipe: ConsumableRecipe, search: string): boolean {
+function matchesSearch(recipe: ConsumableRecipe, search: string, locale: Locale = "en"): boolean {
   if (!search) return true;
-  if (toSearchKey(recipe.name).includes(search)) return true;
-  if (toSearchKey(recipe.itemId.replace(/_/g, " ")).includes(search)) return true;
+  if (getItemSearchNames(recipe.itemId, locale, recipe.name).some((name) => toSearchKey(name).includes(search))) return true;
   return recipe.ingredients.some((ingredient) => toSearchKey(ingredient.name).includes(search));
 }
 
@@ -46,7 +47,7 @@ export function deriveFoodPotionRows(
   for (const recipe of recipes) {
     if (recipe.category !== filters.category) continue;
     if (filters.selectedTier !== null && recipe.tier !== filters.selectedTier) continue;
-    if (!matchesSearch(recipe, search)) continue;
+    if (!matchesSearch(recipe, search, filters.locale)) continue;
 
     const ingredientPrices = buildIngredientPrices(recipe, priceByItemId);
     const outputMarketPrice = priceByItemId.get(recipe.itemId) ?? 0;

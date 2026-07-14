@@ -7,6 +7,7 @@ import type {
 } from "../core";
 import type { ReturnRatePreset } from "../core";
 import type { CraftingProgress } from "../specs/data";
+import type { Locale } from "../../../shared";
 
 export interface FoodPotionRow {
   rowKey: string;
@@ -31,4 +32,6 @@ export interface FoodPotionFilters {
   showOnlyProfitable: boolean;
   /** Optional spec progress for focus calc. */
   specProgress?: CraftingProgress;
+  /** UI locale used for localized recipe search. */
+  locale?: Locale;
 }

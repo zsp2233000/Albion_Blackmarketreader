@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { LanguageSwitcher } from "@shared/i18n/LanguageSwitcher";
 
 const LandingPage = lazy(() => import("./pages/LandingPage").then((m) => ({ default: m.LandingPage })));
 const LoginPage = lazy(() => import("./pages/LoginPage").then((m) => ({ default: m.LoginPage })));
@@ -20,6 +21,7 @@ const FoodPotionCrafterPage = lazy(() =>
 export function App() {
   return (
     <Suspense fallback={null}>
+      <LanguageSwitcher />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSessionState } from "../../../shared";
 import type { JournalData, OwnedJournals } from "../../../shared";
+import type { Locale } from "../../../shared";
 import { returnRatePercentToDecimal } from "../domain";
 import type { BmCrafterDataBundle } from "../data";
 import { deriveBmCrafterRows } from "./deriveRows";
@@ -13,7 +14,7 @@ interface JournalConfig {
 
 // Filter settings persist for the browser session so navigating to an item's breakdown and
 // back does not wipe the applied tiers/enchants/city/return-rate etc.
-export function useBmCrafterState(bundle: BmCrafterDataBundle | null, journal?: JournalConfig) {
+export function useBmCrafterState(bundle: BmCrafterDataBundle | null, journal?: JournalConfig, locale: Locale = "en") {
   const [selectedTiers, setSelectedTiers] = useSessionState<number[]>("bm-crafter:selectedTiers", []);
   const [selectedEnchants, setSelectedEnchants] = useSessionState<number[]>("bm-crafter:selectedEnchants", []);
   const [minSold, setMinSold] = useSessionState("bm-crafter:minSold", 0);
@@ -47,9 +48,10 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null, journal?: 
         nonArtefactOnly,
         craftCity,
         usageFeePer100,
-        journal
+        journal,
+        locale
       }),
-    [bundle, selectedTiers, selectedEnchants, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100, journal]
+    [bundle, selectedTiers, selectedEnchants, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100, journal, locale]
   );
 
   useEffect(() => {

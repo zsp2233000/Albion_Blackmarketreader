@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { assetUrl, createAuthService, enterGuest, exitGuest } from "@shared/index";
+import { assetUrl, createAuthService, enterGuest, exitGuest, useI18n } from "@shared/index";
 import type { AuthService } from "@shared/index";
 import "./login.css";
 
@@ -47,6 +47,7 @@ function sleep(ms: number) {
 }
 
 export function LoginPage() {
+  const { t } = useI18n();
   const [authService, setAuthService] = useState<AuthService | null>(null);
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [authError, setAuthError] = useState("");
@@ -244,41 +245,41 @@ export function LoginPage() {
             <h2>RomulusKings Market Reader</h2>
             <p>Black Market Profit Tool</p>
           </div>
-          {checkingSession ? <div className="auth-hint">Checking session...</div> : null}
+          {checkingSession ? <div className="auth-hint">{t("auth.checkingSession")}</div> : null}
           <div className="auth-tabs">
-            <button className={`tab ${authMode === "login" ? "active" : ""}`} onClick={() => setAuthMode("login")}>Login</button>
-            <button className={`tab ${authMode === "register" ? "active" : ""}`} onClick={() => setAuthMode("register")}>Register</button>
+            <button className={`tab ${authMode === "login" ? "active" : ""}`} onClick={() => setAuthMode("login")}>{t("auth.login")}</button>
+            <button className={`tab ${authMode === "register" ? "active" : ""}`} onClick={() => setAuthMode("register")}>{t("auth.register")}</button>
           </div>
           {authMode === "login" ? (
             <>
-              <input placeholder="Email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onLogin(); } }} />
-              <input placeholder="Password" type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onLogin(); } }} />
+              <input placeholder={t("auth.email")} value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onLogin(); } }} />
+              <input placeholder={t("auth.password")} type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onLogin(); } }} />
               <div className="auth-actions">
-                <button className="cta" onClick={onLogin}>Login</button>
+                <button className="cta" onClick={onLogin}>{t("auth.login")}</button>
                 <button className="ghost btn-google" onClick={onGoogle}>
-                  <img src={assetUrl("picture/Googleicon.png")} alt="Google Login" />
+                  <img src={assetUrl("picture/Googleicon.png")} alt={`${t("auth.login")} Google`} />
                 </button>
               </div>
               <div className="auth-guest-row">
-                <button type="button" className="auth-guest-link" onClick={onGuest}>Continue as guest</button>
-                <span className="auth-guest-note">Test without an account · settings stay on this device only</span>
+                <button type="button" className="auth-guest-link" onClick={onGuest}>{t("auth.continueAsGuest")}</button>
+                <span className="auth-guest-note">{t("auth.guestNote")}</span>
               </div>
-              <p className="auth-hint">Please confirm your email before logging in.</p>
+              <p className="auth-hint">{t("auth.confirmEmail")}</p>
             </>
           ) : (
             <>
-              <input placeholder="Display Name" value={regName} onChange={(e) => setRegName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
-              <input placeholder="Email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
-              <input placeholder="Password" type="password" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
+              <input placeholder={t("auth.displayName")} value={regName} onChange={(e) => setRegName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
+              <input placeholder={t("auth.email")} value={regEmail} onChange={(e) => setRegEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
+              <input placeholder={t("auth.password")} type="password" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void onRegister(); } }} />
               <div className="auth-actions">
-                <button className="cta" onClick={onRegister}>Register</button>
+                <button className="cta" onClick={onRegister}>{t("auth.register")}</button>
               </div>
-              <p className="auth-hint">You will receive a confirmation email after registration.</p>
+              <p className="auth-hint">{t("auth.confirmEmailBody")}</p>
             </>
           )}
           <div className="auth-error">{authError || ""}</div>
           <div className="auth-footer">
-            <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noreferrer">Need help? Join Discord</a>
+            <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noreferrer">{t("auth.needHelp")} {t("auth.joinDiscord")}</a>
           </div>
           <div className="auth-trust">Powered by Supabase Secure Authentication</div>
         </div>
@@ -287,9 +288,9 @@ export function LoginPage() {
       {showConfirmModal ? (
         <div className="modal-overlay">
           <div className="modal-card">
-            <h3>Check your email</h3>
-            <p>We sent you a confirmation email. Please verify it before logging in.</p>
-            <button className="cta" onClick={() => setShowConfirmModal(false)}>OK</button>
+            <h3>{t("auth.confirmEmailTitle")}</h3>
+            <p>{t("auth.confirmEmailBody")}</p>
+            <button className="cta" onClick={() => setShowConfirmModal(false)}>{t("auth.ok")}</button>
           </div>
         </div>
       ) : null}

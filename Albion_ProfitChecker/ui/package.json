@@ -14,7 +14,8 @@
     "refresh:crafting-data:eu": "node scripts/refresh-crafting-data.mjs eu",
     "refresh:food-potion-data": "node scripts/refresh-food-potion-data.mjs",
     "refresh:food-potion-data:us": "node scripts/refresh-food-potion-data.mjs us",
-    "refresh:food-potion-data:eu": "node scripts/refresh-food-potion-data.mjs eu"
+    "refresh:food-potion-data:eu": "node scripts/refresh-food-potion-data.mjs eu",
+    "refresh:item-locales": "node scripts/refresh-item-locales.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

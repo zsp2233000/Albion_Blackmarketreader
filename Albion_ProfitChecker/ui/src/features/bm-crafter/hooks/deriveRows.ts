@@ -6,7 +6,8 @@ import {
   parseEnchant,
   parseTier
 } from "../domain";
-import { resolveJournalProfit } from "../../../shared";
+import { getItemSearchNames, getOfficialItemName, resolveJournalProfit } from "../../../shared";
+import type { Locale } from "../../../shared";
 import type { BmCrafterDataBundle } from "../data";
 import type { BmCrafterFilters, BmCrafterRow } from "./types";
 
@@ -16,7 +17,8 @@ function toSearchKey(value: string): string {
   return String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
 }
 
-function toDisplayName(itemId: string, recipeName?: string): string {
+function toDisplayName(itemId: string, recipeName?: string, locale: Locale = "en"): string {
+  if (locale === "zh-TW") return getOfficialItemName(itemId) || recipeName || "";
   if (recipeName) return recipeName;
   const base = normalizeItemId(itemId).replace(/_/g, " ").trim();
   return base || itemId;
@@ -54,11 +56,11 @@ export function deriveBmCrafterRows(bundle: BmCrafterDataBundle | null, filters:
     if (!recipe) continue;
     if (filters.nonArtefactOnly && recipe.artifactId) continue;
 
-    const displayName = toDisplayName(id, recipe.name);
+    const displayName = toDisplayName(id, recipe.name, filters.locale);
     if (search) {
       const idKey = toSearchKey(baseId.replace(/_/g, " "));
-      const nameKey = toSearchKey(displayName);
-      if (!idKey.includes(search) && !nameKey.includes(search)) continue;
+      const names = getItemSearchNames(id, filters.locale ?? "en", recipe.name).map(toSearchKey);
+      if (!idKey.includes(search) && !names.some((name) => name.includes(search))) continue;
     }
 
     const materialMap = cityMaterialsFlat;
