@@ -18,6 +18,10 @@ const BOTS = [
   "Mozilla/5.0 (compatible; DuckDuckBot/1.1; +http://duckduckgo.com/duckduckbot.html)",
   "Discordbot/2.0 (+https://discordapp.com)",
   "Mozilla/5.0 (compatible; ClaudeBot/1.0; +claudebot@anthropic.com)",
+  "Mozilla/5.0 (compatible; Mediapartners-Google/2.1; +http://www.google.com/bot.html)",
+  "Mediapartners-Google",
+  "Mozilla/5.0 (compatible; AdsBot-Google; +http://www.google.com/adsbot.html)",
+  "AdsBot-Google-Mobile (+http://www.google.com/mobile/adsbot.html) Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
 ];
 
 const HUMANS = [
