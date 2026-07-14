@@ -44,6 +44,7 @@ export function LegalPage() {
           <ul>
             <li>Data collected: login email, access timestamps, device/session metadata.</li>
             <li>Purpose: authentication, security, service reliability, and support.</li>
+            <li>Advertising: we use Google AdSense to fund the service; ad partners may set cookies to show relevant ads (see Cookies, Tracking &amp; Advertising below).</li>
             <li>Retention: kept only as long as needed for account operation or legal duties.</li>
             <li>Rights: you can request access, correction, or deletion of your data.</li>
           </ul>
@@ -64,11 +65,31 @@ export function LegalPage() {
         </section>
 
         <section className="legal-section" id="cookies">
-          <h2>Cookie & Tracking Notice</h2>
+          <h2>Cookies, Tracking & Advertising</h2>
           <p>
-            If analytics or tracking is enabled, we will show a consent banner and document which cookies are used.
-            Currently, only essential cookies required for login/session may be used.
+            We use essential cookies required for login and session management. With your consent,
+            we also use cookies for analytics and advertising.
           </p>
+          <p>
+            <strong>Advertising (Google AdSense):</strong> This site uses Google AdSense to display ads.
+            Third-party vendors, including Google, use cookies to serve ads based on your prior visits
+            to this and other websites. Google's use of advertising cookies enables it and its partners
+            to serve ads to you based on your visits to this and other sites.
+          </p>
+          <ul>
+            <li>
+              You can opt out of personalized advertising in{" "}
+              <a href="https://www.google.com/settings/ads" target="_blank" rel="noreferrer">Google Ads Settings</a>.
+            </li>
+            <li>
+              You can opt out of third-party vendors' cookies for personalized ads at{" "}
+              <a href="https://www.aboutads.info/choices" target="_blank" rel="noreferrer">aboutads.info</a>.
+            </li>
+            <li>
+              EU/EEA/UK visitors: we ask for consent via a Google-certified consent banner before setting
+              non-essential or advertising cookies, and you can change or withdraw consent at any time.
+            </li>
+          </ul>
         </section>
       </div>
     </div>
