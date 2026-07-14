@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { assetUrl } from "@shared/assets/assets";
 import { createAuthService, type AuthService } from "@shared/auth/authService";
 import { isGuest, buildGuestProfile, exitGuest } from "@shared/auth/guestMode";
+import { isCrawler } from "@shared/auth/crawler";
 import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
@@ -402,7 +403,9 @@ export function RefiningCalculatorPage() {
       const session = await authService.getSession().catch(() => null);
       if (cancelled) return;
       if (!session) {
-        if (isGuest()) {
+        if (isGuest() || isCrawler()) {
+          // Crawlers get the public read-only (guest) view instead of a /login
+          // redirect, so search engines can index the tool page content.
           const guest = buildGuestProfile();
           const guestRegion = readStoredRegion() || guest.region || "eu";
           setUser({ id: guest.id, email: guest.email, avatar: sanitizeAvatarUrl(guest.avatar || localStorage.getItem("avatar")), region: guestRegion });

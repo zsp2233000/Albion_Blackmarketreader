@@ -135,14 +135,14 @@ export function LoginPage() {
         await sleep(150);
       }
       if (!sessionReady) {
-        setAuthError("Login erkannt, Session braucht noch einen Moment. Bitte erneut versuchen.");
+        setAuthError("Login detected — the session needs a moment. Please try again.");
         return;
       }
 
       const profile = await authService.getUserProfile();
       if (!profile?.emailConfirmed) {
         await authService.signOut().catch(() => undefined);
-        setAuthError("Bitte bestatige zuerst deine E-Mail.");
+        setAuthError("Please confirm your email first.");
         return;
       }
 
@@ -163,7 +163,7 @@ export function LoginPage() {
     const password = regPassword.trim();
 
     if (!displayName || !email || !password) {
-      setAuthError("Bitte Display Name, E-Mail und Passwort ausfullen.");
+      setAuthError("Please fill in display name, email and password.");
       return;
     }
 
@@ -176,7 +176,7 @@ export function LoginPage() {
           .eq("display_name", displayName)
           .limit(1);
         if (existingName && existingName.length > 0) {
-          setAuthError("Display Name ist bereits vergeben.");
+          setAuthError("Display name is already taken.");
           return;
         }
       } catch {
@@ -191,11 +191,11 @@ export function LoginPage() {
       if (error) {
         const msg = String(error.message || "").toLowerCase();
         if (msg.includes("already") || msg.includes("exists") || msg.includes("registered")) {
-          setAuthError("Account existiert bereits. Bitte einloggen.");
+          setAuthError("Account already exists. Please log in.");
           return;
         }
         if ((error as { status?: number }).status === 429) {
-          setAuthError("Zu viele Versuche. Bitte kurz warten und erneut versuchen.");
+          setAuthError("Too many attempts. Please wait a moment and try again.");
           return;
         }
         throw error;

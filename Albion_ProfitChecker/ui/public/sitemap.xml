@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://blackmarketreader.com/</loc>
     <lastmod>2026-06-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://blackmarketreader.com/picture/bm-crafter-table.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://blackmarketreader.com/picture/Profit-Dashboard.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://blackmarketreader.com/picture/Silver-dashboard.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://blackmarketreader.com/picture/crafting-calc-preview.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://blackmarketreader.com/picture/refining-calc-preview.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://blackmarketreader.com/picture/food-potion-crafter-preview.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://blackmarketreader.com/dashboard</loc>
