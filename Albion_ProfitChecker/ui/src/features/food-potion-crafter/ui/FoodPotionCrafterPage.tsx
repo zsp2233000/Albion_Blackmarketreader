@@ -7,7 +7,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { MobileNavBurger, ResponsiveFilters, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
+import { MobileNavBurger, ResponsiveFilters, getOfficialItemName, useI18n, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
 import type { City, ConsumableCategory, ConsumableRecipe, MarketRegion, RecipeIngredient } from "../core";
 import { buildConsumablePriceSnapshot, ingredientPricesPath, loadIngredients, loadRecipes, outputPricesPath } from "../data";
 import { deriveFoodPotionRows, useFoodPotionState } from "../hooks";
@@ -24,6 +24,14 @@ const PRICE_STORAGE_KEY = "food-potion-prices-v1";
 function iconUrl(itemId: string): string {
   // Enchanted food shares the base item's icon (the @N variants are our synthetic ids).
   return `/itemicons/${itemId.replace(/@\d+$/, "")}.png`;
+}
+
+function displayRecipeName(recipe: ConsumableRecipe): string {
+  return getOfficialItemName(recipe.itemId) || recipe.name;
+}
+
+function displayIngredientName(ingredient: RecipeIngredient): string {
+  return getOfficialItemName(ingredient.itemId) || ingredient.name;
 }
 
 /** Fish sauce used to enchant food: enchant level → sauce item. Fish sauce IS subject to the return rate. */
@@ -208,6 +216,7 @@ const ACCOUNT_AVATARS = [
 ];
 
 export function FoodPotionCrafterPage() {
+  const { locale, t } = useI18n();
   const [region, setRegion] = useRegion();
   const [recipes, setRecipes] = useState<ConsumableRecipe[]>([]);
   const [ingredientMeta, setIngredientMeta] = useState<Map<string, RecipeIngredient>>(new Map());
@@ -459,7 +468,7 @@ export function FoodPotionCrafterPage() {
     return out;
   }, [recipes]);
 
-  const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useFoodPotionState(scannerRecipes, priceByItemId, specsState.progress);
+  const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useFoodPotionState(scannerRecipes, priceByItemId, specsState.progress, locale);
 
   const updatePrice = (itemId: string, value: string) => setManualPrices((prev) => ({ ...prev, [itemId]: value }));
 
@@ -493,7 +502,7 @@ export function FoodPotionCrafterPage() {
       if (!current || recipe.tier < current.tier) firstByBase.set(base, recipe);
     });
     return [...firstByBase.entries()]
-      .map(([base, recipe]) => ({ base, label: familyLabel(base, recipe.name, filters.category) }))
+      .map(([base, recipe]) => ({ base, label: familyLabel(base, displayRecipeName(recipe), filters.category) }))
       .sort((a, b) => a.label.localeCompare(b.label));
   }, [recipes, filters.category]);
 
@@ -549,22 +558,22 @@ export function FoodPotionCrafterPage() {
               <h1>RomulusKings Crafting Tools</h1>
             </div>
             <div className="bm-nav bm-nav-switch">
-              <Link className="nav-tab" to="/">Home</Link>
-              <Link className="nav-tab" to="/dashboard">Dashboard</Link>
-              <Link className="nav-tab" to="/bm-crafter">Blackmarket Crafter</Link>
-              <Link className="nav-tab" to="/crafting-calculator">Crafting Calculator</Link>
-              <Link className="nav-tab" to="/refining-calculator">Refining Calculator</Link>
-              <span className="nav-tab active">Food &amp; Potion Crafter</span>
+              <Link className="nav-tab" to="/">{t("nav.home")}</Link>
+              <Link className="nav-tab" to="/dashboard">{t("nav.dashboard")}</Link>
+              <Link className="nav-tab" to="/bm-crafter">{t("nav.bmCrafter")}</Link>
+              <Link className="nav-tab" to="/crafting-calculator">{t("nav.craftingCalculator")}</Link>
+              <Link className="nav-tab" to="/refining-calculator">{t("nav.refiningCalculator")}</Link>
+              <span className="nav-tab active">{t("nav.foodPotionCrafter")}</span>
             </div>
           </div>
           <div className="bm-meta">
             <button className="bm-pill" type="button" onClick={() => setRegion(region === "eu" ? "us" : "eu")}>
-              <span className="material-symbols-outlined">language</span>Region: <span>{region.toUpperCase()}</span>
+              <span className="material-symbols-outlined">language</span>{t("common.region")}: <span>{region.toUpperCase()}</span>
             </button>
-            <div className="bm-status" title={liveUpdated.title}><span className="pulse"></span>{liveUpdated.relative ? <>Last updated: <span>{liveUpdated.time}</span><span className="bm-status-ago"> ({liveUpdated.relative})</span></> : "Manual pricing"}</div>
+            <div className="bm-status" title={liveUpdated.title}><span className="pulse"></span>{liveUpdated.relative ? <>{t("common.lastUpdated")}: <span>{liveUpdated.time}</span><span className="bm-status-ago"> ({liveUpdated.relative})</span></> : t("common.manualPricing")}</div>
             <div className="account-wrap">
-              <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount((p) => !p)} aria-label="Account">
-                <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="avatar" />
+              <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount((p) => !p)} aria-label={t("common.account")}>
+                <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt={t("common.avatar")} />
               </button>
             </div>
           </div>
@@ -584,19 +593,19 @@ export function FoodPotionCrafterPage() {
               ) : (
                 <>
                   <span className="email">{user.email || "-"}</span>
-                  <span className="status">Logged in</span>
+                  <span className="status">{t("auth.loggedIn")}</span>
                   <div className="badge-row">
-                    <span className="badge-chip">Active</span>
-                    <span className="badge-chip muted">Secure</span>
+                  <span className="badge-chip">{t("auth.active")}</span>
+                  <span className="badge-chip muted">{t("auth.secure")}</span>
                   </div>
                 </>
               )}
             </div>
-            <button className="close-btn" aria-label="Close" onClick={() => setShowAccount(false)}>X</button>
+            <button className="close-btn" aria-label={t("common.close")} onClick={() => setShowAccount(false)}>X</button>
           </div>
 
           <div className="panel-section">
-            <h4>Select profile avatar</h4>
+          <h4>{t("auth.selectAvatar")}</h4>
             <div className="avatar-grid">
               {ACCOUNT_AVATARS.filter((src) => !src.includes("accountsymbol")).map((src) => (
                 <img key={src} src={assetUrl(src.replace(/^\//, ""))} alt="" onClick={() => onAvatarChange(src)} />
@@ -605,23 +614,23 @@ export function FoodPotionCrafterPage() {
           </div>
 
           <div className="panel-section">
-            <h4>Data region</h4>
+          <h4>{t("auth.dataRegion")}</h4>
             <select className="city-select" value={region} onChange={(e) => onRegionSave(e.target.value === "us" ? "us" : "eu")}>
-              <option value="us">America</option>
-              <option value="eu">Europe</option>
+              <option value="us">{t("panel.america")}</option>
+              <option value="eu">{t("panel.europe")}</option>
             </select>
           </div>
 
           <div className="account-actions">
             {!isGuest() && (
-              <button className="btn primary" onClick={onResetPassword}>{accountActionMsg === "Email sent" ? "Email sent" : "Change password"}</button>
+              <button className="btn primary" onClick={onResetPassword}>{accountActionMsg === "Email sent" ? t("auth.emailSent") : t("auth.changePassword")}</button>
             )}
-            <button className="btn danger" onClick={onLogout}>{isGuest() ? "Exit guest mode" : "Logout"}</button>
+            <button className="btn danger" onClick={onLogout}>{isGuest() ? t("auth.exitGuest") : t("auth.logout")}</button>
           </div>
 
           <div className="account-help">
-            <span>Need help?</span>
-            <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener noreferrer">Join Discord</a>
+            <span>{t("auth.needHelp")}</span>
+            <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener noreferrer">{t("auth.joinDiscord")}</a>
             <a href="mailto:blackmarketreader@gmail.com">blackmarketreader@gmail.com</a>
           </div>
         </div>
@@ -630,10 +639,10 @@ export function FoodPotionCrafterPage() {
       <div className="fp-category-bar">
         <div className="fp-category-tabs">
           {([
-            { category: "food", mode: "scanner", label: "Cooking Scanner", icon: "restaurant" },
-            { category: "food", mode: "crafter", label: "Cooking Crafter", icon: "restaurant" },
-            { category: "potion", mode: "scanner", label: "Potion Scanner", icon: "science" },
-            { category: "potion", mode: "crafter", label: "Potion Crafter", icon: "science" },
+            { category: "food", mode: "scanner", label: t("common.cookingScanner"), icon: "restaurant" },
+            { category: "food", mode: "crafter", label: t("common.cookingCrafter"), icon: "restaurant" },
+            { category: "potion", mode: "scanner", label: t("common.potionScanner"), icon: "science" },
+            { category: "potion", mode: "crafter", label: t("common.potionCrafter"), icon: "science" },
           ] as const).map((tab) => {
             const active = filters.category === tab.category && mode === tab.mode;
             return (
@@ -654,12 +663,12 @@ export function FoodPotionCrafterPage() {
         </div>
         <button type="button" className="fp-specs-trigger" onClick={() => setShowSpecsModal(true)}>
           <span className="material-symbols-outlined">workspace_premium</span>
-          Manage Specs
+          {t("common.edit")} {t("common.mastery")}
           {specsState.pendingSync ? <span className="badge">Saving…</span> : null}
         </button>
       </div>
 
-      <ResponsiveFilters title="Filters" accent="#4ade80">
+      <ResponsiveFilters title={t("common.filters")} accent="#4ade80">
       <section className="fp-controls fp-controls-static">
         <div className="fp-filter-grid">
           <div className="fp-field">
@@ -737,19 +746,19 @@ export function FoodPotionCrafterPage() {
           ) : null}
           {mode === "scanner" ? (
             <div className="fp-field fp-field-wide">
-              <label>Search</label>
+            <label>{t("common.search")}</label>
               <div className="search-field">
-                <input type="search" value={filters.searchTerm} onChange={(e) => filters.setSearchTerm(e.target.value)} placeholder="Recipe or ingredient" />
+                <input type="search" value={filters.searchTerm} onChange={(e) => filters.setSearchTerm(e.target.value)} placeholder={`${t("common.recipe")} / ${t("common.ingredients")}`} />
                 <span className="material-symbols-outlined">search</span>
               </div>
             </div>
           ) : null}
           {mode === "scanner" ? (
             <div className="fp-field">
-              <label>Profitable Only</label>
+              <label>{t("common.profitable")}</label>
               <label className="fp-toggle-field">
                 <input type="checkbox" checked={filters.showOnlyProfitable} onChange={(e) => filters.setShowOnlyProfitable(e.target.checked)} />
-                <span>Hide losses</span>
+                <span>{t("common.hideLosses")}</span>
               </label>
             </div>
           ) : null}
@@ -761,25 +770,25 @@ export function FoodPotionCrafterPage() {
         {mode === "scanner" ? (
           <section className="bm-table expanded">
             <div className="fp-summary-bar">
-              <div className="fp-summary-stat"><span>Profitable</span><strong className="profit">{profitableCount}</strong></div>
+              <div className="fp-summary-stat"><span>{t("common.profitable")}</span><strong className="profit">{profitableCount}</strong></div>
               <div className="fp-summary-divider" />
-              <div className="fp-summary-stat"><span>Showing</span><strong>{visibleRows.length}</strong></div>
+              <div className="fp-summary-stat"><span>{t("common.total")}</span><strong>{visibleRows.length}</strong></div>
               <div className="fp-summary-divider" />
-              <div className="fp-summary-stat"><span>Category</span><strong>{filters.category === "food" ? "Food" : "Potions"}</strong></div>
+              <div className="fp-summary-stat"><span>{t("common.category")}</span><strong>{filters.category === "food" ? t("common.food") : t("common.potions")}</strong></div>
               <div className="fp-summary-divider" />
-              <div className="fp-summary-stat"><span>Return</span><strong className="fp-return-rate">{selectedRow ? formatPct(selectedRow.result.returnRate * 100) : "--"}</strong></div>
+              <div className="fp-summary-stat"><span>{t("common.return")}</span><strong className="fp-return-rate">{selectedRow ? formatPct(selectedRow.result.returnRate * 100) : "--"}</strong></div>
             </div>
             <div className="table-wrap custom-scrollbar fp-scanner-scroll">
               <table>
                 <thead>
                   <tr>
-                    <th>Recipe</th><th className="num">Output</th><th className="num">Return</th>
-                    <th className="num">Craft Cost</th><th className="num">Sell Price</th>
-                    <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Sold / Day (all cities)</th>
+                    <th>{t("common.recipe")}</th><th className="num">{t("common.output")}</th><th className="num">{t("common.return")}</th>
+                    <th className="num">{t("common.craftCost")}</th><th className="num">{t("common.sellPrice")}</th>
+                    <th className="num">{t("common.profit")}</th><th className="num">{t("common.profitPercent")}</th><th className="num">{t("common.profitPerFocus")}</th><th className="num">{t("common.soldPerDay")} ({t("dashboard.allCities")})</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {!visibleRows.length ? (<tr><td colSpan={9}>No recipes match — enter ingredient prices or adjust filters.</td></tr>) : null}
+                  {!visibleRows.length ? (<tr><td colSpan={9}>{t("common.noMatchingRows")}</td></tr>) : null}
                   {visibleRows.map((row, index) => {
                     const priced = isPriced(row);
                     const suspect = isSuspectPrice(row.result);
@@ -796,7 +805,7 @@ export function FoodPotionCrafterPage() {
                             <div className="fp-item-icon"><img src={iconUrl(row.recipe.itemId)} alt="" loading="lazy" onError={onItemIconError} /></div>
                             <div>
                               <div className="item-name">
-                                {row.recipe.name}
+                                {displayRecipeName(row.recipe)}
                                 <EnchantBadge itemId={row.recipe.itemId} />
                                 {priced ? null : <span className="fp-chip fp-missing-chip" style={{ marginLeft: 6 }}>No price</span>}
                                 {row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}
@@ -822,22 +831,22 @@ export function FoodPotionCrafterPage() {
               </table>
             </div>
             <div className="table-footer">
-              <p>Showing {visibleRows.length} {filters.category === "food" ? "food" : "potion"} recipes</p>
-              <p>Region {region.toUpperCase()} · profit shown only when prices are complete</p>
+              <p>{t("common.total")}: {visibleRows.length} {filters.category === "food" ? t("common.food") : t("common.potions")} {t("common.recipe")}</p>
+              <p>{t("common.region")} {region.toUpperCase()} · {t("common.profitOnlyComplete")}</p>
             </div>
           </section>
         ) : (
           <section className="fp-crafter-stage fp-crafter-full">
             <div className="fp-crafter-toolbar">
               <div className="fp-recipe-picker">
-                <span className="cc-caption">Product</span>
+                <span className="cc-caption">{t("common.product")}</span>
                 <select className="fp-control" value={effectiveFamily ?? ""} onChange={(e) => setSelectedFamily(e.target.value || null)}>
-                  {families.length === 0 ? <option value="">No products available</option> : null}
+                  {families.length === 0 ? <option value="">{t("common.noData")}</option> : null}
                   {families.map((f) => (<option key={f.base} value={f.base}>{f.label}</option>))}
                 </select>
               </div>
               <span className="fp-batch-badge">
-                Table <strong>per item</strong> · calculator per <strong>craft</strong>
+                {t("common.recipe")} <strong>/ {t("common.unit")}</strong> · {t("common.calculator")} / <strong>{t("common.craftCost")}</strong>
                 {crafterSelected ? <> · 1 craft → <strong>{crafterSelected.recipe.outputQty}</strong> item{crafterSelected.recipe.outputQty === 1 ? "" : "s"}</> : null}
               </span>
             </div>
@@ -846,14 +855,14 @@ export function FoodPotionCrafterPage() {
               <table>
                 <thead>
                   <tr>
-                    <th>Tier</th><th>Recipe</th>
-                    <th className="num">Yield / craft</th><th className="num">Return</th>
-                    <th className="num">Ingredient Cost</th><th className="num">Station Fee</th><th className="num">Sell Price</th>
-                    <th className="num">Profit</th><th className="num">Profit %</th><th className="num">Silver / Focus</th><th className="num">Sold / Day (all cities)</th>
+                    <th>{t("common.tier")}</th><th>{t("common.recipe")}</th>
+                    <th className="num">{t("common.yieldPerCraft")}</th><th className="num">{t("common.return")}</th>
+                    <th className="num">{t("common.ingredientCost")}</th><th className="num">{t("common.stationFee")}</th><th className="num">{t("common.sellPrice")}</th>
+                    <th className="num">{t("common.profit")}</th><th className="num">{t("common.profitPercent")}</th><th className="num">{t("common.profitPerFocus")}</th><th className="num">{t("common.soldPerDay")} ({t("dashboard.allCities")})</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {familyRows.length === 0 ? (<tr><td colSpan={11}>No tiers for this product.</td></tr>) : null}
+                  {familyRows.length === 0 ? (<tr><td colSpan={11}>{t("common.noData")}</td></tr>) : null}
                   {familyRows.map((row) => { const rowPriced = isPriced(row); return (
                     <tr
                       key={row.rowKey}
@@ -866,7 +875,7 @@ export function FoodPotionCrafterPage() {
                         <div className="item"><div className="item-info">
                           <div className="fp-item-icon"><img src={iconUrl(row.recipe.itemId)} alt="" loading="lazy" onError={onItemIconError} /></div>
                           <div>
-                            <div className="item-name">{row.recipe.name}<EnchantBadge itemId={row.recipe.itemId} />{row.result.missingIngredientCost ? " *" : ""}{row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}</div>
+                            <div className="item-name">{displayRecipeName(row.recipe)}<EnchantBadge itemId={row.recipe.itemId} />{row.result.missingIngredientCost ? " *" : ""}{row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}</div>
                             {isSuspectPrice(row.result) ? <div className="fp-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
                           </div>
                         </div></div>
@@ -902,8 +911,8 @@ export function FoodPotionCrafterPage() {
                 <div className="fp-workbench-title">
                   <span className="material-symbols-outlined">calculate</span>
                   <div>
-                    <h3>{crafterSelected.recipe.name}<EnchantBadge itemId={crafterSelected.recipe.itemId} /> · Calculator</h3>
-                    <p>Edit ingredient + sell prices — profit updates live</p>
+                    <h3>{displayRecipeName(crafterSelected.recipe)}<EnchantBadge itemId={crafterSelected.recipe.itemId} /> · {t("common.calculator")}</h3>
+                    <p>{t("common.edit")} {t("common.ingredients")} + {t("common.sellPrice")}</p>
                   </div>
                 </div>
                 <div className="detail-grid-12">
@@ -937,7 +946,7 @@ export function FoodPotionCrafterPage() {
                             <div className="fp-ingredient-main">
                               <span className="fp-ingredient-icon"><img src={iconUrl(ingredient.itemId)} alt="" loading="lazy" onError={onItemIconError} /></span>
                               <span className="fp-ingredient-qty">{ingredient.qty}×</span>
-                              <span className="fp-ingredient-name">{ingredient.name}</span>
+                              <span className="fp-ingredient-name">{displayIngredientName(ingredient)}</span>
                               {rare ? <span className="fp-chip fp-rare-chip">Rare</span> : null}
                               {isToken ? <span className="fp-chip fp-avalonian-chip">Token</span> : null}
                             </div>

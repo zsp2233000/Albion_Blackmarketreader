@@ -7,7 +7,7 @@ import { isGuest, buildGuestProfile, exitGuest } from "@shared/auth/guestMode";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { JournalControls, MobileNavBurger, ResponsiveFilters, useJournals, GuestSignInLink, exitGuestToLogin } from "../../../shared";
+import { JournalControls, MobileNavBurger, ResponsiveFilters, useI18n, useJournals, GuestSignInLink, exitGuestToLogin } from "../../../shared";
 import {
   buildArtefactId,
   buildMaterialId,
@@ -102,6 +102,7 @@ export function BmCrafterPage() {
   const ROWS_STEP = 40;
 
   const [region, setRegion] = useRegion();
+  const { locale, t } = useI18n();
   const { data, loading, error } = useBmCrafterData(region);
   const journals = useJournals(region);
   // BM Crafter lists every item type, so all four journals always apply — ownership is not a
@@ -114,7 +115,7 @@ export function BmCrafterPage() {
     }),
     [journals.enabled, journals.data]
   );
-  const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useBmCrafterState(data, journalConfig);
+  const { rows, selectedRow, selectedRowKey, setSelectedRowKey, filters } = useBmCrafterState(data, journalConfig, locale);
   const navigate = useNavigate();
 
   // Open the clicked item in the Crafting Calculator, pre-set to sell to the Black Market
@@ -425,14 +426,14 @@ export function BmCrafterPage() {
       </SeoHeading>
       <div className={`modal-overlay ${showRegionConfirm ? "open" : ""}`} aria-hidden={showRegionConfirm ? "false" : "true"}>
         <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="regionConfirmTitle">
-          <h3 id="regionConfirmTitle">Switch region?</h3>
-          <p>Do you really want to switch the region?</p>
+          <h3 id="regionConfirmTitle">{t("message.switchRegion")}</h3>
+          <p>{t("message.confirmRegion")}</p>
           <div className="modal-actions">
             <button type="button" className="modal-btn ghost" onClick={() => { setShowRegionConfirm(false); setPendingRegion(null); }}>
-              Cancel
+              {t("common.cancel")}
             </button>
             <button type="button" className="modal-btn primary" onClick={confirmRegionSwitch}>
-              Switch
+              {t("common.switch")}
             </button>
           </div>
         </div>
@@ -449,25 +450,25 @@ export function BmCrafterPage() {
               <h1>RomulusKings Crafting Tools</h1>
             </div>
             <div className="bm-nav bm-nav-switch">
-              <Link className="nav-tab" to="/">Home</Link>
-              <Link className="nav-tab" to="/dashboard">Dashboard</Link>
-              <Link className="nav-tab active" to="/bm-crafter">Blackmarket Crafter</Link>
-              <a className="nav-tab" href="/crafting-calculator">Crafting Calculator</a>
-              <a className="nav-tab" href="/refining-calculator">Refining Calculator</a>
-              <a className="nav-tab" href="/food-potion-crafter">Food & Potion Crafter</a>
+              <Link className="nav-tab" to="/">{t("nav.home")}</Link>
+              <Link className="nav-tab" to="/dashboard">{t("nav.dashboard")}</Link>
+              <Link className="nav-tab active" to="/bm-crafter">{t("nav.bmCrafter")}</Link>
+              <a className="nav-tab" href="/crafting-calculator">{t("nav.craftingCalculator")}</a>
+              <a className="nav-tab" href="/refining-calculator">{t("nav.refiningCalculator")}</a>
+              <a className="nav-tab" href="/food-potion-crafter">{t("nav.foodPotionCrafter")}</a>
             </div>
           </div>
           <div className="bm-meta">
             <button className="bm-pill" type="button" onClick={requestRegionToggle}>
               <span className="material-symbols-outlined">language</span>
-              Region: <span>{region.toUpperCase()}</span>
+              {t("common.region")}: <span>{region.toUpperCase()}</span>
             </button>
             <div className="bm-status" title={lastUpdated.title}>
               <span className="pulse"></span>
-              Last updated: <span>{lastUpdated.time}</span>{lastUpdated.relative ? <span className="bm-status-ago"> ({lastUpdated.relative})</span> : null}
+              {t("common.lastUpdated")}: <span>{lastUpdated.time}</span>{lastUpdated.relative ? <span className="bm-status-ago"> ({lastUpdated.relative})</span> : null}
             </div>
             <div className="account-wrap">
-              <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label="Account">
+              <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label={t("common.account")}>
                 <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="avatar" />
               </button>
             </div>
@@ -483,7 +484,7 @@ export function BmCrafterPage() {
       >
         <div className="account-header">
           <div className="avatar-ring">
-            <img id="profileAvatar" className="avatar-big" src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="Avatar" />
+            <img id="profileAvatar" className="avatar-big" src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt={t("common.avatar")} />
             <span className="status-dot" aria-hidden="true"></span>
           </div>
           <div className="user-info">
@@ -492,19 +493,19 @@ export function BmCrafterPage() {
             ) : (
               <>
                 <span className="email">{user?.email || "-"}</span>
-                <span className="status">Logged in</span>
+                <span className="status">{t("auth.loggedIn")}</span>
                 <div className="badge-row">
-                  <span className="badge-chip">Active</span>
-                  <span className="badge-chip muted">Secure</span>
+                  <span className="badge-chip">{t("auth.active")}</span>
+                  <span className="badge-chip muted">{t("auth.secure")}</span>
                 </div>
               </>
             )}
           </div>
-          <button className="close-btn" aria-label="Close" onClick={() => setShowAccount(false)}>X</button>
+          <button className="close-btn" aria-label={t("common.close")} onClick={() => setShowAccount(false)}>X</button>
         </div>
 
         <div className="panel-section">
-          <h4>Select profile avatar</h4>
+          <h4>{t("auth.selectAvatar")}</h4>
           <div className="avatar-grid">
             {allowedAvatars.filter((src) => !src.includes("accountsymbol")).map((src) => (
               <img
@@ -519,29 +520,29 @@ export function BmCrafterPage() {
         </div>
 
         <div className="panel-section">
-          <h4>Data region</h4>
+          <h4>{t("auth.dataRegion")}</h4>
           <select
             className="city-select"
             value={region}
             onChange={(e) => onRegionSave(e.target.value === "us" ? "us" : "eu")}
           >
-            <option value="us">America</option>
-            <option value="eu">Europe</option>
+            <option value="us">{t("panel.america")}</option>
+            <option value="eu">{t("panel.europe")}</option>
           </select>
         </div>
 
         <div className="account-actions">
           {!isGuest() && (
             <button className="btn primary" onClick={onResetPassword}>
-              {accountActionMsg === "Email sent" ? "Email sent" : "Change password"}
+              {accountActionMsg === "Email sent" ? t("auth.emailSent") : t("auth.changePassword")}
             </button>
           )}
-          <button className="btn danger" onClick={onLogout}>{isGuest() ? "Exit guest mode" : "Logout"}</button>
+          <button className="btn danger" onClick={onLogout}>{isGuest() ? t("auth.exitGuest") : t("auth.logout")}</button>
         </div>
 
         <div className="account-help">
-          <span>Need help?</span>
-          <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener noreferrer">Join Discord</a>
+          <span>{t("auth.needHelp")}</span>
+          <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener noreferrer">{t("auth.joinDiscord")}</a>
           <a href="mailto:blackmarketreader@gmail.com">blackmarketreader@gmail.com</a>
         </div>
       </div>
@@ -564,8 +565,8 @@ export function BmCrafterPage() {
           </div>
         </div>
 
-        <div className="filter-block">
-          <p>Enchantment</p>
+          <div className="filter-block">
+          <p>{t("common.enchantment")}</p>
           <div className="chip-toggle">
             {[0, 1, 2, 3].map((enchant) => (
               <button
@@ -582,7 +583,7 @@ export function BmCrafterPage() {
 
         <div className="filter-block">
           <div className="filter-head">
-            <p>Min Sold / Day</p>
+            <p>{t("filter.minSold")}</p>
             <span className="filter-value">{filters.minSold}+</span>
           </div>
           <div className="slider">
@@ -603,8 +604,8 @@ export function BmCrafterPage() {
 
         <div className="filter-block">
           <div className="filter-head">
-            <p>Top Daily Profit</p>
-            <span className="filter-value">{filters.sortByDailyTop ? "On" : "Off"}</span>
+            <p>{t("filter.topDailyProfit")}</p>
+            <span className="filter-value">{filters.sortByDailyTop ? t("filter.on") : t("filter.off")}</span>
           </div>
           <label className="daily-top-toggle">
             <input
@@ -612,14 +613,14 @@ export function BmCrafterPage() {
               checked={filters.sortByDailyTop}
               onChange={(e) => filters.setSortByDailyTop(e.target.checked)}
             />
-            <span>Sort by highest daily potential</span>
+            <span>{t("filter.sortHighestDaily")}</span>
           </label>
         </div>
 
         <div className="filter-block">
           <div className="filter-head">
-            <p>Non-Artefact Only</p>
-            <span className="filter-value">{filters.nonArtefactOnly ? "On" : "Off"}</span>
+            <p>{t("filter.nonArtefactOnly")}</p>
+            <span className="filter-value">{filters.nonArtefactOnly ? t("filter.on") : t("filter.off")}</span>
           </div>
           <label className="daily-top-toggle">
             <input
@@ -627,14 +628,14 @@ export function BmCrafterPage() {
               checked={filters.nonArtefactOnly}
               onChange={(e) => filters.setNonArtefactOnly(e.target.checked)}
             />
-            <span>Hide items that need an artefact</span>
+            <span>{t("filter.hideArtefactItems")}</span>
           </label>
         </div>
 
         <div className="filter-block">
           <div className="filter-head">
-            <p>Journal Profit</p>
-            <span className="filter-value">{journals.enabled ? "On" : "Off"}</span>
+            <p>{t("filter.journalProfit")}</p>
+            <span className="filter-value">{journals.enabled ? t("filter.on") : t("filter.off")}</span>
           </div>
           <JournalControls
             enabled={journals.enabled}
@@ -649,7 +650,7 @@ export function BmCrafterPage() {
 
         <div className="filter-block">
           <div className="filter-head">
-            <p>Return Rate</p>
+            <p>{t("common.returnRate")}</p>
             <span className="filter-value">{filters.returnRatePercent.toFixed(2)}%</span>
           </div>
           <div className="return-rate">
@@ -668,17 +669,17 @@ export function BmCrafterPage() {
                 checked={filters.bonusCity}
                 onChange={(e) => filters.setBonusCityPreset(e.target.checked)}
               />
-              <span>Bonus city</span>
+              <span>{t("common.bonusCity")}</span>
             </label>
           </div>
         </div>
 
         <div className="filter-block">
-          <p>Search Item</p>
+          <p>{t("filter.searchItem")}</p>
           <div className="search-field">
             <input
               type="search"
-              placeholder="Type item name"
+              placeholder={t("filter.typeItemName")}
               value={filters.searchTerm}
               onChange={(e) => filters.setSearchTerm(e.target.value)}
             />
@@ -687,7 +688,7 @@ export function BmCrafterPage() {
         </div>
 
         <div className="filter-block">
-          <p>Craft City</p>
+          <p>{t("common.craftCity")}</p>
           <div className="bm-city-field">
             <span className="material-symbols-outlined">location_city</span>
             <select
@@ -707,7 +708,7 @@ export function BmCrafterPage() {
 
         <div className="filter-block">
           <div className="filter-head">
-            <p>Usage Fee / 100</p>
+            <p>{t("filter.usageFee")}</p>
             <span className="filter-value">{filters.usageFeePer100}</span>
           </div>
           <div className="bm-fee-field">
@@ -730,19 +731,19 @@ export function BmCrafterPage() {
             <table>
               <thead>
                 <tr>
-                  <th>Item Specification</th>
-                  <th className="num">BM Price</th>
-                  <th className="num">Craft Cost</th>
-                  <th className="num">Net Profit / U</th>
-                  <th className="center">Sold/Day</th>
-                  <th className="num">Daily Potential</th>
-                  <th className="num">Profit %</th>
+                  <th>{t("common.item")}</th>
+                  <th className="num">{t("common.bmPrice")}</th>
+                  <th className="num">{t("common.craftCost")}</th>
+                  <th className="num">{t("common.netProfit")}</th>
+                  <th className="center">{t("common.soldPerDay")}</th>
+                  <th className="num">{t("common.dailyPotential")}</th>
+                  <th className="num">{t("common.profitPercent")}</th>
                 </tr>
               </thead>
               <tbody>
                 {!rows.length && !loading ? (
                   <tr className="empty-row">
-                    <td colSpan={7}>{error || "No data loaded yet."}</td>
+                    <td colSpan={7}>{error || t("common.noData")}</td>
                   </tr>
                 ) : null}
                 {rows.slice(0, visibleRows).map((row, idx) => {
@@ -800,15 +801,15 @@ export function BmCrafterPage() {
             </table>
           </div>
           <div className="table-footer">
-            <p>Showing {Math.min(visibleRows, rows.length)} of {rows.length} items</p>
-            {loading ? <p>Loading...</p> : null}
+            <p>{t("message.showingItems", { shown: Math.min(visibleRows, rows.length), total: rows.length })}</p>
+            {loading ? <p>{t("common.loading")}</p> : null}
           </div>
         </section>
 
         <aside className="bm-side">
           <div className="side-card teal-glow custom-scrollbar">
             <div className="side-header">
-              <h3>Crafter Insight</h3>
+              <h3>{t("panel.crafterInsight")}</h3>
               <span className="material-symbols-outlined">info</span>
             </div>
             <div className="side-hero teal-gradient-bg" data-tier={selectedRow?.tier ?? undefined}>
@@ -821,29 +822,29 @@ export function BmCrafterPage() {
                   />
                 </div>
               </div>
-              <h2>{selectedRow?.displayName || "Select an item"}</h2>
+              <h2>{selectedRow?.displayName || t("message.selectItem")}</h2>
               <div className="side-tags">
                 <span className="tag" id="insightTier">{selectedRow ? tierLabel(selectedRow.item.id) : "Tier --"}</span>
               </div>
             </div>
             <div className="side-metrics">
-              <div><span>BM Price</span><strong className="profit">{selectedRow ? formatNumber(selectedRow.item.bm) : "--"}</strong></div>
-              <div><span>Sold / Day</span><strong className="primary">{selectedRow ? formatNumber(selectedRow.item.sold) : "--"}</strong></div>
-              <div><span>Craft Cost</span><strong>{selectedRow ? formatNumber(selectedRow.economics.craftCost) : "--"}</strong></div>
-              <div><span>Station Fee</span><strong>{selectedRow ? formatNumber(selectedRow.economics.stationFee) : "--"}</strong></div>
+              <div><span>{t("common.bmPrice")}</span><strong className="profit">{selectedRow ? formatNumber(selectedRow.item.bm) : "--"}</strong></div>
+              <div><span>{t("common.soldPerDay")}</span><strong className="primary">{selectedRow ? formatNumber(selectedRow.item.sold) : "--"}</strong></div>
+              <div><span>{t("common.craftCost")}</span><strong>{selectedRow ? formatNumber(selectedRow.economics.craftCost) : "--"}</strong></div>
+              <div><span>{t("common.stationFee")}</span><strong>{selectedRow ? formatNumber(selectedRow.economics.stationFee) : "--"}</strong></div>
               {selectedRow && (selectedRow.journalProfit ?? 0) > 0 ? (
-                <div><span>Journal Profit</span><strong className="profit">+{formatNumber(selectedRow.journalProfit)}</strong></div>
+                <div><span>{t("common.journalProfit")}</span><strong className="profit">+{formatNumber(selectedRow.journalProfit)}</strong></div>
               ) : null}
-              <div><span>Net Profit / U</span><strong className={selectedRow && selectedRow.economics.profit < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.profit) : "--"}</strong></div>
-              <div><span>Profit %</span><strong className={selectedRow && (selectedRow.economics.profitPct ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatPct(selectedRow.economics.profitPct) : "--"}</strong></div>
-              <div><span>Daily Potential</span><strong className={selectedRow && (selectedRow.economics.dailyPotential ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.dailyPotential) : "--"}</strong></div>
-              <div><span>Profit / Focus</span><strong className={selectedRow && (selectedRow.economics.profitPerFocus ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.profitPerFocus) : "--"}</strong></div>
-              <div><span>Item ID</span><strong>{selectedRow?.item.id || "--"}</strong></div>
+              <div><span>{t("common.netProfit")}</span><strong className={selectedRow && selectedRow.economics.profit < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.profit) : "--"}</strong></div>
+              <div><span>{t("common.profitPercent")}</span><strong className={selectedRow && (selectedRow.economics.profitPct ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatPct(selectedRow.economics.profitPct) : "--"}</strong></div>
+              <div><span>{t("common.dailyPotential")}</span><strong className={selectedRow && (selectedRow.economics.dailyPotential ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.dailyPotential) : "--"}</strong></div>
+              <div><span>{t("common.profitPerFocus")}</span><strong className={selectedRow && (selectedRow.economics.profitPerFocus ?? 0) < 0 ? "loss" : "profit"}>{selectedRow ? formatNumber(selectedRow.economics.profitPerFocus) : "--"}</strong></div>
+              <div><span>{t("common.itemId")}</span><strong>{selectedRow?.item.id || "--"}</strong></div>
             </div>
             <div className="material-box">
               <div className="material-head">
-                <span>Material Prices Used</span>
-                <span className="material-total">Total: {selectedRow ? formatNumber(selectedRow.economics.craftCost) : "--"}</span>
+                <span>{t("common.materialPrices")}</span>
+                <span className="material-total">{t("common.total")}: {selectedRow ? formatNumber(selectedRow.economics.craftCost) : "--"}</span>
               </div>
               <div className="material-list">
                 {materialBreakdown.map((mat) => (
@@ -866,7 +867,7 @@ export function BmCrafterPage() {
                 ))}
               </div>
               <div className="material-row artefact-row" aria-hidden={selectedRow?.recipe.artifactId ? "false" : "true"}>
-                <div className="material-name">{selectedRow?.recipe.artifactId || "Artefact"}</div>
+                <div className="material-name">{selectedRow?.recipe.artifactId || t("common.artefact")}</div>
                 <div className="material-meta">
                   <span className="material-qty">x1</span>
                   <span className="material-price">{formatNumber(artefactCost)}</span>
@@ -876,7 +877,7 @@ export function BmCrafterPage() {
             <div className="side-chart">
               <div className="side-chart-head">
                 <span className="material-symbols-outlined">trending_up</span>
-                <span>Monthly Avg Profit</span>
+                <span>{t("panel.monthlyAvgProfit")}</span>
               </div>
               <div className="chart-bars">
                 <span style={{ height: "40%" }}></span>

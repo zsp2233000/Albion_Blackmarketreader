@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createAuthService, RegionService, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState, isGuest, buildGuestProfile, exitGuest, GuestSignInLink, exitGuestToLogin } from "@shared/index";
+import { createAuthService, RegionService, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState, isGuest, buildGuestProfile, exitGuest, GuestSignInLink, exitGuestToLogin, useI18n, getItemDisplayName } from "@shared/index";
+import type { Locale } from "@shared/index";
 import type { AuthService } from "@shared/index";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
@@ -345,7 +346,7 @@ function sanitizeAvatarUrl(value?: string | null): string {
   return fallback;
 }
 
-function displayName(id: string): string {
+function displayName(id: string, locale: Locale = "en"): string {
   const baseNoEnchant = id.split("@")[0];
   const parts = baseNoEnchant.split("_");
   if (parts.length < 2) return id;
@@ -353,8 +354,8 @@ function displayName(id: string): string {
   const enchantMatch = id.match(/@([0-4])/);
   const ench = enchantMatch ? `.${enchantMatch[1]}` : "";
   const key = parts.slice(1).join("_");
-  const translated = nameMap[key] || key.replace(/_/g, " ");
-  return `${tier}${ench}  ${translated}`;
+  const fallback = nameMap[key] || key.replace(/_/g, " ");
+  return getItemDisplayName(id, locale, fallback);
 }
 
 function normalizeName(value: string): string {
@@ -382,12 +383,13 @@ function getItemTier(id: string): string {
   return match ? match[1] : "";
 }
 
-function baseName(id: string): string {
+function baseName(id: string, locale: Locale = "en"): string {
   const baseNoEnchant = id.split("@")[0];
   const parts = baseNoEnchant.split("_");
   if (parts.length < 2) return id;
   const key = parts.slice(1).join("_");
-  return nameMap[key] || key.replace(/_/g, " ");
+  const fallback = nameMap[key] || key.replace(/_/g, " ");
+  return displayName(id, locale).replace(/^\d+(?:\.\d+)?\s+/, "") || fallback;
 }
 
 function getEnchantLevel(id: string): 0 | 1 | 2 | 3 | 4 {
@@ -573,6 +575,7 @@ function sanitizeProfitValue(value: number, dateKey: string) {
 }
 
 export function DashboardPage() {
+  const { locale, t } = useI18n();
   const CARD_BATCH_SIZE = 60;
   const TOAST_HIDE_MS = 4000;
   const TOAST_CLEAR_MS = 4500;
@@ -849,12 +852,12 @@ export function DashboardPage() {
   const searchSuggestions = useMemo(() => {
     const uniqueNames = new Map<string, string>();
     for (const item of filteredItems) {
-      const name = baseName(item.id);
+       const name = baseName(item.id, locale);
       const key = normalizeName(name);
       if (!uniqueNames.has(key)) uniqueNames.set(key, name);
     }
     return Array.from(uniqueNames.values()).sort((a, b) => a.localeCompare(b));
-  }, [filteredItems]);
+  }, [filteredItems, locale]);
 
   const cardsItems = useMemo(() => {
     const term = normalizeName(searchTerm);
@@ -863,8 +866,8 @@ export function DashboardPage() {
 
     if (term) {
       list = list.filter((item) => {
-        const base = normalizeName(baseName(item.id));
-        const display = normalizeName(displayName(item.id));
+        const base = normalizeName(baseName(item.id, locale));
+        const display = normalizeName(displayName(item.id, locale));
         const rawId = normalizeName(item.id);
         const itemCity = normalizeCity(item.city);
         const itemTier = normalizeName(getItemTier(item.id));
@@ -880,7 +883,7 @@ export function DashboardPage() {
       return Number(b.profit || 0) - Number(a.profit || 0);
     });
     return sorted;
-  }, [filteredItems, searchTerm, sortBySilver, searchSuggestions]);
+  }, [filteredItems, searchTerm, sortBySilver, searchSuggestions, locale]);
 
   const visibleCards = useMemo(() => cardsItems.slice(0, visibleCount), [cardsItems, visibleCount]);
 
@@ -1063,16 +1066,16 @@ export function DashboardPage() {
       {toastText ? <div id="toast" className={`toast ${toastVisible ? "visible" : ""}`}>{toastText}</div> : null}
       <div className="loading-overlay" style={{ display: loading ? "flex" : "none" }}>
         <div className="loading-spinner" />
-        <div className="loading-text">Loading data...</div>
+         <div className="loading-text">{t("dashboard.loadingData")}</div>
       </div>
       {showRegionModal ? (
         <div className="modal-overlay">
           <div className="modal-card">
-            <h3>Select your data region</h3>
-            <p>Please choose which server data you want to load.</p>
+            <h3>{t("dashboard.selectDataRegion")}</h3>
+            <p>{t("dashboard.chooseServerData")}</p>
             <div className="region-actions">
-              <button onClick={() => onRegionConfirm("us")}>America</button>
-              <button onClick={() => onRegionConfirm("eu")}>Europe</button>
+              <button onClick={() => onRegionConfirm("us")}>{t("panel.america")}</button>
+              <button onClick={() => onRegionConfirm("eu")}>{t("panel.europe")}</button>
             </div>
           </div>
         </div>
@@ -1080,63 +1083,63 @@ export function DashboardPage() {
       {showMaintenanceModal ? (
         <div className="modal-overlay" onClick={() => setShowMaintenanceModal(false)}>
           <div className="modal-card" onClick={(event) => event.stopPropagation()}>
-            <h3>Free Trial</h3>
-            <p>This version is running in Free Trial mode. Live data is still being verified, so results may differ from the final release.</p>
-            <button className="cta" type="button" onClick={() => setShowMaintenanceModal(false)}>OK</button>
+            <h3>{t("dashboard.freeTrial")}</h3>
+            <p>{t("dashboard.freeTrialBody")}</p>
+            <button className="cta" type="button" onClick={() => setShowMaintenanceModal(false)}>{t("auth.ok")}</button>
           </div>
         </div>
       ) : null}
       <div className="page">
-      <img src={assetUrl("picture/testo ohne background.png")} alt="Logo" className="logo-fixed" onClick={() => { window.location.href = "/"; }} />
-      <button className="mobile-back" onClick={() => { window.location.href = "/"; }}>Back</button>
+       <img src={assetUrl("picture/testo ohne background.png")} alt="Logo" className="logo-fixed" onClick={() => { window.location.href = "/"; }} />
+       <button className="mobile-back" onClick={() => { window.location.href = "/"; }}>{t("dashboard.back")}</button>
       <aside className="tool-rail">
-        <a className="tool-rail-link" href="/" title="Home">
+        <a className="tool-rail-link" href="/" title={t("nav.home")}>
           <span className="tool-rail-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
               <path d="M12 3 3 10v10h6v-6h6v6h6V10l-9-7Z" />
             </svg>
           </span>
-          <span className="tool-rail-label">Home</span>
+           <span className="tool-rail-label">{t("nav.home")}</span>
         </a>
-        <a className="tool-rail-link active" href="/dashboard" title="Blackmarket Reader">
+        <a className="tool-rail-link active" href="/dashboard" title={t("dashboard.reader")}>
           <span className="tool-rail-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
               <path d="M4 5h16v14H4zM7 15h2v3H7zm4-4h2v7h-2zm4-2h2v9h-2z" />
             </svg>
           </span>
-          <span className="tool-rail-label">Blackmarket Reader</span>
+           <span className="tool-rail-label">{t("dashboard.reader")}</span>
         </a>
-        <a className="tool-rail-link" href="/bm-crafter" title="Blackmarket Crafter">
+        <a className="tool-rail-link" href="/bm-crafter" title={t("nav.bmCrafter")}>
           <span className="tool-rail-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
               <path d="M14 3 4 9l6 3.5 8-4.7V14h2V6L14 3Zm-4 11-6-3.5V15l6 3.5V14Zm2 4.5L18 15v-2.5L12 16v2.5Z" />
             </svg>
           </span>
-          <span className="tool-rail-label">Blackmarket Crafter</span>
+           <span className="tool-rail-label">{t("nav.bmCrafter")}</span>
         </a>
-        <a className="tool-rail-link" href="/crafting-calculator" title="Crafting Calculator">
+        <a className="tool-rail-link" href="/crafting-calculator" title={t("nav.craftingCalculator")}>
           <span className="tool-rail-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
               <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 4h10V5H7v2Zm0 4h2V9H7v2Zm4 0h2V9h-2v2Zm4 0h2V9h-2v2ZM7 15h2v-2H7v2Zm4 0h6v-2h-6v2Zm-4 4h2v-2H7v2Zm4 0h6v-2h-6v2Z" />
             </svg>
           </span>
-          <span className="tool-rail-label">Crafting Calculator</span>
+           <span className="tool-rail-label">{t("nav.craftingCalculator")}</span>
         </a>
-        <a className="tool-rail-link" href="/refining-calculator" title="Refining Calculator">
+        <a className="tool-rail-link" href="/refining-calculator" title={t("nav.refiningCalculator")}>
           <span className="tool-rail-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
               <path d="M7 3h10v2H7V3Zm2 4h6l4 6-7 8-7-8 4-6Zm.96 2-2.23 3.35L12 17.2l4.27-4.85L14.04 9H9.96Z" />
             </svg>
           </span>
-          <span className="tool-rail-label">Refining Calculator</span>
+           <span className="tool-rail-label">{t("nav.refiningCalculator")}</span>
         </a>
-        <a className="tool-rail-link" href="/food-potion-crafter" title="Food & Potion Crafter">
+        <a className="tool-rail-link" href="/food-potion-crafter" title={t("nav.foodPotionCrafter")}>
           <span className="tool-rail-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
               <path d="M11 2h2v6h-2V2Zm-4 0h2v6a3 3 0 0 1-6 0V2h2v6a1 1 0 0 0 2 0V2Zm10 0h2v20h-2v-8h-2V7a5 5 0 0 1 2-5Z" />
             </svg>
           </span>
-          <span className="tool-rail-label">Food &amp; Potion Crafter</span>
+           <span className="tool-rail-label">{t("nav.foodPotionCrafter")}</span>
         </a>
       </aside>
 
@@ -1147,7 +1150,7 @@ export function DashboardPage() {
           <span className="topbar-title">RomulusKings Market Reader</span>
         </a>
         <div className="topbar-search">
-          <input className="search" placeholder="Search markets" list="searchSuggestions" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+           <input className="search" placeholder={t("dashboard.searchMarkets")} list="searchSuggestions" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           <datalist id="searchSuggestions">
             {searchSuggestions.map((name) => (
               <option key={name} value={name} />
@@ -1155,18 +1158,18 @@ export function DashboardPage() {
           </datalist>
         </div>
         <nav className="topbar-nav">
-          <a className="nav-link active" href="/dashboard">Markets</a>
-          <a className="nav-link" href="/#bm-crafter-access">Crafting-Tools</a>
-          <a className="nav-link" href="/community">Community</a>
+           <a className="nav-link active" href="/dashboard">{t("dashboard.markets")}</a>
+           <a className="nav-link" href="/#bm-crafter-access">{t("dashboard.craftingTools")}</a>
+           <a className="nav-link" href="/community">{t("dashboard.community")}</a>
         </nav>
         <div className="topbar-right">
           <div className="topbar-meta">
             <div className="badge">
-              Last updated: <span className="lu-time">{stamp.time}</span> <span className="lu-date">{stamp.date}</span>{stamp.relative ? <span className="lu-ago"> ({stamp.relative})</span> : null}
+               {t("common.lastUpdated")}: <span className="lu-time">{stamp.time}</span> <span className="lu-date">{stamp.date}</span>{stamp.relative ? <span className="lu-ago"> ({stamp.relative})</span> : null}
             </div>
             <div className="pill-row">
-              <span className="pill">Deals: {kpis.deals}</span>
-              <span className="pill">Region: {region === "eu" ? "Europe" : "America"}</span>
+               <span className="pill">{t("dashboard.deals")}: {kpis.deals}</span>
+               <span className="pill">{t("common.region")}: {region === "eu" ? t("panel.europe") : t("panel.america")}</span>
             </div>
           </div>
           <div className="account-wrap">
@@ -1194,19 +1197,19 @@ export function DashboardPage() {
               ) : (
                 <>
                   <span className="email">{user.email || "-"}</span>
-                  <span className="status">Logged in</span>
+                   <span className="status">{t("auth.loggedIn")}</span>
                   <div className="badge-row">
-                    <span className="badge-chip">Active</span>
-                    <span className="badge-chip muted">Secure</span>
+                   <span className="badge-chip">{t("auth.active")}</span>
+                   <span className="badge-chip muted">{t("auth.secure")}</span>
                   </div>
                 </>
               )}
             </div>
-            <button className="close-btn" aria-label="Close" onClick={() => setShowAccount(false)}>X</button>
+             <button className="close-btn" aria-label={t("common.close")} onClick={() => setShowAccount(false)}>X</button>
           </div>
 
           <div className="panel-section">
-            <h4>Select profile avatar</h4>
+            <h4>{t("auth.selectAvatar")}</h4>
             <div className="avatar-grid">
               {allowedAvatars.filter((src) => !src.includes("accountsymbol")).map((src) => (
                 <img
@@ -1221,25 +1224,25 @@ export function DashboardPage() {
           </div>
 
           <div className="panel-section">
-            <h4>Data region</h4>
+            <h4>{t("auth.dataRegion")}</h4>
             <select className="city-select" value={region} onChange={(e) => onRegionSave(e.target.value === "eu" ? "eu" : "us")}>
-              <option value="us">America</option>
-              <option value="eu">Europe</option>
+               <option value="us">{t("panel.america")}</option>
+               <option value="eu">{t("panel.europe")}</option>
             </select>
           </div>
 
           <div className="account-actions">
             {!isGuest() && (
               <button className="btn primary" onClick={onResetPassword}>
-                {accountActionMsg === "Email sent" ? "Email sent" : "Change password"}
+                 {accountActionMsg === "Email sent" ? t("auth.emailSent") : t("auth.changePassword")}
               </button>
             )}
-            <button className="btn danger" onClick={onLogout}>{isGuest() ? "Exit guest mode" : "Logout"}</button>
+             <button className="btn danger" onClick={onLogout}>{isGuest() ? t("auth.exitGuest") : t("auth.logout")}</button>
           </div>
 
           <div className="account-help">
-            <span>Need help?</span>
-            <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener noreferrer">Join Discord</a>
+           <span>{t("auth.needHelp")}</span>
+           <a href="https://discord.gg/HF2Ctg73m5" target="_blank" rel="noopener noreferrer">{t("auth.joinDiscord")}</a>
             <a href="mailto:blackmarketreader@gmail.com">blackmarketreader@gmail.com</a>
           </div>
         </section>
@@ -1249,12 +1252,12 @@ export function DashboardPage() {
         <section className="dash-hero">
           <div className="hero-badge">
             <span className="hero-dot" />
-            Blackmarket data
+             {t("dashboard.blackmarketData")}
           </div>
           <h1>
-            Black Market Profits.
+             {t("dashboard.blackmarketProfits")}
             <br />
-            <span className="hero-muted">Made Clear.</span>
+             <span className="hero-muted">{t("dashboard.madeClear")}</span>
           </h1>
           <div className="hero-subline">
             <span className="hero-line" />
@@ -1264,22 +1267,22 @@ export function DashboardPage() {
         </section>
 
         <section className="kpi-row">
-          <article className="kpi-card"><span className="kpi-label">Live Signals</span><strong className="kpi-value">{kpis.deals}</strong></article>
-          <article className="kpi-card"><span className="kpi-label">Top Spread</span><strong className="kpi-value">{kpis.best}</strong></article>
-          <article className="kpi-card"><span className="kpi-label">Median ROI</span><strong className="kpi-value">{kpis.avg}</strong></article>
-          <article className="kpi-card"><span className="kpi-label">Max Liquidity</span><strong className="kpi-value">{kpis.silver}</strong></article>
+           <article className="kpi-card"><span className="kpi-label">{t("dashboard.liveSignals")}</span><strong className="kpi-value">{kpis.deals}</strong></article>
+           <article className="kpi-card"><span className="kpi-label">{t("dashboard.topSpread")}</span><strong className="kpi-value">{kpis.best}</strong></article>
+           <article className="kpi-card"><span className="kpi-label">{t("dashboard.medianRoi")}</span><strong className="kpi-value">{kpis.avg}</strong></article>
+           <article className="kpi-card"><span className="kpi-label">{t("dashboard.maxLiquidity")}</span><strong className="kpi-value">{kpis.silver}</strong></article>
         </section>
 
         <div className="chart-layout">
           <section ref={chartPanelRef} className="chart-panel">
             <div className="chart-header">
               <div>
-                <h2>Profit % all Markets</h2>
-                <p>Aggregate profit yield across all markets</p>
+                 <h2>{t("dashboard.profitAllMarkets")}</h2>
+                 <p>{t("dashboard.aggregateProfit")}</p>
               </div>
               <div className="chart-meta">
-                <span className="chart-pill">Avg<strong>{chartStats.avg.toFixed(1)}%</strong></span>
-                <span className="chart-pill">Peak <strong>{chartStats.best.toFixed(1)}%</strong></span>
+                 <span className="chart-pill">{t("dashboard.average")}<strong>{chartStats.avg.toFixed(1)}%</strong></span>
+                 <span className="chart-pill">{t("dashboard.peak")} <strong>{chartStats.best.toFixed(1)}%</strong></span>
               </div>
             </div>
             <svg
@@ -1349,25 +1352,25 @@ export function DashboardPage() {
             <div className="side-card premium-panel">
               <div className="side-card-header">
                 <div className="side-card-copy">
-                  <span className="side-card-title">Crafting tools</span>
+              <span className="side-card-title">{t("dashboard.craftingTools")}</span>
                 </div>
-                <span className="premium-badge"><span className="premium-dot" />New</span>
+                <span className="premium-badge"><span className="premium-dot" />{t("dashboard.new")}</span>
               </div>
               <button className="premium-preview" type="button" onClick={() => setShowPremiumPreview(true)}>
-                <img src={assetUrl("picture/bm-crafter-table.png")} alt="Blackmarket Crafter tool preview" />
+                <img src={assetUrl("picture/bm-crafter-table.png")} alt={t("dashboard.preview")} />
               </button>
-              <a className="premium-button" href="/#bm-crafter-access">Crafting tools</a>
+              <a className="premium-button" href="/#bm-crafter-access">{t("dashboard.craftingTools")}</a>
             </div>
             <div className="side-card city-panel">
               <div className="side-card-header">
                 <img className="city-crest-img" src={assetUrl(crestMap[city])} alt="City crest" />
                 <div className="city-panel-copy">
-                  <span className="city-panel-title">City</span>
-                  <span className="city-panel-name">{city === "ALL" ? "All Cities" : city}</span>
+                <span className="city-panel-title">{t("dashboard.city")}</span>
+                <span className="city-panel-name">{city === "ALL" ? t("dashboard.allCities") : city}</span>
                 </div>
               </div>
               <select className="city-select" value={city} onChange={(e) => setCity(e.target.value as City)}>
-                <option value="ALL">All Cities</option>
+                <option value="ALL">{t("dashboard.allCities")}</option>
                 <option value="Lymhurst">Lymhurst</option>
                 <option value="Martlock">Martlock</option>
                 <option value="Fort Sterling">Fort Sterling</option>
@@ -1385,30 +1388,30 @@ export function DashboardPage() {
           <ResponsiveFilters accent="#5cf0c8">
           <div className="filters-wrap">
             <div className="filters-intro">
-              <span className="filters-kicker">Signal Filters</span>
-              <h3 className="filters-title">Deal Scanner Controls</h3>
+              <span className="filters-kicker">{t("dashboard.signalFilters")}</span>
+              <h3 className="filters-title">{t("dashboard.dealScannerControls")}</h3>
             </div>
             <div className="filters-bar">
-              <div className="tier-filters" role="group" aria-label="Tier filters">
+              <div className="tier-filters" role="group" aria-label={t("dashboard.tierFilters")}>
                 {["ALL", "T4", "T5", "T6", "T7", "T8"].map((entry) => (
                   <button key={entry} type="button" className={`tier-btn ${tier === entry ? "active" : ""}`} onClick={() => setTier(entry)}>
-                    {entry === "ALL" ? "All tiers" : `Tier ${entry.slice(1)}`}
+                    {entry === "ALL" ? t("dashboard.allTiers") : `${t("common.tier")} ${entry.slice(1)}`}
                   </button>
                 ))}
               </div>
               <div className="filters-right">
                 <label className="filter-field">
-                  <span className="field-label">Min Profit %</span>
+                  <span className="field-label">{t("dashboard.minProfit")}</span>
                   <input type="number" value={minProfitDraft} onChange={(e) => setMinProfitDraft(e.target.value)} />
                 </label>
                 <label className="filter-field">
-                  <span className="field-label">Max Cost per Item</span>
+                  <span className="field-label">{t("dashboard.maxCostPerItem")}</span>
                   <input type="number" value={maxCostDraft} onChange={(e) => setMaxCostDraft(e.target.value)} placeholder="100000" />
                 </label>
                 <div className="filter-actions">
-                  <button className="filter-btn filter-btn-primary" type="button" onClick={applyFilters}>Apply filter</button>
-                  <button className="filter-btn filter-btn-secondary" type="button" onClick={() => setSortBySilver(true)}>Sort by silver</button>
-                  <button className="filter-btn filter-btn-ghost" type="button" onClick={() => setSortBySilver(false)} style={{ display: sortBySilver ? "inline-block" : "none" }}>Reset</button>
+                  <button className="filter-btn filter-btn-primary" type="button" onClick={applyFilters}>{t("dashboard.applyFilter")}</button>
+                  <button className="filter-btn filter-btn-secondary" type="button" onClick={() => setSortBySilver(true)}>{t("dashboard.sortSilver")}</button>
+                  <button className="filter-btn filter-btn-ghost" type="button" onClick={() => setSortBySilver(false)} style={{ display: sortBySilver ? "inline-block" : "none" }}>{t("dashboard.reset")}</button>
                 </div>
               </div>
             </div>
@@ -1419,20 +1422,20 @@ export function DashboardPage() {
         {loading ? <div className="loading">Loading data...</div> : null}
         {!loading ? (
           <div className="loading" style={{ display: "block", marginBottom: 10, opacity: 0.7 }}>
-            Cards: {cardsItems.length} | City: {city} | Tier: {tier}
+            {t("dashboard.cards")}: {cardsItems.length} | {t("dashboard.city")}: {city} | {t("common.tier")}: {tier}
           </div>
         ) : null}
         <section className="grid" id="cards">
           {visibleCards.map((item, index) => (
             <article key={`${item.city}-${item.id}-${item.lym}-${item.bm}-${item.sold}-${item.profit}-${index}`} className={`card card-box ${item.lym > 0 && item.bm >= 20 * item.lym ? "card-suspect" : ""} ${getEnchantLevel(item.id) > 0 ? `border-enchant-${getEnchantLevel(item.id)}` : ""}`.trim()}>
-              <h3 className="title">{displayName(item.id)}</h3>
+              <h3 className="title">{displayName(item.id, locale)}</h3>
               {item.lym > 0 && item.bm >= 20 * item.lym ? <div className="card-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
-              <div className="row"><span>ID</span><span className="val">{item.id}</span></div>
+              <div className="row"><span>{t("common.id")}</span><span className="val">{item.id}</span></div>
               <div className="row"><span>{item.city}</span><span className="val">{Number(item.lym || 0).toLocaleString("de-DE")}</span></div>
-              <div className="row"><span>Black Market</span><span className="val">{Number(item.bm || 0).toLocaleString("de-DE")}</span></div>
-              <div className="row"><span>Sold/Tag</span><span className="val">{item.sold ?? 0}</span></div>
+              <div className="row"><span>{t("common.blackMarket")}</span><span className="val">{Number(item.bm || 0).toLocaleString("de-DE")}</span></div>
+              <div className="row"><span>{t("common.sold")}</span><span className="val">{item.sold ?? 0}</span></div>
               <div className={`profit ${sortBySilver ? (item.bm - item.lym < 0 ? "negative" : "") : (item.profit < 0 ? "negative" : "")}`.trim()}>
-                {sortBySilver ? `Profit: ${(item.bm - item.lym).toLocaleString("de-DE")} Silber` : `Profit: ${item.profit.toFixed(1)}%`}
+                {sortBySilver ? `${t("common.profit")}: ${(item.bm - item.lym).toLocaleString("de-DE")} ${t("dashboard.silver")}` : `${t("common.profit")}: ${item.profit.toFixed(1)}%`}
                 <span className="span-tag">{item.span || "14d"}</span>
               </div>
             </article>
@@ -1440,7 +1443,7 @@ export function DashboardPage() {
         </section>
         <div ref={cardsSentinelRef} className="cards-sentinel" aria-hidden="true" />
 
-        <a className="community-tile compact" href="/community" aria-label="Join Discord">
+        <a className="community-tile compact" href="/community" aria-label={t("dashboard.joinDiscord")}>
           <span className="tile-icon-wrap">
             <svg className="tile-icon" viewBox="0 0 256 199" aria-hidden="true" focusable="false">
               <path d="M216.9 16.5A208.5 208.5 0 0 0 164.6 0c-2.3 4-4.9 9.2-6.7 13.4-19.2-2.9-38.1-2.9-57.1 0-1.8-4.2-4.5-9.4-6.8-13.4a209.3 209.3 0 0 0-52.4 16.5C6.6 68.4-3.1 119.4 1.8 169.8a210.1 210.1 0 0 0 63.9 32.7c5.2-7.1 9.8-14.6 13.5-22.7-7.4-2.8-14.5-6.2-21.2-10.2 1.8-1.3 3.5-2.6 5.1-4 40.9 19.1 85.1 19.1 125.5 0 1.7 1.4 3.4 2.7 5.1 4-6.7 4-13.8 7.4-21.2 10.2 3.7 8.1 8.3 15.6 13.5 22.7a210.2 210.2 0 0 0 63.9-32.7c5.8-57.9-9.7-108.4-44.8-153.3ZM85 135.3c-12.5 0-22.7-11.4-22.7-25.4S72.5 84.5 85 84.5s22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Zm86 0c-12.5 0-22.7-11.4-22.7-25.4s10.1-25.4 22.7-25.4 22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Z" />
@@ -1454,8 +1457,8 @@ export function DashboardPage() {
       {showPremiumPreview ? (
         <div className="preview-modal" onClick={() => setShowPremiumPreview(false)}>
           <div className="preview-card" onClick={(e) => e.stopPropagation()}>
-            <button className="preview-close" onClick={() => setShowPremiumPreview(false)} aria-label="Close preview">x</button>
-            <img src={assetUrl("picture/bm-crafter-table.png")} alt="Blackmarket Crafter full tool preview" />
+            <button className="preview-close" onClick={() => setShowPremiumPreview(false)} aria-label={t("common.close")}>x</button>
+            <img src={assetUrl("picture/bm-crafter-table.png")} alt={t("dashboard.preview")} />
           </div>
         </div>
       ) : null}

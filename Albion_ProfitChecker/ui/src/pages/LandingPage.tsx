@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSeo } from "../shared/seo/useSeo";
-import { assetUrl, assets } from "@shared/index";
+import { assetUrl, assets, useI18n } from "@shared/index";
 import "./landing.css";
 
 type ToolSlide = {
@@ -15,6 +15,7 @@ type ToolSlide = {
 const CAROUSEL_DURATION_MS = 6000;
 
 export function LandingPage() {
+  const { t } = useI18n();
   const previewRef = useRef<HTMLDivElement | null>(null);
   const [zoomSrc, setZoomSrc] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -23,31 +24,31 @@ export function LandingPage() {
   const slides = useMemo<ToolSlide[]>(
     () => [
       {
-        title: "Black Market Crafter",
+        title: t("nav.bmCrafter"),
         image: assets.bmCrafterPreview,
         href: "/bm-crafter",
-        ctaLabel: "Open BM Crafter"
+        ctaLabel: t("landing.openBmCrafter")
       },
       {
-        title: "Crafting Calculator",
+        title: t("nav.craftingCalculator"),
         image: assets.craftingCalcPreview,
         href: "/crafting-calculator",
-        ctaLabel: "Open Crafting Calculator"
+        ctaLabel: t("landing.openCraftingCalculator")
       },
       {
-        title: "Refining Calculator",
+        title: t("nav.refiningCalculator"),
         image: assets.refiningCalcPreview,
         href: "/refining-calculator",
-        ctaLabel: "Open Refining Calculator"
+        ctaLabel: t("landing.openRefiningCalculator")
       },
       {
-        title: "Food & Potion Crafter",
+        title: t("nav.foodPotionCrafter"),
         image: assets.foodPotionCrafterPreview,
         href: "/food-potion-crafter",
-        ctaLabel: "Open Food & Potion Crafter"
+        ctaLabel: t("landing.openFoodPotionCrafter")
       }
     ],
-    []
+    [t]
   );
 
   const heroDesktop = assetUrl("picture/planeten-1280.jpg");
@@ -145,13 +146,13 @@ export function LandingPage() {
           </span>
         </div>
         <div className="nav-links">
-          <a href="#platform-overview">Features</a>
-          <a href="#how-it-works">How it works</a>
-          <a href="#dashboard-views">Screens</a>
-          <a href="#faq">FAQ</a>
+          <a href="#platform-overview">{t("landing.features")}</a>
+          <a href="#how-it-works">{t("landing.howItWorks")}</a>
+          <a href="#dashboard-views">{t("landing.screens")}</a>
+          <a href="#faq">{t("landing.faq")}</a>
         </div>
         <a className="nav-access" href="/dashboard">
-          Open Dashboard
+          {t("landing.openDashboard")}
         </a>
       </nav>
 
@@ -167,35 +168,35 @@ export function LandingPage() {
         <div className="hero-content">
           <div className="hero-kicker">Blackmarket Protocol v4.0</div>
           <h1>
-            ANALYZE FIRST.
+            {t("landing.analyzeFirst")}
             <br />
-            <span>PROFIT ALWAYS.</span>
+            <span>{t("landing.profitAlways")}</span>
           </h1>
           <div className="hero-actions">
             <div className="hero-cta-row">
               <a className="hero-cta" href="/dashboard">
-                Open Dashboard
+                {t("landing.openDashboard")}
               </a>
               <a className="hero-cta" href="/bm-crafter">
-                Blackmarket Crafter
+                {t("nav.bmCrafter")}
               </a>
               <a className="hero-cta" href="/crafting-calculator">
-                Crafting Calculator
+                {t("nav.craftingCalculator")}
               </a>
               <a className="hero-cta" href="/refining-calculator">
-                Refining Calculator
+                {t("nav.refiningCalculator")}
               </a>
               <a className="hero-cta" href="/food-potion-crafter">
-                Food &amp; Potion Crafter
+                {t("nav.foodPotionCrafter")}
               </a>
             </div>
-            <p>Zero latency market telemetry for high-volume stakeholders.</p>
+            <p>{t("landing.zeroLatency")}</p>
           </div>
         </div>
 
         <div className="hero-footer">
           <div className="hero-line" />
-          <span>Institutional Grade Hardware Required</span>
+          <span>{t("landing.hardware")}</span>
         </div>
       </section>
 
@@ -203,17 +204,17 @@ export function LandingPage() {
         <section className="section" id="platform-overview">
           <div className="container">
             <div className="section-head">
-              <span className="section-eyebrow">Core Infrastructure</span>
-              <h2>Platform Overview</h2>
+              <span className="section-eyebrow">{t("landing.coreInfrastructure")}</span>
+              <h2>{t("landing.platformOverview")}</h2>
             </div>
             <div className="perspective-mockup" ref={previewRef}>
               <button
                 className="mockup-zoom"
                 type="button"
-                aria-label="Zoom Blackmarket Crafter tool preview"
+                aria-label={t("landing.zoomPreview")}
                 onClick={() => setZoomSrc(assets.bmCrafterPreview)}
               >
-                <img className="mockup-preview" src={assets.bmCrafterPreview} alt="Blackmarket Crafter full tool preview" />
+                <img className="mockup-preview" src={assets.bmCrafterPreview} alt={t("dashboard.preview")} />
               </button>
             </div>
           </div>
@@ -251,8 +252,8 @@ export function LandingPage() {
         <section className="section premium-plus-section" id="bm-crafter-access">
           <div className="container">
             <div className="premium-carousel-head">
-              <span className="section-eyebrow">Premium+ Institutional</span>
-              <h2>Crafter Tools</h2>
+              <span className="section-eyebrow">{t("landing.premiumInstitutional")}</span>
+              <h2>{t("landing.crafterTools")}</h2>
             </div>
             <div
               className="premium-carousel carousel-perspective"
@@ -262,7 +263,7 @@ export function LandingPage() {
               <button
                 className="carousel-nav prev"
                 type="button"
-                aria-label="Previous"
+                aria-label={t("landing.previous")}
                 onClick={() => setActiveIndex((current) => (current - 1 + slides.length) % slides.length)}
               >
                 <span className="material-symbols-outlined">arrow_back_ios_new</span>
@@ -270,7 +271,7 @@ export function LandingPage() {
               <button
                 className="carousel-nav next"
                 type="button"
-                aria-label="Next"
+                aria-label={t("landing.next")}
                 onClick={() => setActiveIndex((current) => (current + 1) % slides.length)}
               >
                 <span className="material-symbols-outlined">arrow_forward_ios</span>
@@ -292,19 +293,19 @@ export function LandingPage() {
                           <img
                             className="zoomable"
                             src={slide.image}
-                            alt={`${slide.title} preview`}
+                            alt={`${slide.title} ${t("dashboard.preview")}`}
                             onClick={(event) => setZoomSrc((event.currentTarget as HTMLImageElement).src)}
                           />
                         </div>
                       ) : (
                         <div className="tool-placeholder">
-                          <span>{slide.placeholderText || "Coming Soon"}</span>
+                          <span>{slide.placeholderText || t("landing.comingSoon")}</span>
                         </div>
                       )}
 
                       {slide.href ? (
                         <a className="tool-cta" href={slide.href}>
-                          {slide.ctaLabel || "Open Tool"}
+                          {slide.ctaLabel || t("landing.openTool")}
                         </a>
                       ) : null}
                     </article>
@@ -325,10 +326,10 @@ export function LandingPage() {
               <div className="carousel-cta-row">
                 {activeSlide.href ? (
                   <a className="premium-plus-cta" href={activeSlide.href}>
-                    {activeSlide.ctaLabel || `Open ${activeSlide.title}`}
+                    {activeSlide.ctaLabel || `${t("landing.openTool")} ${activeSlide.title}`}
                   </a>
                 ) : (
-                  <span className="premium-plus-cta disabled">Coming Soon</span>
+                  <span className="premium-plus-cta disabled">{t("landing.comingSoon")}</span>
                 )}
                 <span className="carousel-note">{activeSlide.title}</span>
               </div>
@@ -342,7 +343,7 @@ export function LandingPage() {
               <article className="feature-card">
                 <div className="feature-head">
                   <span>01</span>
-                  <h3>Dashboard Views</h3>
+                  <h3>{t("landing.dashboardViews")}</h3>
                 </div>
                 <p>
                   Two live views for percent and silver profit. Scan faster, compare cities, and spot flips in seconds with clear, clean
@@ -357,7 +358,7 @@ export function LandingPage() {
               <article className="feature-card">
                 <div className="feature-head">
                   <span>02</span>
-                  <h3>BM Crafter</h3>
+                  <h3>{t("nav.bmCrafter")}</h3>
                 </div>
                 <p>
                   Live Black Market pricing, Sold/Day velocity, and full craft cost with materials + artifacts. Only profitable items
@@ -372,7 +373,7 @@ export function LandingPage() {
               <article className="feature-card">
                 <div className="feature-head">
                   <span>03</span>
-                  <h3>Crafting Tools</h3>
+                  <h3>{t("dashboard.craftingTools")}</h3>
                 </div>
                 <p>
                   Full profit calculators for every crafting path — gear, refining, and consumables — with return rate, focus,
@@ -489,24 +490,24 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
-      <a className="community-tile" href="/community" aria-label="Join the community">
+      <a className="community-tile" href="/community" aria-label={t("landing.joinCommunity")}>
         <span className="tile-title">
           <svg className="tile-icon" viewBox="0 0 256 199" aria-hidden="true" focusable="false">
             <path d="M216.9 16.5A208.5 208.5 0 0 0 164.6 0c-2.3 4-4.9 9.2-6.7 13.4-19.2-2.9-38.1-2.9-57.1 0-1.8-4.2-4.5-9.4-6.8-13.4a209.3 209.3 0 0 0-52.4 16.5C6.6 68.4-3.1 119.4 1.8 169.8a210.1 210.1 0 0 0 63.9 32.7c5.2-7.1 9.8-14.6 13.5-22.7-7.4-2.8-14.5-6.2-21.2-10.2 1.8-1.3 3.5-2.6 5.1-4 40.9 19.1 85.1 19.1 125.5 0 1.7 1.4 3.4 2.7 5.1 4-6.7 4-13.8 7.4-21.2 10.2 3.7 8.1 8.3 15.6 13.5 22.7a210.2 210.2 0 0 0 63.9-32.7c5.8-57.9-9.7-108.4-44.8-153.3ZM85 135.3c-12.5 0-22.7-11.4-22.7-25.4S72.5 84.5 85 84.5s22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Zm86 0c-12.5 0-22.7-11.4-22.7-25.4s10.1-25.4 22.7-25.4 22.7 11.4 22.7 25.4-10.1 25.4-22.7 25.4Z" />
           </svg>
-          Join the Community
+          {t("landing.joinCommunity")}
         </span>
         <span className="tile-subtitle">Discord, deals, live flips</span>
-        <span className="tile-cta">Open Community</span>
+        <span className="tile-cta">{t("landing.openCommunity")}</span>
       </a>
 
       {zoomSrc ? (
         <div className="zoom-modal" aria-hidden="false" onClick={() => setZoomSrc(null)}>
           <div className="zoom-card" onClick={(event) => event.stopPropagation()}>
-            <button className="zoom-close" type="button" aria-label="Close" onClick={() => setZoomSrc(null)}>
+            <button className="zoom-close" type="button" aria-label={t("common.close")} onClick={() => setZoomSrc(null)}>
               X
             </button>
-            <img src={zoomSrc} alt="Preview large" />
+            <img src={zoomSrc} alt={t("dashboard.preview")} />
           </div>
         </div>
       ) : null}

@@ -21,3 +21,8 @@ export * from "./journals/JournalControls";
 
 export * from "./ui";
 
+export * from "./i18n/i18n";
+export * from "./i18n/I18nProvider";
+export * from "./i18n/LanguageSwitcher";
+export * from "./i18n/itemNames";
+

@@ -7,7 +7,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { MobileNavBurger, ResponsiveFilters, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
+import { MobileNavBurger, ResponsiveFilters, getItemDisplayName, useI18n, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
 import { createStackingContext, getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type RefineVariant, type ReturnRatePreset, type StackedRefining, type Tier } from "../core";
 import { buildRefiningLiveSnapshot, DEFAULT_PRICE_BY_ITEM_ID, ENCHANTS, MATERIAL_BY_KEY, MATERIAL_DEFINITIONS, REFINE_VARIANTS, TIERS, isEnchantAvailable, rawItemIdFor, refinedItemIdFor } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
@@ -234,18 +234,21 @@ function formatPct(value: number): string {
   return Number.isFinite(value) ? `${value.toFixed(1)}%` : "--";
 }
 
-function formatIngredientName(row: { variant: { materialKey: MaterialKey }; kind: "raw" | "refined"; tier: Tier; enchant: Enchant }): string {
+function formatIngredientName(row: { variant: { materialKey: MaterialKey }; kind: "raw" | "refined"; tier: Tier; enchant: Enchant }, locale: "en" | "zh-TW" = "en"): string {
   const material = MATERIAL_BY_KEY[row.variant.materialKey];
   const baseName = row.kind === "raw" ? material.rawLabel : material.refinedLabel;
-  return `T${row.tier}.${row.enchant} ${baseName}`;
+  const itemId = row.kind === "raw"
+    ? rawItemIdFor(row.variant.materialKey, row.tier, row.enchant)
+    : refinedItemIdFor(row.variant.materialKey, row.tier, row.enchant);
+  return getItemDisplayName(itemId, locale, `T${row.tier}.${row.enchant} ${baseName}`);
 }
 
-function formatVariantName(variant: { materialKey: MaterialKey; tier: Tier; enchant: Enchant; label: string }): string {
+function formatVariantName(variant: { materialKey: MaterialKey; tier: Tier; enchant: Enchant; label: string; itemId: string }, locale: "en" | "zh-TW" = "en"): string {
   const material = MATERIAL_BY_KEY[variant.materialKey];
-  if (variant.materialKey === "stone" && variant.enchant > 0) {
-    return `T${variant.tier} ${material.refinedLabel} from ${variant.label} ${material.rawLabel}`;
-  }
-  return `${variant.label} ${material.refinedLabel}`;
+  const fallback = variant.materialKey === "stone" && variant.enchant > 0
+    ? `T${variant.tier} ${material.refinedLabel} from ${variant.label} ${material.rawLabel}`
+    : `${variant.label} ${material.refinedLabel}`;
+  return getItemDisplayName(variant.itemId, locale, fallback);
 }
 
 function onRefiningIconError(event: React.SyntheticEvent<HTMLImageElement>): void {
@@ -308,6 +311,7 @@ function useRegion(): [MarketRegion, (next: MarketRegion) => void] {
 export function RefiningCalculatorPage() {
   // Rubric marker: this component is the imperative shell around the pure refining core.
   const [region, setRegion] = useRegion();
+  const { locale, t } = useI18n();
   const [authService, setAuthService] = useState<AuthService | null>(null);
   const [user, setUser] = useState<UserState | null>(null);
   const [showAccount, setShowAccount] = useState(false);
@@ -591,17 +595,17 @@ export function RefiningCalculatorPage() {
       if (logicFilter !== "all" && row.logic !== logicFilter) return false;
       if (!search) return true;
       const ingredientText = row.variant.ingredients
-        .map((ingredient) => formatIngredientName({ ...ingredient, variant: row.variant }))
+        .map((ingredient) => formatIngredientName({ ...ingredient, variant: row.variant }, locale))
         .join(" ");
       return [
         row.variant.id,
         row.variant.itemId,
-        formatVariantName(row.variant),
+        formatVariantName(row.variant, locale),
         materialDisplayName(row.variant.materialKey),
         ingredientText,
       ].some((value) => value.toLowerCase().includes(search));
     });
-  }, [resultSearchTerm, rows, logicFilter]);
+  }, [resultSearchTerm, rows, logicFilter, locale]);
   const visibleRows = filteredRows.slice(0, visibleRowCount);
   const profitableCount = filteredRows.filter((row) => row.positive).length;
   const hasDisplayData = hasLiveData || hasManualOverrideValues(manualOverrides);
@@ -926,7 +930,7 @@ export function RefiningCalculatorPage() {
                     const specs = focusSpecsDraft.materials[material.key] || createDefaultMaterialFocusSpecs();
                     return (
                       <tr key={material.key}>
-                        <td>{materialDisplayName(material.key)}</td>
+                        <td>{getItemDisplayName(rawItemIdFor(material.key, 4, 0), locale, materialDisplayName(material.key))}</td>
                         <td>
                           <input
                             className={`rc-input rc-focus-input ${isSpecLevelInvalid(specs.mastery) ? "invalid" : ""}`}
@@ -978,22 +982,22 @@ export function RefiningCalculatorPage() {
               <h1>RomulusKings Crafting Tools</h1>
             </div>
             <div className="bm-nav bm-nav-switch">
-              <Link className="nav-tab" to="/">Home</Link>
-              <Link className="nav-tab" to="/dashboard">Dashboard</Link>
-              <Link className="nav-tab" to="/bm-crafter">Blackmarket Crafter</Link>
-              <Link className="nav-tab" to="/crafting-calculator">Crafting Calculator</Link>
-              <span className="nav-tab active">Refining Calculator</span>
-              <Link className="nav-tab" to="/food-potion-crafter">Food &amp; Potion Crafter</Link>
+              <Link className="nav-tab" to="/">{t("nav.home")}</Link>
+              <Link className="nav-tab" to="/dashboard">{t("nav.dashboard")}</Link>
+              <Link className="nav-tab" to="/bm-crafter">{t("nav.bmCrafter")}</Link>
+              <Link className="nav-tab" to="/crafting-calculator">{t("nav.craftingCalculator")}</Link>
+              <span className="nav-tab active">{t("nav.refiningCalculator")}</span>
+              <Link className="nav-tab" to="/food-potion-crafter">{t("nav.foodPotionCrafter")}</Link>
             </div>
           </div>
           <div className="bm-meta">
             <button className="bm-pill" type="button" onClick={() => { setPendingRegion(region === "eu" ? "us" : "eu"); setShowRegionConfirm(true); }}>
-              <span className="material-symbols-outlined">language</span>Region: <span>{region.toUpperCase()}</span>
+              <span className="material-symbols-outlined">language</span>{t("common.region")}: <span>{region.toUpperCase()}</span>
             </button>
-            <div className="bm-status" title={refiningUpdated.title}><span className="pulse"></span>Last updated: <span>{refiningUpdated.time}</span>{refiningUpdated.relative ? <span className="bm-status-ago"> ({refiningUpdated.relative})</span> : null}</div>
+            <div className="bm-status" title={refiningUpdated.title}><span className="pulse"></span>{t("common.lastUpdated")}: <span>{refiningUpdated.time}</span>{refiningUpdated.relative ? <span className="bm-status-ago"> ({refiningUpdated.relative})</span> : null}</div>
             <div className="account-wrap">
-              <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label="Account">
-                <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="avatar" />
+              <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label={t("common.account")}>
+                <img src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt={t("common.avatar")} />
               </button>
             </div>
           </div>
@@ -1003,27 +1007,27 @@ export function RefiningCalculatorPage() {
       <div ref={accountPanelRef} className={`account-panel ${showAccount ? "open" : ""}`} onClick={(event) => event.stopPropagation()}>
         <div className="account-header">
           <div className="avatar-ring"><img className="avatar-big" src={user?.avatar || assetUrl("picture/accountsymbol.png")} alt="Avatar" /><span className="status-dot" aria-hidden="true"></span></div>
-          <div className="user-info">{isGuest() ? <GuestSignInLink /> : <><span className="email">{user?.email || "Guest"}</span><span className="status">{user ? "Logged in" : "No session"}</span></>}</div>
-          <button className="close-btn" aria-label="Close" onClick={() => setShowAccount(false)}>X</button>
+          <div className="user-info">{isGuest() ? <GuestSignInLink /> : <><span className="email">{user?.email || t("auth.guestMode")}</span><span className="status">{user ? t("auth.loggedIn") : t("auth.checkingSession")}</span></>}</div>
+          <button className="close-btn" aria-label={t("common.close")} onClick={() => setShowAccount(false)}>X</button>
         </div>
         <div className="panel-section">
-          <h4>Select profile avatar</h4>
+          <h4>{t("auth.selectAvatar")}</h4>
           <div className="avatar-grid">{allowedAvatars.filter((src) => !src.includes("accountsymbol")).map((src) => (<img key={src} src={assetUrl(src.replace(/^\//, ""))} alt="" onClick={() => setUser((prev) => (prev ? { ...prev, avatar: src } : prev))} />))}</div>
         </div>
         <div className="panel-section">
-          <h4>Data region</h4>
-          <select className="city-select" value={region} onChange={(event) => void onRegionSave(event.target.value === "us" ? "us" : "eu")}><option value="us">America</option><option value="eu">Europe</option></select>
+          <h4>{t("auth.dataRegion")}</h4>
+          <select className="city-select" value={region} onChange={(event) => void onRegionSave(event.target.value === "us" ? "us" : "eu")}><option value="us">{t("panel.america")}</option><option value="eu">{t("panel.europe")}</option></select>
         </div>
         <div className="account-actions">
           {isGuest() ? (
-            <button className="btn danger" onClick={() => void onLogout()}>Exit guest mode</button>
+            <button className="btn danger" onClick={() => void onLogout()}>{t("auth.exitGuest")}</button>
           ) : user ? (
             <>
-              <button className="btn primary" onClick={() => void onResetPassword()}>{accountActionMsg === "Email sent" ? "Email sent" : "Change password"}</button>
-              <button className="btn danger" onClick={() => void onLogout()}>Logout</button>
+              <button className="btn primary" onClick={() => void onResetPassword()}>{accountActionMsg === "Email sent" ? t("auth.emailSent") : t("auth.changePassword")}</button>
+              <button className="btn danger" onClick={() => void onLogout()}>{t("auth.logout")}</button>
             </>
           ) : (
-            <button className="btn primary" onClick={() => { window.location.href = "/login?next=%2Frefining-calculator"; }}>Login</button>
+            <button className="btn primary" onClick={() => { window.location.href = "/login?next=%2Frefining-calculator"; }}>{t("common.login")}</button>
           )}
         </div>
       </div>
@@ -1031,16 +1035,16 @@ export function RefiningCalculatorPage() {
       <section className={`rc-top-panel ${isTopSectionExpanded ? "expanded" : "collapsed"}`}>
         <div className="rc-top-panel-header">
           <div>
-            <p className="rc-block-title">Refining Controls</p>
-            <span>{isTopSectionExpanded ? "Filters and manual editor open" : "Filters and manual editor closed"}</span>
+            <p className="rc-block-title">{t("common.refiningControls")}</p>
+            <span>{isTopSectionExpanded ? t("common.filtersEditorOpen") : t("common.filtersEditorClosed")}</span>
           </div>
           <button
             type="button"
             className={`rc-arrow-toggle ${isTopSectionExpanded ? "open" : ""}`}
-            aria-label={isTopSectionExpanded ? "Collapse refining controls" : "Expand refining controls"}
+            aria-label={isTopSectionExpanded ? t("common.collapseRefining") : t("common.expandRefining")}
             onClick={() => setIsTopSectionExpanded((prev) => !prev)}
           >
-            <span className="rc-arrow-label">{isTopSectionExpanded ? "Hide" : "Show"}</span>
+            <span className="rc-arrow-label">{isTopSectionExpanded ? t("common.hide") : t("common.show")}</span>
             <span className="rc-arrow-glyph">v</span>
           </button>
         </div>
@@ -1053,32 +1057,32 @@ export function RefiningCalculatorPage() {
         <section className="bm-table expanded">
           <div className="rc-summary-bar">
             <div className="rc-summary-stat">
-              <span>Profitable</span>
+              <span>{t("common.profitable")}</span>
               <strong className="profit">{profitableCount}</strong>
             </div>
             <div className="rc-summary-divider" />
             <div className="rc-summary-stat">
-              <span>Showing</span>
+              <span>{t("common.total")}</span>
               <strong>{filteredRows.length}</strong>
             </div>
             <div className="rc-summary-divider" />
             <div className="rc-summary-stat">
-              <span>Return</span>
+              <span>{t("common.return")}</span>
               <strong>{selectedEditorRow ? `${(selectedEditorRow.returnRate * 100).toFixed(2)}%` : "--"}</strong>
             </div>
             <div className="rc-summary-divider" />
             <div className="rc-summary-stat">
-              <span>Region</span>
+              <span>{t("common.region")}</span>
               <strong>{region.toUpperCase()}</strong>
             </div>
           </div>
           <div className="rc-table-toolbar">
-            <span>Results Table</span>
+            <span>{t("common.resultsTable")}</span>
             <label className="rc-result-search">
               <span className="material-symbols-outlined">search</span>
-              <input type="search" value={resultSearchTerm} onChange={(event) => setResultSearchTerm(event.target.value)} placeholder="Search results" />
+              <input type="search" value={resultSearchTerm} onChange={(event) => setResultSearchTerm(event.target.value)} placeholder={t("common.searchResults")} />
             </label>
-            <div className="rc-logic-seg" role="group" aria-label="Refining logic filter">
+            <div className="rc-logic-seg" role="group" aria-label={t("common.filters")}>
               {(["all", "standard", "stacking"] as const).map((opt) => (
                 <button
                   key={opt}
@@ -1086,11 +1090,11 @@ export function RefiningCalculatorPage() {
                   className={logicFilter === opt ? "active" : ""}
                   onClick={() => setLogicFilter(opt)}
                 >
-                  {opt === "all" ? "All" : opt === "standard" ? "Standard" : "Stacking"}
+                  {opt === "all" ? t("common.all") : opt === "standard" ? t("common.standard") : t("common.stacking")}
                 </button>
               ))}
             </div>
-            <span>{profitableCount} profitable | Showing {filteredRows.length}</span>
+            <span>{profitableCount} {t("common.profitable")} | {t("common.total")} {filteredRows.length}</span>
           </div>
           <p className="rc-logic-hint">
             <span className="rc-logic-hint-tag standard">Standard</span> buys the lower-tier refined material at market.
@@ -1098,14 +1102,14 @@ export function RefiningCalculatorPage() {
           </p>
           <div className="table-wrap custom-scrollbar" onScroll={onResultsScroll}>
             <table>
-              <thead><tr><th>Variant</th><th className="num">Return</th><th className="num">Gross Cost</th><th className="num">Return Save</th><th className="num">Fee</th><th className="num">Tax</th><th className="num">Net Cost</th><th className="num">Net Revenue</th><th className="num">Focus</th><th className="num">Profit/Focus</th><th className="num">Profit</th><th className="num">Profit %</th></tr></thead>
+              <thead><tr><th>{t("common.variants")}</th><th className="num">{t("common.return")}</th><th className="num">{t("common.craftCost")}</th><th className="num">{t("common.returnSaved")}</th><th className="num">{t("common.stationFee")}</th><th className="num">{t("common.marketTax")}</th><th className="num">{t("common.netProfit")}</th><th className="num">{t("common.netRevenue")}</th><th className="num">{t("common.focusCost")}</th><th className="num">{t("common.profitPerFocus")}</th><th className="num">{t("common.profit")}</th><th className="num">{t("common.profitPercent")}</th></tr></thead>
               <tbody>
-                {!hasDisplayData || !filteredRows.length ? (<tr><td colSpan={12}>{resultSearchTerm ? "No matching refining rows." : "No refining data available for the selected region/city."}</td></tr>) : null}
+                {!hasDisplayData || !filteredRows.length ? (<tr><td colSpan={12}>{resultSearchTerm ? t("common.noMatchingRows") : t("common.noDataForRegion")}</td></tr>) : null}
                 {visibleRows.map((row, index) => {
                   const suspect = row.grossMaterialCost > 0 && row.netRevenue >= 10 * row.grossMaterialCost;
                   return (
                   <tr key={row.rowKey} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${suspect ? "rc-suspect-row" : ""} ${row.logic === "stacking" ? "rc-stack-row" : ""}`} onClick={() => { setSelectedRowKey(row.rowKey); if (row.logic === "stacking") setStackModalKey(row.rowKey); }}>
-                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={formatVariantName(row.variant)} onError={onRefiningIconError} /></div><div><div className="item-name">{formatVariantName(row.variant)}{row.missingInputCost ? " *" : ""}<span className={`rc-logic-chip rc-logic-${row.logic}`}>{row.logic === "stacking" ? "Stacking" : "Standard"}</span></div>{suspect ? <div className="rc-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}{row.logic === "stacking" && row.stack && row.stack.selfRefinedTiers.length > 0 ? (<div className="rc-stack-flow">{stackFlowNodes(row.variant, row.stack.selfRefinedTiers).map((n, i) => (<span key={i} className={`rc-flow-node rc-flow-${n.kind}`}>{n.kind === "buy" ? "Buy " : ""}{tierEnchLabel(n.tier, n.enchant)}</span>))}</div>) : null}<div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant })}`).join(" + ")}</div></div></div></div></td>
+                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={formatVariantName(row.variant, locale)} onError={onRefiningIconError} /></div><div><div className="item-name">{formatVariantName(row.variant, locale)}{row.missingInputCost ? " *" : ""}<span className={`rc-logic-chip rc-logic-${row.logic}`}>{row.logic === "stacking" ? "Stacking" : "Standard"}</span></div>{suspect ? <div className="rc-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}{row.logic === "stacking" && row.stack && row.stack.selfRefinedTiers.length > 0 ? (<div className="rc-stack-flow">{stackFlowNodes(row.variant, row.stack.selfRefinedTiers).map((n, i) => (<span key={i} className={`rc-flow-node rc-flow-${n.kind}`}>{n.kind === "buy" ? "Buy " : ""}{tierEnchLabel(n.tier, n.enchant)}</span>))}</div>) : null}<div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant }, locale)}`).join(" + ")}</div></div></div></div></td>
                     <td className="num">{formatPct(row.returnRate * 100)}</td>
                     <td className="num">{formatNumber(row.grossMaterialCost)}</td>
                     <td className="num profit">-{formatNumber(row.returnedMaterialCost)}</td>
@@ -1122,15 +1126,15 @@ export function RefiningCalculatorPage() {
                 })}
                 {visibleRowCount < filteredRows.length ? (
                   <tr className="rc-load-more-row">
-                    <td colSpan={12}>Scroll for more rows</td>
+                    <td colSpan={12}>{t("common.scrollMore")}</td>
                   </tr>
                 ) : null}
               </tbody>
             </table>
           </div>
           <div className="table-footer">
-            <p>Showing {Math.min(visibleRowCount, filteredRows.length)} / {filteredRows.length} variants</p>
-            <p>Region {region.toUpperCase()} | Missing raw live prices: {missingRawCount}</p>
+            <p>{t("common.total")} {Math.min(visibleRowCount, filteredRows.length)} / {filteredRows.length} {t("common.variants")}</p>
+            <p>{t("common.region")} {region.toUpperCase()} | Missing raw live prices: {missingRawCount}</p>
           </div>
         </section>
 
@@ -1139,13 +1143,13 @@ export function RefiningCalculatorPage() {
             <div className="side-header"><h3>Refining Insight</h3><span className="material-symbols-outlined">tune</span></div>
             <div className="side-hero teal-gradient-bg">
               <div className="side-icon"><div className="side-icon-inner"><img src={selectedRow?.variant.icon || ""} alt="" onError={onRefiningIconError} /></div></div>
-              <h2>{selectedRow ? formatVariantName(selectedRow.variant) : "Select a variant"}</h2>
+              <h2>{selectedRow ? formatVariantName(selectedRow.variant, locale) : t("common.selectVariant")}</h2>
             </div>
             <div className="side-metrics">
-              <div><span>Profit</span><strong className={selectedRow?.profit && selectedRow.profit >= 0 ? "profit" : "loss"}>{selectedRow?.profit && selectedRow.profit >= 0 ? "+" : ""}{formatNumber(selectedRow?.profit || 0)}</strong></div>
-              <div><span>Profit %</span><strong className={selectedRow?.profitPercent && selectedRow.profitPercent >= 0 ? "profit" : "loss"}>{formatPct(selectedRow?.profitPercent || 0)}</strong></div>
-              <div><span>Profit / Focus</span><strong className={selectedRow?.profitPerFocus && selectedRow.profitPerFocus >= 0 ? "profit" : "loss"}>{selectedRow?.focusCost ? formatNumber(selectedRow.profitPerFocus) : "--"}</strong></div>
-              <div><span>Return Rate</span><strong>{formatPct((selectedRow?.returnRate || 0) * 100)}</strong></div>
+              <div><span>{t("common.profit")}</span><strong className={selectedRow?.profit && selectedRow.profit >= 0 ? "profit" : "loss"}>{selectedRow?.profit && selectedRow.profit >= 0 ? "+" : ""}{formatNumber(selectedRow?.profit || 0)}</strong></div>
+              <div><span>{t("common.profitPercent")}</span><strong className={selectedRow?.profitPercent && selectedRow.profitPercent >= 0 ? "profit" : "loss"}>{formatPct(selectedRow?.profitPercent || 0)}</strong></div>
+              <div><span>{t("common.profitPerFocus")}</span><strong className={selectedRow?.profitPerFocus && selectedRow.profitPerFocus >= 0 ? "profit" : "loss"}>{selectedRow?.focusCost ? formatNumber(selectedRow.profitPerFocus) : "--"}</strong></div>
+              <div><span>{t("common.returnRate")}</span><strong>{formatPct((selectedRow?.returnRate || 0) * 100)}</strong></div>
               <div><span>Returned Value</span><strong className="profit">-{formatNumber(selectedRow?.returnedMaterialCost || 0)}</strong></div>
               <div><span>Total Cost</span><strong>{formatNumber(selectedRow?.totalCost || 0)}</strong></div>
               <div><span>Material Cost</span><strong>{formatNumber(selectedRow?.grossMaterialCost || 0)}</strong></div>
@@ -1172,7 +1176,7 @@ export function RefiningCalculatorPage() {
             <div className="rc-modal-head">
               <div className="rc-modal-icon"><img src={selectedRow.variant.icon} alt="" onError={onRefiningIconError} /></div>
               <div>
-                <h3>{formatVariantName(selectedRow.variant)}</h3>
+                <h3>{formatVariantName(selectedRow.variant, locale)}</h3>
                 <p>Stacking — refine it yourself, step by step</p>
               </div>
             </div>

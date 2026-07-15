@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSessionState } from "../../../shared";
+import type { Locale } from "../../../shared";
 import { DEFAULT_USAGE_FEE } from "../core";
 import type {
   City,
@@ -17,7 +18,8 @@ const DEFAULT_CITY: City = "Lymhurst";
 export function useFoodPotionState(
   recipes: ConsumableRecipe[],
   priceByItemId: Map<string, number>,
-  specProgress?: CraftingProgress
+  specProgress?: CraftingProgress,
+  locale: Locale = "en"
 ) {
   const [category, setCategoryState] = useSessionState<ConsumableCategory>("fp:category", "food");
   const [selectedTier, setSelectedTier] = useSessionState<number | null>("fp:selectedTier", null);
@@ -66,6 +68,7 @@ export function useFoodPotionState(
           demandPerDay,
           showOnlyProfitable,
           specProgress,
+          locale,
         },
         priceByItemId
       ),
@@ -87,6 +90,7 @@ export function useFoodPotionState(
       demandPerDay,
       showOnlyProfitable,
       specProgress,
+      locale,
     ]
   );
 

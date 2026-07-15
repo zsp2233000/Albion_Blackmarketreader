@@ -1,5 +1,6 @@
 import type { BmMarketItem, BmRecipe, ItemEconomics } from "../domain";
 import type { JournalData, JournalProfession, OwnedJournals } from "../../../shared";
+import type { Locale } from "../../../shared";
 
 export interface BmCrafterRow {
   rowKey: string;
@@ -26,6 +27,8 @@ export interface BmCrafterFilters {
   nonArtefactOnly: boolean;
   craftCity: string;
   usageFeePer100: number;
+  /** UI locale used for display names and localized search. */
+  locale?: Locale;
   /** When enabled, crafting-journal profit is folded into each row's profit before filtering. */
   journal?: {
     enabled: boolean;
