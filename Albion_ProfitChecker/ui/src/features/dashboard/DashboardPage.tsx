@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createAuthService, RegionService, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState, isGuest, buildGuestProfile, exitGuest, GuestSignInLink, exitGuestToLogin, useI18n, getItemDisplayName } from "@shared/index";
-import type { Locale } from "@shared/index";
-import type { AuthService } from "@shared/index";
+import { createAuthService, RegionService, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState, isGuest, buildGuestProfile, exitGuest, isCrawler, GuestSignInLink, exitGuestToLogin, useI18n, getItemDisplayName } from "@shared/index";
+import type { Locale, AuthService } from "@shared/index";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import "./dashboard.css";
@@ -727,7 +726,9 @@ export function DashboardPage() {
     (async () => {
       const session = await authService.getSession().catch(() => null);
       if (!session) {
-        if (isGuest()) {
+        if (isGuest() || isCrawler()) {
+          // Crawlers get the public read-only (guest) view instead of a /login
+          // redirect, so search engines can index the tool page content.
           const guest = buildGuestProfile();
           const storedRegion = readStoredRegion();
           const guestRegion = (storedRegion || guest.region || "us") as Region;
