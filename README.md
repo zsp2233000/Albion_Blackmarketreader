@@ -78,6 +78,21 @@ Albion_Blackmarketreader/
 
 ---
 
+## System Architecture
+
+```mermaid
+graph TD
+    A[Albion Online 遊戲客戶端] -->|玩家安裝監聽器上傳| B(Albion Online Data Project)
+    C[GitHub Actions 排程] -->|每 1.5 秒間隔/批次 50 筆| B
+    C -->|.NET/Node 抓取整理| D[寫入/更新靜態 JSON]
+    D -->|Commit & Push| E[GitHub Repository]
+    E -->|觸發部署/同步| F[Vercel 靜態代碼託管]
+    G[瀏覽器前端 React] -->|讀取靜態 JSON| F
+    G -->|驗證/登入| H(Supabase Auth)
+```
+
+---
+
 ## 📦 Environment Setup
 
 Set these in your Vercel project (used to generate runtime env at build time):
