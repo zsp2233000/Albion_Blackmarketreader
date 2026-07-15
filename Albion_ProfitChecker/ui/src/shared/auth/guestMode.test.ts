@@ -47,8 +47,13 @@ describe("guestMode", () => {
     expect(p.avatar).toBe("http://x/y.png");
   });
 
-  it("buildGuestProfile rejects an invalid stored region", () => {
+  it("buildGuestProfile accepts a stored Asia region", () => {
     localStorage.setItem("region", "asia");
+    expect(buildGuestProfile().region).toBe("asia");
+  });
+
+  it("buildGuestProfile rejects an invalid stored region", () => {
+    localStorage.setItem("region", "invalid");
     expect(buildGuestProfile().region).toBeNull();
   });
 });

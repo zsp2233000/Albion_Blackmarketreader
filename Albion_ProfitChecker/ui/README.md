@@ -54,13 +54,15 @@ npm run test:watch   # vitest in watch mode
 Market data is fetched into `public/data/` JSON files:
 
 ```bash
-npm run refresh:crafting-data      # both regions
+npm run refresh:crafting-data      # all regions
 npm run refresh:crafting-data:eu   # EU only
 npm run refresh:crafting-data:us   # US only
+npm run refresh:crafting-data:asia # Asia only
 
-npm run refresh:food-potion-data     # food + potion ingredient & output prices, both regions
+npm run refresh:food-potion-data     # food + potion ingredient & output prices, all regions
 npm run refresh:food-potion-data:eu  # EU only
 npm run refresh:food-potion-data:us  # US only
+npm run refresh:food-potion-data:asia # Asia only
 ```
 
 ### Data files in `public/data/`

@@ -1,4 +1,5 @@
 import type { Region } from "../types";
+import { normalizeRegion } from "./regions";
 
 type RegionSubscriber = (region: Region) => void;
 
@@ -30,7 +31,8 @@ export class RegionService {
   }
 
   setRegion(next: Region, options?: { broadcast?: boolean }): void {
-    const normalized: Region = next === "us" ? "us" : "eu";
+    const normalized = normalizeRegion(next);
+    if (!normalized) return;
     if (normalized === this.region) return;
 
     this.region = normalized;
@@ -49,8 +51,7 @@ export class RegionService {
   }
 
   private readRegion(defaultRegion: Region): Region {
-    const stored = (localStorage.getItem(REGION_KEY) || "").toLowerCase();
-    return stored === "us" || stored === "eu" ? stored : defaultRegion;
+    return normalizeRegion(localStorage.getItem(REGION_KEY)) ?? defaultRegion;
   }
 
   private notify() {
@@ -59,17 +60,17 @@ export class RegionService {
 
   private onStorage = (event: StorageEvent) => {
     if (event.key !== REGION_KEY) return;
-    const next = (event.newValue || "").toLowerCase();
-    if (next !== "eu" && next !== "us") return;
+    const next = normalizeRegion(event.newValue);
+    if (!next) return;
     if (next === this.region) return;
     this.region = next;
     this.notify();
   };
 
   private onChannelMessage = (event: MessageEvent) => {
-    const next = (event.data?.value || "").toLowerCase();
     if (event.data?.type !== "region") return;
-    if (next !== "eu" && next !== "us") return;
+    const next = normalizeRegion(event.data?.value);
+    if (!next) return;
     if (next === this.region) return;
     this.region = next;
     localStorage.setItem(REGION_KEY, next);

@@ -1,4 +1,4 @@
-export type Region = "eu" | "us";
+export type Region = "us" | "eu" | "asia";
 
 export interface UserProfile {
   id: string;

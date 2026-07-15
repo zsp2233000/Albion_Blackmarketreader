@@ -13,4 +13,11 @@ describe("bm crafter data path builder", () => {
     expect(paths[0]).toBe("/items-categorized-crafting.json");
     expect(paths).toContain("./items-categorized-crafting.json");
   });
+
+  it("builds Asia data paths without falling back to Europe", () => {
+    const paths = buildDataPaths("bm", "asia", "https://blackmarketreader.com/Blackmarket-Crafter");
+    expect(paths[0]).toBe("/data/bm-crafter-asia.json");
+    expect(paths).toContain("./data/bm-crafter-asia.json");
+    expect(paths.every((path) => !path.includes("bm-crafter-eu.json"))).toBe(true);
+  });
 });

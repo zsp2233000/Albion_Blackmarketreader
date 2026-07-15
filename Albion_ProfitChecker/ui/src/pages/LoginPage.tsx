@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { assetUrl, createAuthService, enterGuest, exitGuest, useI18n } from "@shared/index";
+import { assetUrl, createAuthService, enterGuest, exitGuest, normalizeRegion, useI18n } from "@shared/index";
 import type { AuthService } from "@shared/index";
 import "./login.css";
 
@@ -96,7 +96,7 @@ export function LoginPage() {
         if (!user) return null;
         const meta = (user.user_metadata || {}) as Record<string, unknown>;
         const regionRaw = String(meta.region || "").toLowerCase();
-        const region = regionRaw === "eu" || regionRaw === "us" ? regionRaw : null;
+        const region = normalizeRegion(regionRaw);
         return {
           id: user.id,
           email: user.email || null,

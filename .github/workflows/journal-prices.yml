@@ -1,52 +1,58 @@
-name: Build Journal Prices (EU + US)
+name: Journal Prices (US + EU + Asia)
 
 on:
   workflow_dispatch:
   schedule:
-    # Crafting-journal (book) empty/full prices, after the material refresh.
     - cron: "45 10 * * *"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: journal-prices
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  build-journal-prices:
+  collect:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        region: [us, eu, asia]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: "20"
-
-      - name: Fetch journal prices
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Refresh one region
         working-directory: Albion_ProfitChecker/ui
-        run: node scripts/refresh-journal-prices.mjs
-
-      - name: Commit outputs
+        run: node scripts/refresh-journal-prices.mjs "${{ matrix.region }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: journals-${{ matrix.region }}
+          path: Albion_ProfitChecker/ui/public/data/journals-${{ matrix.region }}.json
+          if-no-files-found: error
+  publish:
+    needs: collect
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: journals-*
+          path: Albion_ProfitChecker/ui/public/data
+          merge-multiple: true
+      - name: Commit outputs once
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/data/journals-eu.json Albion_ProfitChecker/ui/public/data/journals-us.json)" ]; then
-            git add Albion_ProfitChecker/ui/public/data/journals-eu.json Albion_ProfitChecker/ui/public/data/journals-us.json
-            git commit -m "chore: update crafting journal prices (eu/us)"
-          else
-            echo "No journal price changes"
-          fi
-
-      - name: Push changes
-        if: success()
-        run: |
-          branch=$(git rev-parse --abbrev-ref HEAD)
-          git pull --rebase origin "$branch" || true
-          if [ -n "$(git log origin/$(git rev-parse --abbrev-ref HEAD)..HEAD)" ]; then
-            git push
-          else
-            echo "Nothing to push"
+          git add Albion_ProfitChecker/ui/public/data/journals-*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh journal prices"
+            git pull --rebase origin "$(git branch --show-current)"
+            git push origin "HEAD:$(git branch --show-current)"
           fi

@@ -37,6 +37,15 @@ describe("AuthService Supabase request efficiency", () => {
     expect(getUser).not.toHaveBeenCalled();
   });
 
+  it("accepts Asia from account metadata", async () => {
+    getSession.mockResolvedValue(
+      sessionWith({ id: "abc", email: "a@b.c", email_confirmed_at: "x", user_metadata: { region: "asia" } })
+    );
+    const svc = new AuthService({ supabaseUrl: "u", supabaseAnonKey: "k" });
+
+    expect((await svc.getUserProfile())?.region).toBe("asia");
+  });
+
   it("coalesces concurrent session reads into a single underlying call", async () => {
     getSession.mockResolvedValue(sessionWith({ email_confirmed_at: "x", user_metadata: {} }));
     const svc = new AuthService({ supabaseUrl: "u", supabaseAnonKey: "k" });

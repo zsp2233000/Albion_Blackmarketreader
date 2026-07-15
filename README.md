@@ -16,14 +16,14 @@ Albion's economy is deep, but the math behind a "good deal" is tedious: return r
 - decide **where and how to refine** — including when self-refining lower tiers beats buying them,
 - find the **most profitable meals and potions** to cook, with focus and buffs accounted for.
 
-Everything is priced from real market data per region (EU / US) and per city, and results that look "too good to be true" (bad/stale data) are flagged so they don't mislead you.
+Everything is priced from real market data per region (Americas / Europe / Asia) and per city, and results that look "too good to be true" (bad/stale data) are flagged so they don't mislead you.
 
 ---
 
 ## 🧰 The tools
 
 ### 🏴 Black Market Reader (Dashboard)
-The classic flip-finder. Compares Black Market prices against city prices and surfaces profitable trades, with charts, search, city selection, min-profit filters and a profit-history graph. Region switch (EU / US).
+The classic flip-finder. Compares Black Market prices against city prices and surfaces profitable trades, with charts, search, city selection, min-profit filters and a profit-history graph. Region switch (Americas / Europe / Asia).
 
 ### ⚒️ Black Market Crafter
 Shows which items are worth **crafting to sell on the Black Market**: craft cost, Black Market sell price and daily sales volume, sorted by profit. Click any row to jump straight into the Crafting Calculator with that item, its tier/enchant, Black Market as the sell target and your craft city pre-filled.
@@ -45,7 +45,7 @@ Profit for meals and potions, including **fish-sauce / arcane-extract enchants**
 - **Focus cost model** — `baseFocus × 0.5^(efficiency / 10000)` with per-spec efficiency, verified exactly against the workbook.
 - **Return-rate presets** — royal city, local production bonus, focus, or a custom value.
 - **Unrealistic-profit flagging** — deals built on bad or stale market data are greyed out with a warning so fake profits don't fool you.
-- **Live regional data** — EU and US, per city, refreshed automatically.
+- **Live regional data** — Americas, Europe, and Asia, per city, refreshed automatically.
 
 ---
 
@@ -117,7 +117,7 @@ npm run build    # production build (with SEO prerender)
 ## 📈 Data Sync
 
 - GitHub Actions refreshes **market data** on a schedule and merges results into the repo.
-- Prices are split per region (EU / US) and per city under `ui/public/data/`.
+- Prices are split per region (US / EU / Asia) and per city under `ui/public/data/`.
 - Recipe, crafting and refining datasets are derived from Albion item data and the reference workbook.
 
 ---

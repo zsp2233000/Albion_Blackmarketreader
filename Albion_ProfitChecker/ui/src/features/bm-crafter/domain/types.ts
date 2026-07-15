@@ -1,4 +1,4 @@
-export type MarketRegion = "eu" | "us";
+export type { Region as MarketRegion } from "@shared/types";
 
 export interface BmMarketItem {
   id: string;

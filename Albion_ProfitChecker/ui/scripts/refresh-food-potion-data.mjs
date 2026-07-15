@@ -7,14 +7,16 @@ import path from "node:path";
  * consumed by src/features/food-potion-crafter/data (consumable-ingredient-prices-*, {category}-prices-*).
  *
  * Usage:
- *   node scripts/refresh-food-potion-data.mjs          # both regions
+ *   node scripts/refresh-food-potion-data.mjs          # all regions
  *   node scripts/refresh-food-potion-data.mjs eu       # EU only
  *   node scripts/refresh-food-potion-data.mjs us       # US only
+ *   node scripts/refresh-food-potion-data.mjs asia     # Asia only
  */
 
 const REGIONS = {
   us: "west",
   eu: "europe",
+  asia: "east",
 };
 
 const CITIES = ["Lymhurst", "Martlock", "Fort Sterling", "Thetford", "Bridgewatch", "Caerleon", "Brecilien"];
@@ -267,7 +269,8 @@ async function refreshRegion(region, ids) {
 
 async function main() {
   const arg = String(process.argv[2] || "").toLowerCase();
-  const regions = arg === "us" || arg === "eu" ? [arg] : ["eu", "us"];
+  if (arg && !(arg in REGIONS)) throw new Error(`unknown region: ${arg}`);
+  const regions = arg in REGIONS ? [arg] : Object.keys(REGIONS);
   const ids = await loadItemIds();
 
   for (let i = 0; i < regions.length; i += 1) {

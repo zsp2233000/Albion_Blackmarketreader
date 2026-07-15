@@ -8,7 +8,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { MobileNavBurger, ResponsiveFilters, getOfficialItemName, useI18n, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
+import { MobileNavBurger, RegionSelect, ResponsiveFilters, getOfficialItemName, normalizeRegion, useI18n, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
 import type { City, ConsumableCategory, ConsumableRecipe, MarketRegion, RecipeIngredient } from "../core";
 import { buildConsumablePriceSnapshot, ingredientPricesPath, loadIngredients, loadRecipes, outputPricesPath } from "../data";
 import { deriveFoodPotionRows, useFoodPotionState } from "../hooks";
@@ -283,7 +283,7 @@ export function FoodPotionCrafterPage() {
           // Crawlers get the public read-only (guest) view instead of a /login
           // redirect, so search engines can index the tool page content.
           const guest = buildGuestProfile();
-          const guestRegion = guest.region === "eu" || guest.region === "us" ? (guest.region as MarketRegion) : null;
+          const guestRegion = normalizeRegion(guest.region);
           setUser({
             id: guest.id,
             email: guest.email,
@@ -306,7 +306,7 @@ export function FoodPotionCrafterPage() {
         window.location.href = `/login?next=${next}`;
         return;
       }
-      const normalizedRegion = profile.region === "eu" || profile.region === "us" ? (profile.region as MarketRegion) : null;
+      const normalizedRegion = normalizeRegion(profile.region);
       setUser({
         id: profile.id,
         email: profile.email,
@@ -570,9 +570,7 @@ export function FoodPotionCrafterPage() {
             </div>
           </div>
           <div className="bm-meta">
-            <button className="bm-pill" type="button" onClick={() => setRegion(region === "eu" ? "us" : "eu")}>
-              <span className="material-symbols-outlined">language</span>{t("common.region")}: <span>{region.toUpperCase()}</span>
-            </button>
+            <RegionSelect value={region} onChange={(next) => void onRegionSave(next)} className="bm-pill" />
             <div className="bm-status" title={liveUpdated.title}><span className="pulse"></span>{liveUpdated.relative ? <>{t("common.lastUpdated")}: <span>{liveUpdated.time}</span><span className="bm-status-ago"> ({liveUpdated.relative})</span></> : t("common.manualPricing")}</div>
             <div className="account-wrap">
               <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount((p) => !p)} aria-label={t("common.account")}>
@@ -618,10 +616,7 @@ export function FoodPotionCrafterPage() {
 
           <div className="panel-section">
           <h4>{t("auth.dataRegion")}</h4>
-            <select className="city-select" value={region} onChange={(e) => onRegionSave(e.target.value === "us" ? "us" : "eu")}>
-              <option value="us">{t("panel.america")}</option>
-              <option value="eu">{t("panel.europe")}</option>
-            </select>
+            <RegionSelect value={region} onChange={(next) => void onRegionSave(next)} />
           </div>
 
           <div className="account-actions">

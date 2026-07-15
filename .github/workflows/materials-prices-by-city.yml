@@ -1,187 +1,58 @@
-name: Build Material Prices by City (EU + US)
+name: Build Material Prices by City (US + EU + Asia)
 
 on:
   workflow_dispatch:
   schedule:
-    # Raw material city prices for refining, after crafting calculator refresh.
     - cron: "35 10 * * *"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: materials-prices-by-city
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  build-material-prices-by-city:
+  collect:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        region: [us, eu, asia]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Build raw material prices by city
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Refresh one region
         working-directory: Albion_ProfitChecker/ui
-        run: |
-          node - <<'NODE'
-          const fs = require("fs");
-          const path = require("path");
-
-          const materials = [
-            { raw: "ORE", refined: "METALBAR" },
-            { raw: "WOOD", refined: "PLANKS" },
-            { raw: "FIBER", refined: "CLOTH" },
-            { raw: "HIDE", refined: "LEATHER" },
-            { raw: "ROCK", refined: "STONEBLOCK" }
-          ];
-          const tiers = [2, 3, 4, 5, 6, 7, 8];
-          const enchants = [0, 1, 2, 3, 4];
-          const cities = ["Lymhurst", "Caerleon", "Bridgewatch", "Martlock", "Fort Sterling", "Thetford", "Brecilien"];
-          const chunkSize = 50;
-          const delayMs = 1400;
-
-          const outputDir = path.join("public", "data");
-          const regions = [
-            { key: "eu", host: "https://europe.albion-online-data.com/api/v2/stats" },
-            { key: "us", host: "https://west.albion-online-data.com/api/v2/stats" }
-          ];
-
-          function isEnchantAvailable(tier, enchant) {
-            return tier >= 4 || enchant === 0;
-          }
-
-          function isItemAvailable(material, kind, tier, enchant) {
-            if (!isEnchantAvailable(tier, enchant)) return false;
-            return !(material.raw === "ROCK" && kind === "refined" && enchant > 0);
-          }
-
-          function buildItemIds(kind) {
-            const ids = [];
-            for (const material of materials) {
-              const base = material[kind];
-              for (const tier of tiers) {
-                for (const enchant of enchants) {
-                  if (!isItemAvailable(material, kind, tier, enchant)) continue;
-                  if (enchant > 0) {
-                    ids.push(`T${tier}_${base}_LEVEL${enchant}@${enchant}`);
-                  } else {
-                    ids.push(`T${tier}_${base}`);
-                  }
-                }
-              }
-            }
-            return ids;
-          }
-
-          function parseMeta(itemId) {
-            const tierMatch = itemId.match(/^T(\d+)_/);
-            const enchantMatch = itemId.match(/@(\d+)/);
-            const tier = tierMatch ? Number(tierMatch[1]) : null;
-            const enchant = enchantMatch ? Number(enchantMatch[1]) : 0;
-            return { tier, enchant };
-          }
-
-          async function fetchCurrentByCity(host, itemIds) {
-            const byItem = new Map();
-            const locations = encodeURIComponent(cities.join(","));
-
-            for (let i = 0; i < itemIds.length; i += chunkSize) {
-              const slice = itemIds.slice(i, i + chunkSize);
-              const url = `${host}/prices/${slice.join(",")}.json?locations=${locations}`;
-              const res = await fetch(url);
-              if (!res.ok) {
-                console.error("Fetch failed", res.status, url);
-                continue;
-              }
-              const data = await res.json();
-              for (const row of data) {
-                const itemId = row.item_id;
-                const city = row.city;
-                if (!itemId || !city || !cities.includes(city)) continue;
-                const price = Number(row.sell_price_min || 0);
-                if (!byItem.has(itemId)) byItem.set(itemId, new Map());
-                const perCity = byItem.get(itemId);
-                const prev = perCity.get(city);
-                if (!prev || (price > 0 && price < prev)) {
-                  perCity.set(city, price > 0 ? price : 0);
-                }
-              }
-
-              if (i + chunkSize < itemIds.length) {
-                await new Promise((resolve) => setTimeout(resolve, delayMs));
-              }
-            }
-
-            return byItem;
-          }
-
-          (async () => {
-            fs.mkdirSync(outputDir, { recursive: true });
-            const rawItemIds = buildItemIds("raw");
-            const generatedAt = new Date().toISOString();
-
-            for (const region of regions) {
-              const rawByItem = await fetchCurrentByCity(region.host, rawItemIds);
-
-              function buildItems(itemIds, byItem) {
-                const items = [];
-                for (const itemId of itemIds) {
-                  const { tier, enchant } = parseMeta(itemId);
-                  const cityPrices = {};
-                  const itemCityMap = byItem.get(itemId) || new Map();
-
-                  for (const city of cities) {
-                    cityPrices[city] = Number(itemCityMap.get(city) || 0);
-                  }
-
-                  items.push({
-                    itemId,
-                    tier,
-                    enchant,
-                    prices: cityPrices
-                  });
-                }
-                return items;
-              }
-
-              const rawItems = buildItems(rawItemIds, rawByItem);
-
-              const rawPayload = {
-                generatedAt,
-                region: region.key,
-                cities,
-                count: rawItems.length,
-                items: rawItems
-              };
-
-              const rawOutPath = path.join(outputDir, `raw-materials-cities-${region.key}.json`);
-              fs.writeFileSync(rawOutPath, JSON.stringify(rawPayload));
-              console.log(`Wrote ${rawOutPath}: ${rawItems.length} items x ${cities.length} cities`);
-            }
-          })().catch((err) => {
-            console.error(err);
-            process.exit(1);
-          });
-          NODE
-
-      - name: Commit outputs
+        run: node scripts/refresh-raw-material-prices.mjs "${{ matrix.region }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raw-materials-${{ matrix.region }}
+          path: Albion_ProfitChecker/ui/public/data/raw-materials-cities-${{ matrix.region }}.json
+          if-no-files-found: error
+  publish:
+    needs: collect
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: raw-materials-*
+          path: Albion_ProfitChecker/ui/public/data
+          merge-multiple: true
+      - name: Commit outputs once
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain Albion_ProfitChecker/ui/public/data/raw-materials-cities-eu.json Albion_ProfitChecker/ui/public/data/raw-materials-cities-us.json)" ]; then
-            git add Albion_ProfitChecker/ui/public/data/raw-materials-cities-eu.json Albion_ProfitChecker/ui/public/data/raw-materials-cities-us.json
-            git commit -m "chore: update raw material city prices (eu/us)"
-          else
-            echo "No raw city material price changes"
-          fi
-
-      - name: Push changes
-        if: success()
-        run: |
-          branch=$(git rev-parse --abbrev-ref HEAD)
-          git pull --rebase origin "$branch" || true
-          if [ -n "$(git log origin/$(git rev-parse --abbrev-ref HEAD)..HEAD)" ]; then
-            git push
-          else
-            echo "Nichts zu pushen"
+          git add Albion_ProfitChecker/ui/public/data/raw-materials-cities-*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update regional raw material prices"
+            git pull --rebase origin "$(git branch --show-current)"
+            git push origin "HEAD:$(git branch --show-current)"
           fi
