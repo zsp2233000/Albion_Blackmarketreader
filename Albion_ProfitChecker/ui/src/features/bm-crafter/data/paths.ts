@@ -12,7 +12,7 @@ function routeLocalUrl(file: string, locationHref?: string): string | null {
 }
 
 function regionFile(kind: Exclude<DataKind, "recipes">, region: MarketRegion): string {
-  const suffix = region === "us" ? "us" : "eu";
+  const suffix = region;
   if (kind === "bm") return `bm-crafter-${suffix}.json`;
   if (kind === "materials") return `materials-${suffix}.json`;
   if (kind === "materials-cities") return `materials-cities-${suffix}.json`;

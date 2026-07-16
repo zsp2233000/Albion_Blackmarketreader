@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createAuthService, RegionService, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState, isGuest, buildGuestProfile, exitGuest, isCrawler, GuestSignInLink, exitGuestToLogin, useI18n, getItemDisplayName } from "@shared/index";
-import type { Locale, AuthService } from "@shared/index";
+import { createAuthService, RegionService, RegionSelect, normalizeRegion, assetUrl, MobileNavBurger, ResponsiveFilters, useSessionState, isGuest, buildGuestProfile, exitGuest, isCrawler, GuestSignInLink, exitGuestToLogin, useI18n, getItemDisplayName } from "@shared/index";
+import type { Locale, AuthService, Region } from "@shared/index";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import "./dashboard.css";
 
-type Region = "us" | "eu";
 type City = "ALL" | "Lymhurst" | "Martlock" | "Fort Sterling" | "Thetford" | "Bridgewatch" | "Caerleon";
 type Range = "1W" | "1M" | "6M" | "1Y";
 
@@ -326,8 +325,7 @@ const nameMap: Record<string, string> = {
 };
 
 function readStoredRegion(): Region | null {
-  const stored = (localStorage.getItem("region") || "").toLowerCase();
-  return stored === "eu" || stored === "us" ? stored : null;
+  return normalizeRegion(localStorage.getItem("region"));
 }
 
 function sanitizeAvatarUrl(value?: string | null): string {
@@ -431,7 +429,12 @@ function normalizeResultItem(entry: RawResultItem): ResultItem | null {
 }
 
 async function loadResultsByRegion(region: Region): Promise<ResultItem[]> {
-  const files = region === "eu" ? ["results-eu-1.js", "results-eu-2.js", "results-eu.js"] : ["results-1.js", "results-2.js", "results.js"];
+  const filesByRegion: Record<Region, string[]> = {
+    us: ["results-1.js", "results-2.js", "results.js"],
+    eu: ["results-eu-1.js", "results-eu-2.js", "results-eu.js"],
+    asia: ["results-asia-1.js", "results-asia-2.js", "results-asia.js"]
+  };
+  const files = filesByRegion[region];
   const all: ResultItem[] = [];
 
   for (const file of files) {
@@ -754,7 +757,7 @@ export function DashboardPage() {
         if (!user) return null;
         const meta = (user.user_metadata || {}) as Record<string, unknown>;
         const regionRaw = String(meta.region || "").toLowerCase();
-        const region = regionRaw === "eu" || regionRaw === "us" ? (regionRaw as Region) : null;
+        const region = normalizeRegion(regionRaw);
         return {
           id: user.id,
           email: user.email || null,
@@ -1170,7 +1173,7 @@ export function DashboardPage() {
             </div>
             <div className="pill-row">
                <span className="pill">{t("dashboard.deals")}: {kpis.deals}</span>
-               <span className="pill">{t("common.region")}: {region === "eu" ? t("panel.europe") : t("panel.america")}</span>
+               <span className="pill">{t("common.region")}: {t(region === "eu" ? "panel.europe" : region === "asia" ? "panel.asia" : "panel.america")}</span>
             </div>
           </div>
           <div className="account-wrap">
@@ -1226,10 +1229,7 @@ export function DashboardPage() {
 
           <div className="panel-section">
             <h4>{t("auth.dataRegion")}</h4>
-            <select className="city-select" value={region} onChange={(e) => onRegionSave(e.target.value === "eu" ? "eu" : "us")}>
-               <option value="us">{t("panel.america")}</option>
-               <option value="eu">{t("panel.europe")}</option>
-            </select>
+            <RegionSelect value={region} onChange={(next) => void onRegionSave(next)} />
           </div>
 
           <div className="account-actions">

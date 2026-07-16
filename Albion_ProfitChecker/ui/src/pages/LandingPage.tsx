@@ -431,7 +431,7 @@ export function LandingPage() {
               </details>
               <details>
                 <summary>Which regions are available?</summary>
-                <p>America and Europe. You choose the region after login.</p>
+                <p>America, Europe, and Asia. You choose the region after login.</p>
               </details>
               <details>
                 <summary>Is this official from Sandbox Interactive?</summary>

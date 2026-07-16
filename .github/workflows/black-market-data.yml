@@ -1,0 +1,91 @@
+name: Black Market Data (US + EU + Asia)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: black-market-data
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include:
+          - region: us
+            api_host: https://west.albion-online-data.com/api/v2/stats
+            result_1: results-1.js
+            result_2: results-2.js
+          - region: eu
+            api_host: https://europe.albion-online-data.com/api/v2/stats
+            result_1: results-eu-1.js
+            result_2: results-eu-2.js
+          - region: asia
+            api_host: https://east.albion-online-data.com/api/v2/stats
+            result_1: results-asia-1.js
+            result_2: results-asia-2.js
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet restore Albion_ProfitChecker/Albion_ProfitChecker.csproj
+      - name: Collect first city group
+        working-directory: Albion_ProfitChecker
+        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --cities "Lymhurst,Martlock,Fort Sterling" --api-host "${{ matrix.api_host }}"
+      - run: mv Albion_ProfitChecker/ui/public/results.js "Albion_ProfitChecker/ui/public/${{ matrix.result_1 }}"
+      - name: Collect second city group
+        working-directory: Albion_ProfitChecker
+        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --cities "Bridgewatch,Thetford,Caerleon" --api-host "${{ matrix.api_host }}"
+      - run: mv Albion_ProfitChecker/ui/public/results.js "Albion_ProfitChecker/ui/public/${{ matrix.result_2 }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: black-market-${{ matrix.region }}
+          path: |
+            Albion_ProfitChecker/ui/public/${{ matrix.result_1 }}
+            Albion_ProfitChecker/ui/public/${{ matrix.result_2 }}
+          if-no-files-found: error
+
+  publish:
+    needs: collect
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: black-market-*
+          path: Albion_ProfitChecker/ui/public
+          merge-multiple: true
+      - name: Validate and merge regional outputs
+        working-directory: Albion_ProfitChecker/ui
+        run: node scripts/merge-black-market-data.mjs
+      - name: Commit all regional outputs once
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Albion_ProfitChecker/ui/public/results-1.js Albion_ProfitChecker/ui/public/results-2.js Albion_ProfitChecker/ui/public/results-eu-1.js Albion_ProfitChecker/ui/public/results-eu-2.js Albion_ProfitChecker/ui/public/results-asia-1.js Albion_ProfitChecker/ui/public/results-asia-2.js Albion_ProfitChecker/ui/public/data/bm-crafter-us.json Albion_ProfitChecker/ui/public/data/bm-crafter-eu.json Albion_ProfitChecker/ui/public/data/bm-crafter-asia.json Albion_ProfitChecker/ui/public/data/bm-crafter-metadata.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh black market data"
+            git pull --rebase origin "$(git branch --show-current)"
+            git push origin "HEAD:$(git branch --show-current)"
+          fi
+      - name: Trigger Vercel deploy
+        if: env.VERCEL_DEPLOY_HOOK_URL != ''
+        env:
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: curl --fail --show-error --silent -X POST "$VERCEL_DEPLOY_HOOK_URL"

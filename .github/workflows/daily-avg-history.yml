@@ -26,7 +26,8 @@ jobs:
           const cities = ["ALL","Lymhurst","Martlock","Fort Sterling","Thetford","Bridgewatch","Caerleon"];
           const regions = {
             us: ["public/results.js","public/results-1.js","public/results-2.js"],
-            eu: ["public/results-eu.js","public/results-eu-1.js","public/results-eu-2.js"]
+            eu: ["public/results-eu.js","public/results-eu-1.js","public/results-eu-2.js"],
+            asia: ["public/results-asia.js","public/results-asia-1.js","public/results-asia-2.js"]
           };
 
           const readResults = (file) => {
@@ -65,12 +66,17 @@ jobs:
               if (!fs.existsSync(path.join(basePath, file))) continue;
               try { merged.push(...readResults(path.join(basePath, file))); } catch (_) {}
             }
+            if (!merged.length) {
+              console.log(`Skipping ${region}: no result shards available`);
+              continue;
+            }
             if (!history[region]) history[region] = { ALL: [] };
 
             for (const city of cities) {
               const list = city === "ALL" ? merged : merged.filter((item) => getCity(item) === city);
               const profits = list.map((item) => getProfit(item)).filter((v) => v !== null);
-              const avg = profits.length ? profits.reduce((s, v) => s + v, 0) / profits.length : 0;
+              if (!profits.length) continue;
+              const avg = profits.reduce((s, v) => s + v, 0) / profits.length;
               if (!history[region][city]) history[region][city] = [];
               ensureEntry(history[region][city], today, Number(avg.toFixed(2)));
             }

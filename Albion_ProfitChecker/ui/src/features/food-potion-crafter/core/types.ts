@@ -1,5 +1,5 @@
 export type City = "Bridgewatch" | "Lymhurst" | "Fort Sterling" | "Martlock" | "Thetford" | "Caerleon" | "Brecilien";
-export type MarketRegion = "eu" | "us";
+export type { Region as MarketRegion } from "@shared/types";
 export type ConsumableCategory = "food" | "potion";
 export type StationKind = "city" | "hideout" | "island";
 

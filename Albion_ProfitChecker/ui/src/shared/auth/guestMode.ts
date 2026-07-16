@@ -1,4 +1,5 @@
 import type { Region, UserProfile } from "../types";
+import { normalizeRegion } from "../region/regions";
 
 // Guest mode lets a visitor use every tool without a Supabase account. It is a purely local
 // flag: nothing is written server-side, and per-device settings (region, avatar, filters) fall
@@ -33,8 +34,7 @@ export function exitGuest(): void {
 
 function readStoredRegion(): Region | null {
   try {
-    const stored = (localStorage.getItem("region") || "").toLowerCase();
-    return stored === "us" || stored === "eu" ? (stored as Region) : null;
+    return normalizeRegion(localStorage.getItem("region"));
   } catch {
     return null;
   }

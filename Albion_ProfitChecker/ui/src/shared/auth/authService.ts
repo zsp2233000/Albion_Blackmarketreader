@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Region, UserProfile } from "../types";
+import { normalizeRegion } from "../region/regions";
 
 export interface AuthServiceConfig {
   supabaseUrl: string;
@@ -50,7 +51,7 @@ export class AuthService {
     if (!user) return null;
 
     const meta = user.user_metadata || {};
-    const metaRegion = this.normalizeRegion(meta.region);
+    const metaRegion = normalizeRegion(meta.region);
     const metaAvatar = typeof meta.avatar === "string" ? meta.avatar : null;
     const profilePrefs = await this.getProfilePreferences(user.id);
 
@@ -83,11 +84,6 @@ export class AuthService {
   async updateUserMetadata(data: Record<string, unknown>): Promise<void> {
     const { error } = await this.supabase.auth.updateUser({ data });
     if (error) throw error;
-  }
-
-  private normalizeRegion(value: unknown): Region | null {
-    const region = String(value || "").toLowerCase();
-    return region === "eu" || region === "us" ? region : null;
   }
 
   private async getProfilePreferences(userId: string): Promise<{ avatar: string | null; region: Region | null } | null> {

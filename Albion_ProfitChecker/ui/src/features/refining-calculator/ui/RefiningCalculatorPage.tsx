@@ -8,7 +8,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { MobileNavBurger, ResponsiveFilters, getItemDisplayName, useI18n, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
+import { MobileNavBurger, RegionSelect, ResponsiveFilters, getItemDisplayName, normalizeRegion, useI18n, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../../shared";
 import { createStackingContext, getReturnRatePresetConfig, makeRefiner, type Enchant, type MarketRegion, type MaterialKey, type RefineTierInput, type RefineVariant, type ReturnRatePreset, type StackedRefining, type Tier } from "../core";
 import { buildRefiningLiveSnapshot, DEFAULT_PRICE_BY_ITEM_ID, ENCHANTS, MATERIAL_BY_KEY, MATERIAL_DEFINITIONS, REFINE_VARIANTS, TIERS, isEnchantAvailable, rawItemIdFor, refinedItemIdFor } from "../data";
 import "../../bm-crafter/ui/bmCrafter.css";
@@ -257,8 +257,7 @@ function onRefiningIconError(event: React.SyntheticEvent<HTMLImageElement>): voi
 }
 
 function readStoredRegion(): MarketRegion | null {
-  const stored = (localStorage.getItem("region") || "").toLowerCase();
-  return stored === "us" || stored === "eu" ? stored : null;
+  return normalizeRegion(localStorage.getItem("region"));
 }
 
 function sanitizeAvatarUrl(value?: string | null): string {
@@ -893,7 +892,7 @@ export function RefiningCalculatorPage() {
           <p>Do you really want to switch the region?</p>
           <div className="modal-actions">
             <button type="button" className="modal-btn ghost" onClick={() => { setShowRegionConfirm(false); setPendingRegion(null); }}>Cancel</button>
-            <button type="button" className="modal-btn primary" onClick={() => { const next = pendingRegion ?? (region === "eu" ? "us" : "eu"); setPendingRegion(null); setShowRegionConfirm(false); void onRegionSave(next); }}>Switch</button>
+            <button type="button" className="modal-btn primary" onClick={() => { const next = pendingRegion ?? region; setPendingRegion(null); setShowRegionConfirm(false); void onRegionSave(next); }}>Switch</button>
           </div>
         </div>
       </div>
@@ -994,9 +993,7 @@ export function RefiningCalculatorPage() {
             </div>
           </div>
           <div className="bm-meta">
-            <button className="bm-pill" type="button" onClick={() => { setPendingRegion(region === "eu" ? "us" : "eu"); setShowRegionConfirm(true); }}>
-              <span className="material-symbols-outlined">language</span>{t("common.region")}: <span>{region.toUpperCase()}</span>
-            </button>
+            <RegionSelect value={region} onChange={(next) => { setPendingRegion(next); setShowRegionConfirm(true); }} className="bm-pill" />
             <div className="bm-status" title={refiningUpdated.title}><span className="pulse"></span>{t("common.lastUpdated")}: <span>{refiningUpdated.time}</span>{refiningUpdated.relative ? <span className="bm-status-ago"> ({refiningUpdated.relative})</span> : null}</div>
             <div className="account-wrap">
               <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label={t("common.account")}>
@@ -1019,7 +1016,7 @@ export function RefiningCalculatorPage() {
         </div>
         <div className="panel-section">
           <h4>{t("auth.dataRegion")}</h4>
-          <select className="city-select" value={region} onChange={(event) => void onRegionSave(event.target.value === "us" ? "us" : "eu")}><option value="us">{t("panel.america")}</option><option value="eu">{t("panel.europe")}</option></select>
+          <RegionSelect value={region} onChange={(next) => void onRegionSave(next)} />
         </div>
         <div className="account-actions">
           {isGuest() ? (

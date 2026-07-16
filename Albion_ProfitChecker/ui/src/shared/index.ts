@@ -8,6 +8,8 @@ export * from "./auth/guestMode";
 export * from "./auth/crawler";
 
 export * from "./region/regionService";
+export * from "./region/regions";
+export * from "./region/RegionSelect";
 
 export * from "./assets/assets";
 

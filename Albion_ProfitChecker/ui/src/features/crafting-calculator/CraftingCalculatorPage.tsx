@@ -8,7 +8,7 @@ import { RegionService } from "@shared/region/regionService";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import { SeoHeading } from "../../shared/seo/SeoHeading";
-import { JournalControls, MobileNavBurger, getItemDisplayName, professionForItem, resolveJournalProfit, useI18n, useJournals, useSessionState, GuestSignInLink, exitGuestToLogin } from "../../shared";
+import { JournalControls, MobileNavBurger, RegionSelect, getItemDisplayName, normalizeRegion, professionForItem, resolveJournalProfit, useI18n, useJournals, useSessionState, GuestSignInLink, exitGuestToLogin, type Region } from "../../shared";
 import "../bm-crafter/ui/bmCrafter.css";
 import "./craftingCalculator.css";
 import {
@@ -33,7 +33,7 @@ import {
 } from "./specs/data";
 import { useCraftingSpecs } from "./specs/useCraftingSpecs";
 
-type MarketRegion = "eu" | "us";
+type MarketRegion = Region;
 
 // The Crafting Calculator shows one item, whose single journal always applies — no per-profession
 // opt-out (unlike nothing; matches the BM Crafter which also counts all). Ownership is always on.
@@ -207,8 +207,7 @@ const TABLE_SECTIONS: TableSection[] = [
 ];
 
 function readStoredRegion(): MarketRegion | null {
-  const stored = (localStorage.getItem("region") || "").toLowerCase();
-  return stored === "eu" || stored === "us" ? stored : null;
+  return normalizeRegion(localStorage.getItem("region"));
 }
 
 function formatNumber(value: number): string {
@@ -348,9 +347,12 @@ async function loadResultsByRegion(region: MarketRegion): Promise<ResultItem[]> 
     // keep loading legacy sparse result shards below
   }
 
-  const files = region === "eu"
-    ? ["results-crafting-eu.js", "results-eu.js", "results-eu-1.js", "results-eu-2.js"]
-    : ["results-crafting-us.js", "results.js", "results-1.js", "results-2.js"];
+  const filesByRegion: Record<MarketRegion, string[]> = {
+    us: ["results-crafting-us.js", "results.js", "results-1.js", "results-2.js"],
+    eu: ["results-crafting-eu.js", "results-eu.js", "results-eu-1.js", "results-eu-2.js"],
+    asia: ["results-crafting-asia.js", "results-asia.js", "results-asia-1.js", "results-asia-2.js"]
+  };
+  const files = filesByRegion[region];
 
   for (const file of files) {
     try {
@@ -606,7 +608,7 @@ export function CraftingCalculatorPage() {
         if (!currentUser) return null;
         const meta = (currentUser.user_metadata || {}) as Record<string, unknown>;
         const regionRaw = String(meta.region || "").toLowerCase();
-        const normalizedRegion = regionRaw === "eu" || regionRaw === "us" ? (regionRaw as MarketRegion) : null;
+        const normalizedRegion = normalizeRegion(regionRaw);
         return {
           id: currentUser.id,
           email: currentUser.email || null,
@@ -727,7 +729,8 @@ export function CraftingCalculatorPage() {
   // Deep-link from the BM Crafter: pre-fill region, sell city, craft city and tier/enchant row.
   useEffect(() => {
     const rg = searchParams.get("region");
-    if (rg === "eu" || rg === "us") setRegion(rg); // match the region whose BM prices were shown
+    const linkedRegion = normalizeRegion(rg);
+    if (linkedRegion) setRegion(linkedRegion); // match the region whose BM prices were shown
     if (searchParams.get("sell") === "bm") setSellCity("Black Market");
     const cc = searchParams.get("craftCity");
     if (cc && (CITY_FILTER_OPTIONS as readonly string[]).includes(cc)) setCraftCity(cc);
@@ -1237,7 +1240,7 @@ export function CraftingCalculatorPage() {
 
   async function confirmRegionSwitch() {
     setShowRegionConfirm(false);
-    const next = pendingRegion ?? (region === "eu" ? "us" : "eu");
+    const next = pendingRegion ?? region;
     setPendingRegion(null);
     await onRegionSave(next);
   }
@@ -1305,10 +1308,7 @@ export function CraftingCalculatorPage() {
             </div>
           </div>
           <div className="bm-meta">
-            <button className="bm-pill" type="button" onClick={() => { setPendingRegion(region === "eu" ? "us" : "eu"); setShowRegionConfirm(true); }}>
-              <span className="material-symbols-outlined">language</span>
-              {t("common.region")}: <span>{region.toUpperCase()}</span>
-            </button>
+            <RegionSelect value={region} onChange={(next) => { setPendingRegion(next); setShowRegionConfirm(true); }} className="bm-pill" />
             <div className="bm-status" title={craftingUpdated.title}>
               <span className="pulse"></span>
               {t("common.lastUpdated")}: <span>{craftingUpdated.time}</span>{craftingUpdated.relative ? <span className="bm-status-ago"> ({craftingUpdated.relative})</span> : null}
@@ -1356,10 +1356,7 @@ export function CraftingCalculatorPage() {
 
         <div className="panel-section">
           <h4>{t("auth.dataRegion")}</h4>
-          <select className="city-select" value={region} onChange={(e) => onRegionSave(e.target.value === "us" ? "us" : "eu")}>
-            <option value="us">{t("panel.america")}</option>
-            <option value="eu">{t("panel.europe")}</option>
-          </select>
+          <RegionSelect value={region} onChange={(next) => void onRegionSave(next)} />
         </div>
 
         <div className="account-actions">

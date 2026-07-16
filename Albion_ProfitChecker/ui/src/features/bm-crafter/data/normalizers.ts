@@ -1,5 +1,6 @@
 import type { BmMarketItem, BmRecipe, MarketRegion } from "../domain";
 import type { BmCrafterMarketData, BmCrafterPriceData, BmCrafterRecipesData, PriceEntry } from "./types";
+import { normalizeRegion as normalizeSharedRegion } from "@shared/region/regions";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -15,8 +16,7 @@ function toFiniteNumber(value: unknown): number | null {
 }
 
 function normalizeRegion(raw: unknown, fallback: MarketRegion): MarketRegion {
-  const text = String(raw || "").toLowerCase();
-  return text === "us" ? "us" : text === "eu" ? "eu" : fallback;
+  return normalizeSharedRegion(raw) ?? fallback;
 }
 
 function normalizeMarketItem(entry: unknown): BmMarketItem | null {

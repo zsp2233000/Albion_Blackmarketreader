@@ -8,7 +8,7 @@ import { isCrawler } from "@shared/auth/crawler";
 import { RegionService } from "@shared/region/regionService";
 import { useSeo } from "../../../shared/seo/useSeo";
 import { SeoHeading } from "../../../shared/seo/SeoHeading";
-import { JournalControls, MobileNavBurger, ResponsiveFilters, useI18n, useJournals, GuestSignInLink, exitGuestToLogin } from "../../../shared";
+import { JournalControls, MobileNavBurger, RegionSelect, ResponsiveFilters, normalizeRegion, useI18n, useJournals, GuestSignInLink, exitGuestToLogin } from "../../../shared";
 import {
   buildArtefactId,
   buildMaterialId,
@@ -94,8 +94,7 @@ function sanitizeAvatarUrl(value?: string | null): string {
 }
 
 function readStoredRegion(): MarketRegion | null {
-  const stored = (localStorage.getItem("region") || "").toLowerCase();
-  return stored === "us" || stored === "eu" ? stored : null;
+  return normalizeRegion(localStorage.getItem("region"));
 }
 
 export function BmCrafterPage() {
@@ -227,7 +226,7 @@ export function BmCrafterPage() {
         if (!user) return null;
         const meta = (user.user_metadata || {}) as Record<string, unknown>;
         const regionRaw = String(meta.region || "").toLowerCase();
-        const region = regionRaw === "eu" || regionRaw === "us" ? (regionRaw as MarketRegion) : null;
+        const region = normalizeRegion(regionRaw);
         return {
           id: user.id,
           email: user.email || null,
@@ -401,13 +400,6 @@ export function BmCrafterPage() {
     await authService.updateUserMetadata({ region: next }).catch(() => undefined);
   }
 
-  function requestRegionToggle() {
-    if (showRegionConfirm) return;
-    const next = region === "eu" ? "us" : "eu";
-    setPendingRegion(next);
-    setShowRegionConfirm(true);
-  }
-
   function onTableScroll(event: UIEvent<HTMLDivElement>) {
     const el = event.currentTarget;
     const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 120;
@@ -417,7 +409,7 @@ export function BmCrafterPage() {
 
   async function confirmRegionSwitch() {
     setShowRegionConfirm(false);
-    const next = pendingRegion ?? (region === "eu" ? "us" : "eu");
+    const next = pendingRegion ?? region;
     setPendingRegion(null);
     await onRegionSave(next);
   }
@@ -462,10 +454,7 @@ export function BmCrafterPage() {
             </div>
           </div>
           <div className="bm-meta">
-            <button className="bm-pill" type="button" onClick={requestRegionToggle}>
-              <span className="material-symbols-outlined">language</span>
-              {t("common.region")}: <span>{region.toUpperCase()}</span>
-            </button>
+            <RegionSelect value={region} onChange={(next) => { setPendingRegion(next); setShowRegionConfirm(true); }} className="bm-pill" />
             <div className="bm-status" title={lastUpdated.title}>
               <span className="pulse"></span>
               {t("common.lastUpdated")}: <span>{lastUpdated.time}</span>{lastUpdated.relative ? <span className="bm-status-ago"> ({lastUpdated.relative})</span> : null}
@@ -524,14 +513,7 @@ export function BmCrafterPage() {
 
         <div className="panel-section">
           <h4>{t("auth.dataRegion")}</h4>
-          <select
-            className="city-select"
-            value={region}
-            onChange={(e) => onRegionSave(e.target.value === "us" ? "us" : "eu")}
-          >
-            <option value="us">{t("panel.america")}</option>
-            <option value="eu">{t("panel.europe")}</option>
-          </select>
+          <RegionSelect value={region} onChange={(next) => void onRegionSave(next)} />
         </div>
 
         <div className="account-actions">

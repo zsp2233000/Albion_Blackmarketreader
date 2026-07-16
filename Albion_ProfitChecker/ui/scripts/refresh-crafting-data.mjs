@@ -3,7 +3,8 @@ import path from "node:path";
 
 const REGIONS = {
   us: "west",
-  eu: "europe"
+  eu: "europe",
+  asia: "east"
 };
 
 const CITIES = ["Lymhurst", "Martlock", "Fort Sterling", "Thetford", "Bridgewatch", "Caerleon", "Brecilien"];
@@ -380,6 +381,8 @@ async function refreshRegion(region) {
 }
 
 const requested = process.argv.slice(2);
+const invalidRegions = requested.filter((region) => !(region in REGIONS));
+if (invalidRegions.length) throw new Error(`unknown region: ${invalidRegions.join(", ")}`);
 const regions = requested.length ? requested : Object.keys(REGIONS);
 
 for (const region of regions) {

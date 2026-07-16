@@ -53,7 +53,7 @@ function pickJournalPrices(
  * Loads journal price data for the region and holds the session-persistent journal settings
  * (whether journal profit is counted, and which profession journals the user fills).
  */
-export function useJournals(region: "eu" | "us") {
+export function useJournals(region: import("../types").Region) {
   const [enabled, setEnabled] = useSessionState<boolean>("journals:enabled", false);
   const [owned, setOwned] = useSessionState<OwnedJournals>("journals:owned", ALL_OWNED);
   const [data, setData] = useState<JournalData | null>(null);

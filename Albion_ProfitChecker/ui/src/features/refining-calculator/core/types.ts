@@ -1,5 +1,5 @@
 export type City = "Bridgewatch" | "Lymhurst" | "Fort Sterling" | "Martlock" | "Thetford" | "Caerleon" | "Brecilien";
-export type MarketRegion = "eu" | "us";
+export type { Region as MarketRegion } from "@shared/types";
 export type Tier = 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export type Enchant = 0 | 1 | 2 | 3 | 4;
 export type MaterialKey = "metal" | "wood" | "fiber" | "hide" | "stone";

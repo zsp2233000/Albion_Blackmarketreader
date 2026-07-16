@@ -12,9 +12,14 @@
     "refresh:crafting-data": "node scripts/refresh-crafting-data.mjs",
     "refresh:crafting-data:us": "node scripts/refresh-crafting-data.mjs us",
     "refresh:crafting-data:eu": "node scripts/refresh-crafting-data.mjs eu",
+    "refresh:crafting-data:asia": "node scripts/refresh-crafting-data.mjs asia",
     "refresh:food-potion-data": "node scripts/refresh-food-potion-data.mjs",
     "refresh:food-potion-data:us": "node scripts/refresh-food-potion-data.mjs us",
     "refresh:food-potion-data:eu": "node scripts/refresh-food-potion-data.mjs eu",
+    "refresh:food-potion-data:asia": "node scripts/refresh-food-potion-data.mjs asia",
+    "refresh:raw-material-data:us": "node scripts/refresh-raw-material-prices.mjs us",
+    "refresh:raw-material-data:eu": "node scripts/refresh-raw-material-prices.mjs eu",
+    "refresh:raw-material-data:asia": "node scripts/refresh-raw-material-prices.mjs asia",
     "refresh:item-locales": "node scripts/refresh-item-locales.mjs"
   },
   "dependencies": {
