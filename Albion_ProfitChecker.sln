@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albion_ProfitChecker", "Albion_ProfitChecker\Albion_ProfitChecker.csproj", "{CA9139FA-89A5-44F9-A3EA-FD42C52045B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albion_ProfitChecker.Tests", "Albion_ProfitChecker.Tests\Albion_ProfitChecker.Tests.csproj", "{7E95C51A-BC12-41C9-B98D-F346C837172C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{CA9139FA-89A5-44F9-A3EA-FD42C52045B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA9139FA-89A5-44F9-A3EA-FD42C52045B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA9139FA-89A5-44F9-A3EA-FD42C52045B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E95C51A-BC12-41C9-B98D-F346C837172C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E95C51A-BC12-41C9-B98D-F346C837172C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E95C51A-BC12-41C9-B98D-F346C837172C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E95C51A-BC12-41C9-B98D-F346C837172C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
