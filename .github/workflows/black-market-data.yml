@@ -2,6 +2,17 @@ name: Black Market Data (US + EU + Asia)
 
 on:
   workflow_dispatch:
+    inputs:
+      region:
+        description: "要抓取的地區"
+        required: true
+        default: asia
+        type: choice
+        options:
+          - asia
+          - us
+          - eu
+          - all
   schedule:
     - cron: "0 2 * * *"
 
@@ -19,19 +30,7 @@ jobs:
       fail-fast: false
       max-parallel: 3
       matrix:
-        include:
-          - region: us
-            api_host: https://west.albion-online-data.com/api/v2/stats
-            result_1: results-1.js
-            result_2: results-2.js
-          - region: eu
-            api_host: https://europe.albion-online-data.com/api/v2/stats
-            result_1: results-eu-1.js
-            result_2: results-eu-2.js
-          - region: asia
-            api_host: https://east.albion-online-data.com/api/v2/stats
-            result_1: results-asia-1.js
-            result_2: results-asia-2.js
+        region: ${{ fromJSON(inputs.region == 'all' && '["us", "eu", "asia"]' || format('["{0}"]', inputs.region || 'asia')) }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,18 +41,18 @@ jobs:
       - run: dotnet restore Albion_ProfitChecker/Albion_ProfitChecker.csproj
       - name: Collect first city group
         working-directory: Albion_ProfitChecker
-        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --history-cache-file "${{ runner.temp }}/black-market-${{ matrix.region }}-history-cache.json" --cities "Lymhurst,Martlock,Fort Sterling" --api-host "${{ matrix.api_host }}"
-      - run: mv Albion_ProfitChecker/ui/public/results.js "Albion_ProfitChecker/ui/public/${{ matrix.result_1 }}"
+        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --history-cache-file "${{ runner.temp }}/black-market-${{ matrix.region }}-history-cache.json" --cities "Lymhurst,Martlock,Fort Sterling" --api-host "${{ matrix.region == 'us' && 'https://west.albion-online-data.com/api/v2/stats' || matrix.region == 'eu' && 'https://europe.albion-online-data.com/api/v2/stats' || 'https://east.albion-online-data.com/api/v2/stats' }}"
+      - run: mv Albion_ProfitChecker/ui/public/results.js "Albion_ProfitChecker/ui/public/${{ matrix.region == 'us' && 'results-1.js' || matrix.region == 'eu' && 'results-eu-1.js' || 'results-asia-1.js' }}"
       - name: Collect second city group
         working-directory: Albion_ProfitChecker
-        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --history-cache-file "${{ runner.temp }}/black-market-${{ matrix.region }}-history-cache.json" --cities "Bridgewatch,Thetford,Caerleon" --api-host "${{ matrix.api_host }}"
-      - run: mv Albion_ProfitChecker/ui/public/results.js "Albion_ProfitChecker/ui/public/${{ matrix.result_2 }}"
+        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --history-cache-file "${{ runner.temp }}/black-market-${{ matrix.region }}-history-cache.json" --cities "Bridgewatch,Thetford,Caerleon" --api-host "${{ matrix.region == 'us' && 'https://west.albion-online-data.com/api/v2/stats' || matrix.region == 'eu' && 'https://europe.albion-online-data.com/api/v2/stats' || 'https://east.albion-online-data.com/api/v2/stats' }}"
+      - run: mv Albion_ProfitChecker/ui/public/results.js "Albion_ProfitChecker/ui/public/${{ matrix.region == 'us' && 'results-2.js' || matrix.region == 'eu' && 'results-eu-2.js' || 'results-asia-2.js' }}"
       - uses: actions/upload-artifact@v4
         with:
           name: black-market-${{ matrix.region }}
           path: |
-            Albion_ProfitChecker/ui/public/${{ matrix.result_1 }}
-            Albion_ProfitChecker/ui/public/${{ matrix.result_2 }}
+            Albion_ProfitChecker/ui/public/${{ matrix.region == 'us' && 'results-1.js' || matrix.region == 'eu' && 'results-eu-1.js' || 'results-asia-1.js' }}
+            Albion_ProfitChecker/ui/public/${{ matrix.region == 'us' && 'results-2.js' || matrix.region == 'eu' && 'results-eu-2.js' || 'results-asia-2.js' }}
           if-no-files-found: error
 
   publish:
