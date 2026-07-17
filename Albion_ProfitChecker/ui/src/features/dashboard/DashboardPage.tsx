@@ -3,6 +3,7 @@ import { createAuthService, RegionService, RegionSelect, normalizeRegion, assetU
 import type { Locale, AuthService, Region } from "@shared/index";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
+import { formatSilver } from "./dashboard.formatters";
 import "./dashboard.css";
 
 type City = "ALL" | "Lymhurst" | "Martlock" | "Fort Sterling" | "Thetford" | "Bridgewatch" | "Caerleon";
@@ -951,9 +952,9 @@ export function DashboardPage() {
       deals: cardsItems.length,
       best: `${best.toFixed(1)}%`,
       avg: `${avg.toFixed(1)}%`,
-      silver: silver.toLocaleString("de-DE")
+      silver: formatSilver(silver, locale)
     };
-  }, [cardsItems]);
+  }, [cardsItems, locale]);
 
   const chartSeries = useMemo(() => {
     const days = getRangeDays(range);
@@ -1432,11 +1433,11 @@ export function DashboardPage() {
               <h3 className="title">{displayName(item.id, locale)}</h3>
               {item.lym > 0 && item.bm >= 20 * item.lym ? <div className="card-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
               <div className="row"><span>{t("common.id")}</span><span className="val">{item.id}</span></div>
-              <div className="row"><span>{item.city}</span><span className="val">{Number(item.lym || 0).toLocaleString("de-DE")}</span></div>
-              <div className="row"><span>{t("common.blackMarket")}</span><span className="val">{Number(item.bm || 0).toLocaleString("de-DE")}</span></div>
+              <div className="row"><span>{item.city}</span><span className="val">{formatSilver(item.lym, locale)}</span></div>
+              <div className="row"><span>{t("common.blackMarket")}</span><span className="val">{formatSilver(item.bm, locale)}</span></div>
               <div className="row"><span>{t("common.sold")}</span><span className="val">{item.sold ?? 0}</span></div>
               <div className={`profit ${sortBySilver ? (item.bm - item.lym < 0 ? "negative" : "") : (item.profit < 0 ? "negative" : "")}`.trim()}>
-                {sortBySilver ? `${t("common.profit")}: ${(item.bm - item.lym).toLocaleString("de-DE")} ${t("dashboard.silver")}` : `${t("common.profit")}: ${item.profit.toFixed(1)}%`}
+                {sortBySilver ? `${t("common.profit")}: ${formatSilver(item.bm - item.lym, locale)} ${t("dashboard.silver")}` : `${t("common.profit")}: ${item.profit.toFixed(1)}%`}
                 <span className="span-tag">{item.span || "14d"}</span>
               </div>
             </article>
