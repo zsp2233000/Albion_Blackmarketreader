@@ -70,7 +70,8 @@ internal static class Program
         int HistoryRetryDelayMs,
         int HistorySpanDelayMs,
         int MaxHistoryConcurrency,
-        string ApiHost
+        string ApiHost,
+        string? HistoryCacheFile
     );
 
     public static async Task Main(string[] args)
@@ -156,7 +157,8 @@ internal static class Program
             HistoryRetryDelayMs: DEFAULT_HISTORY_RETRY_DELAY_MS,
             HistorySpanDelayMs: DEFAULT_HISTORY_SPAN_DELAY_MS,
             MaxHistoryConcurrency: DEFAULT_MAX_HISTORY_CONCURRENCY,
-            ApiHost: "https://west.albion-online-data.com/api/v2/stats"
+            ApiHost: "https://west.albion-online-data.com/api/v2/stats",
+            HistoryCacheFile: null
         );
 
         for (int i = 0; i < args.Length; i++)
@@ -202,6 +204,11 @@ internal static class Program
             else if (string.Equals(arg, "--api-host", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
             {
                 opt = opt with { ApiHost = args[i + 1].Trim().TrimEnd('/') };
+                i++;
+            }
+            else if (string.Equals(arg, "--history-cache-file", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
+            {
+                opt = opt with { HistoryCacheFile = args[i + 1].Trim() };
                 i++;
             }
             else if (string.Equals(arg, "--bm-min-points", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length && int.TryParse(args[i + 1], out var mp))
@@ -252,6 +259,7 @@ internal static class Program
     private static async Task RunPipelineAsync(Options options)
     {
         var api = new AlbionApiService(apiBase: options.ApiHost);
+        var historyCache = new BlackMarketHistoryCache(options.HistoryCacheFile);
 
         // 0) ItemList laden
         var itemListPath = ToAbsolute(options.ItemListPath);
@@ -293,9 +301,25 @@ internal static class Program
                         return;
                     }
 
-                    var (avgPrice, avgSoldPerDay, daysUsed, pointsUsed) = await GetBmAveragesAsync(
-                        api, v.ItemId, options.BmFallbackDays, options.MinBmPoints,
-                        options.HistoryRetries, options.HistoryRetryDelayMs, options.HistorySpanDelayMs);
+                    var cacheKey = BlackMarketHistoryCacheKey.Create(
+                        options.ApiHost,
+                        v.ItemId,
+                        BM_LOCATION,
+                        options.BmFallbackDays,
+                        options.MinBmPoints);
+                    var history = await historyCache.GetOrAddAsync(cacheKey, async () =>
+                    {
+                        var (cachedAvgPrice, cachedAvgSoldPerDay, cachedDaysUsed, cachedPointsUsed) =
+                            await GetBmAveragesAsync(
+                                api, v.ItemId, options.BmFallbackDays, options.MinBmPoints,
+                                options.HistoryRetries, options.HistoryRetryDelayMs, options.HistorySpanDelayMs);
+                        return new BlackMarketHistorySnapshot(
+                            cachedAvgPrice,
+                            cachedAvgSoldPerDay,
+                            cachedDaysUsed,
+                            cachedPointsUsed);
+                    });
+                    var (avgPrice, avgSoldPerDay, daysUsed, pointsUsed) = history;
 
                     if (avgPrice <= 0 || avgSoldPerDay <= 0 || pointsUsed < options.MinBmPoints)
                     {
@@ -343,6 +367,8 @@ internal static class Program
             await Task.WhenAll(tasks);
             UpdateProgress(totalVariants, totalVariants);
         }
+
+        await historyCache.SaveAsync();
 
         // 4) Ausgabe
         var winners = results

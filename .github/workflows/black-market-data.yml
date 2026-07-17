@@ -42,11 +42,11 @@ jobs:
       - run: dotnet restore Albion_ProfitChecker/Albion_ProfitChecker.csproj
       - name: Collect first city group
         working-directory: Albion_ProfitChecker
-        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --cities "Lymhurst,Martlock,Fort Sterling" --api-host "${{ matrix.api_host }}"
+        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --history-cache-file "${{ runner.temp }}/black-market-${{ matrix.region }}-history-cache.json" --cities "Lymhurst,Martlock,Fort Sterling" --api-host "${{ matrix.api_host }}"
       - run: mv Albion_ProfitChecker/ui/public/results.js "Albion_ProfitChecker/ui/public/${{ matrix.result_1 }}"
       - name: Collect second city group
         working-directory: Albion_ProfitChecker
-        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --cities "Bridgewatch,Thetford,Caerleon" --api-host "${{ matrix.api_host }}"
+        run: dotnet run -- --run-once --bm-days 14 --bulk-batch-size 50 --bulk-delay-ms 1500 --history-parallel 1 --history-retries 1 --history-retry-delay-ms 2500 --history-span-delay-ms 1500 --history-cache-file "${{ runner.temp }}/black-market-${{ matrix.region }}-history-cache.json" --cities "Bridgewatch,Thetford,Caerleon" --api-host "${{ matrix.api_host }}"
       - run: mv Albion_ProfitChecker/ui/public/results.js "Albion_ProfitChecker/ui/public/${{ matrix.result_2 }}"
       - uses: actions/upload-artifact@v4
         with:
