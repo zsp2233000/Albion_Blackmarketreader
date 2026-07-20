@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useI18n } from "../../../shared/i18n/I18nProvider";
 import {
   SPEC_LEVEL_MAX,
   SPEC_LEVEL_MIN,
@@ -60,6 +61,7 @@ export function SpecsModal({
   onReset,
   onClose
 }: SpecsModalProps) {
+  const { t } = useI18n();
   const [activeStation, setActiveStation] = useState<SpecStation>("warrior");
   const [activeCategory, setActiveCategory] = useState<string>("__all__");
   const [search, setSearch] = useState("");
@@ -142,7 +144,7 @@ export function SpecsModal({
       <div className="specs-modal" role="dialog" aria-modal="true" aria-labelledby="specsTitle" onClick={(event) => event.stopPropagation()}>
         {readOnly ? (
           <div className="specs-readonly-note">
-            Guest mode · specs are read-only.{" "}
+            {t("auth.guestMode")} · {t("specs.readOnly")}{" "}
             <a
               href="/login"
               className="guest-signin-anchor"
@@ -152,23 +154,23 @@ export function SpecsModal({
                 window.location.href = `/login?next=${next}`;
               }}
             >
-              Sign in
+              {t("auth.signIn")}
             </a>{" "}
-            to edit.
+            {t("common.toEdit")}
           </div>
         ) : null}
         <header className="specs-header">
           <div>
-            <h3 id="specsTitle">Crafting Specializations</h3>
-            <p>One Mastery 0–100 per category. One Spec 0–100 per item. Both affect focus cost.</p>
+            <h3 id="specsTitle">{t("specs.craftingTitle")}</h3>
+            <p>{t("specs.craftingDescription")}</p>
           </div>
           <div className="specs-meta">
-            <span className={`specs-sync ${pendingSync ? "pending" : ""}`}>{pendingSync ? "Saving…" : "Synced"}</span>
-            <button type="button" className="specs-close" aria-label="Close" onClick={onClose}>×</button>
+            <span className={`specs-sync ${pendingSync ? "pending" : ""}`}>{pendingSync ? t("common.saving") : t("common.synced")}</span>
+            <button type="button" className="specs-close" aria-label={t("common.close")} onClick={onClose}>×</button>
           </div>
         </header>
 
-        <nav className="specs-tabs" aria-label="Crafting stations">
+        <nav className="specs-tabs" aria-label={t("common.craftingStations")}>
           {STATIONS.map((station) => (
             <button
               key={station}
@@ -188,7 +190,7 @@ export function SpecsModal({
             className={`specs-chip ${activeCategory === "__all__" ? "active" : ""}`}
             onClick={() => setActiveCategory("__all__")}
           >
-            All
+            {t("common.all")}
             <span>{itemsByStation[activeStation].length}</span>
           </button>
           {stationCategories.map((cat) => (
@@ -208,7 +210,7 @@ export function SpecsModal({
           <input
             type="text"
             className="specs-search"
-            placeholder="Search items at this station…"
+            placeholder={t("common.searchStationItems")}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -216,7 +218,7 @@ export function SpecsModal({
 
         <div className={`specs-body ${readOnly ? "readonly" : ""}`}>
           {filteredGroups.length === 0 ? (
-            <div className="specs-empty">No items match.</div>
+            <div className="specs-empty">{t("specs.noItemsMatch")}</div>
           ) : (
             filteredGroups.map((group) => (
               <section key={group.categoryKey} className="specs-group">
@@ -224,7 +226,7 @@ export function SpecsModal({
 
                 {group.masteryGroups.map((masteryGroup) => (
                   <div key={masteryGroup} className="specs-mastery-row">
-                    <span className="specs-mastery-label">Mastery · {humanizeCategoryLabel(masteryGroup)}</span>
+                    <span className="specs-mastery-label">{t("common.mastery")} · {humanizeCategoryLabel(masteryGroup)}</span>
                     <SpecLine
                       level={getMasteryLevel(progress.masteries, masteryGroup)}
                       onChange={(level) => onMasteryChange(masteryGroup, level)}
@@ -243,7 +245,7 @@ export function SpecsModal({
                       <li key={key} className={`specs-row ${isHighlighted ? "highlighted" : ""}`}>
                         <div className="specs-row-head">
                           <span className="specs-row-label">{item.name || key}</span>
-                          {isHighlighted ? <span className="specs-badge">active</span> : null}
+                          {isHighlighted ? <span className="specs-badge">{t("specs.active")}</span> : null}
                           <span className="specs-row-value">{specLevel}</span>
                         </div>
                         <SpecLine
@@ -261,8 +263,8 @@ export function SpecsModal({
         </div>
 
         <footer className="specs-footer">
-          <button type="button" className="modal-btn ghost" onClick={onReset} disabled={readOnly}>Reset all</button>
-          <button type="button" className="modal-btn primary" onClick={onClose}>Done</button>
+          <button type="button" className="modal-btn ghost" onClick={onReset} disabled={readOnly}>{t("specs.resetAll")}</button>
+          <button type="button" className="modal-btn primary" onClick={onClose}>{t("specs.done")}</button>
         </footer>
       </div>
     </div>

@@ -662,7 +662,7 @@ export function FoodPotionCrafterPage() {
         <button type="button" className="fp-specs-trigger" onClick={() => setShowSpecsModal(true)}>
           <span className="material-symbols-outlined">workspace_premium</span>
           {t("common.edit")} {t("common.mastery")}
-          {specsState.pendingSync ? <span className="badge">Saving…</span> : null}
+          {specsState.pendingSync ? <span className="badge">{t("common.saving")}</span> : null}
         </button>
       </div>
 
@@ -670,53 +670,53 @@ export function FoodPotionCrafterPage() {
       <section className="fp-controls fp-controls-static">
         <div className="fp-filter-grid">
           <div className="fp-field">
-            <label>Amount</label>
+            <label>{t("common.amount")}</label>
             <input className="fp-control" inputMode="numeric" value={filters.amount} onChange={(e) => filters.setAmount(Math.max(1, Number(e.target.value) || 1))} />
           </div>
           <div className="fp-field">
-            <label>Usage Fee</label>
+            <label>{t("common.usageFee")}</label>
             <input className="fp-control" inputMode="numeric" value={filters.usageFee} onChange={(e) => filters.setUsageFee(Math.max(0, Number(e.target.value) || 0))} />
           </div>
           <div className="fp-field">
-            <label>Craft City</label>
+            <label>{t("common.craftCity")}</label>
             <select className="fp-control" value={filters.craftCity} onChange={(e) => filters.setCraftCity(e.target.value as City)}>
               {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
             </select>
           </div>
           <div className="fp-field">
-            <label>Buy City</label>
+            <label>{t("common.buyCity")}</label>
             <select className="fp-control" value={buyCity} onChange={(e) => setBuyCity(e.target.value as City)}>
               {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
             </select>
           </div>
           <div className="fp-field">
-            <label>Sell City</label>
+            <label>{t("common.sellCity")}</label>
             <select className="fp-control" value={sellCity} onChange={(e) => setSellCity(e.target.value as City)}>
               {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
             </select>
           </div>
           <div className="fp-field">
-            <label>Return Profile</label>
+            <label>{t("common.returnProfile")}</label>
             <select className="fp-control" value={filters.returnRatePreset} onChange={(e) => filters.setReturnRatePreset(e.target.value as typeof filters.returnRatePreset)}>
-              <option value="base">Royal Base</option>
-              <option value="city">Auto City Bonus</option>
-              <option value="focus">Auto City + Focus</option>
-              <option value="custom">Custom %</option>
+              <option value="base">{t("common.royalBase")}</option>
+              <option value="city">{t("common.autoCityBonus")}</option>
+              <option value="focus">{t("common.autoCityFocus")}</option>
+              <option value="custom">{t("common.customRate")}</option>
             </select>
           </div>
           {filters.returnRatePreset === "custom" ? (
             <div className="fp-field">
-              <label>Custom Return %</label>
+            <label>{t("common.customReturnPercent")}</label>
               <input className="fp-control" inputMode="decimal" value={filters.customReturnRatePct} onChange={(e) => filters.setCustomReturnRatePct(Math.max(0, Math.min(99, Number(e.target.value) || 0)))} />
             </div>
           ) : null}
           <div className="fp-field">
-            <label>Market Tax %</label>
+            <label>{t("common.marketTaxPercent")}</label>
             <input className="fp-control" inputMode="decimal" value={(filters.marketTaxRate * 100).toFixed(1)} onChange={(e) => filters.setMarketTaxRate(Math.max(0, Math.min(100, Number(e.target.value) || 0)) / 100)} />
           </div>
           {mode === "scanner" ? (
             <div className="fp-field fp-field-wide">
-              <label>Tier</label>
+              <label>{t("common.tier")}</label>
               <div className="chip-row">
                 {selectedTiers.map((tier) => (
                   <button key={tier} type="button" className={`chip ${filters.selectedTier === tier ? "active" : ""}`} onClick={() => filters.toggleTier(tier)}>T{tier}</button>
@@ -726,9 +726,9 @@ export function FoodPotionCrafterPage() {
           ) : null}
           {mode === "scanner" ? (
             <div className="fp-field fp-field-wide">
-              <label>Enchant</label>
+              <label>{t("common.enchantment")}</label>
               <div className="chip-row">
-                <button type="button" className={`chip ${scannerEnchant === "all" ? "active" : ""}`} onClick={() => setScannerEnchant("all")}>All</button>
+                <button type="button" className={`chip ${scannerEnchant === "all" ? "active" : ""}`} onClick={() => setScannerEnchant("all")}>{t("common.all")}</button>
                 {([0, 1, 2, 3] as const).map((e) => (
                   <button
                     key={e}
@@ -805,11 +805,11 @@ export function FoodPotionCrafterPage() {
                               <div className="item-name">
                                 {displayRecipeName(row.recipe)}
                                 <EnchantBadge itemId={row.recipe.itemId} />
-                                {priced ? null : <span className="fp-chip fp-missing-chip" style={{ marginLeft: 6 }}>No price</span>}
-                                {row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}
+                                {priced ? null : <span className="fp-chip fp-missing-chip" style={{ marginLeft: 6 }}>{t("common.priceMissing")}</span>}
+                                {row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>{t("common.avalon")}</span> : null}
                               </div>
-                              {suspect ? <div className="fp-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
-                              <div className="item-meta">T{row.recipe.tier} · {row.recipe.ingredients.length} ingredients</div>
+                              {suspect ? <div className="fp-suspect-note">{t("message.unrealisticProfit")}</div> : null}
+                              <div className="item-meta">T{row.recipe.tier} · {row.recipe.ingredients.length} {t("common.ingredientsCount")}</div>
                             </div>
                           </div>
                         </div>
@@ -845,7 +845,7 @@ export function FoodPotionCrafterPage() {
               </div>
               <span className="fp-batch-badge">
                 {t("common.recipe")} <strong>/ {t("common.unit")}</strong> · {t("common.calculator")} / <strong>{t("common.craftCost")}</strong>
-                {crafterSelected ? <> · 1 craft → <strong>{crafterSelected.recipe.outputQty}</strong> item{crafterSelected.recipe.outputQty === 1 ? "" : "s"}</> : null}
+                {crafterSelected ? <> · 1 {t("common.craftAction")} → <strong>{crafterSelected.recipe.outputQty}</strong> {t("common.item")}</> : null}
               </span>
             </div>
 
@@ -865,7 +865,7 @@ export function FoodPotionCrafterPage() {
                     <tr
                       key={row.rowKey}
                       className={`high-density-row ${crafterSelected?.rowKey === row.rowKey ? "selected-row" : ""} ${row.recipe.isAvalonian ? "fp-avalonian-row" : ""} ${isSuspectPrice(row.result) ? "fp-suspect-row" : ""}`}
-                      title={isSuspectPrice(row.result) ? "Sell price 10x+ craft cost - likely bad market data" : undefined}
+                      title={isSuspectPrice(row.result) ? t("message.unrealisticProfit") : undefined}
                       onClick={() => setSelectedRowKey(row.rowKey)}
                     >
                       <td><span className="badge-chip">T{row.recipe.tier}</span></td>
@@ -873,8 +873,8 @@ export function FoodPotionCrafterPage() {
                         <div className="item"><div className="item-info">
                           <div className="fp-item-icon"><img src={iconUrl(row.recipe.itemId)} alt="" loading="lazy" onError={onItemIconError} /></div>
                           <div>
-                            <div className="item-name">{displayRecipeName(row.recipe)}<EnchantBadge itemId={row.recipe.itemId} />{row.result.missingIngredientCost ? " *" : ""}{row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>Avalon</span> : null}</div>
-                            {isSuspectPrice(row.result) ? <div className="fp-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
+                            <div className="item-name">{displayRecipeName(row.recipe)}<EnchantBadge itemId={row.recipe.itemId} />{row.result.missingIngredientCost ? " *" : ""}{row.recipe.isAvalonian ? <span className="fp-chip fp-avalonian-chip" style={{ marginLeft: 6 }}>{t("common.avalon")}</span> : null}</div>
+                            {isSuspectPrice(row.result) ? <div className="fp-suspect-note">{t("message.unrealisticProfit")}</div> : null}
                           </div>
                         </div></div>
                       </td>
@@ -916,19 +916,19 @@ export function FoodPotionCrafterPage() {
                 <div className="detail-grid-12">
                   <div className="bento-card span-8">
                     <div className="bento-card-inner-head">
-                      <div className="cc-caption">Output Sell Price (per item)</div>
+                      <div className="cc-caption">{t("common.outputSellPricePerItem")}</div>
                       <div className="fp-output-price">
                         <input
                           inputMode="numeric"
                           value={manualPrices[crafterSelected.recipe.itemId] ?? ""}
                           onChange={(e) => updatePrice(crafterSelected.recipe.itemId, e.target.value)}
-                          placeholder={livePriceByItemId[crafterSelected.recipe.itemId] ? String(livePriceByItemId[crafterSelected.recipe.itemId]) : "enter sell price"}
+                          placeholder={livePriceByItemId[crafterSelected.recipe.itemId] ? String(livePriceByItemId[crafterSelected.recipe.itemId]) : t("common.enterSellPrice")}
                         />
                       </div>
                     </div>
                     <div className="material-head">
-                      <span className="cc-caption">Ingredients · 1 craft → {oq} item{oq === 1 ? "" : "s"} · edit unit prices</span>
-                      <span className="material-total">Total / craft: {formatNumber(perCraft(crafterSelected.result.grossIngredientCost))}</span>
+                      <span className="cc-caption">{t("common.ingredients")} · 1 {t("common.craftAction")} → {oq} {t("common.item")} · {t("common.edit")} {t("common.unitPrice")}</span>
+                      <span className="material-total">{t("common.totalPerCraft")}: {formatNumber(perCraft(crafterSelected.result.grossIngredientCost))}</span>
                     </div>
                     <div className="fp-ingredient-list">
                       {crafterSelected.recipe.ingredients.map((ingredient) => {
@@ -945,8 +945,8 @@ export function FoodPotionCrafterPage() {
                               <span className="fp-ingredient-icon"><img src={iconUrl(ingredient.itemId)} alt="" loading="lazy" onError={onItemIconError} /></span>
                               <span className="fp-ingredient-qty">{ingredient.qty}×</span>
                               <span className="fp-ingredient-name">{displayIngredientName(ingredient)}</span>
-                              {rare ? <span className="fp-chip fp-rare-chip">Rare</span> : null}
-                              {isToken ? <span className="fp-chip fp-avalonian-chip">Token</span> : null}
+                              {rare ? <span className="fp-chip fp-rare-chip">{t("common.rare")}</span> : null}
+                              {isToken ? <span className="fp-chip fp-avalonian-chip">{t("common.token")}</span> : null}
                             </div>
                             <div className="fp-ingredient-meta">
                               <input
@@ -954,7 +954,7 @@ export function FoodPotionCrafterPage() {
                                 inputMode="numeric"
                                 value={manualPrices[ingredient.itemId] ?? ""}
                                 onChange={(e) => updatePrice(ingredient.itemId, e.target.value)}
-                                placeholder={livePlaceholder ? String(livePlaceholder) : "unit"}
+                                placeholder={livePlaceholder ? String(livePlaceholder) : t("common.unit")}
                               />
                               <span className="fp-ingredient-total">{total > 0 ? formatNumber(total) : "-"}</span>
                             </div>
@@ -966,31 +966,31 @@ export function FoodPotionCrafterPage() {
 
                   <div className="bento-card span-4 fp-summary-card">
                     <div className="fp-summary-card-head">
-                      <span className="cc-caption">Profit Summary · 1 craft ({oq} item{oq === 1 ? "" : "s"})</span>
+                      <span className="cc-caption">{t("common.profitSummary")} · 1 {t("common.craftAction")}（{oq} {t("common.item")}）</span>
                       <span className={`fp-summary-pill ${!cPriced ? "" : crafterSelected.result.profit >= 0 ? "profit" : "loss"}`}>
-                        {!cPriced ? "Incomplete" : crafterSelected.result.profit >= 0 ? "Profit" : "Loss"}
+                        {!cPriced ? t("common.incomplete") : crafterSelected.result.profit >= 0 ? t("message.profit") : t("message.loss")}
                       </span>
                     </div>
                     <div className="fp-summary-hero">
-                      <span className="fp-summary-hero-label">Profit / Craft</span>
+                      <span className="fp-summary-hero-label">{t("common.profitPerCraft")}</span>
                       <strong className={!cPriced ? "" : crafterSelected.result.profit >= 0 ? "profit-cell" : "loss-cell"}>
                         {cPriced ? `${crafterSelected.result.profit >= 0 ? "+" : ""}${formatNumber(perCraft(crafterSelected.result.profit))}` : "--"}
                       </strong>
-                      <span className="fp-summary-hero-sub">{cPriced ? `ROI ${formatPct(crafterSelected.result.profitPercent)} · ${crafterSelected.result.profitPerOutput >= 0 ? "+" : ""}${formatNumber(crafterSelected.result.profitPerOutput)} / item` : "prices incomplete"}</span>
+                      <span className="fp-summary-hero-sub">{cPriced ? `${t("common.roi")} ${formatPct(crafterSelected.result.profitPercent)} · ${crafterSelected.result.profitPerOutput >= 0 ? "+" : ""}${formatNumber(crafterSelected.result.profitPerOutput)} / ${t("common.item")}` : t("common.pricesIncomplete")}</span>
                     </div>
                     <div className="fp-summary-grid">
-                      <div><span>Ingredient Cost</span><strong>{formatNumber(perCraft(crafterSelected.result.grossIngredientCost))}</strong></div>
-                      <div><span>Return Saved</span><strong className="profit-cell">−{formatNumber(perCraft(crafterSelected.result.returnedIngredientCost))}</strong></div>
-                      <div><span>Station Fee</span><strong>{formatNumber(perCraft(crafterSelected.result.stationFee))}</strong></div>
-                      <div><span>Market Tax</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.marketTax)) : "--"}</strong></div>
-                      <div><span>Total Cost</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.totalCost)) : "--"}</strong></div>
-                      <div><span>Net Revenue</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.netRevenue)) : "--"}</strong></div>
-                      <div><span>Return Rate</span><strong className="fp-return-rate">{formatPct(crafterSelected.result.returnRate * 100)}</strong></div>
-                      <div><span>Focus Cost</span><strong>{crafterSelected.result.focusCost > 0 ? formatNumber(perCraft(crafterSelected.result.focusCost)) : "--"}</strong></div>
-                      <div><span>Silver / Focus</span><strong className={!cPriced ? "" : (crafterSelected.result.silverPerFocus ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{cPriced && crafterSelected.result.silverPerFocus !== null ? formatNumber(crafterSelected.result.silverPerFocus) : "--"}</strong></div>
-                      <div><span>Cost / Item</span><strong>{cPriced ? formatNumber(perItem(crafterSelected.result.totalCost)) : "--"}</strong></div>
-                      <div><span>Profit / Item</span><strong className={!cPriced ? "" : crafterSelected.result.profitPerOutput >= 0 ? "profit-cell" : "loss-cell"}>{cPriced ? formatNumber(crafterSelected.result.profitPerOutput) : "--"}</strong></div>
-                      <div><span>Sold / Day</span><strong>{(soldByItemId[crafterSelected.recipe.itemId] ?? 0) > 0 ? formatNumber(soldByItemId[crafterSelected.recipe.itemId]) : "--"}</strong></div>
+                      <div><span>{t("common.ingredientCost")}</span><strong>{formatNumber(perCraft(crafterSelected.result.grossIngredientCost))}</strong></div>
+                      <div><span>{t("common.returnSaved")}</span><strong className="profit-cell">−{formatNumber(perCraft(crafterSelected.result.returnedIngredientCost))}</strong></div>
+                      <div><span>{t("common.stationFee")}</span><strong>{formatNumber(perCraft(crafterSelected.result.stationFee))}</strong></div>
+                      <div><span>{t("common.marketTax")}</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.marketTax)) : "--"}</strong></div>
+                      <div><span>{t("common.totalCost")}</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.totalCost)) : "--"}</strong></div>
+                      <div><span>{t("common.netRevenue")}</span><strong>{cPriced ? formatNumber(perCraft(crafterSelected.result.netRevenue)) : "--"}</strong></div>
+                      <div><span>{t("common.returnRate")}</span><strong className="fp-return-rate">{formatPct(crafterSelected.result.returnRate * 100)}</strong></div>
+                      <div><span>{t("common.focusCost")}</span><strong>{crafterSelected.result.focusCost > 0 ? formatNumber(perCraft(crafterSelected.result.focusCost)) : "--"}</strong></div>
+                      <div><span>{t("common.silverPerFocus")}</span><strong className={!cPriced ? "" : (crafterSelected.result.silverPerFocus ?? 0) >= 0 ? "profit-cell" : "loss-cell"}>{cPriced && crafterSelected.result.silverPerFocus !== null ? formatNumber(crafterSelected.result.silverPerFocus) : "--"}</strong></div>
+                      <div><span>{t("common.costPerItem")}</span><strong>{cPriced ? formatNumber(perItem(crafterSelected.result.totalCost)) : "--"}</strong></div>
+                      <div><span>{t("common.profitPerItem")}</span><strong className={!cPriced ? "" : crafterSelected.result.profitPerOutput >= 0 ? "profit-cell" : "loss-cell"}>{cPriced ? formatNumber(crafterSelected.result.profitPerOutput) : "--"}</strong></div>
+                      <div><span>{t("common.soldPerDay")}</span><strong>{(soldByItemId[crafterSelected.recipe.itemId] ?? 0) > 0 ? formatNumber(soldByItemId[crafterSelected.recipe.itemId]) : "--"}</strong></div>
                     </div>
                   </div>
                 </div>

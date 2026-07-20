@@ -706,8 +706,8 @@ export function RefiningCalculatorPage() {
       <div className="rc-price-editor">
         <div className="rc-price-editor-head">
           <div className="rc-price-editor-copy">
-            <p className="rc-block-title">Material Prices</p>
-            <span>Raw + refining sell prices</span>
+            <p className="rc-block-title">{t("common.materialPrices")}</p>
+            <span>{t("common.materialPricesRawSell")}</span>
           </div>
           <div className="rc-tab-nav">
             {MATERIAL_DEFINITIONS.map((material) => (
@@ -726,9 +726,9 @@ export function RefiningCalculatorPage() {
             <table className="rc-price-table rc-price-table-combined">
               <thead>
                 <tr>
-                  <th>Tier</th>
-                  {ENCHANTS.map((enchant) => (<th key={`raw-head-${enchant}`}>Raw .{enchant}</th>))}
-                  {ENCHANTS.map((enchant) => (<th key={`sell-head-${enchant}`}>Sell .{enchant}</th>))}
+                  <th>{t("common.tier")}</th>
+                  {ENCHANTS.map((enchant) => (<th key={`raw-head-${enchant}`}>{t("common.raw")} .{enchant}</th>))}
+                  {ENCHANTS.map((enchant) => (<th key={`sell-head-${enchant}`}>{t("common.sell")} .{enchant}</th>))}
                 </tr>
               </thead>
               <tbody>
@@ -742,7 +742,7 @@ export function RefiningCalculatorPage() {
                       const rawId = rawItemIdFor(editorMaterial, tier, enchant);
                       return (
                         <td key={`raw-${editorMaterial}-${tier}-${enchant}`}>
-                          <input className="rc-input rc-table-input" value={displayedPriceByItemId[rawId] || ""} onChange={(event) => updateManualPrice(rawId, event.target.value)} placeholder={`raw .${enchant}`} />
+                          <input className="rc-input rc-table-input" value={displayedPriceByItemId[rawId] || ""} onChange={(event) => updateManualPrice(rawId, event.target.value)} placeholder={`${t("common.raw")} .${enchant}`} />
                         </td>
                       );
                     })}
@@ -753,7 +753,7 @@ export function RefiningCalculatorPage() {
                       const refinedId = refinedItemIdFor(editorMaterial, tier, enchant);
                       return (
                         <td key={`sell-${editorMaterial}-${tier}-${enchant}`}>
-                          <input className="rc-input rc-table-input" value={displayedPriceByItemId[refinedId] || ""} onChange={(event) => updateManualPrice(refinedId, event.target.value)} placeholder={`sell .${enchant}`} />
+                          <input className="rc-input rc-table-input" value={displayedPriceByItemId[refinedId] || ""} onChange={(event) => updateManualPrice(refinedId, event.target.value)} placeholder={`${t("common.sell")} .${enchant}`} />
                         </td>
                       );
                     })}
@@ -765,50 +765,50 @@ export function RefiningCalculatorPage() {
         </div>
         <div className="rc-return-card">
           <div className="rc-return-stat">
-            <span>Current Return</span>
+            <span>{t("common.currentReturn")}</span>
             <strong>{formatPct((selectedEditorRow?.returnRate || 0) * 100)}</strong>
           </div>
           <div className="rc-return-stat">
-            <span>Profitable Items</span>
+            <span>{t("common.profitableItems")}</span>
             <strong>{formatNumber(profitableCount)}</strong>
           </div>
-          <small>{`${bonusCityOverrides[editorMaterial] || MATERIAL_BY_KEY[editorMaterial].bonusCity} bonus for ${MATERIAL_BY_KEY[editorMaterial].rawLabel}`}</small>
+          <small>{`${bonusCityOverrides[editorMaterial] || MATERIAL_BY_KEY[editorMaterial].bonusCity} · ${t("common.bonusFor")} ${MATERIAL_BY_KEY[editorMaterial].rawLabel}`}</small>
         </div>
       </div>
       <div className="rc-fixed-filters">
         <div className="filter-block">
-          <p>Amount</p>
+          <p>{t("common.amount")}</p>
           <input className="rc-input" value={amount} onChange={(event) => setAmount(event.target.value)} />
         </div>
         <div className="filter-block">
-          <p>Usage Fee / 100</p>
+          <p>{t("common.usageFee")}</p>
           <input className="rc-input" value={usageFeePer100} onChange={(event) => setUsageFeePer100(event.target.value)} />
         </div>
         <div className="filter-block">
-          <p>Buy City</p>
+          <p>{t("common.buyCity")}</p>
           <select className="rc-input" value={selectedBuyCity} onChange={(event) => { const nextCity = normalizeCityName(event.target.value); setSelectedBuyCity(nextCity); localStorage.setItem("city", nextCity); }}>
             {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
           </select>
         </div>
         <div className="filter-block">
-          <p>Refine City</p>
+          <p>{t("common.refineCity")}</p>
           <select className="rc-input" value={selectedRefineCity} onChange={(event) => setSelectedRefineCity(normalizeCityName(event.target.value))}>
             {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
           </select>
         </div>
         <div className="filter-block">
-          <p>Sell City</p>
+          <p>{t("common.sellCity")}</p>
           <select className="rc-input" value={selectedSellCity} onChange={(event) => setSelectedSellCity(normalizeCityName(event.target.value))}>
             {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
           </select>
         </div>
         <div className="filter-block">
-          <p>Return Profile</p>
+          <p>{t("common.returnProfile")}</p>
           <select className="rc-input" value={returnRatePreset} onChange={(event) => setReturnRatePreset(event.target.value as ReturnRatePreset)}>
-            <option value="base">Royal Base</option>
-            <option value="city">Auto City Bonus</option>
-            <option value="focus">Auto City + Focus</option>
-            <option value="custom">Custom Rate</option>
+            <option value="base">{t("common.royalBase")}</option>
+            <option value="city">{t("common.autoCityBonus")}</option>
+            <option value="focus">{t("common.autoCityFocus")}</option>
+            <option value="custom">{t("common.customRate")}</option>
           </select>
           {returnRatePreset === "custom" ? (
             <input
@@ -816,38 +816,38 @@ export function RefiningCalculatorPage() {
               inputMode="decimal"
               value={customReturnRatePercent}
               onChange={(event) => setCustomReturnRatePercent(event.target.value)}
-              placeholder="Return rate %"
-              aria-label="Custom return rate percent"
+              placeholder={t("common.returnRatePercent")}
+              aria-label={t("common.customReturnRatePercent")}
             />
           ) : null}
         </div>
         <div className="filter-block">
-          <p>Focus Specs</p>
+          <p>{t("common.focusSpecs")}</p>
           <button type="button" className="execute-btn" onClick={() => {
             setFocusSpecsDraft(focusSpecs);
             setShowFocusSpecs(true);
-          }}>Specs</button>
+          }}>{t("common.specs")}</button>
         </div>
         <div className="filter-block">
-          <p>Tax Mode</p>
+          <p>{t("common.taxMode")}</p>
           <select className="rc-input" value={taxMode} onChange={(event) => setTaxMode(event.target.value as TaxMode)}>
-            {Object.entries(TAX_PRESETS).map(([key, preset]) => (<option key={key} value={key}>{preset.label}</option>))}
+            {Object.entries(TAX_PRESETS).map(([key]) => (<option key={key} value={key}>{key === "premiumSellOrder" ? t("common.premiumSellOrder") : key === "nonPremiumSellOrder" ? t("common.noPremiumSellOrder") : t("common.customRate")}</option>))}
           </select>
-          <span className="rc-filter-note">{taxMode === "custom" ? "Manual fee percent" : TAX_PRESETS[taxMode].description}</span>
+          <span className="rc-filter-note">{taxMode === "custom" ? t("common.manualFeePercent") : taxMode === "premiumSellOrder" ? t("common.premiumSellOrderDescription") : t("common.noPremiumSellOrderDescription")}</span>
         </div>
         <div className="filter-block">
-          <p>{taxMode === "custom" ? "Custom Fee %" : "Market Fee %"}</p>
+          <p>{taxMode === "custom" ? t("common.customFeePercent") : t("common.marketFeePercent")}</p>
           <input className="rc-input" value={taxMode === "custom" ? customMarketTaxRate : String(TAX_PRESETS[taxMode].totalRate)} onChange={(event) => setCustomMarketTaxRate(event.target.value)} disabled={taxMode !== "custom"} />
         </div>
         <div className="filter-block">
-          <p>{materialDisplayName(editorMaterial)} Bonus City</p>
+          <p>{materialDisplayName(editorMaterial)} {t("common.bonusCity")}</p>
           <select className="rc-input" value={bonusCityOverrides[editorMaterial]} onChange={(event) => updateBonusCityOverride(editorMaterial, normalizeCityName(event.target.value))}>
             {KNOWN_CITIES.map((city) => (<option key={city} value={city}>{city}</option>))}
           </select>
         </div>
         <div className="filter-block rc-filter-action">
-          <p>Manual Overrides</p>
-          <button type="button" className="execute-btn ghost-btn" onClick={clearManualOverrides}>Reset Live</button>
+          <p>{t("common.manualOverrides")}</p>
+          <button type="button" className="execute-btn ghost-btn" onClick={clearManualOverrides}>{t("common.resetLive")}</button>
         </div>
       </div>
     </div>
@@ -888,11 +888,11 @@ export function RefiningCalculatorPage() {
       </SeoHeading>
       <div className={`modal-overlay ${showRegionConfirm ? "open" : ""}`} aria-hidden={showRegionConfirm ? "false" : "true"}>
         <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="regionConfirmTitle">
-          <h3 id="regionConfirmTitle">Switch region?</h3>
-          <p>Do you really want to switch the region?</p>
+          <h3 id="regionConfirmTitle">{t("message.switchRegion")}</h3>
+          <p>{t("message.confirmRegion")}</p>
           <div className="modal-actions">
-            <button type="button" className="modal-btn ghost" onClick={() => { setShowRegionConfirm(false); setPendingRegion(null); }}>Cancel</button>
-            <button type="button" className="modal-btn primary" onClick={() => { const next = pendingRegion ?? region; setPendingRegion(null); setShowRegionConfirm(false); void onRegionSave(next); }}>Switch</button>
+            <button type="button" className="modal-btn ghost" onClick={() => { setShowRegionConfirm(false); setPendingRegion(null); }}>{t("common.cancel")}</button>
+            <button type="button" className="modal-btn primary" onClick={() => { const next = pendingRegion ?? region; setPendingRegion(null); setShowRegionConfirm(false); void onRegionSave(next); }}>{t("common.switch")}</button>
           </div>
         </div>
       </div>
@@ -916,14 +916,14 @@ export function RefiningCalculatorPage() {
                 to edit.
               </div>
             ) : null}
-            <h3 id="focusSpecsTitle">Focus Specs</h3>
-            <p>Enter your refining specs here. The result table automatically uses the matching material and tier for each row.</p>
+              <h3 id="focusSpecsTitle">{t("common.focusSpecs")}</h3>
+              <p>{t("common.enterRefiningSpecs")}</p>
             <div className={`rc-focus-table-wrap ${isGuest() ? "readonly" : ""}`}>
               <table className="rc-focus-table">
                 <thead>
                   <tr>
-                    <th>Material</th>
-                    <th>Mastery</th>
+                    <th>{t("common.material")}</th>
+                    <th>{t("common.mastery")}</th>
                     {FOCUS_SPEC_TIERS.map((tier) => <th key={tier}>T{tier}</th>)}
                   </tr>
                 </thead>
@@ -967,8 +967,8 @@ export function RefiningCalculatorPage() {
             </div>
             {focusSpecsValidationError ? <p className="rc-focus-error">{focusSpecsValidationError}</p> : null}
             <div className="modal-actions">
-              <button type="button" className="modal-btn ghost" onClick={() => setShowFocusSpecs(false)}>Cancel</button>
-              <button type="button" className="modal-btn primary" disabled={Boolean(focusSpecsValidationError) || isGuest()} onClick={() => void saveFocusSpecs()}>Save</button>
+              <button type="button" className="modal-btn ghost" onClick={() => setShowFocusSpecs(false)}>{t("common.cancel")}</button>
+              <button type="button" className="modal-btn primary" disabled={Boolean(focusSpecsValidationError) || isGuest()} onClick={() => void saveFocusSpecs()}>{t("common.save")}</button>
             </div>
           </div>
         </div>
@@ -1097,8 +1097,8 @@ export function RefiningCalculatorPage() {
             <span>{profitableCount} {t("common.profitable")} | {t("common.total")} {filteredRows.length}</span>
           </div>
           <p className="rc-logic-hint">
-            <span className="rc-logic-hint-tag standard">Standard</span> buys the lower-tier refined material at market.
-            <span className="rc-logic-hint-tag stacking">Stacking</span> refines it yourself, tier by tier, whenever that is cheaper — the <strong>⚡ tiers</strong> are the ones worth self-refining. Keep <strong>All</strong> to compare both rows per item, or filter to one.
+            <span className="rc-logic-hint-tag standard">{t("common.standard")}</span> {locale === "zh-TW" ? "以市場價格購買較低階的精煉材料。" : "buys the lower-tier refined material at market."}
+            <span className="rc-logic-hint-tag stacking">{t("common.stacking")}</span> {locale === "zh-TW" ? "逐階自行精煉，僅在成本較低時採用；標有 ⚡ 的階級代表值得自行精煉。保留「全部」可比較每件道具的兩種方式，也可篩選單一方式。" : "refines it yourself, tier by tier, whenever that is cheaper — the ⚡ tiers are the ones worth self-refining. Keep All to compare both rows per item, or filter to one."}
           </p>
           <div className="table-wrap custom-scrollbar" onScroll={onResultsScroll}>
             <table>
@@ -1109,7 +1109,7 @@ export function RefiningCalculatorPage() {
                   const suspect = row.grossMaterialCost > 0 && row.netRevenue >= 10 * row.grossMaterialCost;
                   return (
                   <tr key={row.rowKey} className={`high-density-row ${index % 2 === 1 ? "alt" : ""} ${selectedRowKey === row.rowKey ? "selected-row" : ""} ${suspect ? "rc-suspect-row" : ""} ${row.logic === "stacking" ? "rc-stack-row" : ""}`} onClick={() => { setSelectedRowKey(row.rowKey); if (row.logic === "stacking") setStackModalKey(row.rowKey); }}>
-                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={formatVariantName(row.variant, locale)} onError={onRefiningIconError} /></div><div><div className="item-name">{formatVariantName(row.variant, locale)}{row.missingInputCost ? " *" : ""}<span className={`rc-logic-chip rc-logic-${row.logic}`}>{row.logic === "stacking" ? "Stacking" : "Standard"}</span></div>{suspect ? <div className="rc-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}{row.logic === "stacking" && row.stack && row.stack.selfRefinedTiers.length > 0 ? (<div className="rc-stack-flow">{stackFlowNodes(row.variant, row.stack.selfRefinedTiers).map((n, i) => (<span key={i} className={`rc-flow-node rc-flow-${n.kind}`}>{n.kind === "buy" ? "Buy " : ""}{tierEnchLabel(n.tier, n.enchant)}</span>))}</div>) : null}<div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant }, locale)}`).join(" + ")}</div></div></div></div></td>
+                    <td><div className="item"><div className="item-info"><div className="item-icon"><img src={row.variant.icon} alt={formatVariantName(row.variant, locale)} onError={onRefiningIconError} /></div><div><div className="item-name">{formatVariantName(row.variant, locale)}{row.missingInputCost ? " *" : ""}<span className={`rc-logic-chip rc-logic-${row.logic}`}>{row.logic === "stacking" ? t("common.stacking") : t("common.standard")}</span></div>{suspect ? <div className="rc-suspect-note">{t("message.unrealisticProfit")}</div> : null}{row.logic === "stacking" && row.stack && row.stack.selfRefinedTiers.length > 0 ? (<div className="rc-stack-flow">{stackFlowNodes(row.variant, row.stack.selfRefinedTiers).map((n, i) => (<span key={i} className={`rc-flow-node rc-flow-${n.kind}`}>{n.kind === "buy" ? `${t("common.buy")} ` : ""}{tierEnchLabel(n.tier, n.enchant)}</span>))}</div>) : null}<div className="item-meta">{row.variant.ingredients.map((ingredient) => `${ingredient.quantity}x ${formatIngredientName({ ...ingredient, variant: row.variant }, locale)}`).join(" + ")}</div></div></div></div></td>
                     <td className="num">{formatPct(row.returnRate * 100)}</td>
                     <td className="num">{formatNumber(row.grossMaterialCost)}</td>
                     <td className="num profit">-{formatNumber(row.returnedMaterialCost)}</td>
@@ -1134,13 +1134,13 @@ export function RefiningCalculatorPage() {
           </div>
           <div className="table-footer">
             <p>{t("common.total")} {Math.min(visibleRowCount, filteredRows.length)} / {filteredRows.length} {t("common.variants")}</p>
-            <p>{t("common.region")} {region.toUpperCase()} | Missing raw live prices: {missingRawCount}</p>
+          <p>{t("common.region")} {region.toUpperCase()} | {t("common.missingRawPrices")}: {missingRawCount}</p>
           </div>
         </section>
 
         <aside className="bm-side">
           <div className="side-card teal-glow custom-scrollbar">
-            <div className="side-header"><h3>Refining Insight</h3><span className="material-symbols-outlined">tune</span></div>
+            <div className="side-header"><h3>{t("common.refiningInsight")}</h3><span className="material-symbols-outlined">tune</span></div>
             <div className="side-hero teal-gradient-bg">
               <div className="side-icon"><div className="side-icon-inner"><img src={selectedRow?.variant.icon || ""} alt="" onError={onRefiningIconError} /></div></div>
               <h2>{selectedRow ? formatVariantName(selectedRow.variant, locale) : t("common.selectVariant")}</h2>
@@ -1150,19 +1150,19 @@ export function RefiningCalculatorPage() {
               <div><span>{t("common.profitPercent")}</span><strong className={selectedRow?.profitPercent && selectedRow.profitPercent >= 0 ? "profit" : "loss"}>{formatPct(selectedRow?.profitPercent || 0)}</strong></div>
               <div><span>{t("common.profitPerFocus")}</span><strong className={selectedRow?.profitPerFocus && selectedRow.profitPerFocus >= 0 ? "profit" : "loss"}>{selectedRow?.focusCost ? formatNumber(selectedRow.profitPerFocus) : "--"}</strong></div>
               <div><span>{t("common.returnRate")}</span><strong>{formatPct((selectedRow?.returnRate || 0) * 100)}</strong></div>
-              <div><span>Returned Value</span><strong className="profit">-{formatNumber(selectedRow?.returnedMaterialCost || 0)}</strong></div>
-              <div><span>Total Cost</span><strong>{formatNumber(selectedRow?.totalCost || 0)}</strong></div>
-              <div><span>Material Cost</span><strong>{formatNumber(selectedRow?.grossMaterialCost || 0)}</strong></div>
-              <div><span>Net Revenue</span><strong>{formatNumber(selectedRow?.netRevenue || 0)}</strong></div>
-              <div><span>Output Amount</span><strong>{formatNumber(selectedRow?.outputAmount || 0)}</strong></div>
-              <div><span>Focus Cost</span><strong>{formatNumber(selectedRow?.focusCost || 0)}</strong></div>
-              <div><span>Runs By Focus</span><strong>{selectedRow?.focusCost ? formatNumber(selectedRow.maxRunsByFocus) : "--"}</strong></div>
-              <div><span>Bonus City</span><strong>{selectedRow ? bonusCityOverrides[selectedRow.variant.materialKey] || MATERIAL_BY_KEY[selectedRow.variant.materialKey].bonusCity : "--"}</strong></div>
-              <div><span>Logic</span><strong className={selectedRow?.logic === "stacking" ? "rc-logic-stacking-text" : ""}>{selectedRow?.logic === "stacking" ? "Stacking" : "Standard"}</strong></div>
+              <div><span>{t("common.returnedValue")}</span><strong className="profit">-{formatNumber(selectedRow?.returnedMaterialCost || 0)}</strong></div>
+              <div><span>{t("common.totalCost")}</span><strong>{formatNumber(selectedRow?.totalCost || 0)}</strong></div>
+              <div><span>{t("common.materialCost")}</span><strong>{formatNumber(selectedRow?.grossMaterialCost || 0)}</strong></div>
+              <div><span>{t("common.netRevenue")}</span><strong>{formatNumber(selectedRow?.netRevenue || 0)}</strong></div>
+              <div><span>{t("common.outputAmount")}</span><strong>{formatNumber(selectedRow?.outputAmount || 0)}</strong></div>
+              <div><span>{t("common.focusCost")}</span><strong>{formatNumber(selectedRow?.focusCost || 0)}</strong></div>
+              <div><span>{t("common.runsByFocus")}</span><strong>{selectedRow?.focusCost ? formatNumber(selectedRow.maxRunsByFocus) : "--"}</strong></div>
+              <div><span>{t("common.bonusCity")}</span><strong>{selectedRow ? bonusCityOverrides[selectedRow.variant.materialKey] || MATERIAL_BY_KEY[selectedRow.variant.materialKey].bonusCity : "--"}</strong></div>
+              <div><span>{t("common.logic")}</span><strong className={selectedRow?.logic === "stacking" ? "rc-logic-stacking-text" : ""}>{selectedRow?.logic === "stacking" ? t("common.stacking") : t("common.standard")}</strong></div>
             </div>
             {selectedRow?.logic === "stacking" ? (
               <button type="button" className="rc-show-path-btn" onClick={() => setStackModalKey(selectedRow.rowKey)}>
-                View step-by-step refining path →
+                {t("common.viewRefiningPath")}
               </button>
             ) : null}
           </div>
@@ -1172,24 +1172,24 @@ export function RefiningCalculatorPage() {
       {stackModalKey && selectedRow && selectedRow.logic === "stacking" && selectedPath ? (
         <div className="rc-modal-overlay" onClick={() => setStackModalKey(null)}>
           <div className="rc-modal" onClick={(event) => event.stopPropagation()}>
-            <button className="rc-modal-close" onClick={() => setStackModalKey(null)} aria-label="Close">×</button>
+            <button className="rc-modal-close" onClick={() => setStackModalKey(null)} aria-label={t("common.close")}>×</button>
             <div className="rc-modal-head">
               <div className="rc-modal-icon"><img src={selectedRow.variant.icon} alt="" onError={onRefiningIconError} /></div>
               <div>
                 <h3>{formatVariantName(selectedRow.variant, locale)}</h3>
-                <p>Stacking — refine it yourself, step by step</p>
+                <p>{t("common.refineStepByStep")}</p>
               </div>
             </div>
-            <p className="rc-modal-intro">Buy the cheapest starting material, then refine one tier at a time up to your target. The number on the right is the <strong>net cost</strong> to make one refined item at that tier — it already includes that tier's raw material, the refined material from the step below, the refining fee and the return-rate savings.</p>
+            <p className="rc-modal-intro">{t("common.refiningPathIntro")}</p>
             <ol className="rc-modal-steps">
               {selectedPath.baseRefinedItemId && selectedPath.baseRefinedTier !== null ? (
                 <li className="rc-modal-step buy">
-                  <span className="rc-step-badge">Buy</span>
+                  <span className="rc-step-badge">{t("common.buy")}</span>
                   <div className="rc-step-body">
                     <strong>Buy {tierEnchLabel(selectedPath.baseRefinedTier, selectedPath.baseRefinedEnchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].refinedLabel}</strong>
-                    <p className="rc-step-sub">Cheapest starting point — bought ready-made from the market.</p>
+                    <p className="rc-step-sub">{t("common.cheapestStartingPoint")}</p>
                   </div>
-                  <div className="rc-step-cost"><span className="rc-step-cost-val">{formatNumber(Math.round(selectedPath.baseRefinedUnitCost))}</span><span className="rc-step-cost-lbl">buy price</span></div>
+                  <div className="rc-step-cost"><span className="rc-step-cost-val">{formatNumber(Math.round(selectedPath.baseRefinedUnitCost))}</span><span className="rc-step-cost-lbl">{t("common.buyPrice")}</span></div>
                 </li>
               ) : null}
               {selectedPath.steps.map((step) => (
@@ -1198,21 +1198,21 @@ export function RefiningCalculatorPage() {
                   <div className="rc-step-body">
                     <strong>Make {tierEnchLabel(step.tier, step.enchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].refinedLabel}{step.isTarget ? " — your target" : ""}</strong>
                     <ul className="rc-step-inputs">
-                      <li>{step.rawQty}× {tierEnchLabel(step.tier, step.enchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].rawLabel} <span>(raw — buy)</span> · {formatNumber(step.rawUnitPrice)} each</li>
+                      <li>{step.rawQty}× {tierEnchLabel(step.tier, step.enchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].rawLabel} <span>({t("common.rawBuy")})</span> · {formatNumber(step.rawUnitPrice)} {locale === "zh-TW" ? "每件" : "each"}</li>
                       {step.refinedInputItemId ? (
-                        <li>{step.refinedInputQty}× {tierEnchLabel(step.refinedInputTier, step.refinedInputEnchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].refinedLabel} <span>(from the step above)</span> · {formatNumber(Math.round(step.refinedInputUnitCost))} each</li>
+                        <li>{step.refinedInputQty}× {tierEnchLabel(step.refinedInputTier, step.refinedInputEnchant)} {MATERIAL_BY_KEY[selectedRow.variant.materialKey].refinedLabel} <span>({t("common.fromStepAbove")})</span> · {formatNumber(Math.round(step.refinedInputUnitCost))} {locale === "zh-TW" ? "每件" : "each"}</li>
                       ) : null}
-                      <li className="rc-step-fee">+ refining fee, − return-rate savings</li>
+                      <li className="rc-step-fee">{t("common.refiningFeeSavings")}</li>
                     </ul>
                   </div>
-                  <div className="rc-step-cost"><span className="rc-step-cost-val">{formatNumber(Math.round(step.outputUnitCost))}</span><span className="rc-step-cost-lbl">net cost</span></div>
+                  <div className="rc-step-cost"><span className="rc-step-cost-val">{formatNumber(Math.round(step.outputUnitCost))}</span><span className="rc-step-cost-lbl">{t("common.netCost")}</span></div>
                 </li>
               ))}
             </ol>
             <div className="rc-modal-footer">
-              <div><span>Net cost / item</span><strong>{formatNumber(Math.round(selectedPath.steps.length ? selectedPath.steps[selectedPath.steps.length - 1].outputUnitCost : 0))}</strong></div>
-              <div><span>Market price</span><strong>{formatNumber(selectedRow.variant.market)}</strong></div>
-              <div><span>Profit margin</span><strong className={selectedRow.profitPercent >= 0 ? "profit" : "loss"}>{formatPct(selectedRow.profitPercent)}</strong></div>
+              <div><span>{t("common.netCostPerItem")}</span><strong>{formatNumber(Math.round(selectedPath.steps.length ? selectedPath.steps[selectedPath.steps.length - 1].outputUnitCost : 0))}</strong></div>
+              <div><span>{t("common.marketPrice")}</span><strong>{formatNumber(selectedRow.variant.market)}</strong></div>
+              <div><span>{t("common.profitMargin")}</span><strong className={selectedRow.profitPercent >= 0 ? "profit" : "loss"}>{formatPct(selectedRow.profitPercent)}</strong></div>
             </div>
           </div>
         </div>

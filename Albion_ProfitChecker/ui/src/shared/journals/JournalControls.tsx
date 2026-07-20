@@ -64,18 +64,13 @@ export function JournalControls({ enabled, owned, onToggleEnabled, onToggleOwned
         <details className="jrnl-explain">
           <summary>{t("journal.howItWorks")}</summary>
           <p className="jrnl-note">
-            Crafting gear earns fame; slotting an empty journal soaks it up and, once full, it sells for
-            more than the empty cost — that extra silver is added to each craft. {showOwnership
-              ? "Only items crafted with a selected profession's journal count. "
-              : "Each item's fame fills the journal of its crafting profession. "}
-            Prices below are live for {city ? city : "your craft city"} (or the best journal-trading
-            city if it does not sell there).
+            {t(showOwnership ? "journal.explanationOwnership" : "journal.explanationPrices", { city: city || t("common.craftCity") })}
           </p>
           <ul className="jrnl-formula">
-            <li>fame = total resources × fame-per-resource (by tier) × artifact factor</li>
-            <li>journals filled = fame ÷ capacity (T4 = 3600 … T8 = 58590)</li>
-            <li>profit per journal = full × 0.935 (6.5% tax) − empty</li>
-            <li>added profit = journals filled × profit per journal</li>
+            <li>{t("journal.formulaFame")}</li>
+            <li>{t("journal.formulaFilled")}</li>
+            <li>{t("journal.formulaProfit")}</li>
+            <li>{t("journal.formulaAdded")}</li>
           </ul>
         </details>
         {shownProfessions.length === 0 ? (

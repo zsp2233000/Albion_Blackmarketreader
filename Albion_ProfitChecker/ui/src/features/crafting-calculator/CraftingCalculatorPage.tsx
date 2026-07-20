@@ -1379,7 +1379,7 @@ export function CraftingCalculatorPage() {
           <table className="spreadsheet-table">
             <thead>
               <tr>
-                <th>UID</th><th>Material 1</th><th>Material 2</th><th>Artefact</th><th>Market Value</th><th>Sold/Day</th><th>Profit</th><th>Gain %</th><th>Silver / Focus</th>
+                <th>{t("common.id")}</th><th>{t("common.material")} 1</th><th>{t("common.material")} 2</th><th>{t("common.artefact")}</th><th>{t("common.marketValue")}</th><th>{t("common.soldPerDay")}</th><th>{t("common.profit")}</th><th>{t("common.gainPercent")}</th><th>{t("common.silverPerFocus")}</th>
               </tr>
             </thead>
             <tbody>
@@ -1428,7 +1428,7 @@ export function CraftingCalculatorPage() {
                     const rowSuspect = rowMatTotal > 0 && values.market >= 10 * rowMatTotal;
                     return (
                       <tr key={row.key} className={`sub-row ${section.fogClass} ${selected ? "selected" : ""} ${rowSuspect ? "cc-suspect-row" : ""}`} onClick={() => setSelectedRowKey(row.key)}>
-                        <td>{row.uid}{rowSuspect ? <span className="cc-suspect-overlay">This profit looks unrealistic — market price probably not real</span> : null}</td>
+                        <td>{row.uid}{rowSuspect ? <span className="cc-suspect-overlay">{t("message.unrealisticProfit")}</span> : null}</td>
                         <td
                           className="mono-num editable-cell"
                           contentEditable
@@ -1471,7 +1471,7 @@ export function CraftingCalculatorPage() {
                             {(artefactByTier[rowTier] ?? 0) > 0 ? formatCompact(artefactByTier[rowTier]) : "-"}
                           </td>
                         ) : (
-                          <td rowSpan={section.rows.length} className="mono-num muted">Non Artefakt</td>
+                          <td rowSpan={section.rows.length} className="mono-num muted">{t("common.noArtefact")}</td>
                         )) : null}
                         <td className="mono-num editable-cell" contentEditable suppressContentEditableWarning onBlur={(e) => updateRowField(row.key, "market", e.currentTarget.textContent || "0")} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}>{formatCompactOrDash(values.market)}</td>
                         <td className="mono-num muted">{values.sold > 0 ? formatCompact(values.sold) : "-"}</td>
@@ -1528,7 +1528,7 @@ export function CraftingCalculatorPage() {
               <div className="focus-layout">
                 <div className="focus-main">
                   <span className="cc-caption">{t("common.selectionFocus")}</span>
-                  <h2 id="selectedItemTitle">{selectedItem ? getItemDisplayName(buildCraftedItemId(selectedItem.id, parseTierEnchant(selectedRow.uid).tier, parseTierEnchant(selectedRow.uid).enchant), locale, selectedItem.name) : `Selected ${selectedRow.uid}`}</h2>
+                  <h2 id="selectedItemTitle">{selectedItem ? getItemDisplayName(buildCraftedItemId(selectedItem.id, parseTierEnchant(selectedRow.uid).tier, parseTierEnchant(selectedRow.uid).enchant), locale, selectedItem.name) : `${t("common.selected")} ${selectedRow.uid}`}</h2>
                   <div className="badge-row">
                     <span className="badge-chip">{selectedRow.uid}</span>
                     <span className="badge-chip muted">
@@ -1545,7 +1545,7 @@ export function CraftingCalculatorPage() {
                   </div>
                   <div className="focus-stat">
                     <span className="cc-caption">{t("common.bonusCity")}</span>
-                    <strong>{bonusCity ? (isBonusCityActive ? `${bonusCity} active` : bonusCity) : "None"}</strong>
+                    <strong>{bonusCity ? (isBonusCityActive ? `${bonusCity} · ${t("common.active")}` : bonusCity) : t("common.none")}</strong>
                   </div>
                 </div>
               </div>
@@ -1566,7 +1566,7 @@ export function CraftingCalculatorPage() {
             onClick={() => setShowSpecsModal(true)}
           >
             <span>{t("common.edit")} {t("common.mastery")}</span>
-            {specsState.pendingSync ? <span className="specs-trigger-badge">Saving…</span> : null}
+            {specsState.pendingSync ? <span className="specs-trigger-badge">{t("common.saving")}</span> : null}
           </button>
 
           <div className="bento-card">
@@ -1622,7 +1622,7 @@ export function CraftingCalculatorPage() {
                   onSelectSearchItem(exact || searchResults[0]);
                 }
               }}
-              placeholder="Search by item name"
+              placeholder={t("filter.typeItemName")}
             />
             <datalist id="cc-item-suggestions">
               {searchSuggestions.map((value) => (
@@ -1632,44 +1632,44 @@ export function CraftingCalculatorPage() {
 
             <div className="cc-grid-2">
               <div>
-                <div className="cc-caption">{isBlackMarketSell ? "Black Market Value" : "Market Value"}</div>
+                <div className="cc-caption">{isBlackMarketSell ? `${t("common.blackMarket")} ${t("common.marketValue")}` : t("common.marketValue")}</div>
                 <input className="detail-input" type="number" min={0} step={1} value={Math.round(selectedRowValues.market)} onChange={(e) => updateRowField(selectedRow.key, "market", e.target.value)} />
               </div>
               <div>
-                <div className="cc-caption">Item Value (Craft)</div>
+                <div className="cc-caption">{t("common.itemValueCraft")}</div>
                 <input className="detail-input" type="number" min={0} step={1} value={Math.round(itemValue)} onChange={(e) => setItemValue(Math.max(0, Number(e.target.value) || 0))} />
               </div>
             </div>
 
             <div className="cc-grid-2">
               <div>
-                <div className="cc-caption">Station Usage Fee</div>
+                <div className="cc-caption">{t("common.stationUsageFee")}</div>
                 <input className="detail-input" type="number" min={0} step={1} value={Math.round(stationFee)} onChange={(e) => setStationFee(Math.max(0, Number(e.target.value) || 0))} />
               </div>
               <div>
-                <div className="cc-caption">Craft Bonus City</div>
-                <input className="detail-input" value={bonusCity || "None"} readOnly />
+                <div className="cc-caption">{t("common.craftBonusCity")}</div>
+                <input className="detail-input" value={bonusCity || t("common.none")} readOnly />
               </div>
             </div>
 
             <div className="bonus-section">
               <div>
-                <div className="cc-caption">Return Bonuses</div>
+                <div className="cc-caption">{t("common.returnBonuses")}</div>
                 <div className="bonus-grid">
                   <button
                     type="button"
                     className={`bonus-tile ${isBonusCityActive ? "active" : ""}`}
                     onClick={() => { if (bonusCity && KNOWN_CITIES.includes(bonusCity)) setCraftCity(bonusCity); }}
                   >
-                    <span>Bonus City</span>
-                    <strong>{bonusCity || "None"}</strong>
+                    <span>{t("common.bonusCity")}</span>
+                    <strong>{bonusCity || t("common.none")}</strong>
                   </button>
                   <button
                     type="button"
                     className={`bonus-tile ${dailyBonusPercent === 10 ? "active" : ""}`}
                     onClick={() => setDailyBonusPercent((prev) => (prev === 10 ? 0 : 10))}
                   >
-                    <span>Daily Bonus</span>
+                    <span>{t("common.dailyBonus")}</span>
                     <strong>+10%</strong>
                   </button>
                   <button
@@ -1677,7 +1677,7 @@ export function CraftingCalculatorPage() {
                     className={`bonus-tile ${dailyBonusPercent === 20 ? "active" : ""}`}
                     onClick={() => setDailyBonusPercent((prev) => (prev === 20 ? 0 : 20))}
                   >
-                    <span>Daily Bonus</span>
+                    <span>{t("common.dailyBonus")}</span>
                     <strong>+20%</strong>
                   </button>
                   <button
@@ -1685,23 +1685,23 @@ export function CraftingCalculatorPage() {
                     className={`bonus-tile ${useFocus ? "active" : ""}`}
                     onClick={() => setUseFocus((prev) => !prev)}
                   >
-                    <span>Focus</span>
-                    <strong>{useFocus ? "Active" : "Off"}</strong>
+                    <span>{t("common.focus")}</span>
+                    <strong>{useFocus ? t("common.active") : t("filter.off")}</strong>
                   </button>
                 </div>
               </div>
 
               <div>
-                <div className="cc-caption">Premium</div>
+                <div className="cc-caption">{t("common.premium")}</div>
                 <label className="checkbox-chip premium-chip">
                   <input type="checkbox" checked={usePremium} onChange={(e) => setUsePremium(e.target.checked)} />
-                  <span>Use Premium market tax (4% instead of 8%)</span>
+                  <span>{t("common.usePremiumTax")}</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <div className="cc-caption">Journals</div>
+              <div className="cc-caption">{t("journal.journals")}</div>
               <JournalControls
                 enabled={journals.enabled}
                 owned={journals.owned}
@@ -1716,7 +1716,7 @@ export function CraftingCalculatorPage() {
 
             <div className="cc-grid-2">
               <div>
-                <div className="cc-caption">Market Setup Fee %</div>
+                <div className="cc-caption">{t("common.marketSetupFee")}</div>
                 <input
                   className="detail-input"
                   type="number"
@@ -1729,7 +1729,7 @@ export function CraftingCalculatorPage() {
                 />
               </div>
               <div>
-                <div className="cc-caption">Market Tax %</div>
+                <div className="cc-caption">{t("common.marketTaxPercent")}</div>
                 <input
                   className="detail-input"
                   type="number"
@@ -1778,42 +1778,42 @@ export function CraftingCalculatorPage() {
           </div>
 
           <div className="bento-card totals">
-            <div><span>Gross Resource Cost</span><strong>{formatMaybeNumber(totals.canCalculate ? totals.grossResourceCost : null)}</strong></div>
-            <div><span>Net Resource Cost (after RRR)</span><strong>{formatMaybeNumber(totals.netResourceCost)}</strong></div>
-            <div><span>Crafting Usage Fee</span><strong>{formatMaybeNumber(totals.craftingUsageFee)}</strong></div>
-            <div><span>Market Setup + Tax</span><strong>{formatMaybeNumber(
+            <div><span>{t("common.grossResourceCost")}</span><strong>{formatMaybeNumber(totals.canCalculate ? totals.grossResourceCost : null)}</strong></div>
+            <div><span>{t("common.netResourceCostAfterRrr")}</span><strong>{formatMaybeNumber(totals.netResourceCost)}</strong></div>
+            <div><span>{t("common.craftingUsageFee")}</span><strong>{formatMaybeNumber(totals.craftingUsageFee)}</strong></div>
+            <div><span>{t("common.marketSetupTax")}</span><strong>{formatMaybeNumber(
               typeof totals.marketSetupFee === "number" && typeof totals.marketTransactionTax === "number"
                 ? totals.marketSetupFee + totals.marketTransactionTax
                 : null
             )}</strong></div>
-            <div><span>Total Cost</span><strong>{formatMaybeNumber(totals.totalCost)}</strong></div>
+            <div><span>{t("common.totalCost")}</span><strong>{formatMaybeNumber(totals.totalCost)}</strong></div>
             {typeof totals.journalProfit === "number" && totals.journalProfit > 0 ? (
-              <div><span>Journal Profit</span><strong className="profit-cell">+{formatNumber(totals.journalProfit)}</strong></div>
+              <div><span>{t("common.journalProfit")}</span><strong className="profit-cell">+{formatNumber(totals.journalProfit)}</strong></div>
             ) : null}
             <div>
-              <span>Profit</span>
+              <span>{t("common.profit")}</span>
               <strong className={typeof totals.profit === "number" ? (totals.profit >= 0 ? "profit-cell" : "loss-cell") : ""}>
                 {typeof totals.profit === "number" ? `${totals.profit >= 0 ? "+" : ""}${formatNumber(totals.profit)}` : "-"}
               </strong>
             </div>
             <div>
-              <span>ROI</span>
+              <span>{t("common.roi")}</span>
               <strong className={typeof totals.roi === "number" ? (totals.roi >= 0 ? "profit-cell" : "loss-cell") : ""}>
                 {typeof totals.roi === "number" ? `${totals.roi >= 0 ? "+" : ""}${totals.roi.toFixed(1)}%` : "-"}
               </strong>
             </div>
             <div>
-              <span>Focus Cost</span>
+              <span>{t("common.focusCost")}</span>
               <strong>{selectedFocusCost > 0 ? formatNumber(Math.round(selectedFocusCost)) : "-"}</strong>
             </div>
             <div>
-              <span>Silver per Focus</span>
+              <span>{t("common.silverPerFocus")}</span>
               <strong className={typeof totals.silverPerFocus === "number" ? (totals.silverPerFocus >= 0 ? "profit-cell" : "loss-cell") : ""}>
                 {typeof totals.silverPerFocus === "number" ? formatNumber(totals.silverPerFocus) : "-"}
               </strong>
             </div>
             <div>
-              <span>Fame / Craft</span>
+              <span>{t("common.famePerCraft")}</span>
               <strong title="Crafting fame = total material count × tier factor × 2^enchant">
                 {(() => {
                   const { tier, enchant } = parseTierEnchant(selectedRow.uid);
