@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build && node scripts/prerender-seo.mjs",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:rwd": "playwright test",
     "test:watch": "vitest",
     "refresh:crafting-data": "node scripts/refresh-crafting-data.mjs",
     "refresh:crafting-data:us": "node scripts/refresh-crafting-data.mjs us",

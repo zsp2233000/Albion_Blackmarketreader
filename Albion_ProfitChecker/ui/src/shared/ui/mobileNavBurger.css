@@ -29,6 +29,13 @@
   }
 }
 
+/* Dashboard replaces its fixed rail with the drawer throughout the tablet range. */
+@media (min-width: 641px) and (max-width: 1100px) {
+  .dashboard .mnav-burger {
+    display: flex;
+  }
+}
+
 /* Portrait tablet: only the crafting-tools header (its inline switcher doesn't fit); the
    dashboard header already fits at this width, so its burger stays hidden. */
 @media (min-width: 641px) and (max-width: 768px) {

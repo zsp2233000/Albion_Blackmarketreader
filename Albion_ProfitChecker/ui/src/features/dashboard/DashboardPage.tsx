@@ -5,6 +5,7 @@ import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import { formatSilver } from "./dashboard.formatters";
 import "./dashboard.css";
+import "./dashboard.rwd.css";
 
 type City = "ALL" | "Lymhurst" | "Martlock" | "Fort Sterling" | "Thetford" | "Bridgewatch" | "Caerleon";
 type Range = "1W" | "1M" | "6M" | "1Y";
