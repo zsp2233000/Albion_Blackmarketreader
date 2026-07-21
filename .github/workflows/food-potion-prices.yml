@@ -14,7 +14,7 @@ on:
           - eu
           - all
   schedule:
-    - cron: "0 4 * * *"
+    - cron: "40 8 * * *"
 
 permissions:
   contents: read
