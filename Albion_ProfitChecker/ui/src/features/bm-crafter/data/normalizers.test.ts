@@ -16,7 +16,13 @@ describe("bm crafter data normalizers", () => {
     const normalized = normalizeMarketPayload(payload, "eu");
     expect(normalized.region).toBe("us");
     expect(normalized.items).toHaveLength(2);
-    expect(normalized.items[1]).toEqual({ id: "T5_MAIN_AXE", bm: 1000, sold: 10.5 });
+    expect(normalized.items[1]).toEqual({
+      id: "T5_MAIN_AXE",
+      bm: 1000,
+      sold: 10.5,
+      source: "api",
+      observedAt: "2026-01-01T00:00:00Z"
+    });
   });
 
   it("normalizes compact market tuple payload", () => {
@@ -33,8 +39,20 @@ describe("bm crafter data normalizers", () => {
     const normalized = normalizeMarketPayload(payload, "us");
     expect(normalized.region).toBe("eu");
     expect(normalized.items).toHaveLength(2);
-    expect(normalized.items[0]).toEqual({ id: "T4_MAIN_SWORD", bm: 12345, sold: 99.2 });
-    expect(normalized.items[1]).toEqual({ id: "T5_MAIN_AXE", bm: 1000, sold: 10.5 });
+    expect(normalized.items[0]).toEqual({
+      id: "T4_MAIN_SWORD",
+      bm: 12345,
+      sold: 99.2,
+      source: "api",
+      observedAt: "2026-01-01T00:00:00Z"
+    });
+    expect(normalized.items[1]).toEqual({
+      id: "T5_MAIN_AXE",
+      bm: 1000,
+      sold: 10.5,
+      source: "api",
+      observedAt: "2026-01-01T00:00:00Z"
+    });
   });
 
   it("deduplicates market items by item id and keeps the best bm row", () => {
@@ -51,8 +69,27 @@ describe("bm crafter data normalizers", () => {
 
     const normalized = normalizeMarketPayload(payload, "us");
     expect(normalized.items).toHaveLength(2);
-    expect(normalized.items[0]).toEqual({ id: "T4_MAIN_SWORD", bm: 1200, sold: 30 });
-    expect(normalized.items[1]).toEqual({ id: "T5_MAIN_AXE", bm: 900, sold: 15 });
+    expect(normalized.items[0]).toMatchObject({ id: "T4_MAIN_SWORD", bm: 1200, sold: 30, source: "api" });
+    expect(normalized.items[1]).toMatchObject({ id: "T5_MAIN_AXE", bm: 900, sold: 15, source: "api" });
+  });
+
+  it("keeps per-entry local source and observation time metadata", () => {
+    const normalized = normalizeMarketPayload({
+      region: "eu",
+      generatedAt: "2026-01-01T00:00:00Z",
+      items: [{
+        id: "T4_MAIN_SWORD",
+        bm: 12345,
+        sold: 99.2,
+        source: "local",
+        observedAt: "2026-01-02T12:00:00Z"
+      }]
+    }, "eu");
+
+    expect(normalized.items[0]).toMatchObject({
+      source: "local",
+      observedAt: "2026-01-02T12:00:00Z"
+    });
   });
 
   it("normalizes price payload into list and map", () => {

@@ -30,6 +30,12 @@ function formatPct(value: number | null | undefined): string {
   return `${value.toFixed(1)}%`;
 }
 
+function formatObservedAt(value: string | null | undefined): string {
+  const stamp = formatUpdated(value);
+  if (!value || !stamp.relative) return "API snapshot";
+  return `${stamp.time} · ${stamp.relative}`;
+}
+
 function useRegion(): [MarketRegion, (next: MarketRegion) => void] {
   const [service] = useState(() => new RegionService("eu"));
   const [region, setRegion] = useState<MarketRegion>(service.getRegion());
@@ -321,12 +327,19 @@ export function BmCrafterPage() {
 
   useEffect(() => {
     setVisibleRows(INITIAL_ROWS);
-  }, [rows.length, region, filters.selectedTiers, filters.selectedEnchants, filters.minSold, filters.searchTerm, filters.sortByDailyTop, filters.showOnlyProfitable]);
+  }, [rows.length, region, filters.selectedTiers, filters.selectedEnchants, filters.minSold, filters.searchTerm, filters.sortByDailyTop, filters.showOnlyProfitable, filters.sourceFilter]);
 
+  const latestLocalObservedAt = useMemo(() => {
+    const values = data?.market.items
+      .filter((item) => item.source === "local" && item.observedAt)
+      .map((item) => item.observedAt as string) ?? [];
+    return values.sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null;
+  }, [data]);
   const lastUpdated = useMemo(
-    () => formatUpdated(data?.market.generatedAt ?? data?.materials.generatedAt ?? null),
-    [data]
+    () => formatUpdated(latestLocalObservedAt ?? data?.market.generatedAt ?? data?.materials.generatedAt ?? null),
+    [data, latestLocalObservedAt]
   );
+  const hasLocalMarketData = Boolean(data?.market.items.some((item) => item.source === "local"));
 
   const soldMax = 200;
   const soldRatio = Math.max(0, Math.min(1, filters.minSold / soldMax));
@@ -457,7 +470,7 @@ export function BmCrafterPage() {
             <RegionSelect value={region} onChange={(next) => { setPendingRegion(next); setShowRegionConfirm(true); }} className="bm-pill" />
             <div className="bm-status" title={lastUpdated.title}>
               <span className="pulse"></span>
-              {t("common.lastUpdated")}: <span>{lastUpdated.time}</span>{lastUpdated.relative ? <span className="bm-status-ago"> ({lastUpdated.relative})</span> : null}
+              <span>{hasLocalMarketData ? "Local" : "API"}</span> · {t("common.lastUpdated")}: <span>{lastUpdated.time}</span>{lastUpdated.relative ? <span className="bm-status-ago"> ({lastUpdated.relative})</span> : null}
             </div>
             <div className="account-wrap">
               <button ref={accountBtnRef} className="account-btn" type="button" onClick={() => setShowAccount(true)} aria-label={t("common.account")}>
@@ -547,6 +560,18 @@ export function BmCrafterPage() {
                 T{tier}
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className="filter-block">
+          <p>Data Source</p>
+          <div className="bm-city-field">
+            <span className="material-symbols-outlined">sync_alt</span>
+            <select value={filters.sourceFilter} onChange={(e) => filters.setSourceFilter(e.target.value as "all" | "local" | "api")}>
+              <option value="all">All sources</option>
+              <option value="local">Local capture</option>
+              <option value="api">API snapshot</option>
+            </select>
           </div>
         </div>
 
@@ -759,7 +784,7 @@ export function BmCrafterPage() {
                             <div>
                               <div className="item-name">{row.displayName}<span className="bm-open-calc-icon" aria-hidden="true">↗</span></div>
                               {suspect ? <div className="bm-suspect-note">This profit looks unrealistic — market price probably not real</div> : null}
-                              <div className="item-meta">{baseId}</div>
+                              <div className="item-meta">{baseId} · {row.item.source === "local" ? "Local" : "API"} · {formatObservedAt(row.item.observedAt)}</div>
                             </div>
                           </div>
                           <span className="item-tier-pill" data-tier={tier ?? undefined} data-enchant={enchant}>

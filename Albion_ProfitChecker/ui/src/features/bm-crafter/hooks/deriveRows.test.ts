@@ -132,4 +132,28 @@ describe("deriveBmCrafterRows", () => {
     const e01 = deriveBmCrafterRows(bundle, { ...base, selectedTiers: [], selectedEnchants: [0, 1] });
     expect(e01).toHaveLength(3);
   });
+
+  it("filters rows by local or API source", () => {
+    const bundle = buildBundle();
+    bundle.market.items[0].source = "local";
+    bundle.market.items[1].source = "api";
+    bundle.recipes.byItemId.set("MAIN_SWORD", bundle.recipes.items[0]);
+    bundle.recipes.byItemId.set("MAIN_AXE", bundle.recipes.items[1]);
+
+    const rows = deriveBmCrafterRows(bundle, {
+      selectedTiers: [],
+      selectedEnchants: [],
+      minSold: 0,
+      searchTerm: "",
+      returnRate: 0.1525,
+      sortByDailyTop: false,
+      showOnlyProfitable: true,
+      nonArtefactOnly: false,
+      craftCity: "Caerleon",
+      usageFeePer100: 0,
+      sourceFilter: "local"
+    });
+
+    expect(rows.map((row) => row.item.id)).toEqual(["T4_MAIN_SWORD"]);
+  });
 });

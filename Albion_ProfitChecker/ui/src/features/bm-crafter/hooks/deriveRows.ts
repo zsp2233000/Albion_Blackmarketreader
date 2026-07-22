@@ -38,6 +38,7 @@ export function deriveBmCrafterRows(bundle: BmCrafterDataBundle | null, filters:
   let rowCounter = 0;
 
   for (const item of bundle.market.items) {
+    if (filters.sourceFilter && filters.sourceFilter !== "all" && (item.source ?? "api") !== filters.sourceFilter) continue;
     const id = item.id || "";
     if (/_ROYAL(\b|_)/i.test(id)) continue;
     if (/SHAPESHIFTER/i.test(id)) continue;

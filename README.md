@@ -120,6 +120,19 @@ npm run build    # production build (with SEO prerender)
 - Prices are split per region (US / EU / Asia) and per city under `ui/public/data/`.
 - Recipe, crafting and refining datasets are derived from Albion item data and the reference workbook.
 
+## 🎧 Local Black Market capture
+
+The local .NET server can passively read Black Market traffic through Npcap and overlay fresh local prices before falling back per item to the existing API snapshot. It never commits or pushes automatically. Start capture, refresh the local page manually, and publish only when you explicitly choose to:
+
+```powershell
+cd Albion_ProfitChecker
+dotnet run -- --list-capture-devices
+dotnet run -- --capture-device 0
+dotnet run -- --publish-local --region eu
+```
+
+See [docs/local-black-market-capture.md](docs/local-black-market-capture.md) for prerequisites, region safety, the one-hour freshness rule, and manual Git/Vercel publication.
+
 ---
 
 ## 📬 Support

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
+using AlbionProfitChecker.Models;
 using AlbionProfitChecker.Services;
 
 namespace AlbionProfitChecker;
@@ -71,7 +72,11 @@ internal static class Program
         int HistorySpanDelayMs,
         int MaxHistoryConcurrency,
         string ApiHost,
-        string? HistoryCacheFile
+        string? HistoryCacheFile,
+        string? CaptureDevice,
+        string? CaptureRegion,
+        string? LocalOrderStatePath,
+        bool CaptureEnabled
     );
 
     public static async Task Main(string[] args)
@@ -80,9 +85,23 @@ internal static class Program
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
         bool runOnce = args.Any(a => string.Equals(a, "--run-once", StringComparison.OrdinalIgnoreCase));
+        bool publishLocal = args.Any(a => string.Equals(a, "--publish-local", StringComparison.OrdinalIgnoreCase));
+        bool listCaptureDevices = args.Any(a => string.Equals(a, "--list-capture-devices", StringComparison.OrdinalIgnoreCase));
         bool serve = !runOnce;
 
         var options = ParseOptions(args);
+
+        if (listCaptureDevices)
+        {
+            ListCaptureDevices(options);
+            return;
+        }
+
+        if (publishLocal)
+        {
+            await PublishLocalAsync(options);
+            return;
+        }
 
         if (serve)
         {
@@ -107,6 +126,14 @@ internal static class Program
 
         app.UseDefaultFiles();
         app.UseStaticFiles(); // ui/*
+        if (Directory.Exists(PublicDir))
+        {
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(PublicDir),
+                RequestPath = ""
+            });
+        }
         if (Directory.Exists(PictureDir))
         {
             app.UseStaticFiles(new StaticFileOptions
@@ -130,8 +157,40 @@ internal static class Program
             return Results.Json(new { updatedAt = DateTime.UtcNow });
         });
 
+        var localStore = new BlackMarketOrderStore(options.LocalOrderStatePath);
+        var orderBook = new BlackMarketOrderBook(localStore);
+        var capture = new BlackMarketCaptureService(
+            orderBook,
+            options.CaptureDevice,
+            options.CaptureRegion,
+            options.CaptureEnabled,
+            message => Console.WriteLine($"[capture] {message}"));
+        var projection = new BlackMarketProjectionService();
+
+        app.MapGet("/api/local/status", () => Results.Json(capture.Status));
+        app.MapGet("/api/local/bm-crafter-{region}.json", (string region) =>
+        {
+            var normalizedRegion = BlackMarketCaptureConstants.NormalizeRegion(region);
+            if (normalizedRegion is null) return Results.BadRequest(new { error = "Unknown region." });
+            var basePath = Path.Combine(PublicDir, "data", $"bm-crafter-{normalizedRegion}.json");
+            if (!File.Exists(basePath)) return Results.NotFound();
+            try
+            {
+                var payload = projection.BuildLocalPayload(basePath, normalizedRegion, orderBook);
+                return Results.Content(payload, "application/json");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[capture] local projection fallback: {ex.Message}");
+                return Results.File(basePath, "application/json");
+            }
+        });
+
         Console.WriteLine("Lokaler Server gestartet: http://localhost:5173");
         Console.WriteLine("Passwort für Dashboard: testo");
+        Console.WriteLine($"Local Black Market state: {localStore.Path}");
+        if (!capture.Start()) Console.WriteLine("Passive capture unavailable; the existing API/static fallback remains active.");
+        app.Lifetime.ApplicationStopping.Register(capture.Dispose);
         TryOpenBrowser("http://localhost:5173");
         await app.RunAsync();
     }
@@ -158,7 +217,11 @@ internal static class Program
             HistorySpanDelayMs: DEFAULT_HISTORY_SPAN_DELAY_MS,
             MaxHistoryConcurrency: DEFAULT_MAX_HISTORY_CONCURRENCY,
             ApiHost: "https://west.albion-online-data.com/api/v2/stats",
-            HistoryCacheFile: null
+            HistoryCacheFile: null,
+            CaptureDevice: null,
+            CaptureRegion: null,
+            LocalOrderStatePath: null,
+            CaptureEnabled: true
         );
 
         for (int i = 0; i < args.Length; i++)
@@ -210,6 +273,26 @@ internal static class Program
             {
                 opt = opt with { HistoryCacheFile = args[i + 1].Trim() };
                 i++;
+            }
+            else if (string.Equals(arg, "--capture-device", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
+            {
+                opt = opt with { CaptureDevice = args[i + 1].Trim() };
+                i++;
+            }
+            else if (string.Equals(arg, "--region", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
+            {
+                var region = BlackMarketCaptureConstants.NormalizeRegion(args[i + 1]);
+                if (region is not null) opt = opt with { CaptureRegion = region };
+                i++;
+            }
+            else if (string.Equals(arg, "--local-orders", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
+            {
+                opt = opt with { LocalOrderStatePath = args[i + 1].Trim() };
+                i++;
+            }
+            else if (string.Equals(arg, "--no-capture", StringComparison.OrdinalIgnoreCase))
+            {
+                opt = opt with { CaptureEnabled = false };
             }
             else if (string.Equals(arg, "--bm-min-points", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length && int.TryParse(args[i + 1], out var mp))
             {
@@ -458,6 +541,48 @@ internal static class Program
 
     private static string FormatDate(DateTime? utc)
         => utc.HasValue ? utc.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : "n/a";
+
+    private static void ListCaptureDevices(Options options)
+    {
+        var store = new BlackMarketOrderStore(options.LocalOrderStatePath);
+        var book = new BlackMarketOrderBook(store);
+        using var capture = new BlackMarketCaptureService(book, options.CaptureDevice, options.CaptureRegion, enabled: true, log: Console.WriteLine);
+        var devices = capture.ListDevices();
+        if (devices.Count == 0)
+        {
+            Console.WriteLine("No capture device found. Install Npcap first.");
+            return;
+        }
+
+        for (var index = 0; index < devices.Count; index++)
+            Console.WriteLine($"[{index}] {devices[index].Name} {devices[index].Description}");
+    }
+
+    private static Task PublishLocalAsync(Options options)
+    {
+        var store = new BlackMarketOrderStore(options.LocalOrderStatePath);
+        var book = new BlackMarketOrderBook(store);
+        var orders = book.Snapshot();
+        var regions = orders
+            .Select(order => BlackMarketCaptureConstants.NormalizeRegion(order.Region))
+            .Where(region => region is not null)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Cast<string>()
+            .ToList();
+
+        var region = options.CaptureRegion ?? (regions.Count == 1 ? regions[0] : null);
+        if (region is null)
+            throw new InvalidOperationException("Specify --region us|eu|asia when local state contains zero or multiple regions.");
+        if (regions.Any(other => !string.Equals(other, region, StringComparison.OrdinalIgnoreCase)))
+            throw new InvalidOperationException($"Local state contains another region than '{region}'. Refusing to publish a mixed snapshot.");
+
+        var basePath = Path.Combine(PublicDir, "data", $"bm-crafter-{region}.json");
+        var projection = new BlackMarketProjectionService();
+        projection.Publish(basePath, region, book);
+        var freshCount = book.GetFreshBuyPrices(region).Count;
+        Console.WriteLine($"Published local Black Market overlay for {region}: {freshCount} fresh item prices.");
+        return Task.CompletedTask;
+    }
 
     private static void TryOpenBrowser(string url)
     {

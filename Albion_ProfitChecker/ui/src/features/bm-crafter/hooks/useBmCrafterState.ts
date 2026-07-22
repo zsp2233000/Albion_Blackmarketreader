@@ -26,6 +26,7 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null, journal?: 
   const [returnRatePercent, setReturnRatePercent] = useSessionState("bm-crafter:returnRatePercent", 15.25);
   const [craftCity, setCraftCity] = useSessionState<string>("bm-crafter:craftCity", "Lymhurst");
   const [usageFeePer100, setUsageFeePer100] = useSessionState<number>("bm-crafter:usageFeePer100", 1500);
+  const [sourceFilter, setSourceFilter] = useSessionState<"all" | "local" | "api">("bm-crafter:sourceFilter", "all");
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null);
 
   const setBonusCityPreset = (enabled: boolean) => {
@@ -48,10 +49,11 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null, journal?: 
         nonArtefactOnly,
         craftCity,
         usageFeePer100,
+        sourceFilter,
         journal,
         locale
       }),
-    [bundle, selectedTiers, selectedEnchants, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100, journal, locale]
+    [bundle, selectedTiers, selectedEnchants, minSold, searchTerm, returnRate, sortByDailyTop, showOnlyProfitable, nonArtefactOnly, craftCity, usageFeePer100, sourceFilter, journal, locale]
   );
 
   useEffect(() => {
@@ -113,6 +115,8 @@ export function useBmCrafterState(bundle: BmCrafterDataBundle | null, journal?: 
       setCraftCity,
       usageFeePer100,
       setUsageFeePer100,
+      sourceFilter,
+      setSourceFilter,
       toggleTier,
       toggleEnchant,
       resetFilters

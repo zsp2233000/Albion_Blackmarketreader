@@ -1,4 +1,4 @@
-import type { BmMarketItem, BmRecipe, MarketRegion } from "../domain";
+import type { BmMarketItem, BmRecipe, MarketRegion, BmMarketSource } from "../domain";
 import type { BmCrafterMarketData, BmCrafterPriceData, BmCrafterRecipesData, PriceEntry } from "./types";
 import { normalizeRegion as normalizeSharedRegion } from "@shared/region/regions";
 
@@ -19,34 +19,48 @@ function normalizeRegion(raw: unknown, fallback: MarketRegion): MarketRegion {
   return normalizeSharedRegion(raw) ?? fallback;
 }
 
-function normalizeMarketItem(entry: unknown): BmMarketItem | null {
+function normalizeSource(value: unknown): BmMarketSource {
+  return value === "local" ? "local" : "api";
+}
+
+function normalizeObservedAt(value: unknown, fallback: string | null): string | null {
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function normalizeMarketItem(entry: unknown, generatedAt: string | null): BmMarketItem | null {
   if (Array.isArray(entry)) {
     const id = String(entry[0] || "").trim();
     if (!id) return null;
     return {
       id,
       bm: toFiniteNumber(entry[1]),
-      sold: toFiniteNumber(entry[2])
+      sold: toFiniteNumber(entry[2]),
+      source: "api",
+      observedAt: generatedAt
     };
   }
 
   if (!isRecord(entry)) return null;
   const id = String(entry.id || "").trim();
   if (!id) return null;
-  return {
+  const normalized: BmMarketItem = {
     id,
     bm: toFiniteNumber(entry.bm),
-    sold: toFiniteNumber(entry.sold)
+    sold: toFiniteNumber(entry.sold),
+    source: normalizeSource(entry.source),
+    observedAt: normalizeObservedAt(entry.observedAt, generatedAt)
   };
+  return normalized;
 }
 
 export function normalizeMarketPayload(payload: unknown, fallbackRegion: MarketRegion): BmCrafterMarketData {
   const root = isRecord(payload) ? payload : {};
   const list = Array.isArray(root.items) ? root.items : [];
+  const generatedAt = typeof root.generatedAt === "string" ? root.generatedAt : null;
 
   const byItemId = new Map<string, BmMarketItem>();
   for (const entry of list) {
-    const item = normalizeMarketItem(entry);
+    const item = normalizeMarketItem(entry, generatedAt);
     if (!item) continue;
     const current = byItemId.get(item.id);
     if (!current) {
@@ -66,13 +80,18 @@ export function normalizeMarketPayload(payload: unknown, fallbackRegion: MarketR
       const nextSold = item.sold ?? -Infinity;
       if (nextSold > currentSold) {
         byItemId.set(item.id, item);
+        continue;
+      }
+
+      if (nextSold === currentSold && item.source === "local" && current.source !== "local") {
+        byItemId.set(item.id, item);
       }
     }
   }
 
   return {
     region: normalizeRegion(root.region, fallbackRegion),
-    generatedAt: typeof root.generatedAt === "string" ? root.generatedAt : null,
+    generatedAt,
     items: Array.from(byItemId.values())
   };
 }

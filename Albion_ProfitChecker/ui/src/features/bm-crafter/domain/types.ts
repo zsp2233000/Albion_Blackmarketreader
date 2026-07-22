@@ -1,9 +1,13 @@
 export type { Region as MarketRegion } from "@shared/types";
 
+export type BmMarketSource = "local" | "api";
+
 export interface BmMarketItem {
   id: string;
   bm: number | null;
   sold: number | null;
+  source?: BmMarketSource;
+  observedAt?: string | null;
 }
 
 export interface MaterialRequirement {

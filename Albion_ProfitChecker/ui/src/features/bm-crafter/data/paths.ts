@@ -11,6 +11,16 @@ function routeLocalUrl(file: string, locationHref?: string): string | null {
   }
 }
 
+function isLocalServer(locationHref?: string): boolean {
+  if (!locationHref) return false;
+  try {
+    const url = new URL(locationHref);
+    return url.hostname === "localhost" || url.hostname === "127.0.0.1" || url.hostname === "[::1]";
+  } catch {
+    return false;
+  }
+}
+
 function regionFile(kind: Exclude<DataKind, "recipes">, region: MarketRegion): string {
   const suffix = region;
   if (kind === "bm") return `bm-crafter-${suffix}.json`;
@@ -34,6 +44,9 @@ export function buildDataPaths(kind: DataKind, region: MarketRegion, locationHre
   const rootDataPath = `/data/${file}`;
   const relativePath = `./data/${file}`;
   const routeLocalPath = routeLocalUrl(`data/${file}`, locationHref);
-  const paths = [rootDataPath, routeLocalPath, relativePath];
+  const localCapturePath = kind === "bm" && isLocalServer(locationHref)
+    ? routeLocalUrl(`/api/local/${file}`, locationHref)
+    : null;
+  const paths = [localCapturePath, rootDataPath, routeLocalPath, relativePath];
   return paths.filter((v): v is string => Boolean(v));
 }

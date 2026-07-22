@@ -20,4 +20,10 @@ describe("bm crafter data path builder", () => {
     expect(paths).toContain("./data/bm-crafter-asia.json");
     expect(paths.every((path) => !path.includes("bm-crafter-eu.json"))).toBe(true);
   });
+
+  it("prefers the local capture endpoint on localhost", () => {
+    const paths = buildDataPaths("bm", "eu", "http://localhost:5173/bm-crafter");
+    expect(paths[0]).toBe("http://localhost:5173/api/local/bm-crafter-eu.json");
+    expect(paths).toContain("/data/bm-crafter-eu.json");
+  });
 });

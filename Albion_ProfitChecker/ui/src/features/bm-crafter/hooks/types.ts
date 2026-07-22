@@ -1,4 +1,4 @@
-import type { BmMarketItem, BmRecipe, ItemEconomics } from "../domain";
+import type { BmMarketItem, BmRecipe, ItemEconomics, BmMarketSource } from "../domain";
 import type { JournalData, JournalProfession, OwnedJournals } from "../../../shared";
 import type { Locale } from "../../../shared";
 
@@ -16,6 +16,7 @@ export interface BmCrafterRow {
 }
 
 export interface BmCrafterFilters {
+  sourceFilter?: "all" | BmMarketSource;
   // Empty array = no restriction (show all tiers / all enchants). Multiple values allowed.
   selectedTiers: number[];
   selectedEnchants: number[];
