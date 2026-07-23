@@ -4,21 +4,20 @@ import type { Locale, AuthService, Region } from "@shared/index";
 import { formatUpdated } from "@shared/time/lastUpdated";
 import { useSeo } from "../../shared/seo/useSeo";
 import { formatSilver } from "./dashboard.formatters";
+import { normalizeMarketPayload } from "../bm-crafter/data";
+import {
+  filterDashboardResults,
+  mergeDashboardResults,
+  type DashboardMarketSnapshot,
+  type DashboardResultItem
+} from "./dashboard.market";
 import "./dashboard.css";
 import "./dashboard.rwd.css";
 
 type City = "ALL" | "Lymhurst" | "Martlock" | "Fort Sterling" | "Thetford" | "Bridgewatch" | "Caerleon";
 type Range = "1W" | "1M" | "6M" | "1Y";
 
-type ResultItem = {
-  city: string;
-  id: string;
-  lym: number;
-  bm: number;
-  sold: number;
-  profit: number;
-  span: string;
-};
+type ResultItem = DashboardResultItem;
 
 type RawResultItem =
   | ResultItem
@@ -411,7 +410,9 @@ function normalizeResultItem(entry: RawResultItem): ResultItem | null {
       bm: Number(entry[3] || 0),
       sold: Number(entry[4] || 0),
       profit: Number(entry[5] || 0),
-      span: String(entry[6] || "14d")
+      span: String(entry[6] || "14d"),
+      source: "api",
+      observedAt: null
     };
   }
 
@@ -426,8 +427,36 @@ function normalizeResultItem(entry: RawResultItem): ResultItem | null {
     bm: Number(entry.bm || 0),
     sold: Number(entry.sold || 0),
     profit: Number(entry.profit || 0),
-    span: String(entry.span || "14d")
+    span: String(entry.span || "14d"),
+    source: entry.source === "local" ? "local" : "api",
+    observedAt: typeof entry.observedAt === "string" ? entry.observedAt : null
   };
+}
+
+async function loadMarketSnapshotByRegion(region: Region): Promise<DashboardMarketSnapshot | null> {
+  const file = `bm-crafter-${region}.json`;
+  const localHost = typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+  const candidates = localHost
+    ? [`/api/local/${file}`, `/data/${file}`, `./data/${file}`]
+    : [`/data/${file}`, `./data/${file}`];
+
+  for (const candidate of candidates) {
+    try {
+      const response = await fetch(candidate);
+      if (!response.ok) continue;
+      const payload = await response.json();
+      const normalized = normalizeMarketPayload(payload, region);
+      return {
+        generatedAt: normalized.generatedAt,
+        items: normalized.items
+      };
+    } catch {
+      // try next fallback
+    }
+  }
+
+  return null;
 }
 
 async function loadResultsByRegion(region: Region): Promise<ResultItem[]> {
@@ -598,6 +627,7 @@ export function DashboardPage() {
   const [maxCostDraft, setMaxCostDraft] = useSessionState("dash:maxCostDraft", "");
   const [sortBySilver, setSortBySilver] = useSessionState("dash:sortBySilver", false);
   const [searchTerm, setSearchTerm] = useSessionState("dash:searchTerm", "");
+  const [sourceFilter, setSourceFilter] = useSessionState<"all" | "local" | "api">("dash:sourceFilter", "all");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ResultItem[]>([]);
   const [history, setHistory] = useState<Record<string, unknown> | null>(null);
@@ -825,10 +855,16 @@ export function DashboardPage() {
     setLoading(true);
     Promise.all([
       loadResultsByRegion(region),
-      loadHistoryWithFallback()
-    ]).then(([items, hist]) => {
-      setResults(items);
+      loadHistoryWithFallback(),
+      loadMarketSnapshotByRegion(region)
+    ]).then(([items, hist, market]) => {
+      setResults(mergeDashboardResults(items, market));
       setHistory(hist);
+      const localTimes = market?.items
+        .filter((item) => item.source === "local" && item.observedAt)
+        .map((item) => item.observedAt as string) ?? [];
+      const latestLocal = localTimes.sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null;
+      setDataUpdatedIso(latestLocal ?? market?.generatedAt ?? null);
     }).catch(() => {
       setResults([]);
       setHistory(null);
@@ -840,7 +876,8 @@ export function DashboardPage() {
     const selectedCity = normalizeCity(city);
     const selectedTier = String(tier || "").toUpperCase();
 
-    return results.filter((item) => {
+    const sourceResults = filterDashboardResults(results, sourceFilter);
+    return sourceResults.filter((item) => {
       const profitValue = Number(item.profit || 0);
       const lymValue = Number(item.lym || 0);
       const itemCity = normalizeCity(item.city);
@@ -853,7 +890,7 @@ export function DashboardPage() {
 
       return profitMatch && cityMatch && tierMatch && maxCostMatch;
     });
-  }, [results, minProfit, city, tier, maxCost]);
+  }, [results, sourceFilter, minProfit, city, tier, maxCost]);
 
   const searchSuggestions = useMemo(() => {
     const uniqueNames = new Map<string, string>();
@@ -895,7 +932,7 @@ export function DashboardPage() {
 
   useEffect(() => {
     setVisibleCount(CARD_BATCH_SIZE);
-  }, [cardsItems.length, region, city, tier, minProfit, maxCost, searchTerm, sortBySilver]);
+  }, [cardsItems.length, region, city, tier, sourceFilter, minProfit, maxCost, searchTerm, sortBySilver]);
 
   useEffect(() => {
     const sentinel = cardsSentinelRef.current;
@@ -976,21 +1013,6 @@ export function DashboardPage() {
   }, [history, region, city, range]);
 
   // Real merge-workflow timestamp for the active region (bm-crafter-{region}.json generatedAt).
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(`/data/bm-crafter-${region}.json`);
-        const payload = res.ok ? await res.json() : null;
-        if (cancelled) return;
-        setDataUpdatedIso(payload && typeof payload.generatedAt === "string" ? payload.generatedAt : null);
-      } catch {
-        if (!cancelled) setDataUpdatedIso(null);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [region]);
-
   const chart = useMemo(() => buildChartGeometry(chartSeries.values), [chartSeries.values]);
   const chartStats = useMemo(() => calcStats(chartSeries.values), [chartSeries.values]);
   const stamp = useMemo(() => formatUpdated(dataUpdatedIso), [dataUpdatedIso]);
@@ -1411,6 +1433,14 @@ export function DashboardPage() {
                   <span className="field-label">{t("dashboard.maxCostPerItem")}</span>
                   <input type="number" value={maxCostDraft} onChange={(e) => setMaxCostDraft(e.target.value)} placeholder="100000" />
                 </label>
+                <label className="filter-field">
+                  <span className="field-label">Data Source</span>
+                  <select value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value as "all" | "local" | "api")}>
+                    <option value="all">All sources</option>
+                    <option value="local">Local capture</option>
+                    <option value="api">API snapshot</option>
+                  </select>
+                </label>
                 <div className="filter-actions">
                   <button className="filter-btn filter-btn-primary" type="button" onClick={applyFilters}>{t("dashboard.applyFilter")}</button>
                   <button className="filter-btn filter-btn-secondary" type="button" onClick={() => setSortBySilver(true)}>{t("dashboard.sortSilver")}</button>
@@ -1437,6 +1467,8 @@ export function DashboardPage() {
               <div className="row"><span>{item.city}</span><span className="val">{formatSilver(item.lym, locale)}</span></div>
               <div className="row"><span>{t("common.blackMarket")}</span><span className="val">{formatSilver(item.bm, locale)}</span></div>
               <div className="row"><span>{t("common.sold")}</span><span className="val">{item.sold ?? 0}</span></div>
+              <div className="row"><span>Source</span><span className="val">{item.source === "local" ? "Local capture" : "API snapshot"}</span></div>
+              <div className="row"><span>Observed</span><span className="val">{item.observedAt ? `${formatUpdated(item.observedAt).date} ${formatUpdated(item.observedAt).time}` : "--"}</span></div>
               <div className={`profit ${sortBySilver ? (item.bm - item.lym < 0 ? "negative" : "") : (item.profit < 0 ? "negative" : "")}`.trim()}>
                 {sortBySilver ? `${t("common.profit")}: ${formatSilver(item.bm - item.lym, locale)} ${t("dashboard.silver")}` : `${t("common.profit")}: ${item.profit.toFixed(1)}%`}
                 <span className="span-tag">{item.span || "14d"}</span>

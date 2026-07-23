@@ -122,7 +122,7 @@ npm run build    # production build (with SEO prerender)
 
 ## 🎧 Local Black Market capture
 
-The local .NET server can passively read Black Market traffic through Npcap and overlay fresh local prices before falling back per item to the existing API snapshot. It never commits or pushes automatically. Start capture, refresh the local page manually, and publish only when you explicitly choose to:
+The local .NET server can passively read Black Market traffic through Npcap and overlay fresh local prices on `/dashboard` and `/bm-crafter`, before falling back per item to the existing API snapshot. It never commits or pushes automatically. Start capture, refresh the local page manually, and publish only when you explicitly choose to:
 
 ```powershell
 cd Albion_ProfitChecker
