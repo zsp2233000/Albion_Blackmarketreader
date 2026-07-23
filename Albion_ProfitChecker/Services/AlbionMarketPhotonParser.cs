@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Globalization;
 using System.Text.Json;
-using PhotonPackageParser;
 using AlbionProfitChecker.Models;
 
 namespace AlbionProfitChecker.Services;
 
-public sealed class AlbionMarketPhotonParser : PhotonParser
+public sealed class AlbionMarketPhotonParser : Photon18Parser
 {
     public const byte AuctionGetOffersOperation = 81;
     public const byte AuctionGetRequestsOperation = 82;

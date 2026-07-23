@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using System.Text.Json;
 using AlbionProfitChecker.Models;
 using AlbionProfitChecker.Services;
@@ -33,6 +34,50 @@ public sealed class BlackMarketCaptureTests
         Assert.False(AlbionMarketPhotonParser.TryParseOrder(
             OrderJson(103, "T4_MAIN_SWORD", "3003", 1, 12345, now.AddMinutes(-1)),
             "request", "eu", now, out _, out _));
+    }
+
+    [Fact]
+    public void ParsesProtocol18MarketResponseWithoutUnsupportedTypeErrors()
+    {
+        var now = DateTime.UtcNow;
+        var orders = new List<BlackMarketOrder>();
+        var errors = new List<string>();
+        var parser = new AlbionMarketPhotonParser(
+            () => "asia",
+            orders.Add,
+            errors.Add);
+
+        var payload = Protocol18ResponsePacket(
+            AlbionMarketPhotonParser.AuctionGetOffersOperation,
+            OrderJson(201, "T4_MAIN_SWORD", "3003-Auction2", 2, 12345, now.AddMinutes(20)));
+
+        var exception = Record.Exception(() => parser.ReceivePacket(payload));
+
+        Assert.Null(exception);
+        var order = Assert.Single(orders);
+        Assert.Equal(201, order.OrderId);
+        Assert.Equal("T4_MAIN_SWORD", order.ItemId);
+        Assert.Equal("asia", order.Region);
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    public void ReassemblesFragmentedProtocol18MarketResponse()
+    {
+        var now = DateTime.UtcNow;
+        var orders = new List<BlackMarketOrder>();
+        var parser = new AlbionMarketPhotonParser(() => "asia", orders.Add);
+        var reliablePayload = Protocol18ResponseBody(
+            AlbionMarketPhotonParser.AuctionGetRequestsOperation,
+            OrderJson(202, "T4_MAIN_AXE", "3003", 1, 54321, now.AddMinutes(20)));
+        var split = reliablePayload.Length / 2;
+
+        Assert.True(parser.ReceivePacket(Protocol18FragmentPacket(reliablePayload, 0, split, 77)));
+        Assert.True(parser.ReceivePacket(Protocol18FragmentPacket(reliablePayload, split, reliablePayload.Length - split, 77)));
+
+        var order = Assert.Single(orders);
+        Assert.Equal(202, order.OrderId);
+        Assert.Equal("T4_MAIN_AXE", order.ItemId);
     }
 
     [Fact]
@@ -136,6 +181,95 @@ public sealed class BlackMarketCaptureTests
         Amount = 1,
         Expires = expiry.ToString("O")
     });
+
+    private static byte[] Protocol18ResponsePacket(byte operationCode, string orderJson)
+    {
+        var body = Protocol18ResponseBody(operationCode, orderJson);
+        var commandLength = checked(12 + body.Length);
+        var packet = new List<byte>(12 + commandLength)
+        {
+            0, 0,
+            0,
+            1,
+            0, 0, 0, 0,
+            0, 0, 0, 0
+        };
+        packet.Add(6);
+        packet.Add(0);
+        packet.Add(0);
+        packet.Add(0);
+        var commandLengthBytes = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(commandLengthBytes, checked((uint)commandLength));
+        packet.AddRange(commandLengthBytes);
+        packet.AddRange(new byte[4]);
+        packet.AddRange(body);
+        return packet.ToArray();
+    }
+
+    private static byte[] Protocol18ResponseBody(byte operationCode, string orderJson)
+    {
+        var jsonBytes = System.Text.Encoding.UTF8.GetBytes(orderJson);
+        var response = new List<byte>
+        {
+            operationCode,
+            0,
+            0,
+            71,
+            1
+        };
+        response.AddRange(CompressedUInt32(jsonBytes.Length));
+        response.AddRange(jsonBytes);
+        response.Add(1);
+        response.Add(9);
+        response.Add(138);
+        response.Add(0);
+        return new byte[] { 0, 3 }.Concat(response).ToArray();
+    }
+
+    private static byte[] Protocol18FragmentPacket(byte[] reliablePayload, int offset, int length, int sequence)
+    {
+        var commandLength = checked(12 + 20 + length);
+        var packet = new List<byte>(12 + commandLength)
+        {
+            0, 0,
+            0,
+            1,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            8,
+            0,
+            0,
+            0
+        };
+        AddBigEndian(packet, commandLength);
+        packet.AddRange(new byte[4]);
+        AddBigEndian(packet, sequence);
+        AddBigEndian(packet, 2);
+        AddBigEndian(packet, offset == 0 ? 0 : 1);
+        AddBigEndian(packet, reliablePayload.Length);
+        AddBigEndian(packet, offset);
+        packet.AddRange(reliablePayload.Skip(offset).Take(length));
+        return packet.ToArray();
+    }
+
+    private static void AddBigEndian(List<byte> target, int value)
+    {
+        var bytes = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(bytes, checked((uint)value));
+        target.AddRange(bytes);
+    }
+
+    private static IEnumerable<byte> CompressedUInt32(int value)
+    {
+        var remaining = checked((uint)value);
+        while (remaining >= 0x80)
+        {
+            yield return (byte)(remaining | 0x80);
+            remaining >>= 7;
+        }
+
+        yield return (byte)remaining;
+    }
 
     private static string TempPath() => Path.Combine(Path.GetTempPath(), $"albion-bm-test-{Guid.NewGuid():N}.json");
 
