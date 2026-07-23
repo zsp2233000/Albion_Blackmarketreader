@@ -34,6 +34,7 @@ internal static class Program
     // Verwende das aktuelle Arbeitsverzeichnis, damit ui/public/results.js im Repo geschrieben wird (auch in CI).
     private static readonly string BaseDir = Directory.GetCurrentDirectory();
     private static readonly string UiDir = Path.Combine(BaseDir, "ui");
+    private static readonly string UiDistDir = Path.Combine(UiDir, "dist");
     private static readonly string PublicDir = Path.Combine(UiDir, "public");
     private static readonly string PictureDir = Path.Combine(BaseDir, "picture");
     private static readonly string ProgressPath = Path.Combine(UiDir, "progress.json");
@@ -114,10 +115,18 @@ internal static class Program
 
     private static async Task RunServerAsync(Options options)
     {
+        var uiEntryPath = Path.Combine(UiDistDir, "index.html");
+        if (!File.Exists(uiEntryPath))
+        {
+            Console.WriteLine($"Frontend build missing: {uiEntryPath}");
+            Console.WriteLine("Run 'cd ui; npm install; npm run build' and start the server again.");
+            return;
+        }
+
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
             ContentRootPath = BaseDir,
-            WebRootPath = UiDir
+            WebRootPath = UiDistDir
         });
 
         builder.WebHost.UseUrls("http://localhost:5173");
@@ -125,7 +134,8 @@ internal static class Program
         var app = builder.Build();
 
         app.UseDefaultFiles();
-        app.UseStaticFiles(); // ui/*
+        // Serve mutable files (env.js, results.js and data) first so a local
+        // pipeline run is visible immediately without rebuilding the bundle.
         if (Directory.Exists(PublicDir))
         {
             app.UseStaticFiles(new StaticFileOptions
@@ -134,6 +144,7 @@ internal static class Program
                 RequestPath = ""
             });
         }
+        app.UseStaticFiles(); // ui/dist/*
         if (Directory.Exists(PictureDir))
         {
             app.UseStaticFiles(new StaticFileOptions

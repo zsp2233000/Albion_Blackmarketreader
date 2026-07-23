@@ -112,6 +112,15 @@ npm test         # run the Vitest suite
 npm run build    # production build (with SEO prerender)
 ```
 
+The local .NET server serves this production build from `ui/dist`. After a fresh checkout, build the UI once before starting it:
+
+```powershell
+cd Albion_ProfitChecker/ui
+npm install
+npm run build
+cd ../..
+```
+
 ---
 
 ## 📈 Data Sync
