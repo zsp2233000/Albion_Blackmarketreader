@@ -33,6 +33,7 @@ public sealed class BlackMarketCaptureService : IDisposable
         _orderBook = orderBook;
         _deviceSelector = string.IsNullOrWhiteSpace(deviceSelector) ? null : deviceSelector.Trim();
         _manualRegion = BlackMarketCaptureConstants.NormalizeRegion(manualRegion);
+        _activeRegion = _manualRegion;
         Enabled = enabled;
         _log = log;
         _parser = new AlbionMarketPhotonParser(() => _activeRegion, OnOrder, SetParseError);
@@ -52,6 +53,7 @@ public sealed class BlackMarketCaptureService : IDisposable
                     _device?.Name,
                     _detectedRegion,
                     _manualRegion,
+                    _activeRegion,
                     _lastPacketAtUtc,
                     _lastOrderAtUtc,
                     Interlocked.Read(ref _capturedPacketCount),
@@ -169,11 +171,10 @@ public sealed class BlackMarketCaptureService : IDisposable
                 : ipv4Packet?.DestinationAddress ?? ipv6Packet?.DestinationAddress;
             if (remoteAddress is null) return;
             var detectedRegion = DetectRegion(remoteAddress);
-            if (!SelectRegion(detectedRegion)) return;
 
             var payload = udp.PayloadData;
             if (payload is null || payload.Length == 0) return;
-            _parser.ReceivePacket(payload);
+            ProcessCapturedPayload(detectedRegion, payload);
         }
         catch (Exception ex)
         {
@@ -181,32 +182,36 @@ public sealed class BlackMarketCaptureService : IDisposable
         }
     }
 
-    private bool SelectRegion(string? detectedRegion)
+    internal bool SelectRegion(string? detectedRegion)
     {
         lock (_gate)
         {
             if (detectedRegion is not null)
             {
-                if (_detectedRegion is null) _detectedRegion = detectedRegion;
-                if (!string.Equals(_detectedRegion, detectedRegion, StringComparison.OrdinalIgnoreCase))
+                if (_detectedRegion is not null &&
+                    !string.Equals(_detectedRegion, detectedRegion, StringComparison.OrdinalIgnoreCase))
                 {
                     _blocked = true;
                     _lastError = $"Multiple Albion server regions detected: {_detectedRegion}, {detectedRegion}. Capture stopped for safety.";
                     Log(_lastError);
                     return false;
                 }
-                if (_manualRegion is not null && !string.Equals(_manualRegion, detectedRegion, StringComparison.OrdinalIgnoreCase))
-                {
-                    _blocked = true;
-                    _lastError = $"Detected region '{detectedRegion}' does not match manual region '{_manualRegion}'. Capture stopped for safety.";
-                    Log(_lastError);
-                    return false;
-                }
+
+                _detectedRegion ??= detectedRegion;
             }
 
-            _activeRegion = detectedRegion ?? _manualRegion;
+            // An explicitly selected region is authoritative for parsing. Endpoint geolocation
+            // data is advisory and can be stale or wrong for an otherwise valid server address.
+            _activeRegion = _manualRegion ?? _detectedRegion;
             return _activeRegion is not null && !_blocked;
         }
+    }
+
+    internal bool ProcessCapturedPayload(string? detectedRegion, byte[] payload)
+    {
+        if (!SelectRegion(detectedRegion)) return false;
+        _parser.ReceivePacket(payload);
+        return true;
     }
 
     private void OnOrder(BlackMarketOrder order)

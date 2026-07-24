@@ -62,6 +62,54 @@ public sealed class BlackMarketCaptureTests
     }
 
     [Fact]
+    public void ExplicitAsiaCaptureDoesNotRejectAnEndpointClassifiedAsEu()
+    {
+        var path = TempPath();
+        try
+        {
+            var capture = new BlackMarketCaptureService(
+                new BlackMarketOrderBook(new BlackMarketOrderStore(path)),
+                manualRegion: "asia");
+
+            Assert.Equal("asia", capture.Status.ActiveRegion);
+            Assert.True(capture.ProcessCapturedPayload("eu", Protocol18ResponsePacket(
+                AlbionMarketPhotonParser.AuctionGetOffersOperation,
+                OrderJson(301, "T4_MAIN_SWORD", "3003-Auction2", 2, 12345, DateTime.UtcNow.AddMinutes(20)))));
+
+            var status = capture.Status;
+            Assert.Equal("eu", status.DetectedRegion);
+            Assert.Equal("asia", status.ManualRegion);
+            Assert.Equal("asia", status.ActiveRegion);
+            Assert.Equal(1, status.ParsedOrderCount);
+            Assert.NotNull(status.LastOrderAtUtc);
+        }
+        finally
+        {
+            DeleteTempFiles(path);
+        }
+    }
+
+    [Fact]
+    public void StopsWhenEndpointRegionChangesDuringCapture()
+    {
+        var path = TempPath();
+        try
+        {
+            var capture = new BlackMarketCaptureService(
+                new BlackMarketOrderBook(new BlackMarketOrderStore(path)),
+                manualRegion: "asia");
+
+            Assert.True(capture.ProcessCapturedPayload("eu", Array.Empty<byte>()));
+            Assert.False(capture.ProcessCapturedPayload("asia", Array.Empty<byte>()));
+            Assert.Contains("Multiple Albion server regions detected", capture.Status.LastError);
+        }
+        finally
+        {
+            DeleteTempFiles(path);
+        }
+    }
+
+    [Fact]
     public void ReassemblesFragmentedProtocol18MarketResponse()
     {
         var now = DateTime.UtcNow;

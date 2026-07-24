@@ -75,6 +75,7 @@ public sealed record BlackMarketCaptureStatus(
     string? Device,
     string? DetectedRegion,
     string? ManualRegion,
+    string? ActiveRegion,
     DateTime? LastPacketAtUtc,
     DateTime? LastOrderAtUtc,
     long CapturedPacketCount,
