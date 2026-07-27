@@ -1,16 +1,23 @@
 {
-  "generatedAt": "2026-07-26T11:34:30.719Z",
+  "generatedAt": "2026-07-27T13:19:07.654Z",
   "region": "asia",
   "city": "ANY",
-  "count": 614,
+  "count": 938,
   "items": [
     {
       "itemId": "T4_ARTEFACT_2H_CLEAVER_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 2895
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_CLEAVER_HELL",
+      "city": "Brecilien",
+      "price": 4237
     },
     {
       "itemId": "T5_ARTEFACT_2H_CLEAVER_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 9931
     },
     {
       "itemId": "T6_ARTEFACT_2H_CLEAVER_HELL",
@@ -19,8 +26,18 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_CLEAVER_HELL",
-      "city": "Bridgewatch",
-      "price": 9847
+      "city": "Martlock",
+      "price": 8999
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_CLEAVER_HELL",
+      "city": "Fort Sterling",
+      "price": 8995
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_CLEAVER_HELL",
+      "city": "Brecilien",
+      "price": 7944
     },
     {
       "itemId": "T7_ARTEFACT_2H_CLEAVER_HELL",
@@ -28,34 +45,74 @@
       "price": 39924
     },
     {
+      "itemId": "T7_ARTEFACT_2H_CLEAVER_HELL",
+      "city": "Fort Sterling",
+      "price": 24998
+    },
+    {
       "itemId": "T8_ARTEFACT_2H_CLEAVER_HELL",
       "city": "Brecilien",
-      "price": 98700
+      "price": 98699
     },
     {
       "itemId": "T4_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 18453
     },
     {
       "itemId": "T5_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 39986
     },
     {
       "itemId": "T6_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 298865
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 326998
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
+      "city": "Bridgewatch",
+      "price": 299959
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
+      "city": "Brecilien",
+      "price": 100000
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 1555555
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
+      "city": "Bridgewatch",
+      "price": 1899990
     },
     {
       "itemId": "T7_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
       "city": "Brecilien",
-      "price": 1522219
+      "price": 1501976
     },
     {
       "itemId": "T8_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 5400000
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_DUALSCIMITAR_UNDEAD",
+      "city": "Brecilien",
+      "price": 5509859
     },
     {
       "itemId": "T4_ARTEFACT_2H_CLAYMORE_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 16663
     },
     {
       "itemId": "T5_ARTEFACT_2H_CLAYMORE_AVALON",
@@ -63,19 +120,48 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_CLAYMORE_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 54997
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_CLAYMORE_AVALON",
+      "city": "Brecilien",
+      "price": 39969
     },
     {
       "itemId": "T7_ARTEFACT_2H_CLAYMORE_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 167733
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_CLAYMORE_AVALON",
+      "city": "Fort Sterling",
+      "price": 200000
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_CLAYMORE_AVALON",
+      "city": "Bridgewatch",
+      "price": 399986
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_CLAYMORE_AVALON",
+      "city": "Brecilien",
+      "price": 159995
     },
     {
       "itemId": "T8_ARTEFACT_2H_CLAYMORE_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 980000
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_CLAYMORE_AVALON",
+      "city": "Brecilien",
+      "price": 1450000
     },
     {
       "itemId": "T4_ARTEFACT_2H_DUALAXE_KEEPER",
-      "price": 0
+      "city": "Martlock",
+      "price": 105999
     },
     {
       "itemId": "T5_ARTEFACT_2H_DUALAXE_KEEPER",
@@ -83,45 +169,108 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_DUALAXE_KEEPER",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 196969
     },
     {
       "itemId": "T7_ARTEFACT_2H_DUALAXE_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 199996
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_DUALAXE_KEEPER",
+      "city": "Brecilien",
+      "price": 188886
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_DUALAXE_KEEPER",
+      "city": "Fort Sterling",
+      "price": 1499999
     },
     {
       "itemId": "T8_ARTEFACT_2H_DUALAXE_KEEPER",
       "city": "Brecilien",
-      "price": 699999
+      "price": 622222
     },
     {
       "itemId": "T4_ARTEFACT_2H_HALBERD_MORGANA",
-      "city": "Caerleon",
-      "price": 4969
+      "city": "Lymhurst",
+      "price": 286
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Bridgewatch",
+      "price": 149
     },
     {
       "itemId": "T5_ARTEFACT_2H_HALBERD_MORGANA",
-      "city": "Caerleon",
-      "price": 8499
+      "city": "Martlock",
+      "price": 1997
     },
     {
       "itemId": "T6_ARTEFACT_2H_HALBERD_MORGANA",
-      "city": "Caerleon",
-      "price": 9082
+      "city": "Lymhurst",
+      "price": 1884
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Martlock",
+      "price": 2649
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Fort Sterling",
+      "price": 4886
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Thetford",
+      "price": 1200
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Brecilien",
+      "price": 1940
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Lymhurst",
+      "price": 5970
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Fort Sterling",
+      "price": 6950
     },
     {
       "itemId": "T7_ARTEFACT_2H_HALBERD_MORGANA",
       "city": "Brecilien",
-      "price": 7565
+      "price": 7296
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Lymhurst",
+      "price": 32977
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Fort Sterling",
+      "price": 33492
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_HALBERD_MORGANA",
+      "city": "Caerleon",
+      "price": 28036
     },
     {
       "itemId": "T8_ARTEFACT_2H_HALBERD_MORGANA",
       "city": "Brecilien",
-      "price": 27977
+      "price": 27975
     },
     {
       "itemId": "T4_ARTEFACT_2H_SCYTHE_CRYSTAL",
-      "price": 0
+      "city": "Thetford",
+      "price": 249983
     },
     {
       "itemId": "T5_ARTEFACT_2H_SCYTHE_CRYSTAL",
@@ -141,31 +290,38 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_SCYTHE_HELL",
-      "city": "Brecilien",
-      "price": 991
+      "city": "Martlock",
+      "price": 990
     },
     {
       "itemId": "T5_ARTEFACT_2H_SCYTHE_HELL",
-      "city": "Bridgewatch",
-      "price": 4999
+      "city": "Martlock",
+      "price": 5999
     },
     {
       "itemId": "T6_ARTEFACT_2H_SCYTHE_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 23954
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_SCYTHE_HELL",
+      "city": "Brecilien",
+      "price": 8650
     },
     {
       "itemId": "T7_ARTEFACT_2H_SCYTHE_HELL",
-      "price": 0
+      "city": "Brecilien",
+      "price": 29975
     },
     {
       "itemId": "T8_ARTEFACT_2H_SCYTHE_HELL",
-      "city": "Thetford",
-      "price": 199989
+      "city": "Fort Sterling",
+      "price": 104899
     },
     {
       "itemId": "T8_ARTEFACT_2H_SCYTHE_HELL",
       "city": "Brecilien",
-      "price": 98992
+      "price": 98990
     },
     {
       "itemId": "T4_ARTEFACT_2H_AXE_AVALON",
@@ -173,11 +329,28 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_AXE_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 11000
     },
     {
       "itemId": "T6_ARTEFACT_2H_AXE_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 39984
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_AXE_AVALON",
+      "city": "Fort Sterling",
+      "price": 59990
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_AXE_AVALON",
+      "city": "Thetford",
+      "price": 59997
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_AXE_AVALON",
+      "city": "Brecilien",
+      "price": 44965
     },
     {
       "itemId": "T7_ARTEFACT_2H_AXE_AVALON",
@@ -185,8 +358,7 @@
     },
     {
       "itemId": "T8_ARTEFACT_2H_AXE_AVALON",
-      "city": "Brecilien",
-      "price": 339955
+      "price": 0
     },
     {
       "itemId": "T4_ARTEFACT_2H_MACE_MORGANA",
@@ -194,22 +366,23 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_MACE_MORGANA",
-      "city": "Brecilien",
-      "price": 8853
+      "city": "Bridgewatch",
+      "price": 5000
     },
     {
       "itemId": "T6_ARTEFACT_2H_MACE_MORGANA",
-      "city": "Brecilien",
-      "price": 30971
+      "city": "Bridgewatch",
+      "price": 31883
     },
     {
       "itemId": "T7_ARTEFACT_2H_MACE_MORGANA",
-      "city": "Fort Sterling",
-      "price": 98909
+      "city": "Brecilien",
+      "price": 109988
     },
     {
       "itemId": "T8_ARTEFACT_2H_MACE_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 366666
     },
     {
       "itemId": "T4_ARTEFACT_2H_DUALMACE_AVALON",
@@ -221,7 +394,13 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_DUALMACE_AVALON",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 9995
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DUALMACE_AVALON",
+      "city": "Brecilien",
+      "price": 9980
     },
     {
       "itemId": "T7_ARTEFACT_2H_DUALMACE_AVALON",
@@ -229,19 +408,43 @@
     },
     {
       "itemId": "T8_ARTEFACT_2H_DUALMACE_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 116990
     },
     {
       "itemId": "T4_ARTEFACT_2H_DUALHAMMER_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 1943
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_DUALHAMMER_HELL",
+      "city": "Bridgewatch",
+      "price": 799
     },
     {
       "itemId": "T5_ARTEFACT_2H_DUALHAMMER_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 6300
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_DUALHAMMER_HELL",
+      "city": "Thetford",
+      "price": 16622
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_DUALHAMMER_HELL",
+      "city": "Bridgewatch",
+      "price": 5000
     },
     {
       "itemId": "T6_ARTEFACT_2H_DUALHAMMER_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 9942
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DUALHAMMER_HELL",
+      "city": "Brecilien",
+      "price": 9781
     },
     {
       "itemId": "T7_ARTEFACT_2H_DUALHAMMER_HELL",
@@ -250,60 +453,128 @@
     },
     {
       "itemId": "T7_ARTEFACT_2H_DUALHAMMER_HELL",
+      "city": "Fort Sterling",
+      "price": 29666
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_DUALHAMMER_HELL",
       "city": "Brecilien",
-      "price": 27774
+      "price": 27763
     },
     {
       "itemId": "T8_ARTEFACT_2H_DUALHAMMER_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 399989
     },
     {
       "itemId": "T4_ARTEFACT_2H_HAMMER_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 5977
     },
     {
       "itemId": "T5_ARTEFACT_2H_HAMMER_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 9998
     },
     {
       "itemId": "T6_ARTEFACT_2H_HAMMER_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 9871
     },
     {
       "itemId": "T7_ARTEFACT_2H_HAMMER_AVALON",
       "city": "Brecilien",
-      "price": 69979
+      "price": 65995
     },
     {
       "itemId": "T8_ARTEFACT_2H_HAMMER_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 99995
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_HAMMER_AVALON",
+      "city": "Brecilien",
+      "price": 679997
     },
     {
       "itemId": "T4_ARTEFACT_2H_HAMMER_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 169
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Martlock",
+      "price": 140
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 122
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Lymhurst",
+      "price": 605
     },
     {
       "itemId": "T5_ARTEFACT_2H_HAMMER_UNDEAD",
       "city": "Martlock",
-      "price": 904
+      "price": 555
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 452
     },
     {
       "itemId": "T6_ARTEFACT_2H_HAMMER_UNDEAD",
-      "city": "Caerleon",
-      "price": 2998
+      "city": "Lymhurst",
+      "price": 2452
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Martlock",
+      "price": 2883
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 2446
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Brecilien",
+      "price": 94996
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 6669
     },
     {
       "itemId": "T7_ARTEFACT_2H_HAMMER_UNDEAD",
       "city": "Brecilien",
-      "price": 7998
+      "price": 7900
     },
     {
       "itemId": "T8_ARTEFACT_2H_HAMMER_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 34500
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 33817
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_HAMMER_UNDEAD",
+      "city": "Brecilien",
+      "price": 28396
     },
     {
       "itemId": "T4_ARTEFACT_2H_GLAIVE_CRYSTAL",
-      "price": 0
+      "city": "Thetford",
+      "price": 149987
     },
     {
       "itemId": "T5_ARTEFACT_2H_GLAIVE_CRYSTAL",
@@ -323,8 +594,18 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_HARPOON_HELL",
+      "city": "Lymhurst",
+      "price": 1220
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_HARPOON_HELL",
       "city": "Martlock",
-      "price": 888
+      "price": 885
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_HARPOON_HELL",
+      "city": "Brecilien",
+      "price": 820
     },
     {
       "itemId": "T5_ARTEFACT_2H_HARPOON_HELL",
@@ -332,50 +613,77 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_HARPOON_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 8832
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HARPOON_HELL",
+      "city": "Fort Sterling",
+      "price": 8499
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HARPOON_HELL",
+      "city": "Brecilien",
+      "price": 8372
     },
     {
       "itemId": "T7_ARTEFACT_2H_HARPOON_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 45554
     },
     {
       "itemId": "T8_ARTEFACT_2H_HARPOON_HELL",
-      "price": 0
+      "city": "Brecilien",
+      "price": 89897
     },
     {
       "itemId": "T4_ARTEFACT_2H_TRIDENT_UNDEAD",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 4487
     },
     {
       "itemId": "T5_ARTEFACT_2H_TRIDENT_UNDEAD",
       "city": "Bridgewatch",
-      "price": 8799
+      "price": 7997
     },
     {
       "itemId": "T6_ARTEFACT_2H_TRIDENT_UNDEAD",
-      "price": 0
+      "city": "Brecilien",
+      "price": 28268
     },
     {
       "itemId": "T7_ARTEFACT_2H_TRIDENT_UNDEAD",
-      "price": 0
+      "city": "Brecilien",
+      "price": 102960
     },
     {
       "itemId": "T8_ARTEFACT_2H_TRIDENT_UNDEAD",
-      "price": 0
+      "city": "Brecilien",
+      "price": 544439
     },
     {
       "itemId": "T4_ARTEFACT_2H_BOW_KEEPER",
-      "city": "Lymhurst",
-      "price": 100986
-    },
-    {
-      "itemId": "T5_ARTEFACT_2H_BOW_KEEPER",
       "price": 0
     },
     {
+      "itemId": "T5_ARTEFACT_2H_BOW_KEEPER",
+      "city": "Bridgewatch",
+      "price": 100000
+    },
+    {
       "itemId": "T6_ARTEFACT_2H_BOW_KEEPER",
-      "city": "Thetford",
-      "price": 79999
+      "city": "Fort Sterling",
+      "price": 99997
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_BOW_KEEPER",
+      "city": "Bridgewatch",
+      "price": 80996
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_BOW_KEEPER",
+      "city": "Brecilien",
+      "price": 70941
     },
     {
       "itemId": "T7_ARTEFACT_2H_BOW_KEEPER",
@@ -383,70 +691,101 @@
     },
     {
       "itemId": "T8_ARTEFACT_2H_BOW_KEEPER",
-      "city": "Brecilien",
-      "price": 488864
+      "price": 0
     },
     {
       "itemId": "T4_ARTEFACT_2H_BOW_AVALON",
-      "city": "Lymhurst",
-      "price": 34790
+      "city": "Brecilien",
+      "price": 13499
     },
     {
       "itemId": "T5_ARTEFACT_2H_BOW_AVALON",
-      "city": "Lymhurst",
-      "price": 62210
+      "city": "Martlock",
+      "price": 30875
     },
     {
       "itemId": "T5_ARTEFACT_2H_BOW_AVALON",
-      "city": "Fort Sterling",
-      "price": 30000
+      "city": "Brecilien",
+      "price": 19101
     },
     {
       "itemId": "T6_ARTEFACT_2H_BOW_AVALON",
       "city": "Lymhurst",
-      "price": 37989
+      "price": 37985
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_BOW_AVALON",
+      "city": "Bridgewatch",
+      "price": 28998
     },
     {
       "itemId": "T6_ARTEFACT_2H_BOW_AVALON",
       "city": "Brecilien",
-      "price": 19999
+      "price": 26111
     },
     {
       "itemId": "T7_ARTEFACT_2H_BOW_AVALON",
-      "city": "Lymhurst",
-      "price": 47000
+      "city": "Martlock",
+      "price": 33299
     },
     {
       "itemId": "T7_ARTEFACT_2H_BOW_AVALON",
       "city": "Brecilien",
-      "price": 40927
+      "price": 35553
     },
     {
       "itemId": "T8_ARTEFACT_2H_BOW_AVALON",
-      "city": "Lymhurst",
-      "price": 230000
+      "city": "Fort Sterling",
+      "price": 188863
     },
     {
-      "itemId": "T4_ARTEFACT_2H_BOW_HELL",
-      "city": "Bridgewatch",
-      "price": 1037
-    },
-    {
-      "itemId": "T4_ARTEFACT_2H_BOW_HELL",
+      "itemId": "T8_ARTEFACT_2H_BOW_AVALON",
       "city": "Brecilien",
-      "price": 818
+      "price": 165984
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_BOW_HELL",
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_2H_BOW_HELL",
-      "price": 0
+      "city": "Thetford",
+      "price": 18884
     },
     {
       "itemId": "T6_ARTEFACT_2H_BOW_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 8908
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_BOW_HELL",
+      "city": "Martlock",
+      "price": 8000
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_BOW_HELL",
+      "city": "Fort Sterling",
+      "price": 9997
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_BOW_HELL",
+      "city": "Bridgewatch",
+      "price": 9866
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_BOW_HELL",
+      "city": "Brecilien",
+      "price": 8396
     },
     {
       "itemId": "T7_ARTEFACT_2H_BOW_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 30800
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_BOW_HELL",
+      "city": "Brecilien",
+      "price": 30000
     },
     {
       "itemId": "T8_ARTEFACT_2H_BOW_HELL",
@@ -455,35 +794,82 @@
     {
       "itemId": "T4_ARTEFACT_2H_LONGBOW_UNDEAD",
       "city": "Lymhurst",
-      "price": 343
+      "price": 333
     },
     {
       "itemId": "T4_ARTEFACT_2H_LONGBOW_UNDEAD",
-      "city": "Fort Sterling",
-      "price": 136
+      "city": "Bridgewatch",
+      "price": 47
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Caerleon",
+      "price": 215
     },
     {
       "itemId": "T4_ARTEFACT_2H_LONGBOW_UNDEAD",
       "city": "Brecilien",
-      "price": 82
+      "price": 63
     },
     {
       "itemId": "T5_ARTEFACT_2H_LONGBOW_UNDEAD",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 392
     },
     {
       "itemId": "T6_ARTEFACT_2H_LONGBOW_UNDEAD",
       "city": "Lymhurst",
-      "price": 1869
+      "price": 1841
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 1498
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Thetford",
+      "price": 2454
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Brecilien",
+      "price": 1896
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Lymhurst",
+      "price": 6139
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Martlock",
+      "price": 6000
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 6236
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Caerleon",
+      "price": 4000
     },
     {
       "itemId": "T7_ARTEFACT_2H_LONGBOW_UNDEAD",
       "city": "Brecilien",
-      "price": 7134
+      "price": 6500
     },
     {
       "itemId": "T8_ARTEFACT_2H_LONGBOW_UNDEAD",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 39895
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_LONGBOW_UNDEAD",
+      "city": "Brecilien",
+      "price": 27994
     },
     {
       "itemId": "T4_ARTEFACT_2H_DUALCROSSBOW_HELL",
@@ -491,72 +877,112 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_DUALCROSSBOW_HELL",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 7998
     },
     {
       "itemId": "T6_ARTEFACT_2H_DUALCROSSBOW_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 9497
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DUALCROSSBOW_HELL",
+      "city": "Fort Sterling",
+      "price": 7998
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DUALCROSSBOW_HELL",
+      "city": "Bridgewatch",
+      "price": 7999
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DUALCROSSBOW_HELL",
+      "city": "Brecilien",
+      "price": 9848
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_DUALCROSSBOW_HELL",
+      "city": "Lymhurst",
+      "price": 30800
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_DUALCROSSBOW_HELL",
+      "city": "Fort Sterling",
+      "price": 32453
     },
     {
       "itemId": "T7_ARTEFACT_2H_DUALCROSSBOW_HELL",
       "city": "Brecilien",
-      "price": 28799
+      "price": 28789
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_DUALCROSSBOW_HELL",
+      "city": "Lymhurst",
+      "price": 109977
     },
     {
       "itemId": "T8_ARTEFACT_2H_DUALCROSSBOW_HELL",
       "city": "Brecilien",
-      "price": 99880
+      "price": 75555
     },
     {
       "itemId": "T4_ARTEFACT_2H_CROSSBOW_CANNON_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 39999
     },
     {
       "itemId": "T5_ARTEFACT_2H_CROSSBOW_CANNON_AVALON",
-      "city": "Fort Sterling",
-      "price": 16938
-    },
-    {
-      "itemId": "T5_ARTEFACT_2H_CROSSBOW_CANNON_AVALON",
-      "city": "Brecilien",
-      "price": 7177
+      "city": "Bridgewatch",
+      "price": 17100
     },
     {
       "itemId": "T6_ARTEFACT_2H_CROSSBOW_CANNON_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 14598
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_CROSSBOW_CANNON_AVALON",
+      "city": "Brecilien",
+      "price": 14854
     },
     {
       "itemId": "T7_ARTEFACT_2H_CROSSBOW_CANNON_AVALON",
       "city": "Brecilien",
-      "price": 42219
+      "price": 39999
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_CROSSBOW_CANNON_AVALON",
+      "city": "Fort Sterling",
+      "price": 1149999
     },
     {
       "itemId": "T8_ARTEFACT_2H_CROSSBOW_CANNON_AVALON",
       "city": "Brecilien",
-      "price": 1099739
+      "price": 999997
     },
     {
       "itemId": "T4_ARTEFACT_2H_CROSSBOWLARGE_MORGANA",
-      "price": 0
-    },
-    {
-      "itemId": "T5_ARTEFACT_2H_CROSSBOWLARGE_MORGANA",
-      "city": "Martlock",
-      "price": 10334
+      "city": "Lymhurst",
+      "price": 5685
     },
     {
       "itemId": "T5_ARTEFACT_2H_CROSSBOWLARGE_MORGANA",
       "city": "Bridgewatch",
-      "price": 8927
+      "price": 8906
     },
     {
       "itemId": "T6_ARTEFACT_2H_CROSSBOWLARGE_MORGANA",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 32798
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_CROSSBOWLARGE_MORGANA",
+      "city": "Brecilien",
+      "price": 31875
     },
     {
       "itemId": "T7_ARTEFACT_2H_CROSSBOWLARGE_MORGANA",
-      "city": "Brecilien",
-      "price": 138884
+      "price": 0
     },
     {
       "itemId": "T8_ARTEFACT_2H_CROSSBOWLARGE_MORGANA",
@@ -564,32 +990,73 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
+      "city": "Bridgewatch",
+      "price": 88
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
+      "city": "Caerleon",
+      "price": 323
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
       "city": "Martlock",
-      "price": 112
+      "price": 375
     },
     {
       "itemId": "T5_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
       "city": "Thetford",
-      "price": 439
+      "price": 436
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
+      "city": "Bridgewatch",
+      "price": 295
     },
     {
       "itemId": "T6_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
-      "city": "Thetford",
-      "price": 1649
+      "city": "Lymhurst",
+      "price": 1493
     },
     {
       "itemId": "T6_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
-      "city": "Caerleon",
-      "price": 5583
+      "city": "Fort Sterling",
+      "price": 1795
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
+      "city": "Brecilien",
+      "price": 1795
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
+      "city": "Lymhurst",
+      "price": 5953
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 7694
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
+      "city": "Bridgewatch",
+      "price": 5885
     },
     {
       "itemId": "T7_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
       "city": "Brecilien",
-      "price": 8111
+      "price": 8042
     },
     {
       "itemId": "T8_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 33170
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_REPEATINGCROSSBOW_UNDEAD",
+      "city": "Brecilien",
+      "price": 27997
     },
     {
       "itemId": "T4_ARTEFACT_2H_DAGGER_KATAR_AVALON",
@@ -601,19 +1068,38 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_DAGGER_KATAR_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 33285
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DAGGER_KATAR_AVALON",
+      "city": "Fort Sterling",
+      "price": 8998
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DAGGER_KATAR_AVALON",
+      "city": "Bridgewatch",
+      "price": 9999
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_DAGGER_KATAR_AVALON",
+      "city": "Brecilien",
+      "price": 11111
     },
     {
       "itemId": "T7_ARTEFACT_2H_DAGGER_KATAR_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 32980
     },
     {
       "itemId": "T8_ARTEFACT_2H_DAGGER_KATAR_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 267895
     },
     {
       "itemId": "T4_ARTEFACT_2H_DAGGERPAIR_CRYSTAL",
-      "price": 0
+      "city": "Thetford",
+      "price": 300000
     },
     {
       "itemId": "T5_ARTEFACT_2H_DAGGERPAIR_CRYSTAL",
@@ -633,7 +1119,8 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_ARCANESTAFF_CRYSTAL",
-      "price": 0
+      "city": "Thetford",
+      "price": 88974
     },
     {
       "itemId": "T5_ARTEFACT_2H_ARCANESTAFF_CRYSTAL",
@@ -661,12 +1148,18 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_ARCANE_RINGPAIR_AVALON",
-      "city": "Thetford",
-      "price": 8482
+      "city": "Fort Sterling",
+      "price": 9419
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ARCANE_RINGPAIR_AVALON",
+      "city": "Brecilien",
+      "price": 14997
     },
     {
       "itemId": "T7_ARTEFACT_2H_ARCANE_RINGPAIR_AVALON",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 19999
     },
     {
       "itemId": "T8_ARTEFACT_2H_ARCANE_RINGPAIR_AVALON",
@@ -674,13 +1167,8 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_ENIGMATICORB_MORGANA",
-      "city": "Martlock",
-      "price": 5862
-    },
-    {
-      "itemId": "T4_ARTEFACT_2H_ENIGMATICORB_MORGANA",
       "city": "Fort Sterling",
-      "price": 6818
+      "price": 6817
     },
     {
       "itemId": "T5_ARTEFACT_2H_ENIGMATICORB_MORGANA",
@@ -688,11 +1176,13 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_ENIGMATICORB_MORGANA",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 32000
     },
     {
       "itemId": "T7_ARTEFACT_2H_ENIGMATICORB_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 99956
     },
     {
       "itemId": "T8_ARTEFACT_2H_ENIGMATICORB_MORGANA",
@@ -700,7 +1190,13 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_ARCANESTAFF_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 1991
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_ARCANESTAFF_HELL",
+      "city": "Bridgewatch",
+      "price": 1992
     },
     {
       "itemId": "T5_ARTEFACT_2H_ARCANESTAFF_HELL",
@@ -708,20 +1204,38 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_ARCANESTAFF_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 9421
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ARCANESTAFF_HELL",
+      "city": "Fort Sterling",
+      "price": 9736
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ARCANESTAFF_HELL",
+      "city": "Bridgewatch",
+      "price": 8489
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ARCANESTAFF_HELL",
+      "city": "Brecilien",
+      "price": 8962
     },
     {
       "itemId": "T7_ARTEFACT_2H_ARCANESTAFF_HELL",
-      "price": 0
+      "city": "Brecilien",
+      "price": 54986
     },
     {
       "itemId": "T8_ARTEFACT_2H_ARCANESTAFF_HELL",
       "city": "Brecilien",
-      "price": 97585
+      "price": 97583
     },
     {
       "itemId": "T4_ARTEFACT_2H_SKULLORB_HELL",
-      "price": 0
+      "city": "Thetford",
+      "price": 1104
     },
     {
       "itemId": "T5_ARTEFACT_2H_SKULLORB_HELL",
@@ -729,68 +1243,121 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_SKULLORB_HELL",
-      "city": "Bridgewatch",
-      "price": 9530
+      "city": "Lymhurst",
+      "price": 5764
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_SKULLORB_HELL",
+      "city": "Fort Sterling",
+      "price": 9844
     },
     {
       "itemId": "T6_ARTEFACT_2H_SKULLORB_HELL",
       "city": "Brecilien",
-      "price": 9919
+      "price": 9750
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_SKULLORB_HELL",
+      "city": "Lymhurst",
+      "price": 28882
     },
     {
       "itemId": "T7_ARTEFACT_2H_SKULLORB_HELL",
       "city": "Brecilien",
-      "price": 30498
+      "price": 29999
     },
     {
       "itemId": "T8_ARTEFACT_2H_SKULLORB_HELL",
       "city": "Brecilien",
-      "price": 93995
+      "price": 93993
     },
     {
       "itemId": "T4_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
-      "city": "Lymhurst",
-      "price": 4996
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
-      "city": "Lymhurst",
-      "price": 9941
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 77758
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
+      "city": "Fort Sterling",
+      "price": 32993
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
+      "city": "Bridgewatch",
+      "price": 32998
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
+      "city": "Brecilien",
+      "price": 32893
     },
     {
       "itemId": "T7_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 95000
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
+      "city": "Brecilien",
+      "price": 98399
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
+      "city": "Thetford",
+      "price": 383998
     },
     {
       "itemId": "T8_ARTEFACT_2H_CURSEDSTAFF_MORGANA",
       "city": "Brecilien",
-      "price": 319999
+      "price": 319998
     },
     {
       "itemId": "T4_ARTEFACT_2H_INFERNOSTAFF_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 75658
     },
     {
       "itemId": "T5_ARTEFACT_2H_INFERNOSTAFF_MORGANA",
-      "city": "Lymhurst",
-      "price": 65980
+      "city": "Thetford",
+      "price": 72996
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_INFERNOSTAFF_MORGANA",
+      "city": "Bridgewatch",
+      "price": 64476
     },
     {
       "itemId": "T6_ARTEFACT_2H_INFERNOSTAFF_MORGANA",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 77997
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_INFERNOSTAFF_MORGANA",
+      "city": "Brecilien",
+      "price": 61105
     },
     {
       "itemId": "T7_ARTEFACT_2H_INFERNOSTAFF_MORGANA",
       "city": "Brecilien",
-      "price": 99932
+      "price": 99931
     },
     {
       "itemId": "T8_ARTEFACT_2H_INFERNOSTAFF_MORGANA",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 299900
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_INFERNOSTAFF_MORGANA",
+      "city": "Brecilien",
+      "price": 359989
     },
     {
       "itemId": "T4_ARTEFACT_2H_FIRESTAFF_HELL",
@@ -798,19 +1365,43 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_FIRESTAFF_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 5889
     },
     {
       "itemId": "T6_ARTEFACT_2H_FIRESTAFF_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 9993
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_FIRESTAFF_HELL",
+      "city": "Bridgewatch",
+      "price": 8687
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_FIRESTAFF_HELL",
+      "city": "Brecilien",
+      "price": 8491
     },
     {
       "itemId": "T7_ARTEFACT_2H_FIRESTAFF_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 27200
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_FIRESTAFF_HELL",
+      "city": "Brecilien",
+      "price": 29996
     },
     {
       "itemId": "T8_ARTEFACT_2H_FIRESTAFF_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 308041
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_FIRESTAFF_HELL",
+      "city": "Brecilien",
+      "price": 115000
     },
     {
       "itemId": "T4_ARTEFACT_2H_FIRE_RINGPAIR_AVALON",
@@ -822,20 +1413,23 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_FIRE_RINGPAIR_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 8998
     },
     {
       "itemId": "T7_ARTEFACT_2H_FIRE_RINGPAIR_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 40000
     },
     {
       "itemId": "T8_ARTEFACT_2H_FIRE_RINGPAIR_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 134970
     },
     {
       "itemId": "T4_ARTEFACT_2H_FROSTSTAFF_CRYSTAL",
-      "city": "Martlock",
-      "price": 248888
+      "city": "Thetford",
+      "price": 174956
     },
     {
       "itemId": "T5_ARTEFACT_2H_FROSTSTAFF_CRYSTAL",
@@ -843,7 +1437,8 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_FROSTSTAFF_CRYSTAL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 550000
     },
     {
       "itemId": "T7_ARTEFACT_2H_FROSTSTAFF_CRYSTAL",
@@ -859,26 +1454,38 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_ICECRYSTAL_UNDEAD",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 10000
     },
     {
       "itemId": "T6_ARTEFACT_2H_ICECRYSTAL_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 38975
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ICECRYSTAL_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 34888
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ICECRYSTAL_UNDEAD",
+      "city": "Bridgewatch",
+      "price": 32205
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ICECRYSTAL_UNDEAD",
+      "city": "Brecilien",
+      "price": 32987
     },
     {
       "itemId": "T7_ARTEFACT_2H_ICECRYSTAL_UNDEAD",
       "city": "Brecilien",
-      "price": 129975
+      "price": 129971
     },
     {
       "itemId": "T8_ARTEFACT_2H_ICECRYSTAL_UNDEAD",
       "city": "Brecilien",
       "price": 400000
-    },
-    {
-      "itemId": "T4_ARTEFACT_2H_HOLYSTAFF_HELL",
-      "city": "Martlock",
-      "price": 896
     },
     {
       "itemId": "T4_ARTEFACT_2H_HOLYSTAFF_HELL",
@@ -891,18 +1498,28 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_HOLYSTAFF_HELL",
+      "city": "Lymhurst",
+      "price": 14848
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_HOLYSTAFF_HELL",
       "city": "Fort Sterling",
-      "price": 20995
+      "price": 14998
     },
     {
       "itemId": "T6_ARTEFACT_2H_HOLYSTAFF_HELL",
       "city": "Brecilien",
-      "price": 7548
+      "price": 9797
     },
     {
       "itemId": "T7_ARTEFACT_2H_HOLYSTAFF_HELL",
-      "city": "Brecilien",
-      "price": 38887
+      "city": "Fort Sterling",
+      "price": 42174
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_HOLYSTAFF_HELL",
+      "city": "Bridgewatch",
+      "price": 99989
     },
     {
       "itemId": "T8_ARTEFACT_2H_HOLYSTAFF_HELL",
@@ -911,25 +1528,42 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_NATURESTAFF_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 1172
     },
     {
       "itemId": "T5_ARTEFACT_2H_NATURESTAFF_HELL",
-      "city": "Bridgewatch",
-      "price": 3799
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_2H_NATURESTAFF_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 7998
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_NATURESTAFF_HELL",
+      "city": "Brecilien",
+      "price": 8175
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_NATURESTAFF_HELL",
+      "city": "Lymhurst",
+      "price": 29500
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_NATURESTAFF_HELL",
+      "city": "Fort Sterling",
+      "price": 31961
     },
     {
       "itemId": "T7_ARTEFACT_2H_NATURESTAFF_HELL",
       "city": "Brecilien",
-      "price": 28497
+      "price": 28494
     },
     {
       "itemId": "T8_ARTEFACT_2H_NATURESTAFF_HELL",
-      "price": 0
+      "city": "Brecilien",
+      "price": 99499
     },
     {
       "itemId": "T4_ARTEFACT_2H_NATURESTAFF_KEEPER",
@@ -937,32 +1571,63 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_NATURESTAFF_KEEPER",
+      "city": "Martlock",
+      "price": 10993
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_NATURESTAFF_KEEPER",
+      "city": "Bridgewatch",
+      "price": 8991
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_NATURESTAFF_KEEPER",
       "city": "Brecilien",
-      "price": 8798
+      "price": 8792
     },
     {
       "itemId": "T6_ARTEFACT_2H_NATURESTAFF_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 33538
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_NATURESTAFF_KEEPER",
+      "city": "Brecilien",
+      "price": 34000
     },
     {
       "itemId": "T7_ARTEFACT_2H_NATURESTAFF_KEEPER",
       "city": "Brecilien",
-      "price": 97774
+      "price": 97486
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_NATURESTAFF_KEEPER",
+      "city": "Lymhurst",
+      "price": 399000
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_NATURESTAFF_KEEPER",
+      "city": "Fort Sterling",
+      "price": 399990
     },
     {
       "itemId": "T8_ARTEFACT_2H_NATURESTAFF_KEEPER",
       "city": "Brecilien",
-      "price": 558846
+      "price": 558845
     },
     {
       "itemId": "T4_ARTEFACT_2H_COMBATSTAFF_MORGANA",
       "city": "Lymhurst",
-      "price": 160
+      "price": 150
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_COMBATSTAFF_MORGANA",
+      "city": "Fort Sterling",
+      "price": 114
     },
     {
       "itemId": "T4_ARTEFACT_2H_COMBATSTAFF_MORGANA",
       "city": "Thetford",
-      "price": 207
+      "price": 189
     },
     {
       "itemId": "T4_ARTEFACT_2H_COMBATSTAFF_MORGANA",
@@ -971,27 +1636,48 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_COMBATSTAFF_MORGANA",
-      "city": "Caerleon",
-      "price": 495
+      "city": "Brecilien",
+      "price": 70
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_COMBATSTAFF_MORGANA",
+      "city": "Martlock",
+      "price": 1201
     },
     {
       "itemId": "T5_ARTEFACT_2H_COMBATSTAFF_MORGANA",
       "city": "Bridgewatch",
-      "price": 395
+      "price": 387
     },
     {
       "itemId": "T6_ARTEFACT_2H_COMBATSTAFF_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 2460
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_COMBATSTAFF_MORGANA",
+      "city": "Martlock",
+      "price": 1991
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_COMBATSTAFF_MORGANA",
+      "city": "Fort Sterling",
+      "price": 2129
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_COMBATSTAFF_MORGANA",
+      "city": "Brecilien",
+      "price": 9896
     },
     {
       "itemId": "T7_ARTEFACT_2H_COMBATSTAFF_MORGANA",
-      "city": "Lymhurst",
-      "price": 5973
+      "city": "Fort Sterling",
+      "price": 6405
     },
     {
       "itemId": "T7_ARTEFACT_2H_COMBATSTAFF_MORGANA",
       "city": "Brecilien",
-      "price": 6617
+      "price": 5998
     },
     {
       "itemId": "T8_ARTEFACT_2H_COMBATSTAFF_MORGANA",
@@ -1000,8 +1686,18 @@
     },
     {
       "itemId": "T8_ARTEFACT_2H_COMBATSTAFF_MORGANA",
+      "city": "Fort Sterling",
+      "price": 33986
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_COMBATSTAFF_MORGANA",
+      "city": "Caerleon",
+      "price": 28000
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_COMBATSTAFF_MORGANA",
       "city": "Brecilien",
-      "price": 28057
+      "price": 28047
     },
     {
       "itemId": "T4_ARTEFACT_2H_QUARTERSTAFF_AVALON",
@@ -1009,7 +1705,8 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_QUARTERSTAFF_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 7996
     },
     {
       "itemId": "T6_ARTEFACT_2H_QUARTERSTAFF_AVALON",
@@ -1017,51 +1714,63 @@
     },
     {
       "itemId": "T7_ARTEFACT_2H_QUARTERSTAFF_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 14799
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_QUARTERSTAFF_AVALON",
+      "city": "Brecilien",
+      "price": 22198
     },
     {
       "itemId": "T8_ARTEFACT_2H_QUARTERSTAFF_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 135590
     },
     {
       "itemId": "T4_ARTEFACT_2H_TWINSCYTHE_HELL",
-      "city": "Caerleon",
-      "price": 3333
-    },
-    {
-      "itemId": "T4_ARTEFACT_2H_TWINSCYTHE_HELL",
-      "city": "Brecilien",
-      "price": 1162
+      "city": "Martlock",
+      "price": 3884
     },
     {
       "itemId": "T5_ARTEFACT_2H_TWINSCYTHE_HELL",
-      "city": "Caerleon",
-      "price": 22218
+      "city": "Martlock",
+      "price": 4655
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_TWINSCYTHE_HELL",
+      "city": "Fort Sterling",
+      "price": 2399
     },
     {
       "itemId": "T6_ARTEFACT_2H_TWINSCYTHE_HELL",
-      "city": "Caerleon",
-      "price": 9900
+      "city": "Lymhurst",
+      "price": 9960
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_TWINSCYTHE_HELL",
+      "city": "Fort Sterling",
+      "price": 8999
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_TWINSCYTHE_HELL",
+      "city": "Brecilien",
+      "price": 8285
     },
     {
       "itemId": "T7_ARTEFACT_2H_TWINSCYTHE_HELL",
-      "city": "Caerleon",
-      "price": 38000
+      "city": "Fort Sterling",
+      "price": 28977
     },
     {
-      "itemId": "T8_ARTEFACT_2H_TWINSCYTHE_HELL",
-      "city": "Thetford",
-      "price": 95000
-    },
-    {
-      "itemId": "T8_ARTEFACT_2H_TWINSCYTHE_HELL",
-      "city": "Caerleon",
-      "price": 199996
+      "itemId": "T7_ARTEFACT_2H_TWINSCYTHE_HELL",
+      "city": "Brecilien",
+      "price": 28000
     },
     {
       "itemId": "T8_ARTEFACT_2H_TWINSCYTHE_HELL",
       "city": "Brecilien",
-      "price": 199999
+      "price": 199995
     },
     {
       "itemId": "T4_ARTEFACT_2H_ROCKSTAFF_KEEPER",
@@ -1073,16 +1782,23 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_ROCKSTAFF_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 29882
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ROCKSTAFF_KEEPER",
+      "city": "Brecilien",
+      "price": 29966
     },
     {
       "itemId": "T7_ARTEFACT_2H_ROCKSTAFF_KEEPER",
       "city": "Brecilien",
-      "price": 117874
+      "price": 109996
     },
     {
       "itemId": "T8_ARTEFACT_2H_ROCKSTAFF_KEEPER",
-      "price": 0
+      "city": "Brecilien",
+      "price": 599999
     },
     {
       "itemId": "T4_ARTEFACT_2H_KNUCKLES_AVALON",
@@ -1090,16 +1806,28 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_KNUCKLES_AVALON",
-      "price": 0
+      "city": "Martlock",
+      "price": 12999
     },
     {
       "itemId": "T6_ARTEFACT_2H_KNUCKLES_AVALON",
       "city": "Fort Sterling",
-      "price": 10000
+      "price": 12994
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_KNUCKLES_AVALON",
+      "city": "Brecilien",
+      "price": 9982
     },
     {
       "itemId": "T7_ARTEFACT_2H_KNUCKLES_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 29350
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_KNUCKLES_AVALON",
+      "city": "Lymhurst",
+      "price": 109080
     },
     {
       "itemId": "T8_ARTEFACT_2H_KNUCKLES_AVALON",
@@ -1108,32 +1836,42 @@
     },
     {
       "itemId": "T4_ARTEFACT_2H_KNUCKLES_HELL",
-      "city": "Fort Sterling",
-      "price": 852
-    },
-    {
-      "itemId": "T4_ARTEFACT_2H_KNUCKLES_HELL",
-      "city": "Brecilien",
-      "price": 995
-    },
-    {
-      "itemId": "T5_ARTEFACT_2H_KNUCKLES_HELL",
       "price": 0
     },
     {
+      "itemId": "T5_ARTEFACT_2H_KNUCKLES_HELL",
+      "city": "Martlock",
+      "price": 2999
+    },
+    {
       "itemId": "T6_ARTEFACT_2H_KNUCKLES_HELL",
-      "city": "Thetford",
-      "price": 11072
+      "city": "Brecilien",
+      "price": 8698
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_KNUCKLES_HELL",
+      "city": "Lymhurst",
+      "price": 30985
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_KNUCKLES_HELL",
+      "city": "Fort Sterling",
+      "price": 13000
     },
     {
       "itemId": "T7_ARTEFACT_2H_KNUCKLES_HELL",
       "city": "Brecilien",
-      "price": 29857
+      "price": 29000
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_KNUCKLES_HELL",
+      "city": "Lymhurst",
+      "price": 109975
     },
     {
       "itemId": "T8_ARTEFACT_2H_KNUCKLES_HELL",
       "city": "Brecilien",
-      "price": 101984
+      "price": 99999
     },
     {
       "itemId": "T4_ARTEFACT_2H_ICEGAUNTLETS_HELL",
@@ -1146,15 +1884,38 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_ICEGAUNTLETS_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 8978
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ICEGAUNTLETS_HELL",
+      "city": "Fort Sterling",
+      "price": 9400
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_ICEGAUNTLETS_HELL",
+      "city": "Brecilien",
+      "price": 8991
     },
     {
       "itemId": "T7_ARTEFACT_2H_ICEGAUNTLETS_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 20000
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_ICEGAUNTLETS_HELL",
+      "city": "Brecilien",
+      "price": 31963
     },
     {
       "itemId": "T8_ARTEFACT_2H_ICEGAUNTLETS_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 107192
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_ICEGAUNTLETS_HELL",
+      "city": "Brecilien",
+      "price": 97993
     },
     {
       "itemId": "T4_ARTEFACT_2H_KNUCKLES_MORGANA",
@@ -1162,29 +1923,63 @@
     },
     {
       "itemId": "T5_ARTEFACT_2H_KNUCKLES_MORGANA",
-      "price": 0
+      "city": "Martlock",
+      "price": 11978
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_KNUCKLES_MORGANA",
+      "city": "Bridgewatch",
+      "price": 9779
     },
     {
       "itemId": "T6_ARTEFACT_2H_KNUCKLES_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 32892
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_KNUCKLES_MORGANA",
+      "city": "Brecilien",
+      "price": 29997
     },
     {
       "itemId": "T7_ARTEFACT_2H_KNUCKLES_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 98991
     },
     {
       "itemId": "T8_ARTEFACT_2H_KNUCKLES_MORGANA",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 410000
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_KNUCKLES_MORGANA",
+      "city": "Brecilien",
+      "price": 479999
     },
     {
       "itemId": "T4_ARTEFACT_2H_KNUCKLES_KEEPER",
       "city": "Lymhurst",
-      "price": 134
+      "price": 129
     },
     {
       "itemId": "T4_ARTEFACT_2H_KNUCKLES_KEEPER",
-      "city": "Bridgewatch",
-      "price": 2675
+      "city": "Martlock",
+      "price": 98
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Fort Sterling",
+      "price": 170
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Caerleon",
+      "price": 418
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Martlock",
+      "price": 400
     },
     {
       "itemId": "T5_ARTEFACT_2H_KNUCKLES_KEEPER",
@@ -1193,17 +1988,53 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_KNUCKLES_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 1819
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Martlock",
+      "price": 1940
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Fort Sterling",
+      "price": 1742
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Brecilien",
+      "price": 5898
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Lymhurst",
+      "price": 6822
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Martlock",
+      "price": 9998
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Fort Sterling",
+      "price": 6975
     },
     {
       "itemId": "T7_ARTEFACT_2H_KNUCKLES_KEEPER",
       "city": "Brecilien",
-      "price": 7000
+      "price": 6996
+    },
+    {
+      "itemId": "T8_ARTEFACT_2H_KNUCKLES_KEEPER",
+      "city": "Fort Sterling",
+      "price": 64955
     },
     {
       "itemId": "T8_ARTEFACT_2H_KNUCKLES_KEEPER",
       "city": "Brecilien",
-      "price": 28800
+      "price": 28797
     },
     {
       "itemId": "T4_ARTEFACT_2H_SHAPESHIFTER_MORGANA",
@@ -1215,16 +2046,23 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_SHAPESHIFTER_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 34962
+    },
+    {
+      "itemId": "T7_ARTEFACT_2H_SHAPESHIFTER_MORGANA",
+      "city": "Fort Sterling",
+      "price": 61000
     },
     {
       "itemId": "T7_ARTEFACT_2H_SHAPESHIFTER_MORGANA",
       "city": "Brecilien",
-      "price": 74998
+      "price": 74996
     },
     {
       "itemId": "T8_ARTEFACT_2H_SHAPESHIFTER_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 549999
     },
     {
       "itemId": "T4_ARTEFACT_2H_SHAPESHIFTER_KEEPER",
@@ -1236,40 +2074,63 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_SHAPESHIFTER_KEEPER",
-      "city": "Caerleon",
-      "price": 68983
+      "city": "Brecilien",
+      "price": 28469
     },
     {
       "itemId": "T7_ARTEFACT_2H_SHAPESHIFTER_KEEPER",
       "city": "Brecilien",
-      "price": 97938
+      "price": 97937
     },
     {
       "itemId": "T8_ARTEFACT_2H_SHAPESHIFTER_KEEPER",
       "city": "Brecilien",
-      "price": 319994
+      "price": 319990
+    },
+    {
+      "itemId": "T4_ARTEFACT_2H_SHAPESHIFTER_HELL",
+      "city": "Fort Sterling",
+      "price": 11898
     },
     {
       "itemId": "T4_ARTEFACT_2H_SHAPESHIFTER_HELL",
       "city": "Bridgewatch",
-      "price": 9971
+      "price": 9972
     },
     {
       "itemId": "T5_ARTEFACT_2H_SHAPESHIFTER_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 26982
+    },
+    {
+      "itemId": "T5_ARTEFACT_2H_SHAPESHIFTER_HELL",
+      "city": "Bridgewatch",
+      "price": 23999
     },
     {
       "itemId": "T6_ARTEFACT_2H_SHAPESHIFTER_HELL",
-      "city": "Bridgewatch",
-      "price": 27993
+      "city": "Lymhurst",
+      "price": 29999
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_SHAPESHIFTER_HELL",
+      "city": "Fort Sterling",
+      "price": 44975
+    },
+    {
+      "itemId": "T6_ARTEFACT_2H_SHAPESHIFTER_HELL",
+      "city": "Brecilien",
+      "price": 54900
     },
     {
       "itemId": "T7_ARTEFACT_2H_SHAPESHIFTER_HELL",
-      "price": 0
+      "city": "Brecilien",
+      "price": 64992
     },
     {
       "itemId": "T8_ARTEFACT_2H_SHAPESHIFTER_HELL",
-      "price": 0
+      "city": "Brecilien",
+      "price": 519995
     },
     {
       "itemId": "T4_ARTEFACT_2H_SHAPESHIFTER_AVALON",
@@ -1281,97 +2142,96 @@
     },
     {
       "itemId": "T6_ARTEFACT_2H_SHAPESHIFTER_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 13444
     },
     {
       "itemId": "T7_ARTEFACT_2H_SHAPESHIFTER_AVALON",
       "city": "Lymhurst",
-      "price": 86999
+      "price": 86998
     },
     {
       "itemId": "T7_ARTEFACT_2H_SHAPESHIFTER_AVALON",
       "city": "Brecilien",
-      "price": 32960
+      "price": 32956
     },
     {
       "itemId": "T8_ARTEFACT_2H_SHAPESHIFTER_AVALON",
       "city": "Brecilien",
-      "price": 799944
+      "price": 799942
     },
     {
       "itemId": "T4_ARTEFACT_OFF_SHIELD_AVALON",
-      "city": "Lymhurst",
-      "price": 20098
+      "city": "Brecilien",
+      "price": 4179
     },
     {
       "itemId": "T5_ARTEFACT_OFF_SHIELD_AVALON",
-      "city": "Fort Sterling",
-      "price": 47999
-    },
-    {
-      "itemId": "T5_ARTEFACT_OFF_SHIELD_AVALON",
-      "city": "Thetford",
-      "price": 10000
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_OFF_SHIELD_AVALON",
       "city": "Fort Sterling",
-      "price": 69999
+      "price": 76969
     },
     {
       "itemId": "T7_ARTEFACT_OFF_SHIELD_AVALON",
       "city": "Fort Sterling",
-      "price": 225001
-    },
-    {
-      "itemId": "T7_ARTEFACT_OFF_SHIELD_AVALON",
-      "city": "Brecilien",
-      "price": 199997
+      "price": 225000
     },
     {
       "itemId": "T8_ARTEFACT_OFF_SHIELD_AVALON",
-      "city": "Fort Sterling",
-      "price": 500000
-    },
-    {
-      "itemId": "T8_ARTEFACT_OFF_SHIELD_AVALON",
-      "city": "Brecilien",
-      "price": 326000
+      "price": 0
     },
     {
       "itemId": "T4_ARTEFACT_OFF_SHIELD_HELL",
       "city": "Lymhurst",
-      "price": 1099
+      "price": 997
+    },
+    {
+      "itemId": "T4_ARTEFACT_OFF_SHIELD_HELL",
+      "city": "Brecilien",
+      "price": 1900
     },
     {
       "itemId": "T5_ARTEFACT_OFF_SHIELD_HELL",
-      "city": "Fort Sterling",
-      "price": 2206
+      "city": "Thetford",
+      "price": 2222
     },
     {
       "itemId": "T6_ARTEFACT_OFF_SHIELD_HELL",
-      "city": "Fort Sterling",
-      "price": 9660
+      "city": "Lymhurst",
+      "price": 8838
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_SHIELD_HELL",
+      "city": "Brecilien",
+      "price": 7998
     },
     {
       "itemId": "T7_ARTEFACT_OFF_SHIELD_HELL",
       "city": "Fort Sterling",
-      "price": 28290
+      "price": 20336
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_SHIELD_HELL",
+      "city": "Bridgewatch",
+      "price": 29691
     },
     {
       "itemId": "T7_ARTEFACT_OFF_SHIELD_HELL",
       "city": "Brecilien",
-      "price": 28397
+      "price": 28388
     },
     {
       "itemId": "T8_ARTEFACT_OFF_SHIELD_HELL",
       "city": "Fort Sterling",
-      "price": 74999
+      "price": 97000
     },
     {
       "itemId": "T8_ARTEFACT_OFF_SHIELD_HELL",
       "city": "Brecilien",
-      "price": 89997
+      "price": 89994
     },
     {
       "itemId": "T4_ARTEFACT_OFF_CENSER_AVALON",
@@ -1379,13 +2239,18 @@
     },
     {
       "itemId": "T5_ARTEFACT_OFF_CENSER_AVALON",
-      "city": "Fort Sterling",
-      "price": 5459
+      "city": "Thetford",
+      "price": 4495
     },
     {
       "itemId": "T6_ARTEFACT_OFF_CENSER_AVALON",
       "city": "Fort Sterling",
-      "price": 9995
+      "price": 9990
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_CENSER_AVALON",
+      "city": "Brecilien",
+      "price": 7942
     },
     {
       "itemId": "T7_ARTEFACT_OFF_CENSER_AVALON",
@@ -1394,207 +2259,346 @@
     },
     {
       "itemId": "T7_ARTEFACT_OFF_CENSER_AVALON",
-      "city": "Fort Sterling",
-      "price": 22211
-    },
-    {
-      "itemId": "T7_ARTEFACT_OFF_CENSER_AVALON",
       "city": "Brecilien",
-      "price": 14952
+      "price": 14944
     },
     {
       "itemId": "T8_ARTEFACT_OFF_CENSER_AVALON",
-      "city": "Fort Sterling",
-      "price": 149980
-    },
-    {
-      "itemId": "T8_ARTEFACT_OFF_CENSER_AVALON",
-      "city": "Brecilien",
-      "price": 129992
+      "price": 0
     },
     {
       "itemId": "T4_ARTEFACT_OFF_LAMP_UNDEAD",
-      "city": "Brecilien",
-      "price": 13985
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_OFF_LAMP_UNDEAD",
-      "city": "Fort Sterling",
-      "price": 12222
-    },
-    {
-      "itemId": "T5_ARTEFACT_OFF_LAMP_UNDEAD",
-      "city": "Bridgewatch",
-      "price": 12990
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_OFF_LAMP_UNDEAD",
       "city": "Fort Sterling",
-      "price": 45000
+      "price": 60000
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_LAMP_UNDEAD",
+      "city": "Bridgewatch",
+      "price": 40000
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_LAMP_UNDEAD",
+      "city": "Brecilien",
+      "price": 28999
     },
     {
       "itemId": "T7_ARTEFACT_OFF_LAMP_UNDEAD",
       "city": "Fort Sterling",
-      "price": 99994
+      "price": 394954
     },
     {
       "itemId": "T8_ARTEFACT_OFF_LAMP_UNDEAD",
-      "city": "Fort Sterling",
-      "price": 669995
+      "city": "Lymhurst",
+      "price": 577777
+    },
+    {
+      "itemId": "T8_ARTEFACT_OFF_LAMP_UNDEAD",
+      "city": "Brecilien",
+      "price": 620000
+    },
+    {
+      "itemId": "T4_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Lymhurst",
+      "price": 97
     },
     {
       "itemId": "T4_ARTEFACT_OFF_ORB_MORGANA",
       "city": "Martlock",
-      "price": 246
+      "price": 245
+    },
+    {
+      "itemId": "T4_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Caerleon",
+      "price": 392
+    },
+    {
+      "itemId": "T4_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Brecilien",
+      "price": 181
     },
     {
       "itemId": "T5_ARTEFACT_OFF_ORB_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 200
+    },
+    {
+      "itemId": "T5_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Thetford",
+      "price": 124
+    },
+    {
+      "itemId": "T5_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Caerleon",
+      "price": 591
     },
     {
       "itemId": "T6_ARTEFACT_OFF_ORB_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 2639
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Martlock",
+      "price": 1980
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Fort Sterling",
+      "price": 1556
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Brecilien",
+      "price": 3845
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Lymhurst",
+      "price": 6078
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Fort Sterling",
+      "price": 2892
     },
     {
       "itemId": "T7_ARTEFACT_OFF_ORB_MORGANA",
       "city": "Brecilien",
-      "price": 5691
+      "price": 5686
+    },
+    {
+      "itemId": "T8_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Lymhurst",
+      "price": 68887
+    },
+    {
+      "itemId": "T8_ARTEFACT_OFF_ORB_MORGANA",
+      "city": "Fort Sterling",
+      "price": 36900
     },
     {
       "itemId": "T8_ARTEFACT_OFF_ORB_MORGANA",
       "city": "Brecilien",
-      "price": 30979
+      "price": 30000
     },
     {
       "itemId": "T4_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 33333
+    },
+    {
+      "itemId": "T4_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
+      "city": "Brecilien",
+      "price": 53498
     },
     {
       "itemId": "T5_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
       "city": "Fort Sterling",
-      "price": 69929
+      "price": 69922
+    },
+    {
+      "itemId": "T5_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
+      "city": "Brecilien",
+      "price": 70000
     },
     {
       "itemId": "T6_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
-      "city": "Fort Sterling",
-      "price": 145773
+      "city": "Lymhurst",
+      "price": 164992
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
+      "city": "Brecilien",
+      "price": 119999
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
+      "city": "Lymhurst",
+      "price": 550000
     },
     {
       "itemId": "T7_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
       "city": "Fort Sterling",
-      "price": 555553
+      "price": 648000
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
+      "city": "Brecilien",
+      "price": 625000
     },
     {
       "itemId": "T8_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 2799997
+    },
+    {
+      "itemId": "T8_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
+      "city": "Martlock",
+      "price": 2500000
+    },
+    {
+      "itemId": "T8_ARTEFACT_OFF_SPIKEDSHIELD_MORGANA",
+      "city": "Brecilien",
+      "price": 1888888
     },
     {
       "itemId": "T4_ARTEFACT_OFF_JESTERCANE_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 3299
     },
     {
       "itemId": "T5_ARTEFACT_OFF_JESTERCANE_HELL",
+      "city": "Martlock",
+      "price": 35000
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_JESTERCANE_HELL",
       "city": "Lymhurst",
-      "price": 1983
-    },
-    {
-      "itemId": "T5_ARTEFACT_OFF_JESTERCANE_HELL",
-      "city": "Fort Sterling",
-      "price": 4996
+      "price": 9861
     },
     {
       "itemId": "T6_ARTEFACT_OFF_JESTERCANE_HELL",
       "city": "Fort Sterling",
-      "price": 8992
+      "price": 8990
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_JESTERCANE_HELL",
+      "city": "Bridgewatch",
+      "price": 25484
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_JESTERCANE_HELL",
+      "city": "Brecilien",
+      "price": 20497
     },
     {
       "itemId": "T7_ARTEFACT_OFF_JESTERCANE_HELL",
-      "city": "Fort Sterling",
-      "price": 27997
+      "city": "Lymhurst",
+      "price": 77742
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_JESTERCANE_HELL",
+      "city": "Brecilien",
+      "price": 49997
     },
     {
       "itemId": "T8_ARTEFACT_OFF_JESTERCANE_HELL",
-      "city": "Fort Sterling",
-      "price": 133329
+      "city": "Thetford",
+      "price": 110000
     },
     {
       "itemId": "T4_ARTEFACT_OFF_HORN_KEEPER",
-      "city": "Brecilien",
-      "price": 1991
-    },
-    {
-      "itemId": "T5_ARTEFACT_OFF_HORN_KEEPER",
-      "city": "Fort Sterling",
-      "price": 2778
-    },
-    {
-      "itemId": "T6_ARTEFACT_OFF_HORN_KEEPER",
-      "city": "Fort Sterling",
-      "price": 15478
-    },
-    {
-      "itemId": "T6_ARTEFACT_OFF_HORN_KEEPER",
-      "city": "Caerleon",
-      "price": 15000
-    },
-    {
-      "itemId": "T7_ARTEFACT_OFF_HORN_KEEPER",
-      "city": "Fort Sterling",
-      "price": 18865
-    },
-    {
-      "itemId": "T7_ARTEFACT_OFF_HORN_KEEPER",
-      "city": "Brecilien",
-      "price": 13499
-    },
-    {
-      "itemId": "T8_ARTEFACT_OFF_HORN_KEEPER",
-      "city": "Fort Sterling",
-      "price": 79992
-    },
-    {
-      "itemId": "T8_ARTEFACT_OFF_HORN_KEEPER",
-      "city": "Brecilien",
-      "price": 98976
-    },
-    {
-      "itemId": "T4_ARTEFACT_OFF_DEMONSKULL_HELL",
       "price": 0
     },
     {
-      "itemId": "T5_ARTEFACT_OFF_DEMONSKULL_HELL",
+      "itemId": "T5_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Martlock",
+      "price": 3470
+    },
+    {
+      "itemId": "T5_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Thetford",
+      "price": 4888
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Lymhurst",
+      "price": 8997
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_HORN_KEEPER",
       "city": "Fort Sterling",
-      "price": 24995
+      "price": 9593
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Brecilien",
+      "price": 9999
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Lymhurst",
+      "price": 7000
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Fort Sterling",
+      "price": 17500
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Brecilien",
+      "price": 5993
+    },
+    {
+      "itemId": "T8_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Lymhurst",
+      "price": 94996
+    },
+    {
+      "itemId": "T8_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Fort Sterling",
+      "price": 79092
+    },
+    {
+      "itemId": "T8_ARTEFACT_OFF_HORN_KEEPER",
+      "city": "Brecilien",
+      "price": 98975
+    },
+    {
+      "itemId": "T4_ARTEFACT_OFF_DEMONSKULL_HELL",
+      "city": "Martlock",
+      "price": 15000
+    },
+    {
+      "itemId": "T4_ARTEFACT_OFF_DEMONSKULL_HELL",
+      "city": "Thetford",
+      "price": 14992
+    },
+    {
+      "itemId": "T5_ARTEFACT_OFF_DEMONSKULL_HELL",
+      "price": 0
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_DEMONSKULL_HELL",
+      "city": "Martlock",
+      "price": 12000
     },
     {
       "itemId": "T6_ARTEFACT_OFF_DEMONSKULL_HELL",
       "city": "Fort Sterling",
-      "price": 17905
+      "price": 13996
     },
     {
-      "itemId": "T7_ARTEFACT_OFF_DEMONSKULL_HELL",
-      "city": "Fort Sterling",
-      "price": 29979
+      "itemId": "T6_ARTEFACT_OFF_DEMONSKULL_HELL",
+      "city": "Brecilien",
+      "price": 9997
     },
     {
       "itemId": "T7_ARTEFACT_OFF_DEMONSKULL_HELL",
       "city": "Brecilien",
-      "price": 27901
+      "price": 26891
     },
     {
       "itemId": "T8_ARTEFACT_OFF_DEMONSKULL_HELL",
-      "city": "Fort Sterling",
-      "price": 156984
+      "city": "Brecilien",
+      "price": 130950
     },
     {
       "itemId": "T4_ARTEFACT_OFF_TALISMAN_AVALON",
-      "city": "Brecilien",
-      "price": 2350
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_OFF_TALISMAN_AVALON",
-      "city": "Fort Sterling",
-      "price": 2191
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_OFF_TALISMAN_AVALON",
@@ -1602,53 +2606,59 @@
       "price": 28973
     },
     {
+      "itemId": "T6_ARTEFACT_OFF_TALISMAN_AVALON",
+      "city": "Thetford",
+      "price": 23999
+    },
+    {
       "itemId": "T7_ARTEFACT_OFF_TALISMAN_AVALON",
       "city": "Fort Sterling",
-      "price": 29985
+      "price": 29185
+    },
+    {
+      "itemId": "T7_ARTEFACT_OFF_TALISMAN_AVALON",
+      "city": "Brecilien",
+      "price": 15999
     },
     {
       "itemId": "T8_ARTEFACT_OFF_TALISMAN_AVALON",
-      "city": "Fort Sterling",
-      "price": 99998
+      "city": "Lymhurst",
+      "price": 119997
     },
     {
       "itemId": "T8_ARTEFACT_OFF_TALISMAN_AVALON",
       "city": "Brecilien",
-      "price": 299983
+      "price": 299978
     },
     {
       "itemId": "T4_ARTEFACT_OFF_TOTEM_KEEPER",
-      "city": "Martlock",
-      "price": 39726
+      "city": "Thetford",
+      "price": 34984
     },
     {
       "itemId": "T5_ARTEFACT_OFF_TOTEM_KEEPER",
-      "city": "Fort Sterling",
-      "price": 35665
-    },
-    {
-      "itemId": "T5_ARTEFACT_OFF_TOTEM_KEEPER",
-      "city": "Brecilien",
-      "price": 14977
+      "city": "Bridgewatch",
+      "price": 24998
     },
     {
       "itemId": "T6_ARTEFACT_OFF_TOTEM_KEEPER",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 32000
+    },
+    {
+      "itemId": "T6_ARTEFACT_OFF_TOTEM_KEEPER",
+      "city": "Brecilien",
+      "price": 59977
     },
     {
       "itemId": "T7_ARTEFACT_OFF_TOTEM_KEEPER",
       "city": "Fort Sterling",
-      "price": 376168
-    },
-    {
-      "itemId": "T7_ARTEFACT_OFF_TOTEM_KEEPER",
-      "city": "Brecilien",
-      "price": 109966
+      "price": 376167
     },
     {
       "itemId": "T8_ARTEFACT_OFF_TOTEM_KEEPER",
-      "city": "Fort Sterling",
-      "price": 490000
+      "city": "Brecilien",
+      "price": 388885
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_CLOTH_AVALON",
@@ -1656,11 +2666,13 @@
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_CLOTH_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 28983
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_CLOTH_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 58555
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_CLOTH_AVALON",
@@ -1668,8 +2680,23 @@
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_CLOTH_AVALON",
+      "city": "Martlock",
+      "price": 299999
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_CLOTH_AVALON",
+      "city": "Fort Sterling",
+      "price": 555555
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_CLOTH_AVALON",
+      "city": "Bridgewatch",
+      "price": 355000
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_CLOTH_AVALON",
       "city": "Brecilien",
-      "price": 202098
+      "price": 202096
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_CLOTH_MORGANA",
@@ -1677,20 +2704,33 @@
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_CLOTH_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 24832
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_CLOTH_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 44828
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_CLOTH_MORGANA",
+      "city": "Fort Sterling",
+      "price": 34441
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_CLOTH_MORGANA",
+      "city": "Brecilien",
+      "price": 36865
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_CLOTH_MORGANA",
       "city": "Brecilien",
-      "price": 105987
+      "price": 88887
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_CLOTH_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 396979
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_PLATE_HELL",
@@ -1698,21 +2738,38 @@
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_PLATE_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 3353
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_PLATE_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 9972
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_PLATE_HELL",
+      "city": "Brecilien",
+      "price": 8320
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_PLATE_HELL",
+      "city": "Fort Sterling",
+      "price": 28534
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_PLATE_HELL",
+      "city": "Bridgewatch",
+      "price": 28872
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_PLATE_HELL",
       "city": "Brecilien",
-      "price": 28995
+      "price": 28988
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_PLATE_HELL",
-      "city": "Thetford",
-      "price": 87180
+      "city": "Brecilien",
+      "price": 98285
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_CLOTH_KEEPER",
@@ -1720,25 +2777,63 @@
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_CLOTH_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 8084
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_CLOTH_KEEPER",
-      "price": 0
+      "city": "Martlock",
+      "price": 9996
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_CLOTH_KEEPER",
+      "city": "Fort Sterling",
+      "price": 11985
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_CLOTH_KEEPER",
+      "city": "Brecilien",
+      "price": 52209
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_CLOTH_KEEPER",
       "city": "Lymhurst",
-      "price": 6066
+      "price": 16376
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_CLOTH_KEEPER",
+      "city": "Fort Sterling",
+      "price": 19846
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_CLOTH_KEEPER",
+      "city": "Caerleon",
+      "price": 19
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_CLOTH_KEEPER",
       "city": "Brecilien",
-      "price": 7928
+      "price": 7916
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_CLOTH_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 30000
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_CLOTH_KEEPER",
+      "city": "Fort Sterling",
+      "price": 49578
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_CLOTH_KEEPER",
+      "city": "Caerleon",
+      "price": 24498
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_CLOTH_KEEPER",
+      "city": "Brecilien",
+      "price": 34995
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_PLATE_FEY",
@@ -1750,46 +2845,66 @@
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_PLATE_FEY",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 59999
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_PLATE_FEY",
+      "city": "Brecilien",
+      "price": 65973
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_PLATE_FEY",
+      "city": "Fort Sterling",
+      "price": 93929
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_PLATE_FEY",
       "city": "Brecilien",
-      "price": 94891
+      "price": 91998
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_PLATE_FEY",
+      "city": "Fort Sterling",
+      "price": 388885
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_PLATE_FEY",
       "city": "Brecilien",
-      "price": 299000
+      "price": 298999
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_CLOTH_FEY",
-      "city": "Lymhurst",
-      "price": 39000
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_CLOTH_FEY",
-      "city": "Thetford",
-      "price": 134998
-    },
-    {
-      "itemId": "T5_ARTEFACT_HEAD_CLOTH_FEY",
-      "city": "Bridgewatch",
-      "price": 74999
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_CLOTH_FEY",
-      "price": 0
+      "city": "Brecilien",
+      "price": 128872
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_CLOTH_FEY",
+      "city": "Lymhurst",
+      "price": 200000
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_CLOTH_FEY",
+      "city": "Fort Sterling",
+      "price": 350000
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_CLOTH_FEY",
       "city": "Brecilien",
-      "price": 160000
+      "price": 119998
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_CLOTH_FEY",
       "city": "Brecilien",
-      "price": 388887
+      "price": 378888
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_CLOTH_HELL",
@@ -1797,48 +2912,138 @@
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_CLOTH_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 51194
+    },
+    {
+      "itemId": "T5_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Martlock",
+      "price": 67780
+    },
+    {
+      "itemId": "T5_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Fort Sterling",
+      "price": 30000
+    },
+    {
+      "itemId": "T5_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Thetford",
+      "price": 38991
+    },
+    {
+      "itemId": "T5_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Bridgewatch",
+      "price": 52535
+    },
+    {
+      "itemId": "T5_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Caerleon",
+      "price": 33330
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_CLOTH_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 42992
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Bridgewatch",
+      "price": 42981
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Brecilien",
+      "price": 38802
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Fort Sterling",
+      "price": 45000
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_CLOTH_HELL",
       "city": "Brecilien",
-      "price": 30000
+      "price": 31101
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Lymhurst",
+      "price": 198997
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_CLOTH_HELL",
+      "city": "Martlock",
+      "price": 198981
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_CLOTH_HELL",
       "city": "Brecilien",
-      "price": 222203
+      "price": 189990
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_PLATE_UNDEAD",
-      "city": "Bridgewatch",
-      "price": 337
+      "city": "Martlock",
+      "price": 235
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_PLATE_UNDEAD",
-      "price": 0
+      "city": "Martlock",
+      "price": 992
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_PLATE_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 1728
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_PLATE_UNDEAD",
+      "city": "Martlock",
+      "price": 1649
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_PLATE_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 2999
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_PLATE_UNDEAD",
+      "city": "Brecilien",
+      "price": 1984
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_PLATE_UNDEAD",
+      "city": "Lymhurst",
+      "price": 6421
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_PLATE_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 7063
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_PLATE_UNDEAD",
       "city": "Brecilien",
-      "price": 6568
+      "price": 6499
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_PLATE_UNDEAD",
+      "city": "Lymhurst",
+      "price": 33896
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_PLATE_UNDEAD",
+      "city": "Caerleon",
+      "price": 29999
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_PLATE_UNDEAD",
       "city": "Brecilien",
-      "price": 34701
+      "price": 34650
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_LEATHER_HELL",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 15000
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_LEATHER_HELL",
@@ -1846,16 +3051,28 @@
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_LEATHER_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 40991
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_HELL",
+      "city": "Fort Sterling",
+      "price": 42069
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_HELL",
+      "city": "Brecilien",
+      "price": 29993
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_LEATHER_HELL",
       "city": "Brecilien",
-      "price": 49999
+      "price": 49996
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_LEATHER_HELL",
-      "price": 0
+      "city": "Brecilien",
+      "price": 119994
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_PLATE_AVALON",
@@ -1867,12 +3084,13 @@
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_PLATE_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 34982
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_PLATE_AVALON",
-      "city": "Brecilien",
-      "price": 34991
+      "city": "Fort Sterling",
+      "price": 18196
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_PLATE_AVALON",
@@ -1888,38 +3106,67 @@
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_LEATHER_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 33992
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_AVALON",
+      "city": "Fort Sterling",
+      "price": 9696
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_AVALON",
+      "city": "Brecilien",
+      "price": 9928
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_LEATHER_AVALON",
       "city": "Brecilien",
-      "price": 43993
+      "price": 43886
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_LEATHER_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 119972
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_PLATE_KEEPER",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 11000
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_PLATE_KEEPER",
-      "city": "Fort Sterling",
-      "price": 17995
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_PLATE_KEEPER",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 72996
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_PLATE_KEEPER",
+      "city": "Brecilien",
+      "price": 70491
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_PLATE_KEEPER",
+      "city": "Fort Sterling",
+      "price": 150969
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_PLATE_KEEPER",
+      "city": "Bridgewatch",
+      "price": 125000
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_PLATE_KEEPER",
       "city": "Brecilien",
-      "price": 100975
+      "price": 100970
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_PLATE_KEEPER",
-      "price": 0
+      "city": "Brecilien",
+      "price": 391995
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_LEATHER_FEY",
@@ -1931,16 +3178,23 @@
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_LEATHER_FEY",
-      "price": 0
+      "city": "Brecilien",
+      "price": 147977
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_LEATHER_FEY",
-      "price": 0
+      "city": "Brecilien",
+      "price": 119990
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_LEATHER_FEY",
+      "city": "Lymhurst",
+      "price": 349998
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_LEATHER_FEY",
       "city": "Brecilien",
-      "price": 290988
+      "price": 290983
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_LEATHER_UNDEAD",
@@ -1948,49 +3202,102 @@
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_LEATHER_UNDEAD",
-      "price": 0
+      "city": "Martlock",
+      "price": 22284
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_LEATHER_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 43155
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 32999
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_UNDEAD",
+      "city": "Brecilien",
+      "price": 49199
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_LEATHER_UNDEAD",
-      "price": 0
+      "city": "Brecilien",
+      "price": 109976
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_LEATHER_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 399991
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_LEATHER_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 499987
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_LEATHER_UNDEAD",
+      "city": "Brecilien",
+      "price": 388973
     },
     {
       "itemId": "T4_ARTEFACT_HEAD_LEATHER_MORGANA",
-      "city": "Lymhurst",
-      "price": 2999
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_HEAD_LEATHER_MORGANA",
-      "city": "Brecilien",
-      "price": 29997
+      "city": "Lymhurst",
+      "price": 9990
+    },
+    {
+      "itemId": "T5_ARTEFACT_HEAD_LEATHER_MORGANA",
+      "city": "Thetford",
+      "price": 6800
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_MORGANA",
+      "city": "Lymhurst",
+      "price": 6991
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_MORGANA",
+      "city": "Martlock",
+      "price": 3492
     },
     {
       "itemId": "T6_ARTEFACT_HEAD_LEATHER_MORGANA",
       "city": "Fort Sterling",
-      "price": 2489
+      "price": 2981
+    },
+    {
+      "itemId": "T6_ARTEFACT_HEAD_LEATHER_MORGANA",
+      "city": "Brecilien",
+      "price": 13000
+    },
+    {
+      "itemId": "T7_ARTEFACT_HEAD_LEATHER_MORGANA",
+      "city": "Lymhurst",
+      "price": 9995
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_LEATHER_MORGANA",
       "city": "Fort Sterling",
-      "price": 2996
+      "price": 2989
     },
     {
       "itemId": "T7_ARTEFACT_HEAD_LEATHER_MORGANA",
       "city": "Brecilien",
-      "price": 6372
+      "price": 6200
+    },
+    {
+      "itemId": "T8_ARTEFACT_HEAD_LEATHER_MORGANA",
+      "city": "Fort Sterling",
+      "price": 59999
     },
     {
       "itemId": "T8_ARTEFACT_HEAD_LEATHER_MORGANA",
       "city": "Brecilien",
-      "price": 39890
+      "price": 39874
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_PLATE_AVALON",
@@ -1998,16 +3305,18 @@
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_PLATE_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 14035
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_PLATE_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 26000
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_PLATE_AVALON",
       "city": "Brecilien",
-      "price": 99997
+      "price": 99991
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_PLATE_AVALON",
@@ -2019,21 +3328,28 @@
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_CLOTH_MORGANA",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 44996
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_CLOTH_MORGANA",
-      "city": "Thetford",
-      "price": 75899
+      "city": "Fort Sterling",
+      "price": 74000
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_CLOTH_MORGANA",
+      "city": "Brecilien",
+      "price": 99891
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_CLOTH_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 142958
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_CLOTH_MORGANA",
       "city": "Brecilien",
-      "price": 945000
+      "price": 944989
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_PLATE_HELL",
@@ -2041,32 +3357,83 @@
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_PLATE_HELL",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 5000
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_PLATE_HELL",
-      "city": "Thetford",
-      "price": 14999
+      "city": "Lymhurst",
+      "price": 16881
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_PLATE_HELL",
+      "city": "Fort Sterling",
+      "price": 26196
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_PLATE_HELL",
+      "city": "Brecilien",
+      "price": 14975
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_PLATE_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 34845
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_PLATE_HELL",
+      "city": "Fort Sterling",
+      "price": 36665
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_PLATE_HELL",
+      "city": "Brecilien",
+      "price": 32085
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_PLATE_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 246565
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_PLATE_HELL",
+      "city": "Fort Sterling",
+      "price": 113000
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_PLATE_HELL",
+      "city": "Brecilien",
+      "price": 109999
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_CLOTH_KEEPER",
-      "price": 0
+      "city": "Martlock",
+      "price": 1829
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_CLOTH_KEEPER",
-      "price": 0
+      "city": "Brecilien",
+      "price": 10882
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_CLOTH_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 9991
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_CLOTH_KEEPER",
+      "city": "Martlock",
+      "price": 11998
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_CLOTH_KEEPER",
+      "city": "Fort Sterling",
+      "price": 11989
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_CLOTH_KEEPER",
+      "city": "Brecilien",
+      "price": 19425
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_CLOTH_KEEPER",
@@ -2075,12 +3442,18 @@
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_CLOTH_KEEPER",
+      "city": "Fort Sterling",
+      "price": 14991
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_CLOTH_KEEPER",
       "city": "Brecilien",
-      "price": 6986
+      "price": 7294
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_CLOTH_KEEPER",
-      "price": 0
+      "city": "Brecilien",
+      "price": 319892
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_PLATE_FEY",
@@ -2092,17 +3465,33 @@
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_PLATE_FEY",
-      "price": 0
+      "city": "Brecilien",
+      "price": 429999
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_PLATE_FEY",
+      "city": "Fort Sterling",
+      "price": 449998
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_PLATE_FEY",
       "city": "Brecilien",
-      "price": 399990
+      "price": 418998
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_PLATE_FEY",
+      "city": "Lymhurst",
+      "price": 450000
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_PLATE_FEY",
+      "city": "Fort Sterling",
+      "price": 536000
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_PLATE_FEY",
       "city": "Brecilien",
-      "price": 431990
+      "price": 400998
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_CLOTH_FEY",
@@ -2114,26 +3503,37 @@
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_CLOTH_FEY",
-      "price": 0
+      "city": "Brecilien",
+      "price": 335518
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_CLOTH_FEY",
+      "city": "Fort Sterling",
+      "price": 519997
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_CLOTH_FEY",
       "city": "Brecilien",
-      "price": 377767
+      "price": 355555
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_CLOTH_FEY",
+      "city": "Fort Sterling",
+      "price": 1807888
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_CLOTH_FEY",
       "city": "Brecilien",
-      "price": 1299999
+      "price": 1222219
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_CLOTH_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 2600
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_CLOTH_HELL",
-      "city": "Thetford",
-      "price": 7795
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_CLOTH_HELL",
@@ -2141,9 +3541,29 @@
       "price": 11577
     },
     {
+      "itemId": "T6_ARTEFACT_ARMOR_CLOTH_HELL",
+      "city": "Fort Sterling",
+      "price": 12982
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_CLOTH_HELL",
+      "city": "Bridgewatch",
+      "price": 6000
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_CLOTH_HELL",
+      "city": "Lymhurst",
+      "price": 28000
+    },
+    {
       "itemId": "T7_ARTEFACT_ARMOR_CLOTH_HELL",
       "city": "Brecilien",
-      "price": 25000
+      "price": 29980
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_CLOTH_HELL",
+      "city": "Fort Sterling",
+      "price": 109998
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_CLOTH_HELL",
@@ -2152,49 +3572,132 @@
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_PLATE_UNDEAD",
-      "city": "Brecilien",
-      "price": 562
+      "city": "Lymhurst",
+      "price": 484
+    },
+    {
+      "itemId": "T4_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Martlock",
+      "price": 721
+    },
+    {
+      "itemId": "T4_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 117
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_PLATE_UNDEAD",
-      "city": "Bridgewatch",
-      "price": 6186
+      "city": "Lymhurst",
+      "price": 150
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Martlock",
+      "price": 2000
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 2497
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_PLATE_UNDEAD",
       "city": "Brecilien",
-      "price": 3948
+      "price": 3945
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Lymhurst",
+      "price": 26981
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Martlock",
+      "price": 20994
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 5986
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Thetford",
+      "price": 5000
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_PLATE_UNDEAD",
       "city": "Brecilien",
-      "price": 8059
+      "price": 6190
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_PLATE_UNDEAD",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 38985
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Caerleon",
+      "price": 24444
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_PLATE_UNDEAD",
+      "city": "Brecilien",
+      "price": 27767
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_LEATHER_HELL",
-      "city": "Brecilien",
-      "price": 28862
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_LEATHER_HELL",
-      "price": 0
+      "city": "Martlock",
+      "price": 103997
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_LEATHER_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 129994
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_LEATHER_HELL",
+      "city": "Fort Sterling",
+      "price": 149992
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_LEATHER_HELL",
+      "city": "Brecilien",
+      "price": 139984
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_HELL",
+      "city": "Lymhurst",
+      "price": 199997
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_HELL",
+      "city": "Fort Sterling",
+      "price": 184798
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_HELL",
+      "city": "Bridgewatch",
+      "price": 219984
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_LEATHER_HELL",
       "city": "Brecilien",
-      "price": 176661
+      "price": 155553
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_LEATHER_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 688887
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_LEATHER_HELL",
+      "city": "Brecilien",
+      "price": 649991
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_LEATHER_AVALON",
@@ -2206,37 +3709,57 @@
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_LEATHER_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 88858
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_LEATHER_AVALON",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 110000
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_AVALON",
+      "city": "Brecilien",
+      "price": 108995
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_LEATHER_AVALON",
+      "city": "Fort Sterling",
+      "price": 1699999
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_LEATHER_AVALON",
       "city": "Brecilien",
-      "price": 1333333
+      "price": 1299999
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_PLATE_KEEPER",
-      "city": "Fort Sterling",
-      "price": 55000
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_PLATE_KEEPER",
-      "price": 0
+      "city": "Brecilien",
+      "price": 164442
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_PLATE_KEEPER",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 549932
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_PLATE_KEEPER",
+      "city": "Brecilien",
+      "price": 479968
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_PLATE_KEEPER",
-      "price": 0
+      "city": "Brecilien",
+      "price": 1289984
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_PLATE_KEEPER",
-      "price": 0
+      "city": "Brecilien",
+      "price": 2500000
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_LEATHER_FEY",
@@ -2253,11 +3776,12 @@
     {
       "itemId": "T7_ARTEFACT_ARMOR_LEATHER_FEY",
       "city": "Brecilien",
-      "price": 1474986
+      "price": 1474985
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_LEATHER_FEY",
-      "price": 0
+      "city": "Brecilien",
+      "price": 3343325
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_CLOTH_AVALON",
@@ -2265,11 +3789,13 @@
     },
     {
       "itemId": "T5_ARTEFACT_ARMOR_CLOTH_AVALON",
-      "price": 0
+      "city": "Bridgewatch",
+      "price": 29990
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_CLOTH_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 42856
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_CLOTH_AVALON",
@@ -2294,68 +3820,113 @@
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_LEATHER_UNDEAD",
+      "city": "Martlock",
+      "price": 124999
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 94987
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_UNDEAD",
       "city": "Brecilien",
-      "price": 94995
+      "price": 94993
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_LEATHER_UNDEAD",
       "city": "Brecilien",
-      "price": 509994
+      "price": 450994
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_LEATHER_MORGANA",
       "city": "Lymhurst",
-      "price": 265
+      "price": 275
     },
     {
       "itemId": "T4_ARTEFACT_ARMOR_LEATHER_MORGANA",
       "city": "Martlock",
-      "price": 666
+      "price": 1890
     },
     {
-      "itemId": "T4_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "itemId": "T5_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Martlock",
+      "price": 1397
+    },
+    {
+      "itemId": "T5_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Bridgewatch",
+      "price": 1499
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Lymhurst",
+      "price": 2296
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Martlock",
+      "price": 16897
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_LEATHER_MORGANA",
       "city": "Fort Sterling",
-      "price": 166
-    },
-    {
-      "itemId": "T4_ARTEFACT_ARMOR_LEATHER_MORGANA",
-      "city": "Brecilien",
-      "price": 250
-    },
-    {
-      "itemId": "T5_ARTEFACT_ARMOR_LEATHER_MORGANA",
-      "city": "Thetford",
-      "price": 1371
-    },
-    {
-      "itemId": "T5_ARTEFACT_ARMOR_LEATHER_MORGANA",
-      "city": "Brecilien",
-      "price": 1983
+      "price": 3666
     },
     {
       "itemId": "T6_ARTEFACT_ARMOR_LEATHER_MORGANA",
       "city": "Bridgewatch",
-      "price": 4399
+      "price": 1994
+    },
+    {
+      "itemId": "T6_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Brecilien",
+      "price": 1115
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Lymhurst",
+      "price": 5981
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Martlock",
+      "price": 5996
+    },
+    {
+      "itemId": "T7_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Fort Sterling",
+      "price": 4997
     },
     {
       "itemId": "T7_ARTEFACT_ARMOR_LEATHER_MORGANA",
       "city": "Brecilien",
-      "price": 4996
+      "price": 49990
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_LEATHER_MORGANA",
       "city": "Lymhurst",
-      "price": 30000
+      "price": 29999
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Martlock",
+      "price": 44750
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_LEATHER_MORGANA",
       "city": "Fort Sterling",
-      "price": 43971
+      "price": 28085
+    },
+    {
+      "itemId": "T8_ARTEFACT_ARMOR_LEATHER_MORGANA",
+      "city": "Thetford",
+      "price": 45000
     },
     {
       "itemId": "T8_ARTEFACT_ARMOR_LEATHER_MORGANA",
       "city": "Brecilien",
-      "price": 27999
+      "price": 27989
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_PLATE_AVALON",
@@ -2367,12 +3938,13 @@
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_PLATE_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 125563
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_PLATE_AVALON",
       "city": "Brecilien",
-      "price": 170000
+      "price": 200000
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_PLATE_AVALON",
@@ -2388,7 +3960,13 @@
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_CLOTH_MORGANA",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 39899
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_CLOTH_MORGANA",
+      "city": "Brecilien",
+      "price": 32196
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_CLOTH_MORGANA",
@@ -2396,8 +3974,14 @@
       "price": 107678
     },
     {
+      "itemId": "T7_ARTEFACT_SHOES_CLOTH_MORGANA",
+      "city": "Brecilien",
+      "price": 108000
+    },
+    {
       "itemId": "T8_ARTEFACT_SHOES_CLOTH_MORGANA",
-      "price": 0
+      "city": "Brecilien",
+      "price": 364995
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_PLATE_HELL",
@@ -2410,75 +3994,114 @@
     {
       "itemId": "T6_ARTEFACT_SHOES_PLATE_HELL",
       "city": "Lymhurst",
-      "price": 11096
+      "price": 11069
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_PLATE_HELL",
+      "city": "Brecilien",
+      "price": 12964
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_PLATE_HELL",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 28000
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_PLATE_HELL",
+      "city": "Brecilien",
+      "price": 19999
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_PLATE_HELL",
+      "city": "Fort Sterling",
+      "price": 88800
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_PLATE_HELL",
       "city": "Brecilien",
-      "price": 99993
+      "price": 106967
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_CLOTH_KEEPER",
-      "city": "Lymhurst",
-      "price": 495
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_SHOES_CLOTH_KEEPER",
-      "city": "Lymhurst",
-      "price": 799
+      "city": "Martlock",
+      "price": 684
     },
     {
-      "itemId": "T5_ARTEFACT_SHOES_CLOTH_KEEPER",
-      "city": "Thetford",
-      "price": 1185
+      "itemId": "T6_ARTEFACT_SHOES_CLOTH_KEEPER",
+      "city": "Lymhurst",
+      "price": 9948
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_CLOTH_KEEPER",
+      "city": "Martlock",
+      "price": 2190
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_CLOTH_KEEPER",
       "city": "Fort Sterling",
-      "price": 3402
+      "price": 3296
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_CLOTH_KEEPER",
+      "city": "Brecilien",
+      "price": 5988
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_CLOTH_KEEPER",
       "city": "Lymhurst",
-      "price": 5990
+      "price": 5957
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_CLOTH_KEEPER",
+      "city": "Fort Sterling",
+      "price": 1849
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_CLOTH_KEEPER",
       "city": "Brecilien",
-      "price": 5863
+      "price": 5789
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_CLOTH_KEEPER",
+      "city": "Fort Sterling",
+      "price": 38513
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_CLOTH_KEEPER",
       "city": "Brecilien",
-      "price": 40233
+      "price": 40213
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_PLATE_FEY",
-      "city": "Caerleon",
-      "price": 20000
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_SHOES_PLATE_FEY",
-      "city": "Caerleon",
-      "price": 48000
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_PLATE_FEY",
-      "price": 0
+      "city": "Brecilien",
+      "price": 60962
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_PLATE_FEY",
+      "city": "Fort Sterling",
+      "price": 111997
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_PLATE_FEY",
       "city": "Brecilien",
-      "price": 91893
+      "price": 91891
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_PLATE_FEY",
-      "city": "Brecilien",
-      "price": 319000
+      "city": "Lymhurst",
+      "price": 299991
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_CLOTH_FEY",
@@ -2486,27 +4109,26 @@
     },
     {
       "itemId": "T5_ARTEFACT_SHOES_CLOTH_FEY",
-      "city": "Brecilien",
-      "price": 66989
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_CLOTH_FEY",
-      "price": 0
+      "city": "Brecilien",
+      "price": 74974
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_CLOTH_FEY",
       "city": "Brecilien",
-      "price": 109989
+      "price": 109988
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_CLOTH_FEY",
       "city": "Brecilien",
-      "price": 539997
+      "price": 320997
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_CLOTH_HELL",
-      "city": "Martlock",
-      "price": 764
+      "price": 0
     },
     {
       "itemId": "T5_ARTEFACT_SHOES_CLOTH_HELL",
@@ -2514,52 +4136,123 @@
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_CLOTH_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 8695
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_CLOTH_HELL",
+      "city": "Fort Sterling",
+      "price": 8887
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_CLOTH_HELL",
+      "city": "Brecilien",
+      "price": 9449
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_CLOTH_HELL",
+      "city": "Lymhurst",
+      "price": 28869
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_CLOTH_HELL",
+      "city": "Fort Sterling",
+      "price": 29842
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_CLOTH_HELL",
       "city": "Brecilien",
-      "price": 28556
+      "price": 28536
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_CLOTH_HELL",
+      "city": "Lymhurst",
+      "price": 100000
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_CLOTH_HELL",
+      "city": "Bridgewatch",
+      "price": 99996
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_CLOTH_HELL",
       "city": "Brecilien",
-      "price": 99969
+      "price": 118500
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_PLATE_UNDEAD",
-      "city": "Lymhurst",
-      "price": 369
+      "city": "Martlock",
+      "price": 223
     },
     {
       "itemId": "T5_ARTEFACT_SHOES_PLATE_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 700
+    },
+    {
+      "itemId": "T5_ARTEFACT_SHOES_PLATE_UNDEAD",
+      "city": "Martlock",
+      "price": 1442
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_PLATE_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 7998
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_PLATE_UNDEAD",
+      "city": "Martlock",
+      "price": 5960
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_PLATE_UNDEAD",
+      "city": "Fort Sterling",
+      "price": 3887
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_PLATE_UNDEAD",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 4992
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_PLATE_UNDEAD",
+      "city": "Brecilien",
+      "price": 9400
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_PLATE_UNDEAD",
+      "city": "Lymhurst",
+      "price": 38937
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_PLATE_UNDEAD",
       "city": "Brecilien",
-      "price": 39999
+      "price": 39997
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_LEATHER_HELL",
-      "price": 0
+      "city": "Thetford",
+      "price": 4700
     },
     {
       "itemId": "T5_ARTEFACT_SHOES_LEATHER_HELL",
-      "city": "Bridgewatch",
-      "price": 8989
+      "city": "Martlock",
+      "price": 7995
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_LEATHER_HELL",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 10853
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_LEATHER_HELL",
+      "city": "Fort Sterling",
+      "price": 9895
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_LEATHER_HELL",
+      "city": "Brecilien",
+      "price": 8858
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_LEATHER_HELL",
@@ -2567,8 +4260,19 @@
       "price": 30000
     },
     {
+      "itemId": "T7_ARTEFACT_SHOES_LEATHER_HELL",
+      "city": "Fort Sterling",
+      "price": 28865
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_LEATHER_HELL",
+      "city": "Brecilien",
+      "price": 29606
+    },
+    {
       "itemId": "T8_ARTEFACT_SHOES_LEATHER_HELL",
-      "price": 0
+      "city": "Brecilien",
+      "price": 99996
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_PLATE_KEEPER",
@@ -2580,15 +4284,28 @@
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_PLATE_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 34991
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_PLATE_KEEPER",
+      "city": "Brecilien",
+      "price": 29953
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_PLATE_KEEPER",
-      "price": 0
+      "city": "Brecilien",
+      "price": 148969
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_PLATE_KEEPER",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 369864
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_PLATE_KEEPER",
+      "city": "Brecilien",
+      "price": 295999
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_LEATHER_FEY",
@@ -2601,22 +4318,37 @@
     {
       "itemId": "T6_ARTEFACT_SHOES_LEATHER_FEY",
       "city": "Fort Sterling",
-      "price": 158994
+      "price": 158991
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_LEATHER_FEY",
+      "city": "Brecilien",
+      "price": 79993
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_LEATHER_FEY",
+      "city": "Fort Sterling",
+      "price": 147997
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_LEATHER_FEY",
       "city": "Brecilien",
-      "price": 109987
+      "price": 114981
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_LEATHER_FEY",
+      "city": "Lymhurst",
+      "price": 329998
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_LEATHER_FEY",
       "city": "Fort Sterling",
-      "price": 449998
+      "price": 449996
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_LEATHER_FEY",
       "city": "Brecilien",
-      "price": 309961
+      "price": 309956
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_CLOTH_AVALON",
@@ -2628,16 +4360,28 @@
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_CLOTH_AVALON",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 14000
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_CLOTH_AVALON",
+      "city": "Brecilien",
+      "price": 26661
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_CLOTH_AVALON",
+      "city": "Lymhurst",
+      "price": 39998
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_CLOTH_AVALON",
       "city": "Brecilien",
-      "price": 20000
+      "price": 29999
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_CLOTH_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 579997
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_LEATHER_AVALON",
@@ -2649,15 +4393,18 @@
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_LEATHER_AVALON",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 80000
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_LEATHER_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 54200
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_LEATHER_AVALON",
-      "price": 0
+      "city": "Brecilien",
+      "price": 1300000
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_LEATHER_UNDEAD",
@@ -2669,79 +4416,117 @@
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_LEATHER_UNDEAD",
-      "price": 0
+      "city": "Fort Sterling",
+      "price": 29196
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_LEATHER_UNDEAD",
+      "city": "Brecilien",
+      "price": 31397
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_LEATHER_UNDEAD",
-      "price": 0
+      "city": "Brecilien",
+      "price": 107983
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_LEATHER_UNDEAD",
-      "price": 0
+      "city": "Brecilien",
+      "price": 344444
     },
     {
       "itemId": "T4_ARTEFACT_SHOES_LEATHER_MORGANA",
       "city": "Martlock",
-      "price": 500
+      "price": 409
     },
     {
-      "itemId": "T5_ARTEFACT_SHOES_LEATHER_MORGANA",
-      "city": "Martlock",
-      "price": 9000
-    },
-    {
-      "itemId": "T5_ARTEFACT_SHOES_LEATHER_MORGANA",
-      "city": "Bridgewatch",
-      "price": 9748
-    },
-    {
-      "itemId": "T5_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "itemId": "T4_ARTEFACT_SHOES_LEATHER_MORGANA",
       "city": "Brecilien",
-      "price": 13656
+      "price": 698
+    },
+    {
+      "itemId": "T5_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "price": 0
     },
     {
       "itemId": "T6_ARTEFACT_SHOES_LEATHER_MORGANA",
-      "price": 0
+      "city": "Lymhurst",
+      "price": 20969
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "city": "Martlock",
+      "price": 23885
+    },
+    {
+      "itemId": "T6_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "city": "Fort Sterling",
+      "price": 20692
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "city": "Lymhurst",
+      "price": 7497
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "city": "Martlock",
+      "price": 6948
+    },
+    {
+      "itemId": "T7_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "city": "Fort Sterling",
+      "price": 7442
     },
     {
       "itemId": "T7_ARTEFACT_SHOES_LEATHER_MORGANA",
       "city": "Brecilien",
-      "price": 15798
+      "price": 12200
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_LEATHER_MORGANA",
       "city": "Lymhurst",
-      "price": 110410
+      "price": 95000
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "city": "Fort Sterling",
+      "price": 88475
+    },
+    {
+      "itemId": "T8_ARTEFACT_SHOES_LEATHER_MORGANA",
+      "city": "Bridgewatch",
+      "price": 99900
     },
     {
       "itemId": "T8_ARTEFACT_SHOES_LEATHER_MORGANA",
       "city": "Brecilien",
-      "price": 89998
+      "price": 89997
     },
     {
       "itemId": "T4_SKILLBOOK_STANDARD",
       "city": "Lymhurst",
+      "price": 29894
+    },
+    {
+      "itemId": "T4_SKILLBOOK_STANDARD",
+      "city": "Martlock",
       "price": 29897
     },
     {
       "itemId": "T4_SKILLBOOK_STANDARD",
-      "city": "Fort Sterling",
-      "price": 29749
-    },
-    {
-      "itemId": "T4_SKILLBOOK_STANDARD",
       "city": "Thetford",
-      "price": 28880
+      "price": 31497
     },
     {
       "itemId": "T4_SKILLBOOK_STANDARD",
       "city": "Bridgewatch",
-      "price": 32000
+      "price": 29946
     },
     {
       "itemId": "T4_SKILLBOOK_STANDARD",
       "city": "Brecilien",
-      "price": 27515
+      "price": 27198
     },
     {
       "itemId": "T5_SKILLBOOK_STANDARD",
