@@ -187,10 +187,13 @@ public sealed class BlackMarketCaptureService : IDisposable
             var remoteAddress = IsAlbionTransportPort(sourcePort) ? sourceAddress : destinationAddress;
             if (remoteAddress is null) return;
             var detectedRegion = DetectRegion(remoteAddress);
+            var streamKey = sourceAddress is null || destinationAddress is null
+                ? null
+                : $"{sourceAddress}:{sourcePort}>{destinationAddress}:{destinationPort}";
 
             if (udp?.PayloadData is { Length: > 0 } udpPayload)
             {
-                ProcessCapturedPayload(detectedRegion, udpPayload);
+                ProcessCapturedPayload(detectedRegion, udpPayload, streamKey);
                 return;
             }
 
@@ -212,7 +215,7 @@ public sealed class BlackMarketCaptureService : IDisposable
             }
 
             foreach (var frame in assembler.Append(tcp.SequenceNumber, tcpPayload))
-                ProcessCapturedPayload(detectedRegion, frame);
+                ProcessCapturedPayload(detectedRegion, frame, streamKey);
         }
         catch (Exception ex)
         {
@@ -255,11 +258,11 @@ public sealed class BlackMarketCaptureService : IDisposable
         }
     }
 
-    internal bool ProcessCapturedPayload(string? detectedRegion, byte[] payload)
+    internal bool ProcessCapturedPayload(string? detectedRegion, byte[] payload, string? streamKey = null)
     {
         if (!SelectRegion(detectedRegion)) return false;
         lock (_parserGate)
-            _parser.ReceivePacket(payload);
+            _parser.ReceivePacket(payload, streamKey);
         return true;
     }
 

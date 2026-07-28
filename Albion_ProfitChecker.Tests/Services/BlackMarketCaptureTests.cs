@@ -157,6 +157,29 @@ public sealed class BlackMarketCaptureTests
     }
 
     [Fact]
+    public void KeepsPhotonFragmentsSeparatedByTransportFlow()
+    {
+        var now = DateTime.UtcNow;
+        var orders = new List<BlackMarketOrder>();
+        var parser = new AlbionMarketPhotonParser(() => "asia", orders.Add);
+        var first = Protocol18ResponseBody(
+            AlbionMarketPhotonParser.AuctionGetOffersOperation,
+            OrderJson(204, "T4_MAIN_SWORD", "3003", 1, 12345, now.AddMinutes(20)));
+        var second = Protocol18ResponseBody(
+            AlbionMarketPhotonParser.AuctionGetRequestsOperation,
+            OrderJson(205, "T4_MAIN_AXE", "3003", 1, 54321, now.AddMinutes(20)));
+        var firstSplit = first.Length / 2;
+        var secondSplit = second.Length / 2;
+
+        Assert.True(parser.ReceivePacket(Protocol18FragmentPacket(first, 0, firstSplit, 77), "flow-a"));
+        Assert.True(parser.ReceivePacket(Protocol18FragmentPacket(second, 0, secondSplit, 77), "flow-b"));
+        Assert.True(parser.ReceivePacket(Protocol18FragmentPacket(first, firstSplit, first.Length - firstSplit, 77), "flow-a"));
+        Assert.True(parser.ReceivePacket(Protocol18FragmentPacket(second, secondSplit, second.Length - secondSplit, 77), "flow-b"));
+
+        Assert.Equal(new long[] { 204, 205 }, orders.Select(order => order.OrderId));
+    }
+
+    [Fact]
     public void ReassemblesSplitAndCoalescedTcpPhotonFrames()
     {
         var now = DateTime.UtcNow;

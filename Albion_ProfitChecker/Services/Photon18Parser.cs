@@ -17,7 +17,7 @@ public abstract class Photon18Parser
     private const int MaxSegmentLength = 4 * 1024 * 1024;
     private const int MaxPendingSegments = 32;
 
-    private readonly Dictionary<int, SegmentedPacket> _pendingSegments = new();
+    private readonly Dictionary<FragmentKey, SegmentedPacket> _pendingSegments = new();
     private long _receivedPacketCount;
     private long _acceptedPacketCount;
     private long _encryptedPacketCount;
@@ -27,6 +27,9 @@ public abstract class Photon18Parser
     public long EncryptedPacketCount => Interlocked.Read(ref _encryptedPacketCount);
 
     public bool ReceivePacket(byte[] payload)
+        => ReceivePacket(payload, string.Empty);
+
+    internal bool ReceivePacket(byte[] payload, string? streamKey)
     {
         Interlocked.Increment(ref _receivedPacketCount);
         if (payload is null || payload.Length < PhotonHeaderLength)
@@ -49,7 +52,7 @@ public abstract class Photon18Parser
 
             for (var index = 0; index < commandCount; index++)
             {
-                if (!HandleCommand(input))
+                if (!HandleCommand(input, streamKey ?? string.Empty))
                     return false;
             }
 
@@ -84,7 +87,7 @@ public abstract class Photon18Parser
     {
     }
 
-    private bool HandleCommand(Protocol18Reader input)
+    private bool HandleCommand(Protocol18Reader input, string streamKey)
     {
         var commandType = input.ReadByte();
         input.Skip(3);
@@ -102,7 +105,7 @@ public abstract class Photon18Parser
             CommandDisconnect => true,
             CommandSendReliable => HandleReliable(bodyReader),
             CommandSendUnreliable => HandleUnreliable(bodyReader),
-            CommandSendFragment => HandleFragment(bodyReader),
+            CommandSendFragment => HandleFragment(bodyReader, streamKey),
             _ => true
         };
     }
@@ -147,7 +150,7 @@ public abstract class Photon18Parser
         }
     }
 
-    private bool HandleFragment(Protocol18Reader input)
+    private bool HandleFragment(Protocol18Reader input, string streamKey)
     {
         if (input.Remaining < FragmentHeaderLength)
             return false;
@@ -159,9 +162,10 @@ public abstract class Photon18Parser
         var fragmentOffsetValue = input.ReadUInt32BigEndian();
         var fragment = input.ReadBytes(input.Remaining);
 
+        var fragmentKey = new FragmentKey(streamKey, sequence);
         if (totalLengthValue == 0 || totalLengthValue > MaxSegmentLength || fragmentOffsetValue > totalLengthValue)
         {
-            _pendingSegments.Remove(sequence);
+            _pendingSegments.Remove(fragmentKey);
             return false;
         }
 
@@ -169,17 +173,17 @@ public abstract class Photon18Parser
         var fragmentOffset = checked((int)fragmentOffsetValue);
         if (fragment.Length > totalLength - fragmentOffset)
         {
-            _pendingSegments.Remove(sequence);
+            _pendingSegments.Remove(fragmentKey);
             return false;
         }
 
-        if (!_pendingSegments.TryGetValue(sequence, out var segmented) || segmented.TotalLength != totalLength)
+        if (!_pendingSegments.TryGetValue(fragmentKey, out var segmented) || segmented.TotalLength != totalLength)
         {
             if (_pendingSegments.Count >= MaxPendingSegments)
                 return false;
 
             segmented = new SegmentedPacket(checked((int)totalLength));
-            _pendingSegments[sequence] = segmented;
+            _pendingSegments[fragmentKey] = segmented;
         }
 
         var fragmentStart = fragmentOffset;
@@ -195,7 +199,7 @@ public abstract class Photon18Parser
         if (segmented.ReceivedCount != segmented.TotalLength)
             return true;
 
-        _pendingSegments.Remove(sequence);
+        _pendingSegments.Remove(fragmentKey);
         return HandleReliable(new Protocol18Reader(segmented.Payload));
     }
 
@@ -216,4 +220,6 @@ public abstract class Photon18Parser
         public bool[] Received { get; }
         public int ReceivedCount { get; set; }
     }
+
+    private readonly record struct FragmentKey(string StreamKey, int Sequence);
 }
