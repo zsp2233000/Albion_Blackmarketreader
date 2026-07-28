@@ -123,6 +123,7 @@ public sealed class BlackMarketCaptureService : IDisposable
     {
         lock (_gate)
         {
+            _tcpStreams.Clear();
             if (_device is null) return;
             try { _device.StopCapture(); } catch { }
             try { _device.OnPacketArrival -= OnPacketArrival; } catch { }
