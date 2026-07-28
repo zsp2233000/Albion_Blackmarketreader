@@ -157,6 +157,33 @@ public sealed class BlackMarketCaptureTests
     }
 
     [Fact]
+    public void ReassemblesSplitAndCoalescedTcpPhotonFrames()
+    {
+        var now = DateTime.UtcNow;
+        var orders = new List<BlackMarketOrder>();
+        var parser = new AlbionMarketPhotonParser(() => "asia", orders.Add);
+        var first = Protocol18ResponsePacket(
+            AlbionMarketPhotonParser.AuctionGetOffersOperation,
+            OrderJson(401, "T4_MAIN_SWORD", "3003", 1, 12345, now.AddMinutes(20)));
+        var second = Protocol18ResponsePacket(
+            AlbionMarketPhotonParser.AuctionGetRequestsOperation,
+            OrderJson(402, "T4_MAIN_AXE", "3003", 1, 54321, now.AddMinutes(20)));
+        var split = first.Length / 2;
+        var assembler = new Photon18TcpStreamAssembler();
+
+        Assert.Empty(assembler.Append(100, first[..split]));
+        var frames = assembler.Append(
+            checked((uint)(100 + split)),
+            first[split..].Concat(second).ToArray());
+
+        Assert.Equal(2, frames.Count);
+        foreach (var frame in frames)
+            Assert.True(parser.ReceivePacket(frame));
+
+        Assert.Equal(new long[] { 401, 402 }, orders.Select(order => order.OrderId));
+    }
+
+    [Fact]
     public void KeepsCurrentOrderStateAndUsesFreshFirstThreeQualityBuyOrders()
     {
         var path = TempPath();

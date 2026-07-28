@@ -20,6 +20,8 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
     private readonly Func<string?> _regionProvider;
     private readonly Action<BlackMarketOrder> _onOrder;
     private readonly Action<string>? _onError;
+    private long _parsedOrderCount;
+    private long _parseErrorCount;
 
     public AlbionMarketPhotonParser(Func<string?> regionProvider, Action<BlackMarketOrder> onOrder, Action<string>? onError = null)
     {
@@ -33,8 +35,8 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
     {
     }
 
-    public long ParsedOrderCount { get; private set; }
-    public long ParseErrorCount { get; private set; }
+    public long ParsedOrderCount => Interlocked.Read(ref _parsedOrderCount);
+    public long ParseErrorCount => Interlocked.Read(ref _parseErrorCount);
     public string? CurrentLocationId { get; private set; }
 
     protected override void OnRequest(byte operationCode, Dictionary<byte, object> parameters)
@@ -69,7 +71,7 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
                 continue;
             }
 
-            ParsedOrderCount++;
+            Interlocked.Increment(ref _parsedOrderCount);
             _onOrder(order);
         }
     }
@@ -149,7 +151,7 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
 
     private void RegisterError(string message)
     {
-        ParseErrorCount++;
+        Interlocked.Increment(ref _parseErrorCount);
         _onError?.Invoke(message);
     }
 

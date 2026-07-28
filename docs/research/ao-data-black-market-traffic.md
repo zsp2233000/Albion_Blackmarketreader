@@ -207,9 +207,12 @@ processor 依 realm 切 DB；黑市的「永不過期」遠期日期會改成目
 
 ## 7. 與本專案目前實作的關鍵差異
 
+> 本節記錄研究開始時的 baseline，作為修正前後對照；本次實作已處理 7.1、7.3、7.4、
+> 7.6 與 7.7 的解析／telemetry 缺口，7.2（多網卡選擇）仍是後續可獨立處理的項目。
+
 ### 7.1 空 `LocationId` 會被直接拒絕
 
-本專案 `AlbionMarketPhotonParser` 沒有追蹤 Join/cluster location state。它把 order JSON
+修正前本專案 `AlbionMarketPhotonParser` 沒有追蹤 Join/cluster location state。它把 order JSON
 直接反序列化，隨即要求 DTO 的 `LocationId` 通過 Black Market 規則；空字串會失敗。
 [`AlbionMarketPhotonParser.cs#L67-L105`](../../Albion_ProfitChecker/Services/AlbionMarketPhotonParser.cs#L67-L105)
 [`AlbionMarketPhotonParser.cs#L186-L213`](../../Albion_ProfitChecker/Services/AlbionMarketPhotonParser.cs#L186-L213)
@@ -229,7 +232,7 @@ Wi-Fi/Ethernet/VPN adapter，本專案完全看不到遊戲封包。
 
 ### 7.3 用 response opcode 推導 `AuctionType`
 
-本專案 DTO 沒有 `AuctionType` 欄位；`OnResponse` 只接受 opcode 81/82，並以 opcode
+修正前本專案 DTO 沒有 `AuctionType` 欄位；`OnResponse` 只接受 opcode 81/82，並以 opcode
 直接推導 `"offer"` / `"request"`。
 [`AlbionMarketPhotonParser.cs#L41-L59`](../../Albion_ProfitChecker/Services/AlbionMarketPhotonParser.cs#L41-L59)
 [`AlbionMarketPhotonParser.cs#L186-L196`](../../Albion_ProfitChecker/Services/AlbionMarketPhotonParser.cs#L186-L196)
@@ -240,7 +243,7 @@ ao-data 新版遇到 `params[0] == []string` 會強制 route 為 Offers，但仍
 
 ### 7.4 缺少價格縮放
 
-本專案把 DTO 的 `UnitPriceSilver` 原值直接寫進 `BlackMarketOrder`，沒有 `/ 10000`。
+修正前本專案把 DTO 的 `UnitPriceSilver` 原值直接寫進 `BlackMarketOrder`，沒有 `/ 10000`。
 [`AlbionMarketPhotonParser.cs#L90-L105`](../../Albion_ProfitChecker/Services/AlbionMarketPhotonParser.cs#L90-L105)
 
 ao-data Rails 明確在 dedupe 階段做 `order['UnitPriceSilver'] /= 10000`。所以即使本專案
@@ -262,7 +265,7 @@ parser 之前：SharpPcap 無法列舉 device，就不可能收到任何 market 
 
 ### 7.6 手動指定 Asia 仍可能被跨區安全邏輯永久阻擋
 
-本專案雖把手動 region 當成解析時的 authoritative region，但仍先記錄 endpoint 推導出的
+修正前本專案雖把手動 region 當成解析時的 authoritative region，但仍先記錄 endpoint 推導出的
 `_detectedRegion`；同一個 capture 只要之後出現另一個推導值，就會把 `_blocked` 設為
 `true`。因此先被錯判為 Europe、稍後又看到 Asia 的情況，仍會停止 capture。現有測試
 `StopsWhenEndpointRegionChangesDuringCapture` 更把這個行為固定成目前契約。
@@ -275,8 +278,10 @@ realm/ingest state。若手動 region 的目的正是避免過時 endpoint 資�
 
 ### 7.7 capture 範圍與 telemetry 無法定位掉包層級
 
-ao-data 的 BPF 同時接收 TCP/UDP 5056；本專案只抽取 UDP，且沒有在 capture device 上
-設定 BPF。`CapturedPacketCount` 在檢查 UDP 與 Albion port 之前就遞增，所以數字增加只
+ao-data 的 BPF 同時接收 TCP/UDP 5056；修正前本專案只抽取 UDP，且沒有在 capture device 上
+設定 BPF。現行實作已加入 TCP/UDP 5055/5056 filter、per-flow TCP Photon frame reassembly，
+並分別統計 matched、Photon accepted、encrypted 與 parsed 訂單數。`CapturedPacketCount` 在檢查
+UDP 與 Albion port 之前就遞增，所以數字增加只
 代表網卡有任意封包，不代表收到 Albion payload。另一方面，`Photon18Parser` 遇到
 encrypted 或格式錯誤時多半只回傳 `false`，`ProcessCapturedPayload` 又忽略該回傳值，
 狀態頁因而無法區分「錯網卡、非 Albion、Photon 拒絕、encrypted、location 拒絕」。

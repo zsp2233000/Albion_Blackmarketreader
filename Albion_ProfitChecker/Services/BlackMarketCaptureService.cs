@@ -14,6 +14,7 @@ public sealed class BlackMarketCaptureService : IDisposable
     private readonly Action<string>? _log;
     private readonly object _gate = new();
     private readonly AlbionMarketPhotonParser _parser;
+    private readonly Dictionary<TcpFlowKey, Photon18TcpStreamAssembler> _tcpStreams = new();
     private ICaptureDevice? _device;
     private string? _detectedRegion;
     private string? _activeRegion;
@@ -179,17 +180,37 @@ public sealed class BlackMarketCaptureService : IDisposable
 
             var ipv4Packet = packet.Extract<IPv4Packet>();
             var ipv6Packet = packet.Extract<IPv6Packet>();
-            var remoteAddress = IsAlbionTransportPort(sourcePort)
-                ? ipv4Packet?.SourceAddress ?? ipv6Packet?.SourceAddress
-                : ipv4Packet?.DestinationAddress ?? ipv6Packet?.DestinationAddress;
+            var sourceAddress = ipv4Packet?.SourceAddress ?? ipv6Packet?.SourceAddress;
+            var destinationAddress = ipv4Packet?.DestinationAddress ?? ipv6Packet?.DestinationAddress;
+            var remoteAddress = IsAlbionTransportPort(sourcePort) ? sourceAddress : destinationAddress;
             if (remoteAddress is null) return;
             var detectedRegion = DetectRegion(remoteAddress);
 
-            var payload = udp?.PayloadData;
-            if (payload is null && tcp is not null)
-                payload = tcp.PayloadData;
-            if (payload is null || payload.Length == 0) return;
-            ProcessCapturedPayload(detectedRegion, payload);
+            if (udp?.PayloadData is { Length: > 0 } udpPayload)
+            {
+                ProcessCapturedPayload(detectedRegion, udpPayload);
+                return;
+            }
+
+            if (tcp?.PayloadData is not { Length: > 0 } tcpPayload ||
+                sourceAddress is null || destinationAddress is null)
+                return;
+
+            var flow = new TcpFlowKey(
+                sourceAddress.ToString(),
+                sourcePort,
+                destinationAddress.ToString(),
+                destinationPort);
+            Photon18TcpStreamAssembler assembler;
+            lock (_gate)
+            {
+                if (!_tcpStreams.TryGetValue(flow, out var existing))
+                    _tcpStreams[flow] = existing = new Photon18TcpStreamAssembler();
+                assembler = existing;
+            }
+
+            foreach (var frame in assembler.Append(tcp.SequenceNumber, tcpPayload))
+                ProcessCapturedPayload(detectedRegion, frame);
         }
         catch (Exception ex)
         {
@@ -260,6 +281,12 @@ public sealed class BlackMarketCaptureService : IDisposable
     private void Log(string message) => _log?.Invoke(message);
 
     private static bool IsAlbionTransportPort(int port) => port is 5055 or 5056;
+
+    private readonly record struct TcpFlowKey(
+        string SourceAddress,
+        int SourcePort,
+        string DestinationAddress,
+        int DestinationPort);
 
     private static string? DetectRegion(IPAddress address)
     {

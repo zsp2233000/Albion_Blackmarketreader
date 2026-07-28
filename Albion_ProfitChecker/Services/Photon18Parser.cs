@@ -18,14 +18,17 @@ public abstract class Photon18Parser
     private const int MaxPendingSegments = 32;
 
     private readonly Dictionary<int, SegmentedPacket> _pendingSegments = new();
+    private long _receivedPacketCount;
+    private long _acceptedPacketCount;
+    private long _encryptedPacketCount;
 
-    public long ReceivedPacketCount { get; private set; }
-    public long AcceptedPacketCount { get; private set; }
-    public long EncryptedPacketCount { get; private set; }
+    public long ReceivedPacketCount => Interlocked.Read(ref _receivedPacketCount);
+    public long AcceptedPacketCount => Interlocked.Read(ref _acceptedPacketCount);
+    public long EncryptedPacketCount => Interlocked.Read(ref _encryptedPacketCount);
 
     public bool ReceivePacket(byte[] payload)
     {
-        ReceivedPacketCount++;
+        Interlocked.Increment(ref _receivedPacketCount);
         if (payload is null || payload.Length < PhotonHeaderLength)
             return false;
 
@@ -39,7 +42,7 @@ public abstract class Photon18Parser
 
             if (flags == 1)
             {
-                EncryptedPacketCount++;
+                Interlocked.Increment(ref _encryptedPacketCount);
                 OnEncrypted();
                 return false;
             }
@@ -50,7 +53,7 @@ public abstract class Photon18Parser
                     return false;
             }
 
-            AcceptedPacketCount++;
+            Interlocked.Increment(ref _acceptedPacketCount);
             return true;
         }
         catch (EndOfStreamException)
@@ -121,7 +124,7 @@ public abstract class Photon18Parser
         var messageType = input.ReadByte();
         if (messageType == MessageEncrypted)
         {
-            EncryptedPacketCount++;
+            Interlocked.Increment(ref _encryptedPacketCount);
             OnEncrypted();
             return true;
         }
