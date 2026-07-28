@@ -11,12 +11,19 @@ internal sealed class Photon18TcpStreamAssembler
     private const int MaxBufferedBytes = 8 * 1024 * 1024;
     private const int MaxPendingSegments = 64;
 
+    private readonly object _gate = new();
     private readonly List<byte> _buffer = new();
     private readonly SortedDictionary<uint, byte[]> _pendingSegments = new();
     private uint _nextSequence;
     private bool _hasSequence;
 
     public IReadOnlyList<byte[]> Append(uint sequenceNumber, byte[] payload)
+    {
+        lock (_gate)
+            return AppendCore(sequenceNumber, payload);
+    }
+
+    private IReadOnlyList<byte[]> AppendCore(uint sequenceNumber, byte[] payload)
     {
         if (payload is null || payload.Length == 0)
             return Array.Empty<byte[]>();
@@ -41,13 +48,12 @@ internal sealed class Photon18TcpStreamAssembler
         {
             if (_pendingSegments.Count >= MaxPendingSegments)
                 _pendingSegments.Clear();
-            _pendingSegments.TryAdd(sequenceNumber, payload);
+            _pendingSegments[sequenceNumber] = payload;
             return ExtractFrames();
         }
 
         AppendContiguous(payload);
-        while (_pendingSegments.Remove(_nextSequence, out var nextPayload))
-            AppendContiguous(nextPayload);
+        DrainPendingSegments();
 
         return ExtractFrames();
     }
@@ -62,6 +68,56 @@ internal sealed class Photon18TcpStreamAssembler
 
         _buffer.AddRange(payload);
         _nextSequence = unchecked(_nextSequence + (uint)payload.Length);
+    }
+
+    private void DrainPendingSegments()
+    {
+        while (TryTakeOverlappingSegment(out var sequenceNumber, out var payload))
+        {
+            _pendingSegments.Remove(sequenceNumber);
+            if (IsBefore(sequenceNumber, _nextSequence))
+            {
+                var overlap = unchecked(_nextSequence - sequenceNumber);
+                if (overlap >= payload.Length)
+                    continue;
+                payload = payload[(int)overlap..];
+            }
+
+            AppendContiguous(payload);
+        }
+    }
+
+    private bool TryTakeOverlappingSegment(out uint sequenceNumber, out byte[] payload)
+    {
+        sequenceNumber = 0;
+        payload = Array.Empty<byte>();
+        var found = false;
+
+        foreach (var candidate in _pendingSegments)
+        {
+            if (candidate.Key == _nextSequence)
+            {
+                sequenceNumber = candidate.Key;
+                payload = candidate.Value;
+                return true;
+            }
+
+            if (!IsBefore(candidate.Key, _nextSequence))
+                continue;
+
+            var overlap = unchecked(_nextSequence - candidate.Key);
+            if (overlap >= candidate.Value.Length)
+                continue;
+
+            if (!found || IsBefore(sequenceNumber, candidate.Key))
+            {
+                sequenceNumber = candidate.Key;
+                payload = candidate.Value;
+                found = true;
+            }
+        }
+
+        return found;
     }
 
     private IReadOnlyList<byte[]> ExtractFrames()

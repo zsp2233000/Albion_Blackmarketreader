@@ -13,6 +13,7 @@ public sealed class BlackMarketCaptureService : IDisposable
     private readonly string? _manualRegion;
     private readonly Action<string>? _log;
     private readonly object _gate = new();
+    private readonly object _parserGate = new();
     private readonly AlbionMarketPhotonParser _parser;
     private readonly Dictionary<TcpFlowKey, Photon18TcpStreamAssembler> _tcpStreams = new();
     private ICaptureDevice? _device;
@@ -257,7 +258,8 @@ public sealed class BlackMarketCaptureService : IDisposable
     internal bool ProcessCapturedPayload(string? detectedRegion, byte[] payload)
     {
         if (!SelectRegion(detectedRegion)) return false;
-        _parser.ReceivePacket(payload);
+        lock (_parserGate)
+            _parser.ReceivePacket(payload);
         return true;
     }
 

@@ -184,6 +184,32 @@ public sealed class BlackMarketCaptureTests
     }
 
     [Fact]
+    public void ReassemblesOverlappingOutOfOrderTcpSegments()
+    {
+        var now = DateTime.UtcNow;
+        var orders = new List<BlackMarketOrder>();
+        var parser = new AlbionMarketPhotonParser(() => "asia", orders.Add);
+        var frame = Protocol18ResponsePacket(
+            AlbionMarketPhotonParser.AuctionGetOffersOperation,
+            OrderJson(403, "T4_MAIN_BOW", "3003", 1, 32100, now.AddMinutes(20)));
+        var firstLength = 50;
+        var gapLength = 50;
+        var assembler = new Photon18TcpStreamAssembler();
+
+        Assert.Empty(assembler.Append(100, frame[..firstLength]));
+        Assert.Empty(assembler.Append(
+            100u + (uint)(firstLength + gapLength),
+            frame[(firstLength + gapLength)..]));
+        var frames = assembler.Append(
+            100u + (uint)firstLength,
+            frame[firstLength..(firstLength + gapLength + 50)]);
+
+        var result = Assert.Single(frames);
+        Assert.True(parser.ReceivePacket(result));
+        Assert.Equal(403, Assert.Single(orders).OrderId);
+    }
+
+    [Fact]
     public void KeepsCurrentOrderStateAndUsesFreshFirstThreeQualityBuyOrders()
     {
         var path = TempPath();
