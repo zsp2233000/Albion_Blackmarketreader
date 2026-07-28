@@ -62,6 +62,29 @@ public sealed class BlackMarketCaptureTests
     }
 
     [Fact]
+    public void UsesJoinLocationWhenMarketOrderLocationIsEmptyAndPreservesOrderMetadata()
+    {
+        var now = DateTime.UtcNow;
+        var orders = new List<BlackMarketOrder>();
+        var parser = new AlbionMarketPhotonParser(() => "asia", orders.Add);
+
+        Assert.True(parser.ReceivePacket(Protocol18StringParameterResponsePacket(
+            AlbionMarketPhotonParser.JoinOperation,
+            8,
+            "3003-Auction2")));
+        Assert.Equal("3003-Auction2", parser.CurrentLocationId);
+
+        Assert.True(parser.ReceivePacket(Protocol18ResponsePacket(
+            99,
+            OrderJsonWithAuctionType(203, "T4_MAIN_SWORD", "", 2, 123450000, "request", now.AddMinutes(20)))));
+
+        var order = Assert.Single(orders);
+        Assert.Equal("3003-Auction2", order.LocationId);
+        Assert.Equal("request", order.AuctionType);
+        Assert.Equal(12345, order.UnitPriceSilver);
+    }
+
+    [Fact]
     public void ExplicitAsiaCaptureDoesNotRejectAnEndpointClassifiedAsEu()
     {
         var path = TempPath();
@@ -75,12 +98,17 @@ public sealed class BlackMarketCaptureTests
             Assert.True(capture.ProcessCapturedPayload("eu", Protocol18ResponsePacket(
                 AlbionMarketPhotonParser.AuctionGetOffersOperation,
                 OrderJson(301, "T4_MAIN_SWORD", "3003-Auction2", 2, 12345, DateTime.UtcNow.AddMinutes(20)))));
+            Assert.True(capture.ProcessCapturedPayload("asia", Protocol18ResponsePacket(
+                AlbionMarketPhotonParser.AuctionGetOffersOperation,
+                OrderJson(302, "T4_MAIN_AXE", "3003-Auction2", 2, 12345, DateTime.UtcNow.AddMinutes(20)))));
 
             var status = capture.Status;
             Assert.Equal("eu", status.DetectedRegion);
             Assert.Equal("asia", status.ManualRegion);
             Assert.Equal("asia", status.ActiveRegion);
-            Assert.Equal(1, status.ParsedOrderCount);
+            Assert.Equal(2, status.ParsedOrderCount);
+            Assert.Equal(2, status.PhotonPacketCount);
+            Assert.Equal(2, status.PhotonAcceptedPacketCount);
             Assert.NotNull(status.LastOrderAtUtc);
         }
         finally
@@ -97,7 +125,7 @@ public sealed class BlackMarketCaptureTests
         {
             var capture = new BlackMarketCaptureService(
                 new BlackMarketOrderBook(new BlackMarketOrderStore(path)),
-                manualRegion: "asia");
+                manualRegion: null);
 
             Assert.True(capture.ProcessCapturedPayload("eu", Array.Empty<byte>()));
             Assert.False(capture.ProcessCapturedPayload("asia", Array.Empty<byte>()));
@@ -230,6 +258,19 @@ public sealed class BlackMarketCaptureTests
         Expires = expiry.ToString("O")
     });
 
+    private static string OrderJsonWithAuctionType(long id, string itemId, string location, int quality, long price, string auctionType, DateTime expiry) => JsonSerializer.Serialize(new
+    {
+        Id = id,
+        ItemTypeId = itemId,
+        LocationId = location,
+        QualityLevel = quality,
+        EnchantmentLevel = 0,
+        UnitPriceSilver = price,
+        Amount = 1,
+        AuctionType = auctionType,
+        Expires = expiry.ToString("O")
+    });
+
     private static byte[] Protocol18ResponsePacket(byte operationCode, string orderJson)
     {
         var body = Protocol18ResponseBody(operationCode, orderJson);
@@ -246,6 +287,48 @@ public sealed class BlackMarketCaptureTests
         packet.Add(0);
         packet.Add(0);
         packet.Add(0);
+        var commandLengthBytes = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(commandLengthBytes, checked((uint)commandLength));
+        packet.AddRange(commandLengthBytes);
+        packet.AddRange(new byte[4]);
+        packet.AddRange(body);
+        return packet.ToArray();
+    }
+
+    private static byte[] Protocol18StringParameterResponsePacket(byte operationCode, byte parameterKey, string value)
+    {
+        var valueBytes = System.Text.Encoding.UTF8.GetBytes(value);
+        var response = new List<byte>
+        {
+            operationCode,
+            0,
+            0,
+            7
+        };
+        response.Add(0);
+        response.Add(1);
+        response.Add(parameterKey);
+        response.Add(7);
+        response.AddRange(CompressedUInt32(valueBytes.Length));
+        response.AddRange(valueBytes);
+        return Protocol18Packet(new byte[] { 0, 3 }.Concat(response).ToArray());
+    }
+
+    private static byte[] Protocol18Packet(byte[] body)
+    {
+        var commandLength = checked(12 + body.Length);
+        var packet = new List<byte>(12 + commandLength)
+        {
+            0, 0,
+            0,
+            1,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            6,
+            0,
+            0,
+            0
+        };
         var commandLengthBytes = new byte[4];
         BinaryPrimitives.WriteUInt32BigEndian(commandLengthBytes, checked((uint)commandLength));
         packet.AddRange(commandLengthBytes);

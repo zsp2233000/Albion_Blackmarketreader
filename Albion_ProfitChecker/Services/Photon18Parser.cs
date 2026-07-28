@@ -19,8 +19,13 @@ public abstract class Photon18Parser
 
     private readonly Dictionary<int, SegmentedPacket> _pendingSegments = new();
 
+    public long ReceivedPacketCount { get; private set; }
+    public long AcceptedPacketCount { get; private set; }
+    public long EncryptedPacketCount { get; private set; }
+
     public bool ReceivePacket(byte[] payload)
     {
+        ReceivedPacketCount++;
         if (payload is null || payload.Length < PhotonHeaderLength)
             return false;
 
@@ -33,7 +38,11 @@ public abstract class Photon18Parser
             input.Skip(8);
 
             if (flags == 1)
+            {
+                EncryptedPacketCount++;
+                OnEncrypted();
                 return false;
+            }
 
             for (var index = 0; index < commandCount; index++)
             {
@@ -41,6 +50,7 @@ public abstract class Photon18Parser
                     return false;
             }
 
+            AcceptedPacketCount++;
             return true;
         }
         catch (EndOfStreamException)
@@ -66,6 +76,10 @@ public abstract class Photon18Parser
         Dictionary<byte, object> parameters);
 
     protected abstract void OnEvent(byte code, Dictionary<byte, object> parameters);
+
+    protected virtual void OnEncrypted()
+    {
+    }
 
     private bool HandleCommand(Protocol18Reader input)
     {
@@ -106,7 +120,11 @@ public abstract class Photon18Parser
         input.Skip(1);
         var messageType = input.ReadByte();
         if (messageType == MessageEncrypted)
+        {
+            EncryptedPacketCount++;
+            OnEncrypted();
             return true;
+        }
 
         switch (messageType)
         {

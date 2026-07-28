@@ -7,6 +7,7 @@ namespace AlbionProfitChecker.Services;
 
 public sealed class BlackMarketCaptureService : IDisposable
 {
+    private const string CaptureFilter = "tcp port 5055 or udp port 5055 or tcp port 5056 or udp port 5056";
     private readonly BlackMarketOrderBook _orderBook;
     private readonly string? _deviceSelector;
     private readonly string? _manualRegion;
@@ -20,6 +21,7 @@ public sealed class BlackMarketCaptureService : IDisposable
     private DateTime? _lastPacketAtUtc;
     private DateTime? _lastOrderAtUtc;
     private long _capturedPacketCount;
+    private long _matchedPacketCount;
     private bool _blocked;
     private bool _disposed;
 
@@ -57,6 +59,10 @@ public sealed class BlackMarketCaptureService : IDisposable
                     _lastPacketAtUtc,
                     _lastOrderAtUtc,
                     Interlocked.Read(ref _capturedPacketCount),
+                    Interlocked.Read(ref _matchedPacketCount),
+                    _parser.ReceivedPacketCount,
+                    _parser.AcceptedPacketCount,
+                    _parser.EncryptedPacketCount,
                     _parser.ParsedOrderCount,
                     _parser.ParseErrorCount,
                     _lastError);
@@ -99,6 +105,7 @@ public sealed class BlackMarketCaptureService : IDisposable
             _device = SelectDevice(devices);
             _device.OnPacketArrival += OnPacketArrival;
             _device.Open(DeviceModes.Promiscuous, 1000);
+            _device.Filter = CaptureFilter;
             _device.StartCapture();
             Log($"Passive capture started on {_device.Name}.");
             return true;
@@ -162,17 +169,25 @@ public sealed class BlackMarketCaptureService : IDisposable
             var rawPacket = e.GetPacket();
             var packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
             var udp = packet.Extract<UdpPacket>();
-            if (udp is null || !IsAlbionUdpPort(udp.SourcePort) && !IsAlbionUdpPort(udp.DestinationPort)) return;
+            var tcp = packet.Extract<TcpPacket>();
+            if (udp is null && tcp is null) return;
+
+            var sourcePort = udp?.SourcePort ?? tcp!.SourcePort;
+            var destinationPort = udp?.DestinationPort ?? tcp!.DestinationPort;
+            if (!IsAlbionTransportPort(sourcePort) && !IsAlbionTransportPort(destinationPort)) return;
+            Interlocked.Increment(ref _matchedPacketCount);
 
             var ipv4Packet = packet.Extract<IPv4Packet>();
             var ipv6Packet = packet.Extract<IPv6Packet>();
-            var remoteAddress = IsAlbionUdpPort(udp.SourcePort)
+            var remoteAddress = IsAlbionTransportPort(sourcePort)
                 ? ipv4Packet?.SourceAddress ?? ipv6Packet?.SourceAddress
                 : ipv4Packet?.DestinationAddress ?? ipv6Packet?.DestinationAddress;
             if (remoteAddress is null) return;
             var detectedRegion = DetectRegion(remoteAddress);
 
-            var payload = udp.PayloadData;
+            var payload = udp?.PayloadData;
+            if (payload is null && tcp is not null)
+                payload = tcp.PayloadData;
             if (payload is null || payload.Length == 0) return;
             ProcessCapturedPayload(detectedRegion, payload);
         }
@@ -191,10 +206,20 @@ public sealed class BlackMarketCaptureService : IDisposable
                 if (_detectedRegion is not null &&
                     !string.Equals(_detectedRegion, detectedRegion, StringComparison.OrdinalIgnoreCase))
                 {
-                    _blocked = true;
-                    _lastError = $"Multiple Albion server regions detected: {_detectedRegion}, {detectedRegion}. Capture stopped for safety.";
-                    Log(_lastError);
-                    return false;
+                    if (_manualRegion is null)
+                    {
+                        _blocked = true;
+                        _lastError = $"Multiple Albion server regions detected: {_detectedRegion}, {detectedRegion}. Capture stopped for safety.";
+                        Log(_lastError);
+                        return false;
+                    }
+
+                    var warning = $"Endpoint region advisory mismatch: {_detectedRegion}, {detectedRegion}. Continuing with manually selected region {_manualRegion}.";
+                    if (!string.Equals(_lastError, warning, StringComparison.Ordinal))
+                    {
+                        _lastError = warning;
+                        Log(warning);
+                    }
                 }
 
                 _detectedRegion ??= detectedRegion;
@@ -234,7 +259,7 @@ public sealed class BlackMarketCaptureService : IDisposable
 
     private void Log(string message) => _log?.Invoke(message);
 
-    private static bool IsAlbionUdpPort(int port) => port is 5055 or 5056;
+    private static bool IsAlbionTransportPort(int port) => port is 5055 or 5056;
 
     private static string? DetectRegion(IPAddress address)
     {

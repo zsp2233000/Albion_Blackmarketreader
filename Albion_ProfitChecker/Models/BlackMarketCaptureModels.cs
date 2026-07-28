@@ -79,6 +79,10 @@ public sealed record BlackMarketCaptureStatus(
     DateTime? LastPacketAtUtc,
     DateTime? LastOrderAtUtc,
     long CapturedPacketCount,
+    long MatchedPacketCount,
+    long PhotonPacketCount,
+    long PhotonAcceptedPacketCount,
+    long EncryptedPacketCount,
     long ParsedOrderCount,
     long ParseErrorCount,
     string? LastError

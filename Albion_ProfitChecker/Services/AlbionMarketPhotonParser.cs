@@ -7,6 +7,8 @@ namespace AlbionProfitChecker.Services;
 
 public sealed class AlbionMarketPhotonParser : Photon18Parser
 {
+    public const byte JoinOperation = 2;
+    public const byte GetGameServerByClusterOperation = 17;
     public const byte AuctionGetOffersOperation = 81;
     public const byte AuctionGetRequestsOperation = 82;
 
@@ -33,23 +35,35 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
 
     public long ParsedOrderCount { get; private set; }
     public long ParseErrorCount { get; private set; }
+    public string? CurrentLocationId { get; private set; }
 
     protected override void OnRequest(byte operationCode, Dictionary<byte, object> parameters)
     {
+        if (operationCode == GetGameServerByClusterOperation)
+            UpdateCurrentLocation(parameters, 0);
     }
 
     protected override void OnResponse(byte operationCode, short returnCode, string debugMessage, Dictionary<byte, object> parameters)
     {
-        if (returnCode != 0) return;
-        if (operationCode is not (AuctionGetOffersOperation or AuctionGetRequestsOperation)) return;
+        if (operationCode == JoinOperation)
+            UpdateCurrentLocation(parameters, 8);
+        else if (operationCode == GetGameServerByClusterOperation)
+            UpdateCurrentLocation(parameters, 0);
 
-        var auctionType = operationCode == AuctionGetRequestsOperation ? "request" : "offer";
+        if (returnCode != 0) return;
         if (!parameters.TryGetValue(0, out var rawOrders)) return;
 
+        var orderJsons = ExtractJsonStrings(rawOrders)
+            .Where(LooksLikeMarketOrderJson)
+            .ToList();
+        var isKnownMarketOperation = operationCode is (AuctionGetOffersOperation or AuctionGetRequestsOperation);
+        if (!isKnownMarketOperation && orderJsons.Count == 0) return;
+
+        var auctionType = operationCode == AuctionGetRequestsOperation ? "request" : "offer";
         var region = _regionProvider() ?? "unknown";
-        foreach (var json in ExtractJsonStrings(rawOrders))
+        foreach (var json in orderJsons)
         {
-            if (!TryParseOrder(json, auctionType, region, DateTime.UtcNow, out var order, out var error))
+            if (!TryParseOrder(json, auctionType, region, CurrentLocationId, DateTime.UtcNow, out var order, out var error))
             {
                 RegisterError(error ?? "Unknown market order parse failure.");
                 continue;
@@ -71,6 +85,16 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
         DateTime nowUtc,
         out BlackMarketOrder order,
         out string? error)
+        => TryParseOrder(json, auctionType, region, null, nowUtc, out order, out error);
+
+    public static bool TryParseOrder(
+        string json,
+        string auctionType,
+        string region,
+        string? currentLocationId,
+        DateTime nowUtc,
+        out BlackMarketOrder order,
+        out string? error)
     {
         order = new BlackMarketOrder();
         error = null;
@@ -83,26 +107,30 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
             if (normalizedRegion is null) return Fail("Market order region was unknown.", out order, out error);
             if (dto.Id <= 0) return Fail("Market order id was missing.", out order, out error);
             if (string.IsNullOrWhiteSpace(dto.ItemTypeId)) return Fail("Market order item id was missing.", out order, out error);
-            if (!BlackMarketLocationRules.IsBlackMarket(dto.LocationId))
-                return Fail($"Market order location was not Black Market: {dto.LocationId}.", out order, out error);
+            var locationId = BlackMarketLocationRules.NormalizeLocation(dto.LocationId)
+                ?? BlackMarketLocationRules.NormalizeLocation(currentLocationId);
+            if (!BlackMarketLocationRules.IsBlackMarket(locationId))
+                return Fail($"Market order location was not Black Market: {dto.LocationId ?? currentLocationId}.", out order, out error);
             if (dto.QualityLevel is < 1 or > 5) return Fail("Market order quality was outside 1..5.", out order, out error);
             if (dto.Amount <= 0) return Fail("Market order amount was not positive.", out order, out error);
-            if (dto.UnitPriceSilver <= 0) return Fail("Market order price was not positive.", out order, out error);
+            var unitPriceSilver = dto.UnitPriceSilver / 10_000;
+            if (unitPriceSilver <= 0) return Fail("Market order price was not positive.", out order, out error);
             if (!TryParseExpiry(dto.Expires, out var expiresUtc) || expiresUtc <= nowUtc.ToUniversalTime())
                 return Fail("Market order expiry was invalid or already elapsed.", out order, out error);
 
             var observedAt = nowUtc.ToUniversalTime();
+            var normalizedAuctionType = NormalizeAuctionType(dto.AuctionType) ?? NormalizeAuctionType(auctionType) ?? "offer";
             order = new BlackMarketOrder
             {
                 OrderId = dto.Id,
                 ItemId = dto.ItemTypeId.Trim(),
-                LocationId = dto.LocationId?.Trim() ?? string.Empty,
+                LocationId = locationId!,
                 Region = normalizedRegion,
                 QualityLevel = dto.QualityLevel,
                 EnchantmentLevel = dto.EnchantmentLevel,
-                UnitPriceSilver = dto.UnitPriceSilver,
+                UnitPriceSilver = unitPriceSilver,
                 Amount = dto.Amount,
-                AuctionType = auctionType,
+                AuctionType = normalizedAuctionType,
                 ExpiresUtc = expiresUtc,
                 FirstSeenUtc = observedAt,
                 LastSeenUtc = observedAt
@@ -123,6 +151,29 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
     {
         ParseErrorCount++;
         _onError?.Invoke(message);
+    }
+
+    private void UpdateCurrentLocation(Dictionary<byte, object> parameters, byte parameterKey)
+    {
+        if (!parameters.TryGetValue(parameterKey, out var rawLocation)) return;
+
+        var location = ExtractJsonStrings(rawLocation)
+            .Select(BlackMarketLocationRules.NormalizeLocation)
+            .FirstOrDefault(value => value is not null);
+        if (location is not null)
+            CurrentLocationId = location;
+    }
+
+    private static bool LooksLikeMarketOrderJson(string json)
+        => json.TrimStart().StartsWith("{", StringComparison.Ordinal)
+           && json.Contains("ItemTypeId", StringComparison.OrdinalIgnoreCase)
+           && json.Contains("LocationId", StringComparison.OrdinalIgnoreCase);
+
+    private static string? NormalizeAuctionType(string? value)
+    {
+        if (string.Equals(value?.Trim(), "offer", StringComparison.OrdinalIgnoreCase)) return "offer";
+        if (string.Equals(value?.Trim(), "request", StringComparison.OrdinalIgnoreCase)) return "request";
+        return null;
     }
 
     private static IEnumerable<string> ExtractJsonStrings(object? value)
@@ -187,11 +238,12 @@ public sealed class AlbionMarketPhotonParser : Photon18Parser
     {
         public long Id { get; set; }
         public string ItemTypeId { get; set; } = string.Empty;
-        public string LocationId { get; set; } = string.Empty;
+        public string? LocationId { get; set; }
         public int QualityLevel { get; set; }
         public int EnchantmentLevel { get; set; }
         public long UnitPriceSilver { get; set; }
         public int Amount { get; set; }
+        public string? AuctionType { get; set; }
         public string Expires { get; set; } = string.Empty;
     }
 }
@@ -202,14 +254,26 @@ public static class BlackMarketLocationRules
     // -Auction2 or use the explicit Black Market token. BLACKBANK-* is deliberately excluded.
     public static bool IsBlackMarket(string? rawLocationId)
     {
-        if (string.IsNullOrWhiteSpace(rawLocationId)) return false;
-        var value = rawLocationId.Trim().Trim('\"', '\'');
-        if (value.Equals("BLACK_MARKET", StringComparison.OrdinalIgnoreCase) ||
-            value.Equals("BLACKMARKET", StringComparison.OrdinalIgnoreCase)) return true;
+        var value = NormalizeLocation(rawLocationId);
+        if (value is null) return false;
 
         var candidate = value;
         while (candidate.EndsWith("-Auction2", StringComparison.OrdinalIgnoreCase))
             candidate = candidate[..^"-Auction2".Length];
         return candidate.Equals("3003", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static string? NormalizeLocation(string? rawLocationId)
+    {
+        if (string.IsNullOrWhiteSpace(rawLocationId)) return null;
+        var value = rawLocationId.Trim().Trim('\"', '\'');
+        if (value.Equals("BLACK_MARKET", StringComparison.OrdinalIgnoreCase) ||
+            value.Equals("BLACKMARKET", StringComparison.OrdinalIgnoreCase)) return "3003";
+        if (value.All(char.IsDigit) && value.Length is >= 3 and <= 6) return value;
+        if (value.StartsWith("BLACKBANK-", StringComparison.OrdinalIgnoreCase) ||
+            value.EndsWith("-Auction2", StringComparison.OrdinalIgnoreCase) ||
+            value.EndsWith("-HellDen", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("@", StringComparison.Ordinal)) return value;
+        return null;
     }
 }
