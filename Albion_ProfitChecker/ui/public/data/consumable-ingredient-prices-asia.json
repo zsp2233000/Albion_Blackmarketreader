@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T11:09:44.410Z",
+  "generatedAt": "2026-08-01T10:18:38.725Z",
   "region": "asia",
   "cities": [
     "Lymhurst",
@@ -17,26 +17,29 @@
       "tier": 1,
       "prices": {
         "Lymhurst": 475,
-        "Fort Sterling": 491,
-        "Bridgewatch": 490
+        "Martlock": 519,
+        "Fort Sterling": 440,
+        "Thetford": 482,
+        "Brecilien": 485
       }
     },
     {
       "itemId": "T1_FISHCHOPS",
       "tier": 1,
       "prices": {
-        "Lymhurst": 346,
-        "Bridgewatch": 331,
-        "Caerleon": 338
+        "Lymhurst": 352,
+        "Fort Sterling": 338,
+        "Bridgewatch": 330
       }
     },
     {
       "itemId": "T1_SEAWEED",
       "tier": 1,
       "prices": {
-        "Lymhurst": 389,
-        "Thetford": 402,
-        "Bridgewatch": 397
+        "Lymhurst": 334,
+        "Thetford": 408,
+        "Bridgewatch": 404,
+        "Brecilien": 434
       }
     },
     {
@@ -47,17 +50,13 @@
     {
       "itemId": "T2_BEAN",
       "tier": 2,
-      "prices": {
-        "Bridgewatch": 465,
-        "Brecilien": 472
-      }
+      "prices": {}
     },
     {
       "itemId": "T3_COMFREY",
       "tier": 3,
       "prices": {
-        "Bridgewatch": 799,
-        "Brecilien": 510
+        "Bridgewatch": 620
       }
     },
     {
@@ -76,35 +75,36 @@
       "itemId": "T3_FISH_FRESHWATER_SWAMP_RARE",
       "tier": 3,
       "prices": {
-        "Lymhurst": 3249,
-        "Fort Sterling": 3287,
-        "Thetford": 2973
+        "Lymhurst": 3238
       }
     },
     {
       "itemId": "T3_FISH_FRESHWATER_FOREST_RARE",
       "tier": 3,
       "prices": {
-        "Lymhurst": 3208,
-        "Brecilien": 3270
+        "Lymhurst": 3284
       }
     },
     {
       "itemId": "T3_EGG",
       "tier": 3,
-      "prices": {}
+      "prices": {
+        "Martlock": 144,
+        "Brecilien": 274
+      }
     },
     {
       "itemId": "T3_FISH_FRESHWATER_STEPPE_RARE",
       "tier": 3,
       "prices": {
-        "Lymhurst": 3259
+        "Lymhurst": 3197
       }
     },
     {
       "itemId": "T3_MEAT",
       "tier": 3,
       "prices": {
+        "Lymhurst": 525,
         "Bridgewatch": 534
       }
     },
@@ -117,22 +117,22 @@
       "itemId": "T3_ALCHEMY_RARE_IMP",
       "tier": 3,
       "prices": {
-        "Thetford": 16898
+        "Bridgewatch": 14500
       }
     },
     {
       "itemId": "T3_ALCHEMY_RARE_ELEMENTAL",
       "tier": 3,
       "prices": {
-        "Lymhurst": 26895
+        "Lymhurst": 26893
       }
     },
     {
       "itemId": "T3_ALCHEMY_RARE_PANTHER",
       "tier": 3,
       "prices": {
-        "Lymhurst": 67976,
-        "Brecilien": 42540
+        "Thetford": 49000,
+        "Brecilien": 42400
       }
     },
     {
@@ -143,7 +143,9 @@
     {
       "itemId": "T3_ALCHEMY_RARE_ENT",
       "tier": 3,
-      "prices": {}
+      "prices": {
+        "Brecilien": 18994
+      }
     },
     {
       "itemId": "T3_ALCHEMY_RARE_WEREWOLF",
@@ -159,6 +161,8 @@
       "itemId": "T3_WHEAT",
       "tier": 3,
       "prices": {
+        "Martlock": 518,
+        "Thetford": 526,
         "Bridgewatch": 498
       }
     },
@@ -166,7 +170,8 @@
       "itemId": "T3_FISH_FRESHWATER_HIGHLANDS_RARE",
       "tier": 3,
       "prices": {
-        "Lymhurst": 3217
+        "Lymhurst": 3267,
+        "Bridgewatch": 2998
       }
     },
     {
@@ -180,37 +185,39 @@
       "itemId": "T3_FISH_FRESHWATER_AVALON_RARE",
       "tier": 3,
       "prices": {
-        "Lymhurst": 3235,
-        "Fort Sterling": 3339,
-        "Brecilien": 3178
+        "Lymhurst": 3248,
+        "Brecilien": 3160
       }
     },
     {
       "itemId": "T4_BREAD",
       "tier": 4,
       "prices": {
-        "Thetford": 428,
-        "Bridgewatch": 451
+        "Lymhurst": 495,
+        "Martlock": 508,
+        "Caerleon": 450
       }
     },
     {
       "itemId": "T4_BURDOCK",
       "tier": 4,
       "prices": {
-        "Lymhurst": 461,
-        "Martlock": 529
+        "Martlock": 529,
+        "Caerleon": 386
       }
     },
     {
       "itemId": "T4_FARM_GOAT_GROWN",
       "tier": 4,
-      "prices": {}
+      "prices": {
+        "Lymhurst": 8997
+      }
     },
     {
       "itemId": "T4_BUTTER",
       "tier": 4,
       "prices": {
-        "Lymhurst": 373
+        "Caerleon": 445
       }
     },
     {
@@ -228,25 +235,29 @@
       "itemId": "T4_MEAT",
       "tier": 4,
       "prices": {
-        "Lymhurst": 536,
-        "Bridgewatch": 512
+        "Lymhurst": 545,
+        "Bridgewatch": 513
       }
     },
     {
       "itemId": "T4_TURNIP",
       "tier": 4,
       "prices": {
-        "Bridgewatch": 511
+        "Lymhurst": 486,
+        "Caerleon": 550
       }
     },
     {
       "itemId": "T5_CABBAGE",
       "tier": 5,
       "prices": {
-        "Lymhurst": 542,
-        "Thetford": 472,
-        "Bridgewatch": 468,
-        "Brecilien": 537
+        "Lymhurst": 575,
+        "Martlock": 533,
+        "Fort Sterling": 525,
+        "Thetford": 468,
+        "Bridgewatch": 552,
+        "Caerleon": 576,
+        "Brecilien": 510
       }
     },
     {
@@ -254,21 +265,25 @@
       "tier": 5,
       "prices": {
         "Lymhurst": 6568,
-        "Martlock": 6894,
-        "Brecilien": 6559
+        "Bridgewatch": 6024,
+        "Brecilien": 6660
       }
     },
     {
       "itemId": "T5_TEASEL",
       "tier": 5,
-      "prices": {}
+      "prices": {
+        "Fort Sterling": 476,
+        "Thetford": 465,
+        "Bridgewatch": 476,
+        "Caerleon": 317,
+        "Brecilien": 541
+      }
     },
     {
       "itemId": "T5_FISH_FRESHWATER_STEPPE_RARE",
       "tier": 5,
-      "prices": {
-        "Lymhurst": 6548
-      }
+      "prices": {}
     },
     {
       "itemId": "T5_ALCHEMY_RARE_EAGLE",
@@ -278,21 +293,20 @@
     {
       "itemId": "T5_ALCHEMY_RARE_IMP",
       "tier": 5,
-      "prices": {
-        "Fort Sterling": 59884,
-        "Thetford": 22019
-      }
+      "prices": {}
     },
     {
       "itemId": "T5_ALCHEMY_RARE_ELEMENTAL",
       "tier": 5,
-      "prices": {}
+      "prices": {
+        "Brecilien": 21102
+      }
     },
     {
       "itemId": "T5_ALCHEMY_RARE_PANTHER",
       "tier": 5,
       "prices": {
-        "Brecilien": 54387
+        "Brecilien": 51930
       }
     },
     {
@@ -308,87 +322,105 @@
     {
       "itemId": "T5_ALCHEMY_RARE_WEREWOLF",
       "tier": 5,
-      "prices": {}
+      "prices": {
+        "Martlock": 20499,
+        "Thetford": 18499
+      }
     },
     {
       "itemId": "T5_FARM_GOOSE_GROWN",
       "tier": 5,
-      "prices": {}
+      "prices": {
+        "Brecilien": 11972
+      }
     },
     {
       "itemId": "T5_EGG",
       "tier": 5,
       "prices": {
-        "Fort Sterling": 432
+        "Caerleon": 553,
+        "Brecilien": 479
       }
     },
     {
       "itemId": "T5_FISH_SALTWATER_ALL_RARE",
       "tier": 5,
-      "prices": {
-        "Lymhurst": 6678
-      }
+      "prices": {}
     },
     {
       "itemId": "T5_FISH_FRESHWATER_MOUNTAIN_RARE",
       "tier": 5,
       "prices": {
-        "Lymhurst": 7000
+        "Lymhurst": 7000,
+        "Fort Sterling": 6655,
+        "Thetford": 6869,
+        "Bridgewatch": 6965,
+        "Caerleon": 5833,
+        "Brecilien": 8589
       }
     },
     {
       "itemId": "T5_FISH_FRESHWATER_SWAMP_RARE",
       "tier": 5,
       "prices": {
-        "Lymhurst": 6779
+        "Thetford": 6104,
+        "Bridgewatch": 6482
       }
     },
     {
       "itemId": "T5_MEAT",
       "tier": 5,
       "prices": {
-        "Bridgewatch": 518
+        "Lymhurst": 522,
+        "Bridgewatch": 518,
+        "Caerleon": 687
       }
     },
     {
       "itemId": "T5_FISH_FRESHWATER_FOREST_RARE",
       "tier": 5,
       "prices": {
-        "Lymhurst": 6490,
-        "Fort Sterling": 6985,
-        "Brecilien": 6990
+        "Lymhurst": 6499
       }
     },
     {
       "itemId": "T5_FISH_FRESHWATER_HIGHLANDS_RARE",
       "tier": 5,
       "prices": {
-        "Lymhurst": 6552
+        "Lymhurst": 6552,
+        "Thetford": 6772
       }
     },
     {
       "itemId": "QUESTITEM_TOKEN_AVALON",
       "tier": 0,
       "prices": {
-        "Lymhurst": 2998,
-        "Martlock": 2994,
-        "Fort Sterling": 2865,
-        "Thetford": 2862,
-        "Bridgewatch": 2956
+        "Lymhurst": 3584,
+        "Martlock": 2898,
+        "Fort Sterling": 2847,
+        "Thetford": 4000,
+        "Bridgewatch": 2960,
+        "Caerleon": 3198,
+        "Brecilien": 2486
       }
     },
     {
       "itemId": "T6_FOXGLOVE",
       "tier": 6,
-      "prices": {}
+      "prices": {
+        "Martlock": 541,
+        "Fort Sterling": 512,
+        "Thetford": 522,
+        "Caerleon": 476,
+        "Brecilien": 543
+      }
     },
     {
       "itemId": "T6_ALCOHOL",
       "tier": 6,
       "prices": {
-        "Lymhurst": 445,
+        "Lymhurst": 444,
         "Martlock": 437,
-        "Bridgewatch": 410,
         "Caerleon": 490
       }
     },
@@ -396,18 +428,16 @@
       "itemId": "T6_POTATO",
       "tier": 6,
       "prices": {
-        "Lymhurst": 499,
-        "Martlock": 489,
-        "Bridgewatch": 498,
-        "Caerleon": 510
+        "Lymhurst": 489,
+        "Martlock": 494,
+        "Caerleon": 515
       }
     },
     {
       "itemId": "T6_MEAT",
       "tier": 6,
       "prices": {
-        "Thetford": 592,
-        "Bridgewatch": 560
+        "Caerleon": 557
       }
     },
     {
@@ -419,8 +449,7 @@
       "itemId": "T6_BUTTER",
       "tier": 6,
       "prices": {
-        "Thetford": 531,
-        "Bridgewatch": 515
+        "Caerleon": 471
       }
     },
     {
@@ -429,39 +458,42 @@
       "prices": {
         "Lymhurst": 428,
         "Martlock": 422,
-        "Fort Sterling": 426,
+        "Fort Sterling": 421,
         "Thetford": 400,
-        "Bridgewatch": 416
+        "Bridgewatch": 416,
+        "Caerleon": 415
       }
     },
     {
       "itemId": "T7_FISH_FRESHWATER_SWAMP_RARE",
       "tier": 7,
-      "prices": {
-        "Lymhurst": 10974
-      }
+      "prices": {}
     },
     {
       "itemId": "T7_CORN",
       "tier": 7,
       "prices": {
-        "Lymhurst": 537,
-        "Fort Sterling": 505
+        "Lymhurst": 506,
+        "Bridgewatch": 458,
+        "Caerleon": 456
       }
     },
     {
       "itemId": "T7_ALCOHOL",
       "tier": 7,
       "prices": {
-        "Lymhurst": 532,
-        "Brecilien": 413
+        "Lymhurst": 526,
+        "Bridgewatch": 421,
+        "Brecilien": 414
       }
     },
     {
       "itemId": "T7_FISH_FRESHWATER_FOREST_RARE",
       "tier": 7,
       "prices": {
-        "Lymhurst": 71974,
+        "Lymhurst": 74975,
+        "Martlock": 68474,
+        "Bridgewatch": 79944,
         "Brecilien": 94990
       }
     },
@@ -469,15 +501,14 @@
       "itemId": "T7_FISH_SALTWATER_ALL_RARE",
       "tier": 7,
       "prices": {
-        "Lymhurst": 35498,
-        "Martlock": 38585
+        "Lymhurst": 32999
       }
     },
     {
       "itemId": "T7_FISH_FRESHWATER_STEPPE_RARE",
       "tier": 7,
       "prices": {
-        "Brecilien": 18970
+        "Bridgewatch": 15981
       }
     },
     {
@@ -488,21 +519,22 @@
     {
       "itemId": "T7_ALCHEMY_RARE_IMP",
       "tier": 7,
-      "prices": {
-        "Thetford": 55995
-      }
+      "prices": {}
     },
     {
       "itemId": "T7_ALCHEMY_RARE_ELEMENTAL",
       "tier": 7,
       "prices": {
-        "Brecilien": 47987
+        "Brecilien": 52104
       }
     },
     {
       "itemId": "T7_ALCHEMY_RARE_PANTHER",
       "tier": 7,
-      "prices": {}
+      "prices": {
+        "Thetford": 127000,
+        "Brecilien": 108105
+      }
     },
     {
       "itemId": "T7_ALCHEMY_RARE_DIREBEAR",
@@ -523,17 +555,19 @@
       "itemId": "T7_MULLEIN",
       "tier": 7,
       "prices": {
-        "Lymhurst": 514,
-        "Martlock": 502,
-        "Fort Sterling": 485,
-        "Brecilien": 497
+        "Lymhurst": 512,
+        "Martlock": 500,
+        "Thetford": 488,
+        "Bridgewatch": 502,
+        "Caerleon": 399,
+        "Brecilien": 521
       }
     },
     {
       "itemId": "T7_FISH_FRESHWATER_MOUNTAIN_RARE",
       "tier": 7,
       "prices": {
-        "Lymhurst": 10549
+        "Lymhurst": 12390
       }
     },
     {
@@ -545,38 +579,40 @@
       "itemId": "T7_FISH_FRESHWATER_AVALON_RARE",
       "tier": 7,
       "prices": {
-        "Brecilien": 88000
+        "Bridgewatch": 76747,
+        "Brecilien": 93997
       }
     },
     {
       "itemId": "T7_MEAT",
       "tier": 7,
       "prices": {
-        "Lymhurst": 526,
-        "Martlock": 534,
-        "Fort Sterling": 512,
-        "Thetford": 460,
-        "Bridgewatch": 518,
-        "Brecilien": 540
+        "Lymhurst": 525,
+        "Fort Sterling": 517,
+        "Bridgewatch": 510,
+        "Brecilien": 532
       }
     },
     {
       "itemId": "T7_FISH_FRESHWATER_HIGHLANDS_RARE",
       "tier": 7,
-      "prices": {
-        "Lymhurst": 10365
-      }
+      "prices": {}
     },
     {
       "itemId": "T8_FARM_COW_GROWN",
       "tier": 8,
-      "prices": {}
+      "prices": {
+        "Martlock": 11545
+      }
     },
     {
       "itemId": "T8_BUTTER",
       "tier": 8,
       "prices": {
-        "Bridgewatch": 489
+        "Lymhurst": 553,
+        "Martlock": 581,
+        "Bridgewatch": 493,
+        "Brecilien": 597
       }
     },
     {
@@ -587,81 +623,78 @@
         "Martlock": 479,
         "Fort Sterling": 498,
         "Thetford": 532,
-        "Bridgewatch": 474,
-        "Brecilien": 525
+        "Bridgewatch": 481
       }
     },
     {
       "itemId": "T8_YARROW",
       "tier": 8,
       "prices": {
-        "Bridgewatch": 460
+        "Martlock": 498,
+        "Brecilien": 527
       }
     },
     {
       "itemId": "T8_PUMPKIN",
       "tier": 8,
       "prices": {
-        "Lymhurst": 462,
-        "Fort Sterling": 470,
-        "Bridgewatch": 484
+        "Lymhurst": 457,
+        "Fort Sterling": 464,
+        "Bridgewatch": 478
       }
     },
     {
       "itemId": "T8_ALCOHOL",
       "tier": 8,
       "prices": {
-        "Lymhurst": 435,
-        "Fort Sterling": 554,
-        "Brecilien": 427
+        "Lymhurst": 434,
+        "Bridgewatch": 538,
+        "Caerleon": 480,
+        "Brecilien": 424
       }
     },
     {
       "itemId": "T8_MEAT",
       "tier": 8,
       "prices": {
-        "Thetford": 514,
-        "Bridgewatch": 523
+        "Lymhurst": 557,
+        "Martlock": 517,
+        "Bridgewatch": 521
       }
     },
     {
       "itemId": "T1_FISHSAUCE_LEVEL1",
       "tier": 1,
       "prices": {
-        "Lymhurst": 5349,
-        "Caerleon": 6989
+        "Lymhurst": 5419
       }
     },
     {
       "itemId": "T1_FISHSAUCE_LEVEL2",
       "tier": 1,
       "prices": {
-        "Lymhurst": 16977,
-        "Caerleon": 17296
+        "Bridgewatch": 16487
       }
     },
     {
       "itemId": "T1_FISHSAUCE_LEVEL3",
       "tier": 1,
-      "prices": {
-        "Lymhurst": 48887,
-        "Caerleon": 51999
-      }
+      "prices": {}
     },
     {
       "itemId": "T1_ALCHEMY_EXTRACT_LEVEL1",
       "tier": 1,
-      "prices": {}
+      "prices": {
+        "Caerleon": 3000,
+        "Brecilien": 2337
+      }
     },
     {
       "itemId": "T1_ALCHEMY_EXTRACT_LEVEL2",
       "tier": 1,
       "prices": {
-        "Lymhurst": 9700,
-        "Martlock": 7776,
-        "Thetford": 7686,
         "Bridgewatch": 9996,
-        "Brecilien": 7048
+        "Caerleon": 12000
       }
     },
     {
