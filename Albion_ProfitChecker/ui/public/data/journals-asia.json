@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T11:01:55.674Z",
+  "generatedAt": "2026-08-18T11:02:11.229Z",
   "region": "asia",
   "cities": [
     "Lymhurst",
@@ -27,16 +27,16 @@
     "warrior": {
       "4": {
         "empty": {
-          "Thetford": 2221,
-          "Bridgewatch": 2104
+          "Lymhurst": 2774,
+          "Thetford": 3405
         },
         "full": {
-          "Lymhurst": 4495
+          "Thetford": 4110
         }
       },
       "5": {
         "empty": {
-          "Thetford": 4646
+          "Thetford": 4858
         },
         "full": {}
       },
@@ -45,59 +45,63 @@
         "full": {}
       },
       "7": {
-        "empty": {
-          "Lymhurst": 13956
-        },
-        "full": {
-          "Fort Sterling": 60887,
-          "Bridgewatch": 58787
-        }
+        "empty": {},
+        "full": {}
       },
       "8": {
         "empty": {
-          "Lymhurst": 39488,
-          "Bridgewatch": 31962
+          "Bridgewatch": 31953
         },
-        "full": {
-          "Lymhurst": 164869,
-          "Fort Sterling": 160995,
-          "Bridgewatch": 164934
-        }
+        "full": {}
       }
     },
     "hunter": {
       "4": {
         "empty": {
-          "Lymhurst": 2197,
-          "Thetford": 2222,
-          "Bridgewatch": 2213
+          "Lymhurst": 2200,
+          "Thetford": 2598,
+          "Bridgewatch": 2214
         },
         "full": {
-          "Thetford": 4085
+          "Lymhurst": 4555,
+          "Martlock": 4999,
+          "Thetford": 4078
         }
       },
       "5": {
         "empty": {
-          "Lymhurst": 3533
+          "Thetford": 5479
         },
-        "full": {
-          "Lymhurst": 13775
-        }
+        "full": {}
       },
       "6": {
         "empty": {
-          "Thetford": 5796
+          "Lymhurst": 4948,
+          "Martlock": 6479,
+          "Fort Sterling": 5998,
+          "Thetford": 5795,
+          "Bridgewatch": 4585
         },
         "full": {
-          "Lymhurst": 34494
+          "Lymhurst": 34393,
+          "Martlock": 33493,
+          "Fort Sterling": 34384
         }
       },
       "7": {
         "empty": {
-          "Lymhurst": 14391
+          "Lymhurst": 13986,
+          "Martlock": 16976,
+          "Fort Sterling": 15547,
+          "Thetford": 16999,
+          "Bridgewatch": 11998
         },
         "full": {
-          "Lymhurst": 79869
+          "Lymhurst": 79491,
+          "Martlock": 79489,
+          "Fort Sterling": 79932,
+          "Thetford": 79989,
+          "Bridgewatch": 89999
         }
       },
       "8": {
@@ -108,77 +112,72 @@
     "mage": {
       "4": {
         "empty": {
-          "Fort Sterling": 2205,
-          "Thetford": 2080
+          "Lymhurst": 2216,
+          "Thetford": 2091
         },
         "full": {
-          "Thetford": 4329
+          "Lymhurst": 3397,
+          "Thetford": 4326
         }
       },
       "5": {
-        "empty": {},
-        "full": {}
+        "empty": {
+          "Lymhurst": 3988,
+          "Thetford": 4889
+        },
+        "full": {
+          "Lymhurst": 7942,
+          "Thetford": 9500
+        }
       },
       "6": {
         "empty": {
-          "Lymhurst": 5199
+          "Lymhurst": 5200
         },
         "full": {
-          "Lymhurst": 20200
+          "Lymhurst": 20209,
+          "Thetford": 19332
         }
       },
       "7": {
-        "empty": {},
+        "empty": {
+          "Lymhurst": 16989
+        },
         "full": {
-          "Lymhurst": 59977
+          "Lymhurst": 59000
         }
       },
       "8": {
-        "empty": {},
-        "full": {}
+        "empty": {
+          "Lymhurst": 25551
+        },
+        "full": {
+          "Lymhurst": 200000
+        }
       }
     },
     "toolmaker": {
       "4": {
         "empty": {
-          "Lymhurst": 3123,
-          "Thetford": 2220
-        },
-        "full": {
-          "Lymhurst": 4169
-        }
-      },
-      "5": {
-        "empty": {
-          "Lymhurst": 4087
+          "Thetford": 2778
         },
         "full": {}
       },
+      "5": {
+        "empty": {},
+        "full": {}
+      },
       "6": {
-        "empty": {
-          "Lymhurst": 7980
-        },
-        "full": {
-          "Lymhurst": 30004,
-          "Bridgewatch": 30997
-        }
+        "empty": {},
+        "full": {}
       },
       "7": {
-        "empty": {
-          "Lymhurst": 17974
-        },
-        "full": {
-          "Lymhurst": 72355
-        }
+        "empty": {},
+        "full": {}
       },
       "8": {
-        "empty": {
-          "Bridgewatch": 28450
-        },
-        "full": {
-          "Lymhurst": 191964,
-          "Bridgewatch": 209898
-        }
+        "empty": {},
+        "full": {}
       }
     }
   }
