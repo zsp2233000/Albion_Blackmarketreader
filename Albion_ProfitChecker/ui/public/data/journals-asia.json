@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-22T10:58:45.808Z",
+  "generatedAt": "2026-08-23T10:59:10.445Z",
   "region": "asia",
   "cities": [
     "Lymhurst",
@@ -28,113 +28,107 @@
       "4": {
         "empty": {},
         "full": {
-          "Lymhurst": 4303
+          "Martlock": 4977
         }
       },
       "5": {
         "empty": {},
-        "full": {
-          "Lymhurst": 9861
-        }
+        "full": {}
       },
       "6": {
-        "empty": {
-          "Lymhurst": 4965
-        },
+        "empty": {},
         "full": {}
       },
       "7": {
         "empty": {
           "Lymhurst": 13956,
-          "Bridgewatch": 15464
+          "Fort Sterling": 12217,
+          "Bridgewatch": 9998
         },
-        "full": {
-          "Bridgewatch": 52499
-        }
+        "full": {}
       },
       "8": {
-        "empty": {},
+        "empty": {
+          "Lymhurst": 31999,
+          "Martlock": 34999,
+          "Caerleon": 34990
+        },
         "full": {
-          "Bridgewatch": 162856
+          "Lymhurst": 168887,
+          "Martlock": 160999,
+          "Bridgewatch": 169999
         }
       }
     },
     "hunter": {
       "4": {
-        "empty": {},
+        "empty": {
+          "Lymhurst": 2742,
+          "Martlock": 2874,
+          "Thetford": 2588
+        },
         "full": {
-          "Lymhurst": 4791,
-          "Bridgewatch": 4485
+          "Lymhurst": 4498,
+          "Martlock": 4430,
+          "Thetford": 4493
         }
       },
       "5": {
-        "empty": {},
-        "full": {
-          "Thetford": 13000,
-          "Bridgewatch": 14984
-        }
-      },
-      "6": {
         "empty": {
-          "Lymhurst": 5382
+          "Lymhurst": 4500,
+          "Martlock": 4900
         },
         "full": {}
       },
-      "7": {
+      "6": {
         "empty": {
-          "Bridgewatch": 15768
+          "Lymhurst": 4932,
+          "Caerleon": 8760
         },
         "full": {
-          "Lymhurst": 79962
+          "Lymhurst": 33400
         }
       },
+      "7": {
+        "empty": {
+          "Bridgewatch": 13000
+        },
+        "full": {}
+      },
       "8": {
-        "empty": {},
+        "empty": {
+          "Caerleon": 34999
+        },
         "full": {}
       }
     },
     "mage": {
       "4": {
         "empty": {
-          "Lymhurst": 2986
+          "Thetford": 2081
         },
         "full": {
-          "Lymhurst": 3730,
-          "Bridgewatch": 3595
+          "Martlock": 3992,
+          "Thetford": 3797
         }
       },
       "5": {
-        "empty": {
-          "Lymhurst": 4081,
-          "Fort Sterling": 4597
-        },
-        "full": {
-          "Lymhurst": 8268,
-          "Fort Sterling": 8469,
-          "Bridgewatch": 7933
-        }
+        "empty": {},
+        "full": {}
       },
       "6": {
-        "empty": {
-          "Lymhurst": 5196
-        },
-        "full": {
-          "Lymhurst": 19980
-        }
+        "empty": {},
+        "full": {}
       },
       "7": {
         "empty": {
-          "Lymhurst": 16989,
-          "Bridgewatch": 14991
+          "Bridgewatch": 14000
         },
-        "full": {
-          "Lymhurst": 58998,
-          "Bridgewatch": 58781
-        }
+        "full": {}
       },
       "8": {
         "empty": {
-          "Lymhurst": 28972
+          "Caerleon": 32996
         },
         "full": {}
       }
@@ -142,19 +136,19 @@
     "toolmaker": {
       "4": {
         "empty": {
-          "Thetford": 2777
+          "Thetford": 2776
         },
-        "full": {}
+        "full": {
+          "Thetford": 4198
+        }
       },
       "5": {
         "empty": {},
-        "full": {
-          "Brecilien": 10988
-        }
+        "full": {}
       },
       "6": {
         "empty": {
-          "Lymhurst": 7985
+          "Caerleon": 8499
         },
         "full": {}
       },
@@ -163,7 +157,9 @@
         "full": {}
       },
       "8": {
-        "empty": {},
+        "empty": {
+          "Caerleon": 38879
+        },
         "full": {}
       }
     }
